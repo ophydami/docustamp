@@ -3,8 +3,9 @@
 #
 # Minor and patch updates arrive as one grouped pull request per package each
 # week; major updates still come one per pull request, since they can break
-# things and deserve a look of their own. @types/node follows the Node.js
-# major the images run (node:22), so its major updates are skipped.
+# things and deserve a look of their own (eslint packages move together).
+# @types/node follows the Node.js major the images run, so its major updates
+# are skipped.
 version: 2
 updates:
   - package-ecosystem: "npm"
@@ -24,6 +25,9 @@ updates:
     groups:
       server-minor-and-patch:
         update-types: ["minor", "patch"]
+      # eslint and its companion packages only work at the same major.
+      eslint:
+        patterns: ["eslint", "@eslint/*", "eslint-*", "@babel/eslint-parser", "globals"]
     ignore:
       - dependency-name: "@types/node"
         update-types: ["version-update:semver-major"]
