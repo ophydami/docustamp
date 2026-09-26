@@ -1,0 +1,42 @@
+# Build both Docker images on every pull request and push, so a change to a
+# Dockerfile, a base image or the build context is caught before anyone
+# deploys it. Nothing is pushed anywhere.
+name: docker-ci
+
+on:
+  push:
+    branches:
+      - main
+      - staging
+  pull_request:
+    branches:
+      - '**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  server-image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Build the server image
+        run: docker build -f apps/server/Dockerfile -t docustamp/server:ci .
+
+      - name: Node.js version in the image
+        run: docker run --rm docustamp/server:ci node --version
+
+      - name: LibreOffice is installed (Word to PDF)
+        run: docker run --rm docustamp/server:ci soffice --version
+
+  web-image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Build the web image
+        run: docker build -t docustamp/web:ci apps/web

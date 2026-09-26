@@ -53,7 +53,7 @@ Everything is configured through environment variables, listed with explanations
 
 ## Development
 
-The repository has two apps:
+You need Node.js 24 (the version in `.nvmrc`) and MongoDB. The repository has two apps:
 
 - `apps/server`: the API, built on Parse Server and Express, with MongoDB.
 - `apps/web`: the web app, built with Vite, React, TypeScript and Tailwind. See [`apps/web/README.md`](apps/web/README.md).

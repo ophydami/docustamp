@@ -1,5 +1,6 @@
-# Use an official Node runtime as the base image
-FROM node:22.14.0
+# Node.js 24 LTS on Debian bookworm. The major-only tag picks up Node security
+# releases on every build; Parse Server 8 supports Node 20, 22 and 24.
+FROM node:24-bookworm
 
 # Install LibreOffice for DOCX to PDF conversions
 RUN apt-get update \
