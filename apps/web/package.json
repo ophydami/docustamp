@@ -27,7 +27,7 @@
     "pdfjs-dist": "^6.2.108",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
-    "react-i18next": "^17.0.12",
+    "react-i18next": "^17.0.15",
     "react-router-dom": "^7.18.2",
     "signature_pad": "^5.1.4",
     "zustand": "^5.0.15"
