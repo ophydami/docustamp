@@ -61,7 +61,8 @@ export default function SigningDefaultsSection() {
         NotifyOnSignatures: extUser.NotifyOnSignatures !== false,
         IsTourEnabled: extUser.IsTourEnabled !== false,
         IsLTVEnabled: extUser.IsLTVEnabled === true,
-        Is12HourTime: extUser.Is12HourTime === true,
+        // 12-hour unless the user chose 24-hour.
+        Is12HourTime: extUser.Is12HourTime !== false,
         DateFormat: (extUser.DateFormat as string | undefined) ?? "MM/DD/YYYY",
         Timezone: (extUser.Timezone as string | undefined) ?? browserTimezone(),
         DownloadFilenameFormat: (extUser.DownloadFilenameFormat as string | undefined) ?? "DOCNAME",

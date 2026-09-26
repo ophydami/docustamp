@@ -8,7 +8,7 @@ import { freshUrl, toSignerDocument, useSignerDocument } from "./api";
 import type { SignerParty } from "./types";
 import { Wordmark } from "./components/Wordmark";
 import { DisclosureDialog } from "./components/DisclosureDialog";
-import { formatDate } from "@/lib/format";
+import { dateMedium, timeShort } from "@/lib/format";
 import { SOURCE_URL } from "@/lib/source";
 
 interface DoneState {
@@ -120,8 +120,8 @@ export default function SignerDonePage() {
             i18nKey="signer.done.recorded"
             values={{
               document: docName,
-              time: formatDate(signedAt, "HH:mm"),
-              date: formatDate(signedAt, "d MMM yyyy")
+              time: timeShort(signedAt),
+              date: dateMedium(signedAt)
             }}
             components={{ 1: <span className="text-ink font-medium" /> }}
           />

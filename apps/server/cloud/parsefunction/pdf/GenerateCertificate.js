@@ -200,7 +200,7 @@ export default async function GenerateCertificate(docDetails) {
   const Is12Hr =
     typeof docDetails?.Is12HourTime === 'boolean'
       ? docDetails.Is12HourTime
-      : docDetails?.ExtUserPtr?.Is12HourTime || false;
+      : docDetails?.ExtUserPtr?.Is12HourTime !== false; // 12-hour unless the user chose 24-hour
   const DateFormat = docDetails?.DateFormat || docDetails?.ExtUserPtr?.DateFormat || 'MM/DD/YYYY';
   const pdfDoc = await PDFDocument.create();
   // `fontBytes` is used to embed custom font in pdf

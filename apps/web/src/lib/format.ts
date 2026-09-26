@@ -51,6 +51,51 @@ export function formatDate(d: Date | string | undefined | null, pattern: string)
   return format(date, pattern, opts());
 }
 
+/*
+ * Dates and times in the reader's own conventions. English reads "Sep 26, 2026",
+ * "Saturday, September 26" and "2:05 PM"; German "26. Sept. 2026", "Samstag,
+ * 26. September" and "14:05". Use these instead of spelling out a day-first or
+ * 24-hour pattern.
+ */
+
+function toDate(d: Date | string | undefined | null): Date | null {
+  if (!d) return null;
+  const date = typeof d === "string" ? new Date(d) : d;
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
+/** Month, day and year: "Sep 26, 2026". */
+export function dateMedium(d: Date | string | undefined | null): string {
+  return formatDate(d, "PP");
+}
+
+/** Hours and minutes, 12-hour in English: "2:05 PM". */
+export function timeShort(d: Date | string | undefined | null): string {
+  return formatDate(d, "p");
+}
+
+/** Month and day without the year: "Sep 26". */
+export function monthDay(d: Date | string | undefined | null): string {
+  const date = toDate(d);
+  return date ? new Intl.DateTimeFormat(activeLocale(), { month: "short", day: "numeric" }).format(date) : "";
+}
+
+/** The weekday, month and day: "Saturday, September 26". */
+export function weekdayMonthDay(d: Date | string | undefined | null): string {
+  const date = toDate(d);
+  return date
+    ? new Intl.DateTimeFormat(activeLocale(), { weekday: "long", month: "long", day: "numeric" }).format(date)
+    : "";
+}
+
+/** Date and time in UTC, labelled as such: "Sep 26, 2026, 7:05 PM UTC". */
+export function dateTimeUtc(d: Date | string | undefined | null): string {
+  const date = toDate(d);
+  return date
+    ? `${new Intl.DateTimeFormat(activeLocale(), { dateStyle: "medium", timeStyle: "short", timeZone: "UTC" }).format(date)} UTC`
+    : "";
+}
+
 /** The BCP 47 tag for `Intl`, taken from the active i18next language. */
 export function activeLocale(): string {
   return i18next.resolvedLanguage || i18next.language || "en";
@@ -70,12 +115,12 @@ export function percent(value: number, fractionDigits = 0): string {
   }).format(value / 100);
 }
 
-/** "14:02" today, "Yesterday", "Aug 17", "Aug 17, 2025" across years. */
+/** "2:02 PM" today, "Yesterday", "Aug 17", "Aug 17, 2025" across years. */
 export function whenShort(d: Date | string | undefined | null): string {
   if (!d) return "";
   const date = typeof d === "string" ? new Date(d) : d;
   if (Number.isNaN(date.getTime())) return "";
-  if (isToday(date)) return format(date, "HH:mm", opts());
+  if (isToday(date)) return format(date, "p", opts());
   if (isYesterday(date)) return i18next.t("common.date.yesterday");
   const sameYear = date.getFullYear() === new Date().getFullYear();
   return format(date, sameYear ? "MMM d" : "MMM d, yyyy", opts());

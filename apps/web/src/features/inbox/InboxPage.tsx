@@ -17,7 +17,7 @@ import {
 import { useAuth } from "@/app/auth";
 import { useExtUser } from "@/lib/extUser";
 import { cn } from "@/lib/cn";
-import { formatDate, num } from "@/lib/format";
+import { monthDay, num, weekdayMonthDay } from "@/lib/format";
 import { useHotkeys } from "@/lib/hotkeys";
 import { errorMessage, remindError, remindSummary, totalsOf } from "@/lib/reminder";
 import { useBadges, useCommands } from "@/lib/store";
@@ -323,7 +323,7 @@ export default function InboxPage() {
                 const until = await extend.mutateAsync({ doc: nudge, days: 7 });
                 toast.success(
                   t("inbox.toast.expiryMoved"),
-                  t("inbox.toast.expiryMovedBody", { date: formatDate(until, "d MMM") })
+                  t("inbox.toast.expiryMovedBody", { date: monthDay(until) })
                 );
               } catch (err) {
                 toast.error(
@@ -576,7 +576,7 @@ function Greeting({
 
   return (
     <div className="flex flex-col gap-1.5">
-      <Cap>{formatDate(new Date(), "EEEE, d MMMM")}</Cap>
+      <Cap>{weekdayMonthDay(new Date())}</Cap>
       <h1 className="font-serif text-[22px] md:text-[28px] leading-tight font-medium max-w-3xl">
         {name ? t(greeting.named, { name }) : t(greeting.plain)}{" "}
         {loading ? (

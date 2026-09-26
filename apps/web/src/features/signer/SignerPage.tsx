@@ -69,7 +69,7 @@ import { OtpGate } from "./components/OtpGate";
 import { StatusScreen } from "./components/StatusScreen";
 import { useIsDesktop } from "./components/useIsDesktop";
 import { Wordmark } from "./components/Wordmark";
-import { formatDate } from "@/lib/format";
+import { dateMedium } from "@/lib/format";
 
 type Phase = "loading" | "otp" | "ready" | "error";
 
@@ -666,7 +666,7 @@ export default function SignerPage({ mode }: { mode?: "recipient" | "self" }) {
         waitingOn={waitingOn}
         declineReason={doc.declineReason}
         declinedBy={doc.declinedByName}
-        expiresAt={doc.expiryDate ? formatDate(new Date(doc.expiryDate), "d MMM yyyy") : undefined}
+        expiresAt={doc.expiryDate ? dateMedium(new Date(doc.expiryDate)) : undefined}
         onDownload={doc.isCompleted || blockReason === "already_signed" ? () => void download("current") : undefined}
         downloading={downloading}
       />
@@ -906,7 +906,7 @@ export default function SignerPage({ mode }: { mode?: "recipient" | "self" }) {
               </p>
               {doc.expiryDate ? (
                 <p className="mt-2 text-[12px] text-muted">
-                  {t("signer.about.expires", { date: formatDate(new Date(doc.expiryDate), "d MMM yyyy") })}
+                  {t("signer.about.expires", { date: dateMedium(new Date(doc.expiryDate)) })}
                 </p>
               ) : null}
               {doc.note ? (
@@ -1112,7 +1112,7 @@ function aboutText(doc: SignerDocument, myIndex: number, t: TFunction): string {
   const bits: string[] = [];
   if (prev?.signedAt) {
     bits.push(
-      t("signer.about.prevSignedOn", { name: prev.name, date: formatDate(new Date(prev.signedAt), "d MMM yyyy") })
+      t("signer.about.prevSignedOn", { name: prev.name, date: dateMedium(new Date(prev.signedAt)) })
     );
   } else if (prev) {
     bits.push(t("signer.about.prevSigned", { name: prev.name }));

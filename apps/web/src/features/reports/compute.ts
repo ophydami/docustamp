@@ -16,7 +16,7 @@ import {
   subMonths
 } from "date-fns";
 import i18next from "i18next";
-import { formatDate, num, percent } from "@/lib/format";
+import { dateMedium, monthDay, num, percent } from "@/lib/format";
 import type {
   DateRange,
   DocRow,
@@ -89,8 +89,8 @@ export function inRange(d: Date | undefined, r: DateRange): boolean {
 export function rangeLabel(r: DateRange): string {
   const sameYear = r.from.getFullYear() === r.to.getFullYear();
   return i18next.t("reports.ranges.span", {
-    from: formatDate(r.from, sameYear ? "d MMM" : "d MMM yyyy"),
-    to: formatDate(r.to, "d MMM yyyy")
+    from: sameYear ? monthDay(r.from) : dateMedium(r.from),
+    to: dateMedium(r.to)
   });
 }
 
@@ -187,7 +187,7 @@ export function weeklySeries(docs: DocRow[], r: DateRange): WeekPoint[] {
   while (cursor.getTime() <= last.getTime()) {
     const key = format(cursor, "yyyy-MM-dd");
     index.set(key, points.length);
-    points.push({ key, label: formatDate(cursor, "d MMM"), value: 0 });
+    points.push({ key, label: monthDay(cursor), value: 0 });
     cursor = addDays(cursor, 7);
   }
   for (const d of docs) {

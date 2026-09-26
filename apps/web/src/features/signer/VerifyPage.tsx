@@ -6,7 +6,7 @@ import { Button, Card, Cap, LanguageMini, Pill, toast } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import { verifyPdf, type SignatureResult, type VerifyResult } from "./verify";
 import { Wordmark } from "./components/Wordmark";
-import { formatDate } from "@/lib/format";
+import { dateMedium, dateTimeUtc } from "@/lib/format";
 
 /**
  * Drop a signed PDF, get a verdict. Everything runs in the browser: the file is
@@ -166,15 +166,15 @@ function SignatureCard({ sig }: { sig: SignatureResult }) {
         <Row label={t("signer.verify.rows.serial")} value={sig.serialNumber} mono />
         <Row
           label={t("signer.verify.rows.signedAt")}
-          value={sig.signingTime ? formatDate(sig.signingTime, "d MMM yyyy, HH:mm 'UTC'") : undefined}
+          value={sig.signingTime ? dateTimeUtc(sig.signingTime) : undefined}
         />
         <Row
           label={t("signer.verify.rows.certificate")}
           value={
             sig.certificateValidFrom && sig.certificateValidTo
               ? t(sig.certificateExpired ? "signer.verify.cert.rangeExpired" : "signer.verify.cert.range", {
-                  from: formatDate(sig.certificateValidFrom, "d MMM yyyy"),
-                  to: formatDate(sig.certificateValidTo, "d MMM yyyy")
+                  from: dateMedium(sig.certificateValidFrom),
+                  to: dateMedium(sig.certificateValidTo)
                 })
               : undefined
           }

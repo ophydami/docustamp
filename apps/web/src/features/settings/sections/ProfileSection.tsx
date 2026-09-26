@@ -146,7 +146,7 @@ export default function ProfileSection() {
             <Input value={v.Name} onChange={(e) => form.set({ Name: e.target.value })} placeholder="Ana Silva" />
           </Field>
           <Field label={t("settings.profile.details.phone")}>
-            <Input value={v.Phone} onChange={(e) => form.set({ Phone: e.target.value })} placeholder="+44 20 7946 0000" />
+            <Input value={v.Phone} onChange={(e) => form.set({ Phone: e.target.value })} placeholder="+1 (555) 010-0123" />
           </Field>
           <Field label={t("settings.profile.details.company")}>
             <Input value={v.Company} onChange={(e) => form.set({ Company: e.target.value })} />
