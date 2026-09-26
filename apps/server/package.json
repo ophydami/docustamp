@@ -45,7 +45,7 @@
     "googleapis": "^171.4.0",
     "jsonwebtoken": "^9.0.3",
     "libreoffice-convert": "^1.8.1",
-    "mailgun.js": "^13.0.0",
+    "mailgun.js": "^14.0.1",
     "moment": "^2.31.0",
     "mongodb": "^7.6.0",
     "multer": "^2.4.0",
