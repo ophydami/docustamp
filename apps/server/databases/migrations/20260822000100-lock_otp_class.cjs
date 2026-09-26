@@ -14,7 +14,7 @@
  */
 exports.up = async Parse => {
   const probe = new Parse.Schema('defaultdata_Otp');
-  let existing = null;
+  let existing;
   try {
     existing = await probe.get();
   } catch {

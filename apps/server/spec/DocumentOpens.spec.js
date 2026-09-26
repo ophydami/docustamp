@@ -291,8 +291,8 @@ describe('document opens', () => {
   it('never exposes the open log through the REST classes endpoint', async () => {
     const doc = await makeDocument();
     await open(doc, 1);
-    let status = 0;
-    let count = -1;
+    let status;
+    let count;
     try {
       const res = await http.get(`${TEST_SERVER}/classes/${OPEN_CLASS}`, {
         headers: {

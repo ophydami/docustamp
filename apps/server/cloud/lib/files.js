@@ -274,7 +274,7 @@ export async function assertFetchableUrl(rawUrl) {
     if (isBlockedAddress(host)) throw fetchFailed();
     return parsed.href;
   }
-  let addresses = [];
+  let addresses;
   try {
     addresses = await dns.lookup(host, { all: true, verbatim: true });
   } catch {
@@ -391,7 +391,7 @@ async function assertFileNotOwnedByOthers(url, caller) {
   const query = Parse.Query.or(byUrl, bySignedUrl);
   query.include('ExtUserPtr');
   query.limit(50);
-  let rows = [];
+  let rows;
   try {
     rows = await query.find({ useMasterKey: true });
   } catch (err) {
