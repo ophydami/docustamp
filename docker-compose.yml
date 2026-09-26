@@ -1,14 +1,10 @@
 services:
   app:
-    # The web app and the server in one image (the root Dockerfile), built from
-    # this checkout. It answers the whole site on :8080: the pages at /, the
-    # API under /api.
-    build:
-      context: .
-      args:
-        # Baked into the web app; must match the server's APP_ID below.
-        VITE_APPID: ${APP_ID:-docustamp}
-    image: docustamp/docustamp:local
+    # The web app and the server in one image, published from this repository
+    # for amd64 and arm64. It answers the whole site on :8080: the pages at /,
+    # the API under /api. Pin a release with DOCUSTAMP_VERSION=0.1.0 in .env;
+    # to build from this checkout instead, add -f docker-compose.build.yml.
+    image: ghcr.io/ophydami/docustamp:${DOCUSTAMP_VERSION:-latest}
     container_name: docustamp-app
     restart: unless-stopped
     volumes:
@@ -28,7 +24,8 @@ services:
       - NODE_ENV=production
       - SERVER_URL=${HOST_URL:-https://localhost:3001}/api/app
       - PUBLIC_URL=${HOST_URL:-https://localhost:3001}
-      # The same value is baked into the web app above, so the two always agree.
+      # Must match the value baked into the web app: docustamp in the published
+      # image; a different one needs your own build (docker-compose.build.yml).
       - APP_ID=${APP_ID:-docustamp}
     networks:
       - app-network

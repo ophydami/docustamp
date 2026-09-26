@@ -31,30 +31,33 @@ nano .env.prod
 # 2. Your address, used for HTTPS and for the links in emails.
 echo "HOST_URL=https://sign.example.com" > .env
 
-# 3. Build and start everything.
-docker compose up -d --build
+# 3. Download and start everything.
+docker compose up -d
 ```
 
 Open your domain in a browser and create the first account. HTTPS certificates are issued automatically by Caddy, so ports 80 and 443 must be reachable.
 
-This runs three containers: DocuStamp itself (the web app and the server in one image), MongoDB, and Caddy for HTTPS. The first build takes several minutes because the image includes LibreOffice (used to convert Word files to PDF). A one-command installer, ready-made images and one-click setups for Railway, Render and Fly.io are on the way.
+This runs three containers: DocuStamp itself (the web app and the server in one image), MongoDB, and Caddy for HTTPS. The DocuStamp image is published for both regular (amd64) and ARM servers at `ghcr.io/ophydami/docustamp`. A one-command installer and one-click setups for Railway, Render and Fly.io are on the way.
 
 ### Running just the image
 
-The whole app is one image, built from the `Dockerfile` at the root. It serves the web app at `/` and the API under `/api` on one port (`PORT`, default 8080), so it can run anywhere that runs a container, next to any MongoDB:
+The whole app is one image. It serves the web app at `/` and the API under `/api` on one port (`PORT`, default 8080), so it can run anywhere that runs a container, next to any MongoDB:
 
 ```bash
-docker build -t docustamp .
 docker run -d -p 8080:8080 --env-file .env.prod \
   -e PUBLIC_URL=https://sign.example.com \
   -e SERVER_URL=https://sign.example.com/api/app \
   -v docustamp-files:/usr/src/app/files/files \
-  docustamp
+  ghcr.io/ophydami/docustamp:latest
 ```
 
 Put HTTPS in front of it (a reverse proxy or your platform's), and keep `TRUST_PROXY=1` so the app sees the real client address. The health check is `/api/app/health`.
 
-**Updating:** `git pull && docker compose up -d --build`
+### Building the image yourself
+
+`docker compose -f docker-compose.yml -f docker-compose.build.yml up -d --build` builds the image from your checkout (the root `Dockerfile`) instead of downloading it. You need your own build to change `APP_ID`, to turn on "Sign in with Google" (`GOOGLE_CLIENT_ID` in `.env`), or to point the app's "Source" links at your fork (`SOURCE_URL`), because those are baked into the web app.
+
+**Updating:** `git pull && docker compose pull && docker compose up -d`. To stay on a specific release, put `DOCUSTAMP_VERSION=0.1.0` in `.env`.
 
 **Backups:** back up the `data-volume` (the database) and `docustamp-files` (uploaded documents) Docker volumes, or use S3-compatible storage for documents (see `.env.example`).
 

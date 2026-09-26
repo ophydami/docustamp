@@ -1,0 +1,17 @@
+# Build the image from this checkout instead of pulling the published one:
+#
+#   docker compose -f docker-compose.yml -f docker-compose.build.yml up -d --build
+#
+# Needed to change APP_ID or to enable "Sign in with Google", both of which are
+# baked into the web app at build time.
+services:
+  app:
+    build:
+      context: .
+      args:
+        # Must match the server's APP_ID (docker-compose.yml).
+        VITE_APPID: ${APP_ID:-docustamp}
+        VITE_GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+        # Where the app's "Source" links point; set it to your fork if you change the code.
+        VITE_SOURCE_URL: ${SOURCE_URL:-}
+    image: docustamp/docustamp:local

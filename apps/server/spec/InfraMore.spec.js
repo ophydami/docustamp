@@ -182,12 +182,20 @@ describe('docker-compose.yml', () => {
     fs.readFileSync(path.join(REPO_ROOT, 'docker-compose.yml'), 'utf8')
   );
 
-  it('builds the one image from this checkout, not from the deploy host layout', () => {
-    expect(compose).not.toContain('context: ./src');
-    expect(compose).toContain('context: .');
-    // The web app is built into the same image, not a second one.
-    expect(compose).not.toContain('context: ./apps/web');
+  it('runs the one published image, pinned by DOCUSTAMP_VERSION', () => {
     expect(compose).toMatch(/^ {2}app:$/m);
+    expect(compose).toContain('image: ghcr.io/ophydami/docustamp:${DOCUSTAMP_VERSION:-latest}');
+    // The web app lives in the same image, not a second one.
+    expect(compose).not.toContain('context: ./apps/web');
+  });
+
+  it('builds that image from this checkout with the build override', () => {
+    const build = withoutComments(
+      fs.readFileSync(path.join(REPO_ROOT, 'docker-compose.build.yml'), 'utf8')
+    );
+    expect(build).not.toContain('context: ./src');
+    expect(build).toMatch(/context: \.$/m);
+    expect(build).toContain('VITE_APPID: ${APP_ID:-docustamp}');
   });
 
   it('pins the mongo and caddy images to a major version', () => {
