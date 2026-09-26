@@ -13,7 +13,7 @@ import { buildMcpServer } from './server.js';
 
 /**
  * Stateless Streamable-HTTP MCP endpoint, mounted at `/mcp` (reached as
- * `https://<host>/api/mcp` behind Caddy).
+ * `https://<host>/api/mcp`).
  *
  * Every POST carries `Authorization: Bearer os_...`; the token is resolved to a
  * caller, a throw-away McpServer + transport is built for that request and torn

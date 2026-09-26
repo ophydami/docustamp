@@ -146,7 +146,7 @@ deleted.
 
 ## 4. MCP server (stateless)
 
-Endpoint: `https://sign.example.com/api/mcp` (Caddy maps `/api/*` to the server, which mounts
+Endpoint: `https://sign.example.com/api/mcp` (the server answers `/api/*` itself and mounts
 `/mcp` next to the Parse mount). Streamable HTTP, POST only, `sessionIdGenerator: undefined`,
 JSON responses. A new `McpServer` is built per request around the caller resolved from the token,
 and torn down when the response closes, so nothing is kept between calls.

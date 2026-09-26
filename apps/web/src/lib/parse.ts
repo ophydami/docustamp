@@ -6,8 +6,8 @@ import Parse from "parse";
  * VITE_APPID      app id, must match APP_ID on the server (default "docustamp")
  * VITE_SERVERURL  full server URL, e.g. https://sign.example.com/api/app
  *                 When unset we use same-origin `/api/app`, which the Vite dev
- *                 proxy forwards to VITE_DEV_PROXY_TARGET and Caddy forwards
- *                 to the Parse container in production.
+ *                 proxy forwards to VITE_DEV_PROXY_TARGET and which the server
+ *                 answers itself in production (it serves this app too).
  */
 export const APP_ID: string = import.meta.env.VITE_APPID || "docustamp";
 export const SERVER_URL: string = (

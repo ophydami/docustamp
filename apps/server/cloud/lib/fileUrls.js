@@ -212,6 +212,25 @@ export function validateSignedLocalUrl(signedUrl) {
   }
 }
 
+/**
+ * The public url a `/files/` request was signed against.
+ *
+ * `base` comes from SERVER_URL: its origin and the prefix in front of the Parse
+ * mount (`/api` for https://host/api/app). A reverse proxy that strips that
+ * prefix hands this process `/app/files/...`, so the prefix is put back; when
+ * the process serves the whole site itself (the single-container setup) the
+ * path still carries it and is used as is.
+ *
+ * @param {string} originalUrl the request's path and query.
+ * @param {{origin: string, prefix: string}} base
+ * @returns {string}
+ */
+export function requestedFileUrl(originalUrl, { origin, prefix }) {
+  const path = String(originalUrl || '');
+  const carriesPrefix = Boolean(prefix) && (path === prefix || path.startsWith(`${prefix}/`));
+  return origin + (carriesPrefix ? '' : prefix) + path;
+}
+
 /* ------------------------------------------------------------------- signing */
 
 /**

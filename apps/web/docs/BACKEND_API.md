@@ -39,9 +39,11 @@
 | `/` | custom Express routes (`/docxtopdf`, `/decryptpdf`, `/delete-account/...`, `/deleteuser/:userId`) |
 | `GET /` | health string `docustamp-server is running !!!` |
 
-In the standard Docker/Caddy deployment the whole server is reverse-proxied under
-`/api`, so the browser-visible Parse base URL is `https://<host>/api/app` and the
-custom Express routes live at `https://<host>/api/docxtopdf` etc.
+In the Docker image the server answers the whole site: the web app at `/` and the
+API under `/api` (cloud/lib/webApp.js), so the browser-visible Parse base URL is
+`https://<host>/api/app` and the custom Express routes live at
+`https://<host>/api/docxtopdf` etc. The same paths also answer without the `/api`
+prefix, for the server's own loopback calls and for proxies that strip it.
 
 Relevant Parse Server config (`index.js`):
 

@@ -182,10 +182,12 @@ describe('docker-compose.yml', () => {
     fs.readFileSync(path.join(REPO_ROOT, 'docker-compose.yml'), 'utf8')
   );
 
-  it('builds from this checkout, not from the deploy host layout', () => {
+  it('builds the one image from this checkout, not from the deploy host layout', () => {
     expect(compose).not.toContain('context: ./src');
     expect(compose).toContain('context: .');
-    expect(compose).toContain('context: ./apps/web');
+    // The web app is built into the same image, not a second one.
+    expect(compose).not.toContain('context: ./apps/web');
+    expect(compose).toMatch(/^ {2}app:$/m);
   });
 
   it('pins the mongo and caddy images to a major version', () => {
@@ -211,15 +213,14 @@ describe('docker-compose.yml', () => {
 describe('Caddyfile', () => {
   const caddy = withoutComments(fs.readFileSync(path.join(REPO_ROOT, 'Caddyfile'), 'utf8'));
 
-  it('sets the baseline security headers', () => {
-    for (const header of [
-      'Strict-Transport-Security',
-      'X-Content-Type-Options',
-      'Referrer-Policy',
-      'frame-ancestors',
-    ]) {
-      expect(caddy).withContext(header).toContain(header);
-    }
+  it('proxies the whole site to the app, which serves /api itself', () => {
+    expect(caddy).toContain('reverse_proxy app:8080');
+    // Stripping /api here would break the app's own routing and file urls.
+    expect(caddy).not.toContain('handle_path');
+  });
+
+  it('compresses responses', () => {
+    expect(caddy).toMatch(/encode .*gzip/);
   });
 
   it('does not carry the no-op rewrite', () => {

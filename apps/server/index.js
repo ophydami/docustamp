@@ -20,6 +20,8 @@ import runDbMigrations from './migrationdb/index.js';
 import { ensureSigningIdentity } from './cloud/lib/signingIdentity.js';
 import { validateSignedLocalUrl } from './cloud/parsefunction/getSignedUrl.js';
 import { configuredPublicOrigin, publicOriginFor } from './cloud/lib/publicUrl.js';
+import { requestedFileUrl } from './cloud/lib/fileUrls.js';
+import { createSite, resolveWebRoot, securityHeaders } from './cloud/lib/webApp.js';
 import { startAutoReminderScheduler } from './cloud/jobs/autoReminders.js';
 
 /**
@@ -441,6 +443,10 @@ function trustProxySetting() {
   return value; // subnet(s), e.g. 'loopback, 10.0.0.0/8'
 }
 app.set('trust proxy', trustProxySetting());
+app.disable('x-powered-by');
+// Security headers on every response, including the 503s of the boot gate
+// (cloud/lib/webApp.js).
+app.use(securityHeaders);
 
 /**
  * Which browser origins may script this API.
@@ -547,9 +553,9 @@ app.use(function (req, res, next) {
  *
  * getSignedLocalUrl signs the whole url, so the string rebuilt here has to match
  * it exactly. SERVER_URL is the api url (e.g. https://sign.example.com/api/app):
- * strip the Parse mount off its path and what is left is the prefix the proxy
- * puts in front of this process, `/api` in the deploy/ setup and '' when the
- * container is reached directly. That used to be a literal comparison against
+ * strip the Parse mount off its path and what is left is the prefix in front of
+ * the mount, `/api` in the Docker setup (requestedFileUrl puts it back when a
+ * proxy stripped it before the request got here). That used to be a literal comparison against
  * `/api/app`, so every other mount shape 400'd on every file read, and
  * `new URL(undefined)` threw inside an async handler (a hung request) whenever
  * SERVER_URL was unset.
@@ -560,7 +566,7 @@ const fileUrlBase = (() => {
     console.error(
       '[files] SERVER_URL is not set, so signed file urls cannot be validated; /files/ reads will be refused.'
     );
-    return '';
+    return null;
   }
   try {
     const serverUrl = new URL(raw);
@@ -573,10 +579,10 @@ const fileUrlBase = (() => {
       mount && pathname.endsWith(mount)
         ? pathname.slice(0, -mount.length)
         : pathname.slice(0, pathname.lastIndexOf('/'));
-    return serverUrl.origin + prefix.replace(/\/+$/, '');
+    return { origin: serverUrl.origin, prefix: prefix.replace(/\/+$/, '') };
   } catch (err) {
     console.error(`[files] SERVER_URL is not a valid url (${raw}): ${err?.message}`);
-    return '';
+    return null;
   }
 })();
 
@@ -587,7 +593,7 @@ app.use(async function (req, res, next) {
   // gate confirmed the existence and size of any stored document by name.
   if (isFilePath && (method === 'get' || method === 'head')) {
     if (!fileUrlBase) return res.status(500).json({ message: 'file access is not configured' });
-    const fileUrl = fileUrlBase + req.originalUrl;
+    const fileUrl = requestedFileUrl(req.originalUrl, fileUrlBase);
     const params = fileUrl?.split('?')?.[1];
     if (params) {
       const fileRes = await validateSignedLocalUrl(fileUrl);
@@ -642,7 +648,16 @@ if (!process.env.TESTING) {
     console.error('[migrations] index migrations failed:', err?.message || err)
   );
 
-  const httpServer = http.createServer(app);
+  // With the built web app next to it (the Docker image), this process serves
+  // the whole site; otherwise just the API (cloud/lib/webApp.js).
+  const webRoot = resolveWebRoot();
+  const site = webRoot
+    ? createSite(app, webRoot, { parseMount: process.env.PARSE_MOUNT || '/app' })
+    : app;
+  console.log(
+    webRoot ? `[boot] serving the web app from ${webRoot}` : '[boot] serving the API only'
+  );
+  const httpServer = http.createServer(site);
   // Node requires headersTimeout to exceed keepAliveTimeout: when they are equal
   // a keep-alive connection can be closed at the exact moment a new request is
   // arriving, and the client (or the proxy in front) sees ECONNRESET instead of

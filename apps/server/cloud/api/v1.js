@@ -49,7 +49,7 @@ import {
 
 /**
  * REST API v1, token-authenticated (`Authorization: Bearer os_...`), mounted at
- * `/v1` (reached as `https://<host>/api/v1/...` behind Caddy). Thin wrappers over
+ * `/v1` (reached as `https://<host>/api/v1/...`). Thin wrappers over
  * the same library the MCP tools use; JSON in, JSON out.
  */
 

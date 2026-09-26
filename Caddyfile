@@ -1,32 +1,12 @@
 {$HOST_URL} {
-	# Baseline response headers for every route (the SPA and the API alike).
-	# Without these the signing pages could be framed by any site and browsers
-	# were free to MIME-sniff whatever the file routes returned.
-	header {
-		# HTTPS only, for a year, including subdomains. Caddy terminates TLS
-		# here, so this is the right place for it.
-		Strict-Transport-Security "max-age=31536000; includeSubDomains"
-		# Never let a browser guess a content type: the /files/ routes serve
-		# user-supplied documents.
-		X-Content-Type-Options "nosniff"
-		# Do not leak document ids or signing tokens in the Referer header of
-		# anything a signing page links out to.
-		Referrer-Policy "strict-origin-when-cross-origin"
-		# Only this origin may frame the app; the signing flow is exactly the
-		# kind of one-click action clickjacking targets. frame-ancestors is the
-		# modern spelling, X-Frame-Options covers older browsers.
-		Content-Security-Policy "frame-ancestors 'self'"
-		X-Frame-Options "SAMEORIGIN"
-		# No cross-origin access to camera, microphone or geolocation.
-		Permissions-Policy "camera=(), microphone=(), geolocation=()"
-		# Do not advertise the server software.
-		-Server
-	}
-	reverse_proxy client:3000
-	handle_path /api/* {
-		# handle_path already strips the /api prefix, so the server sees
-		# /app/... which is what PARSE_MOUNT expects. The `rewrite * {uri}`
-		# that used to sit here rewrote the URI to itself and did nothing.
-		reverse_proxy server:8080
-	}
+	# Compress the pages, scripts and API responses on the way out.
+	encode zstd gzip
+
+	# The app sets its own security headers (apps/server/cloud/lib/webApp.js);
+	# Caddy only stops advertising itself.
+	header -Server
+
+	# One upstream for the whole site: the app serves the pages at / and the
+	# API under /api itself, so nothing is rewritten here.
+	reverse_proxy app:8080
 }

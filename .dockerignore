@@ -1,14 +1,16 @@
-# Root build context is used by apps/server/Dockerfile (COPY apps/server/ .)
+# Build context of the root Dockerfile (the web app and the server in one image).
 .git
+.github
 **/node_modules
 **/dist
 **/build
-apps/web
 deploy
 .playwright-mcp
 *.log
-.env
-.env.*
+# Settings files never go into the image, including apps/web/.env.local, which
+# the web build would otherwise read.
+**/.env
+**/.env.*
 
 # Runtime artefacts a developer machine accumulates inside the server tree.
 # They must never reach the image: the log files carry the full params of

@@ -1,9 +1,6 @@
-# Local stack. `make build` brings the whole thing up from this checkout;
-# docker-compose.yml builds the server from . and the frontend from apps/web,
-# so no rsync or deploy host is involved.
-#
-# The frontend is built inside its own image (apps/web/Dockerfile), so there is
-# no host-side npm build step here.
+# Local stack. `make build` brings the whole thing up from this checkout:
+# docker-compose.yml builds the one image (the root Dockerfile builds the web
+# app and the server together), so there is no host-side npm build step here.
 build:
 	@echo "Building with HOST_URL=${HOST_URL}"
 	cp .env.local_dev .env

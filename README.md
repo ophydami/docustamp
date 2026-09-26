@@ -37,7 +37,22 @@ docker compose up -d --build
 
 Open your domain in a browser and create the first account. HTTPS certificates are issued automatically by Caddy, so ports 80 and 443 must be reachable.
 
-The first build takes several minutes because the server image includes LibreOffice (used to convert Word files to PDF). A one-command installer, ready-made images and one-click setups for Railway, Render and Fly.io are on the way.
+This runs three containers: DocuStamp itself (the web app and the server in one image), MongoDB, and Caddy for HTTPS. The first build takes several minutes because the image includes LibreOffice (used to convert Word files to PDF). A one-command installer, ready-made images and one-click setups for Railway, Render and Fly.io are on the way.
+
+### Running just the image
+
+The whole app is one image, built from the `Dockerfile` at the root. It serves the web app at `/` and the API under `/api` on one port (`PORT`, default 8080), so it can run anywhere that runs a container, next to any MongoDB:
+
+```bash
+docker build -t docustamp .
+docker run -d -p 8080:8080 --env-file .env.prod \
+  -e PUBLIC_URL=https://sign.example.com \
+  -e SERVER_URL=https://sign.example.com/api/app \
+  -v docustamp-files:/usr/src/app/files/files \
+  docustamp
+```
+
+Put HTTPS in front of it (a reverse proxy or your platform's), and keep `TRUST_PROXY=1` so the app sees the real client address. The health check is `/api/app/health`.
 
 **Updating:** `git pull && docker compose up -d --build`
 

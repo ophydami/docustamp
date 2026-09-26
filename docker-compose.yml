@@ -1,26 +1,25 @@
 services:
-  server:
-    # Built from this checkout, so `docker compose up --build` works in a fresh
-    # clone. An operator override file can point the context elsewhere.
+  app:
+    # The web app and the server in one image (the root Dockerfile), built from
+    # this checkout. It answers the whole site on :8080: the pages at /, the
+    # API under /api.
     build:
       context: .
-      dockerfile: apps/server/Dockerfile
-    image: docustamp/server:local
-    container_name: docustamp-server
+      args:
+        # Baked into the web app; must match the server's APP_ID below.
+        VITE_APPID: ${APP_ID:-docustamp}
+    image: docustamp/docustamp:local
+    container_name: docustamp-app
     restart: unless-stopped
     volumes:
-      # The uploads directory only, not its parent. @parse/fs-files-adapter
-      # writes to ./files/files, while ./files also holds the password-reset and
-      # verification mail templates that are baked into the image. Mounting the
-      # volume over ./files shadowed those: template edits shipped in new images
-      # never reached production, and a volume restored from an old backup made
-      # the mail adapter throw ENOENT on every password reset.
+      # The uploads directory only, not its parent: ./files also holds the
+      # password-reset and verification mail templates baked into the image, and
+      # a volume over the parent would hide template changes shipped in new images.
       - docustamp-files:/usr/src/app/files/files
     ports:
       # Loopback only: docker writes its own iptables rules, which bypass a host
-      # firewall such as ufw, so "8080:8080" published the Parse mount straight
-      # to the internet and around Caddy's /api path handling. A production
-      # override can drop the mapping entirely.
+      # firewall such as ufw, so "8080:8080" would publish the app straight to
+      # the internet around Caddy. A production override can drop it entirely.
       - "127.0.0.1:8080:8080"
     depends_on:
       - mongo
@@ -29,7 +28,7 @@ services:
       - NODE_ENV=production
       - SERVER_URL=${HOST_URL:-https://localhost:3001}/api/app
       - PUBLIC_URL=${HOST_URL:-https://localhost:3001}
-      # The same value is baked into the web app below, so the two always agree.
+      # The same value is baked into the web app above, so the two always agree.
       - APP_ID=${APP_ID:-docustamp}
     networks:
       - app-network
@@ -52,25 +51,14 @@ services:
         # keeps them working. New ones can use mongodb://mongo:27017.
         aliases:
           - mongo-container
-  client:
-    # The frontend (apps/web), static files served by Caddy on :3000.
-    build:
-      context: ./apps/web
-      args:
-        VITE_APPID: ${APP_ID:-docustamp}
-    image: docustamp/web:local
-    container_name: docustamp-web
-    restart: unless-stopped
-    depends_on:
-      - server
-    ports:
-      - "127.0.0.1:3000:3000"
-    networks:
-      - app-network
   caddy:
+    # HTTPS in front of the app: certificates for HOST_URL are issued and
+    # renewed automatically.
     image: caddy:2
     container_name: docustamp-caddy
     restart: unless-stopped
+    depends_on:
+      - app
     ports:
       - "3001:3001"
       - "80:80"

@@ -1,6 +1,7 @@
-# Build both Docker images on every pull request and push, so a change to a
-# Dockerfile, a base image or the build context is caught before anyone
-# deploys it. Nothing is pushed anywhere.
+# Build the Docker image on every pull request and push, start it against a
+# real MongoDB, and check that the web app and the API answer on one port. A
+# change to the Dockerfile, a base image or the build context is caught before
+# anyone deploys it. Nothing is pushed anywhere.
 name: docker-ci
 
 on:
@@ -17,26 +18,59 @@ permissions:
   contents: read
 
 jobs:
-  server-image:
+  image:
     runs-on: ubuntu-latest
+    services:
+      mongo:
+        image: mongo:8
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --quiet --eval 'db.runCommand({ ping: 1 }).ok'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
     steps:
       - name: Checkout
         uses: actions/checkout@v7
 
-      - name: Build the server image
-        run: docker build -f apps/server/Dockerfile -t docustamp/server:ci .
+      - name: Build the image
+        run: docker build -t docustamp:ci .
 
       - name: Node.js version in the image
-        run: docker run --rm docustamp/server:ci node --version
+        run: docker run --rm docustamp:ci node --version
 
       - name: LibreOffice is installed (Word to PDF)
-        run: docker run --rm docustamp/server:ci soffice --version
+        run: docker run --rm docustamp:ci soffice --version
 
-  web-image:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v7
+      - name: Start it against MongoDB
+        run: >-
+          docker run -d --name app --network host
+          -e MONGODB_URI=mongodb://127.0.0.1:27017/docustamp-ci
+          -e MASTER_KEY=ci-master-key-not-secret
+          -e SERVER_URL=http://localhost:8080/api/app
+          -e PUBLIC_URL=http://localhost:8080
+          -e USE_LOCAL=true
+          docustamp:ci
 
-      - name: Build the web image
-        run: docker build -t docustamp/web:ci apps/web
+      - name: Wait until it is healthy
+        run: |
+          for i in $(seq 1 60); do
+            curl -fsS http://localhost:8080/api/app/health && exit 0
+            sleep 2
+          done
+          exit 1
+
+      - name: The web app and the API answer on one port
+        run: |
+          set -e
+          curl -fsS http://localhost:8080/ | grep -q '<div id="root">'
+          curl -fsS -H 'Accept: text/html' http://localhost:8080/documents | grep -q '<div id="root">'
+          curl -fsS http://localhost:8080/api/ | grep -q 'docustamp-server is running'
+          curl -fsS http://localhost:8080/app/health | grep -q '"ok"'
+          curl -fsSI http://localhost:8080/ | grep -qi '^x-frame-options: SAMEORIGIN'
+          test "$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8080/assets/missing.js)" = 404
+
+      - name: Container logs
+        if: always()
+        run: docker logs app 2>&1 | tail -150
