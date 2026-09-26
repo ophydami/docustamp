@@ -1,5 +1,6 @@
-import dotenv from 'dotenv';
-dotenv.config({ quiet: true });
+// First: loads .env and fills in what a hosting platform already knows
+// (public address, Railway's MongoDB) before any other module reads it.
+import './cloud/lib/platformEnv.js';
 import express from 'express';
 import cors from 'cors';
 import { ParseServer } from 'parse-server';

@@ -39,6 +39,10 @@ Open your domain in a browser and create the first account. HTTPS certificates a
 
 This runs three containers: DocuStamp itself (the web app and the server in one image), MongoDB, and Caddy for HTTPS. The DocuStamp image is published for both regular (amd64) and ARM servers at `ghcr.io/ophydami/docustamp`. A one-command installer and one-click setups for Railway, Render and Fly.io are on the way.
 
+### On Railway
+
+DocuStamp runs on [Railway](https://railway.com) with its MongoDB and a volume in one project, and picks up Railway's address and database link on its own. Follow [docs/deploy/railway.md](docs/deploy/railway.md). Railway blocks SMTP email on its lower plans, so the guide uses Mailgun.
+
 ### Running just the image
 
 The whole app is one image. It serves the web app at `/` and the API under `/api` on one port (`PORT`, default 8080), so it can run anywhere that runs a container, next to any MongoDB:
