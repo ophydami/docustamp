@@ -42,7 +42,7 @@
     "express": "^5.2.1",
     "form-data": "^4.0.6",
     "generate-api-key": "^1.0.2",
-    "googleapis": "^171.4.0",
+    "googleapis": "^181.0.0",
     "jsonwebtoken": "^9.0.3",
     "libreoffice-convert": "^1.8.1",
     "mailgun.js": "^13.0.0",
