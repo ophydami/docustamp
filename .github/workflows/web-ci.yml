@@ -1,0 +1,49 @@
+# Type-check, lint and build apps/web, and check that the translations and the
+# MCP tool list the settings page shows still match their sources.
+name: web-ci
+
+on:
+  push:
+    branches:
+      - main
+      - staging
+  pull_request:
+    branches:
+      - '**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    working-directory: apps/web
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Translations match en.json
+        run: npm run i18n:check
+
+      - name: MCP tool list matches the server
+        run: npm run mcp:check
+
+      - name: Type-check and build
+        run: npm run build

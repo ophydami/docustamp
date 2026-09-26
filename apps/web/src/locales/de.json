@@ -1,0 +1,3255 @@
+{
+  "_meta": "machine-translated 2026-08-21, review welcome",
+  "ai": {
+    "actions": {
+      "adjust": "Anweisungen ändern",
+      "analyze": "Dokument analysieren",
+      "analyzing": "Dokument wird gelesen",
+      "analyzingHint": "Dauert meist 10 bis 30 Sekunden.",
+      "openEditor": "Entwurf speichern und Editor öffnen",
+      "sendNow": "Zur Unterschrift senden"
+    },
+    "disabled": {
+      "body": "Setzen Sie AI_ENABLED und die Bedrock-Zugangsdaten auf dem Server, um sie einzuschalten.",
+      "title": "KI-Vorbereitung ist auf diesem Server deaktiviert"
+    },
+    "drop": {
+      "aria": "Dokument auswählen",
+      "hint": "PDF, DOCX oder DOC, bis zu {{size}} MB",
+      "title": "PDF- oder Word-Datei hier ablegen oder klicken"
+    },
+    "file": {
+      "converted": "aus Word konvertiert",
+      "replace": "Ersetzen"
+    },
+    "instructions": {
+      "hint": "Normale Sprache genügt. Erwähnen Sie, wer Sie sind, wer zuerst unterschreibt oder was das Modell vor dem Senden ausfüllen soll.",
+      "label": "Anweisungen (optional)",
+      "placeholder": "z. B. Ich bin der Vermieter. Der Mieter unterschreibt zuerst, dann ich. Initialen auf jeder Seite."
+    },
+    "known": {
+      "add": "Person hinzufügen",
+      "email": "E-Mail",
+      "empty": "Leer lassen, damit das Modell im Dokument gedruckte Namen und E-Mails findet.",
+      "label": "Bereits bekannte Personen (optional)",
+      "name": "Name"
+    },
+    "poweredBy": "{{model}} über {{provider}}",
+    "preview": {
+      "empty": "Das Dokument erscheint hier, sobald Sie eines wählen.",
+      "legend": "Farbige Kästen sind die vorgeschlagenen Felder.",
+      "title": "Vorschau"
+    },
+    "review": {
+      "inOrder": "Unterschreibt der Reihe nach",
+      "missing_one": "{{count}} Unterzeichner braucht noch eine E-Mail-Adresse.",
+      "missing_other": "{{count}} Unterzeichner brauchen noch eine E-Mail-Adresse.",
+      "signers": "Wer unterschreibt",
+      "signersHint": "Fehlende E-Mail-Adressen vor dem Senden ergänzen.",
+      "title": "Dokumenttitel",
+      "you": "Sie"
+    },
+    "steps": {
+      "document": "1. Dokument",
+      "instructions": "2. Was möchten Sie?",
+      "review": "3. Prüfen"
+    },
+    "subtitle": "Legen Sie ein Dokument ab und sagen Sie, was Sie möchten. Das Modell liest es, erkennt, wer wo unterschreibt, und platziert jedes Feld. Sie prüfen, dann senden Sie oder feilen im Editor nach.",
+    "title": "KI fragen",
+    "toast": {
+      "analysisFailed": "Dokument konnte nicht analysiert werden",
+      "draftCreated": "Entwurf erstellt. Prüfen Sie die Felder im Editor.",
+      "draftFailed": "Entwurf konnte nicht erstellt werden",
+      "missingEmails_one": "{{count}} Unterzeichner hat keine E-Mail-Adresse.",
+      "missingEmails_other": "{{count}} Unterzeichner haben keine E-Mail-Adresse.",
+      "sendFailed": "Dokument konnte nicht gesendet werden",
+      "sentWithFailures_one": "Erstellt, aber {{count}} E-Mail konnte nicht gesendet werden.",
+      "sentWithFailures_other": "Erstellt, aber {{count}} E-Mails konnten nicht gesendet werden.",
+      "sent_one": "An {{count}} Person gesendet",
+      "sent_other": "An {{count}} Personen gesendet"
+    }
+  },
+  "app": {
+    "a11y": {
+      "closeNav": "Navigation schließen",
+      "mainNav": "Hauptnavigation",
+      "openNav": "Navigation öffnen"
+    },
+    "actions": {
+      "bulkSend": "Massenversand",
+      "new": "Neu",
+      "newRequest": "Neue Anfrage",
+      "signYourself": "Selbst unterschreiben",
+      "useTemplate": "Vorlage verwenden"
+    },
+    "nav": {
+      "ai": "KI fragen",
+      "automations": "Automatisierungen",
+      "contacts": "Kontakte",
+      "documents": "Dokumente",
+      "inbox": "Posteingang",
+      "reports": "Berichte",
+      "settings": "Einstellungen",
+      "templates": "Vorlagen"
+    },
+    "palette": {
+      "groupActions": "Aktionen",
+      "groupGoTo": "Gehe zu",
+      "groupThisPage": "Diese Seite",
+      "label": "Befehlspalette",
+      "noResults": "Keine Ergebnisse.",
+      "toggleDark": "Dunkelmodus umschalten",
+      "useATemplate": "Eine Vorlage verwenden"
+    },
+    "savedViews": {
+      "expiring": "Läuft diese Woche ab",
+      "sentByMe": "Von mir gesendet",
+      "title": "Gespeicherte Ansichten",
+      "waitingOnMe": "Wartet auf mich"
+    },
+    "topbar": {
+      "searchPlaceholder": "Suchen oder Befehl eingeben",
+      "searchPlaceholderLong": "Dokumente, Personen oder Vorlagen suchen oder Befehl eingeben"
+    }
+  },
+  "auth": {
+    "a11y": {
+      "acceptTerms": "Nutzungsbedingungen und Datenschutzerklärung akzeptieren",
+      "hidePassword": "Passwort verbergen",
+      "showPassword": "Passwort anzeigen"
+    },
+    "actions": {
+      "backToSignIn": "Zurück zur Anmeldung",
+      "createWorkspace": "Arbeitsbereich erstellen",
+      "emailMeACode": "Code per E-Mail senden",
+      "forgot": "Vergessen?",
+      "goToSignIn": "Zur Anmeldung",
+      "openDocument": "Dokument öffnen",
+      "resendCode": "Code erneut senden",
+      "resendIn": "Erneut senden in {{seconds}}s",
+      "sendResetLink": "Link zum Zurücksetzen senden",
+      "sendToDifferentAddress": "An eine andere Adresse senden",
+      "signIn": "Anmelden",
+      "switchToOtp": "Lieber ohne Passwort? Anmeldecode per E-Mail senden",
+      "switchToPassword": "Stattdessen mit Passwort anmelden",
+      "useDifferentAccount": "Anderes Konto verwenden",
+      "useDifferentEmail": "Andere E-Mail-Adresse verwenden"
+    },
+    "checkEmail": {
+      "sentTo": "Ein 4-stelliger Code wurde an <1>{{email}}</1> gesendet.",
+      "title": "Sehen Sie in Ihre E-Mails"
+    },
+    "code": {
+      "digitAria": "{{label}}, Ziffer {{index}}",
+      "label": "Anmeldecode"
+    },
+    "divider": {
+      "or": "oder"
+    },
+    "errors": {
+      "accountDisabled": "Dieses Konto wurde deaktiviert. Wenden Sie sich an die Administration Ihres Arbeitsbereichs.",
+      "accountNotCreated": "Das Konto konnte nicht erstellt werden.",
+      "badCredentials": "Diese E-Mail-Adresse und dieses Passwort passen zu keinem Konto.",
+      "cannotReachServer": "Der Server ist nicht erreichbar. Prüfen Sie Ihre Verbindung und versuchen Sie es erneut.",
+      "codeEmailFailed": "Der Code konnte nicht per E-Mail gesendet werden. Versuchen Sie es erneut.",
+      "codeFourDigits": "Geben Sie den 6-stelligen Code aus Ihrer E-Mail ein.",
+      "codeInvalid": "Dieser Code stimmt nicht. Prüfen Sie ihn und versuchen Sie es erneut.",
+      "codeSendFailed": "Der Code konnte nicht gesendet werden. Versuchen Sie es erneut.",
+      "codeVerifyFailed": "Der Code konnte nicht überprüft werden. Fordern Sie einen neuen an.",
+      "codeVerifyFallback": "Der Code konnte nicht überprüft werden.",
+      "companyRequired": "Geben Sie den Namen Ihres Unternehmens oder Arbeitsbereichs ein.",
+      "documentUnavailable": "Dieses Dokument ist nicht mehr verfügbar.",
+      "emailNotVerified": "Diese E-Mail-Adresse ist noch nicht verifiziert. Sehen Sie im Posteingang nach dem Verifizierungscode.",
+      "emailTaken": "Diese E-Mail-Adresse wird bereits für ein Konto verwendet. Melden Sie sich stattdessen an.",
+      "googleFailed": "Die Anmeldung mit Google ist fehlgeschlagen.",
+      "googleNoSession": "Die Anmeldung mit Google hat keine Sitzung zurückgegeben.",
+      "googleNoToken": "Google hat kein Anmelde-Token zurückgegeben.",
+      "googleUnusableToken": "Google hat kein verwendbares Anmelde-Token zurückgegeben.",
+      "invalidEmail": "Geben Sie eine gültige geschäftliche E-Mail-Adresse ein.",
+      "jobTitleRequired": "Geben Sie Ihre Berufsbezeichnung ein.",
+      "nameRequired": "Geben Sie Ihren vollständigen Namen ein.",
+      "noAccountForEmail": "Zu dieser E-Mail-Adresse gibt es kein Konto.",
+      "notAllowed": "Dieses Konto darf sich nicht anmelden. Wenden Sie sich an die Administration Ihres Arbeitsbereichs.",
+      "passwordRequired": "Geben Sie Ihr Passwort ein.",
+      "passwordRules": "Wählen Sie ein Passwort, das alle drei Regeln erfüllt.",
+      "profileLoadFailed": "Angemeldet, aber Ihr Profil konnte nicht geladen werden.",
+      "requestNotOpenable": "Diese Signaturanfrage konnte nicht geöffnet werden.",
+      "resetSendFailed": "Die E-Mail zum Zurücksetzen konnte nicht gesendet werden. Versuchen Sie es erneut.",
+      "sessionExpired": "Ihre Sitzung ist abgelaufen. Melden Sie sich erneut an.",
+      "setupFailed": "Die Einrichtung Ihres Arbeitsbereichs konnte nicht abgeschlossen werden.",
+      "signInFailed": "Anmeldung nicht möglich. Versuchen Sie es erneut.",
+      "termsRequired": "Akzeptieren Sie die Bedingungen, um fortzufahren."
+    },
+    "fields": {
+      "company": "Unternehmen",
+      "fullName": "Vollständiger Name",
+      "jobTitle": "Berufsbezeichnung",
+      "password": "Passwort",
+      "phone": "Telefon",
+      "workEmail": "Geschäftliche E-Mail",
+      "yourEmail": "Ihre E-Mail-Adresse"
+    },
+    "footer": {
+      "guestNote": "Zum Unterschreiben ist kein Konto nötig. Der Code bestätigt nur, dass diese Anfrage an Sie gerichtet ist.",
+      "openSource": "Open Source unter AGPL-3.0",
+      "signerNote": "Sie sollen ein Dokument unterschreiben? Nutzen Sie den Link in Ihrer E-Mail, ganz ohne Konto.",
+      "source": "Quellcode",
+      "status": "Status"
+    },
+    "forgot": {
+      "sentBody": "Falls für <1>{{email}}</1> ein Konto besteht, ist ein Link zum Zurücksetzen unterwegs. Über den Link lässt sich ein neues Passwort festlegen.",
+      "subtitle": "Geben Sie Ihre geschäftliche E-Mail-Adresse ein, dann wird ein Link zum Festlegen eines neuen Passworts gesendet.",
+      "title": "Passwort zurücksetzen"
+    },
+    "guest": {
+      "goneBody": "Das Dokument wurde entfernt oder ist nicht mehr für Sie freigegeben.",
+      "goneTitle": "Diese Anfrage ist nicht verfügbar",
+      "invalidBody": "Die Adresse ist unvollständig oder wurde unterwegs verändert. Öffnen Sie den ursprünglichen Link aus Ihrer E-Mail oder bitten Sie den Absender, die Anfrage erneut zu senden.",
+      "invalidTitle": "Dieser Link ist ungültig",
+      "verifyBody": "Dieses Dokument ist mit einem Einmalcode geschützt. Er wird an die vom Absender verwendete Adresse gesendet.",
+      "verifyTitle": "Bestätigen Sie Ihre Identität"
+    },
+    "hints": {
+      "phone": "Optional. Wird nur auf dem Abschlusszertifikat verwendet."
+    },
+    "marketing": {
+      "body": "Verträge, Angebotsschreiben, NDAs und Formulare, in Minuten unterzeichnet, mit lückenlosem Prüfpfad und einem überprüfbaren Abschlusszertifikat.",
+      "headline": "Senden, unterschreiben und jederzeit genau wissen, wo es steht."
+    },
+    "password": {
+      "rules": {
+        "length": "Mindestens 8 Zeichen",
+        "mix": "Groß- und Kleinbuchstaben sowie eine Ziffer",
+        "special": "Ein Sonderzeichen, zum Beispiel ! @ # $ %"
+      }
+    },
+    "placeholders": {
+      "email": "you@company.com",
+      "fullName": "Ada Lovelace",
+      "jobTitle": "Leitung Operations",
+      "phone": "+44 7700 900000"
+    },
+    "profile": {
+      "subtitle": "Noch ein paar Angaben und {{email}} kann Dokumente senden.",
+      "title": "Arbeitsbereich fertigstellen"
+    },
+    "signIn": {
+      "newHere": "Neu hier? <1>Arbeitsbereich erstellen</1>",
+      "title": "Anmelden"
+    },
+    "signUp": {
+      "firstAccountNotice": "Dies ist das erste Konto auf diesem Server und wird damit zur Administration des Arbeitsbereichs.",
+      "haveAccount": "Schon ein Konto? <1>Anmelden</1>",
+      "termsAgreement": "Ich stimme den <1>Nutzungsbedingungen</1> und der <2>Datenschutzerklärung</2> zu.",
+      "title": "Arbeitsbereich erstellen"
+    },
+    "status": {
+      "checkingSession": "Ihre Sitzung wird geprüft",
+      "openingDocument": "Ihr Dokument wird geöffnet"
+    },
+    "toast": {
+      "codeSendFailed": "Code konnte nicht gesendet werden",
+      "existingAccount": "Willkommen zurück",
+      "existingAccountBody": "Diese E-Mail hatte bereits ein Konto, deshalb haben wir Sie darin angemeldet.",
+      "googleFailed": "Anmeldung mit Google fehlgeschlagen",
+      "profileLoadFailed": "Profil konnte nicht geladen werden",
+      "resetFailed": "E-Mail zum Zurücksetzen fehlgeschlagen",
+      "setupFailed": "Einrichtung fehlgeschlagen",
+      "signInFailed": "Anmeldung fehlgeschlagen",
+      "signUpFailed": "Registrierung fehlgeschlagen",
+      "verificationFailed": "Verifizierung fehlgeschlagen",
+      "workspaceCreated": "Arbeitsbereich erstellt",
+      "workspaceCreatedBody": "Willkommen, {{name}}."
+    }
+  },
+  "common": {
+    "actions": {
+      "add": "Hinzufügen",
+      "back": "Zurück",
+      "cancel": "Abbrechen",
+      "clear": "Leeren",
+      "close": "Schließen",
+      "continue": "Fortfahren",
+      "copied": "Kopiert",
+      "copy": "Kopieren",
+      "decline": "Ablehnen",
+      "delete": "Löschen",
+      "discard": "Verwerfen",
+      "dismiss": "Ausblenden",
+      "done": "Fertig",
+      "download": "Herunterladen",
+      "duplicate": "Duplizieren",
+      "edit": "Bearbeiten",
+      "import": "Importieren",
+      "next": "Weiter",
+      "open": "Öffnen",
+      "preview": "Vorschau",
+      "remind": "Erinnern",
+      "remove": "Entfernen",
+      "rename": "Umbenennen",
+      "reset": "Zurücksetzen",
+      "saveChanges": "Änderungen speichern",
+      "select": "Auswählen",
+      "sign": "Unterschreiben",
+      "signOut": "Abmelden",
+      "tryAgain": "Erneut versuchen",
+      "upload": "Hochladen"
+    },
+    "count": {
+      "company_one": "{{count}} Unternehmen",
+      "company_other": "{{count}} Unternehmen",
+      "day_one": "{{count}} Tag",
+      "day_other": "{{count}} Tage",
+      "document_one": "{{count}} Dokument",
+      "document_other": "{{count}} Dokumente",
+      "field_one": "{{count}} Feld",
+      "field_other": "{{count}} Felder",
+      "hour_one": "{{count}} Stunde",
+      "hour_other": "{{count}} Stunden",
+      "page_one": "{{count}} Seite",
+      "page_other": "{{count}} Seiten",
+      "person_one": "{{count}} Person",
+      "person_other": "{{count}} Personen",
+      "recipient_one": "{{count}} Empfänger",
+      "recipient_other": "{{count}} Empfänger",
+      "role_one": "{{count}} Rolle",
+      "role_other": "{{count}} Rollen",
+      "signer_one": "{{count}} Unterzeichner",
+      "signer_other": "{{count}} Unterzeichner",
+      "template_one": "{{count}} Vorlage",
+      "template_other": "{{count}} Vorlagen"
+    },
+    "date": {
+      "daysShort_one": "{{count}} Tg.",
+      "daysShort_other": "{{count}} Tg.",
+      "expired": "abgelaufen",
+      "hoursShort_one": "{{count}} Std.",
+      "hoursShort_other": "{{count}} Std.",
+      "yesterday": "Gestern"
+    },
+    "errors": {
+      "generic": "Etwas ist schiefgelaufen",
+      "invalidEmail": "Bitte eine gültige E-Mail-Adresse eingeben"
+    },
+    "hints": {
+      "move": "navigieren",
+      "open": "öffnen",
+      "select": "auswählen",
+      "selected_one": "{{count}} ausgewählt",
+      "selected_other": "{{count}} ausgewählt"
+    },
+    "language": {
+      "label": "Sprache"
+    },
+    "reminder": {
+      "couldNotSendTitle": "Erinnerung konnte nicht gesendet werden",
+      "everyoneSigned": "Alle haben bereits unterzeichnet.",
+      "failedDocuments_one": "{{count}} Dokument fehlgeschlagen: {{message}}",
+      "failedDocuments_other": "{{count}} Dokumente fehlgeschlagen: {{message}}",
+      "nobodyToRemind": "Niemand zu erinnern",
+      "noneSent": "Keine Erinnerung gesendet",
+      "notSentTitle": "Erinnerung nicht gesendet",
+      "reason": {
+        "alreadySigned": "bereits unterzeichnet",
+        "mailFailed": "E-Mail fehlgeschlagen",
+        "noEmail": "keine E-Mail-Adresse",
+        "notTheirTurn": "noch nicht an der Reihe"
+      },
+      "remindedAcross_one": "{{people}} Personen in {{count}} Dokument erinnert",
+      "remindedAcross_other": "{{people}} Personen in {{count}} Dokumenten erinnert",
+      "reminded_one": "{{count}} Person erinnert",
+      "reminded_other": "{{count}} Personen erinnert",
+      "sentToOne": "Erinnerung an {{email}} gesendet",
+      "skipped_one": "{{count}} übersprungen ({{reasons}})",
+      "skipped_other": "{{count}} übersprungen ({{reasons}})",
+      "titleWithSkips": "{{title}}, {{skipped}}"
+    },
+    "state": {
+      "loading": "Wird geladen",
+      "none": "Keine",
+      "saving": "Wird gespeichert",
+      "unknown": "Unbekannt"
+    },
+    "status": {
+      "completed": "Abgeschlossen",
+      "declined": "Abgelehnt",
+      "draft": "Entwurf",
+      "expired": "Abgelaufen",
+      "inProgress": "In Bearbeitung",
+      "needsYou": "Aktion erforderlich",
+      "signed": "Unterzeichnet"
+    },
+    "theme": {
+      "dark": "Dunkel",
+      "label": "Darstellung",
+      "light": "Hell",
+      "system": "System",
+      "toDark": "Zum dunklen Modus wechseln",
+      "toLight": "Zum hellen Modus wechseln"
+    }
+  },
+  "contacts": {
+    "a11y": {
+      "closePanel": "Bereich schließen",
+      "contactActions": "Kontaktaktionen",
+      "rowActions": "Aktionen für {{name}}",
+      "selectAll": "Alle Kontakte auswählen",
+      "selectOne": "{{name}} auswählen"
+    },
+    "actions": {
+      "addPerson": "Person hinzufügen",
+      "importCsv": "CSV importieren",
+      "remind": "Erinnern ({{count}})",
+      "sendDocument": "Dokument senden"
+    },
+    "activity": {
+      "declined": "Abgelehnt, {{when}}",
+      "none": "Noch nichts",
+      "sent": "Gesendet, {{when}}",
+      "signed": "Unterzeichnet, {{when}}",
+      "viewed": "Geöffnet, {{when}}",
+      "viewedStale": "Geöffnet, nicht unterzeichnet · {{when}}"
+    },
+    "company": {
+      "fromEmail": "aus der E-Mail",
+      "none": "Kein Unternehmen"
+    },
+    "dialog": {
+      "deleteManyBody": "Sie werden aus Ihrem Kontaktbuch entfernt. Bereits an sie gesendete Dokumente sind nicht betroffen.",
+      "deleteOneBody": "{{name}} wird aus Ihrem Kontaktbuch entfernt. Bereits gesendete Dokumente sind nicht betroffen.",
+      "deleteTitle_one": "Diesen Kontakt löschen?",
+      "deleteTitle_other": "Diese Kontakte löschen?"
+    },
+    "doc": {
+      "untitled": "Unbenannt"
+    },
+    "duration": {
+      "days_one": "{{value}} Tag",
+      "days_other": "{{value}} Tage",
+      "hours_one": "{{count}} Std.",
+      "hours_other": "{{count}} Std.",
+      "minutes_one": "{{count}} Min.",
+      "minutes_other": "{{count}} Min."
+    },
+    "empty": {
+      "clearFilter": "Filter leeren",
+      "loadFailedBody": "Beim Lesen Ihres Kontaktbuchs ist etwas schiefgelaufen.",
+      "loadFailedTitle": "Kontakte wurden nicht geladen",
+      "noCompaniesBody": "Unternehmen erscheinen, sobald Ihre Kontakte eines haben.",
+      "noCompaniesTitle": "Noch keine Unternehmen",
+      "noContactsBody": "Fügen Sie die Personen hinzu, denen Sie Dokumente senden, oder importieren Sie eine CSV-Datei.",
+      "noContactsTitle": "Noch keine Kontakte",
+      "noMatchBody": "Versuchen Sie einen anderen Namen, eine andere E-Mail oder ein anderes Unternehmen.",
+      "noMatchTitle": "Niemand passt dazu"
+    },
+    "errors": {
+      "notSignedIn": "Nicht angemeldet"
+    },
+    "fields": {
+      "added": "Hinzugefügt",
+      "company": "Unternehmen",
+      "email": "E-Mail",
+      "jobTitle": "Berufsbezeichnung",
+      "name": "Name",
+      "phone": "Telefon",
+      "signsIn": "Unterzeichnet in"
+    },
+    "filter": {
+      "label": "Kontakte filtern",
+      "placeholder": "Nach Name, E-Mail oder Unternehmen filtern"
+    },
+    "form": {
+      "addDescription": "Diese Person kann unterschreiben, ohne ein Konto zu erstellen.",
+      "addTitle": "Person hinzufügen",
+      "editDescription": "Beim Speichern wird ein neuer Kontakteintrag angelegt, sodass bereits gesendete Dokumente die alten Angaben behalten.",
+      "editTitle": "Person bearbeiten",
+      "errors": {
+        "duplicate": "Diese Person ist bereits in Ihren Kontakten.",
+        "emailInvalid": "Das sieht nicht nach einer E-Mail-Adresse aus.",
+        "emailRequired": "Eine E-Mail-Adresse ist erforderlich.",
+        "name": "Geben Sie dieser Person einen Namen."
+      },
+      "optional": "Optional",
+      "placeholders": {
+        "company": "Northbay",
+        "email": "rosa@northbay.co",
+        "jobTitle": "Leitung Finanzen",
+        "name": "Rosa Almeida",
+        "phone": "+351 912 000 000"
+      }
+    },
+    "hints": {
+      "addPerson": "Person hinzufügen",
+      "newRequest": "neue Anfrage an Person"
+    },
+    "import": {
+      "actions": {
+        "importCount": "{{count}} importieren"
+      },
+      "description": "Eine CSV-Datei mit den Spalten name und email. phone, company und jobTitle sind optional.",
+      "dropzone": "Legen Sie hier eine CSV-Datei ab oder klicken Sie, um eine auszuwählen",
+      "errors": {
+        "empty": "Diese Datei ist leer.",
+        "missingColumns": "Die Datei benötigt eine Spalte name und eine Spalte email.",
+        "notCsv": "Wählen Sie eine .csv-Datei. Exportieren Sie eine aus Ihrer Tabellenkalkulation, falls Sie xlsx haben."
+      },
+      "problem": {
+        "duplicate": "In dieser Datei doppelt",
+        "invalidEmail": "Ungültige E-Mail",
+        "noEmail": "Keine E-Mail",
+        "noName": "Kein Name",
+        "ready": "Bereit"
+      },
+      "progress": "{{done}} von {{total}} werden importiert",
+      "readyWithSkipped_one": "{{count}} Zeile bereit, {{skipped}} übersprungen",
+      "readyWithSkipped_other": "{{count}} Zeilen bereit, {{skipped}} übersprungen",
+      "ready_one": "{{count}} Zeile bereit",
+      "ready_other": "{{count}} Zeilen bereit",
+      "showingFirst_one": "Es wird {{shown}} von {{count}} Zeile angezeigt.",
+      "showingFirst_other": "Es werden die ersten {{shown}} von {{count}} Zeilen angezeigt.",
+      "summary": {
+        "addedFailed_one": "{{count}} Person hinzugefügt, {{failed}} fehlgeschlagen.",
+        "addedFailed_other": "{{count}} Personen hinzugefügt, {{failed}} fehlgeschlagen.",
+        "addedSkippedFailed_one": "{{count}} Person hinzugefügt, {{skipped}} übersprungen (bereits im Kontaktbuch oder unbrauchbar), {{failed}} fehlgeschlagen.",
+        "addedSkippedFailed_other": "{{count}} Personen hinzugefügt, {{skipped}} übersprungen (bereits im Kontaktbuch oder unbrauchbar), {{failed}} fehlgeschlagen.",
+        "addedSkipped_one": "{{count}} Person hinzugefügt, {{skipped}} übersprungen (bereits im Kontaktbuch oder unbrauchbar).",
+        "addedSkipped_other": "{{count}} Personen hinzugefügt, {{skipped}} übersprungen (bereits im Kontaktbuch oder unbrauchbar).",
+        "added_one": "{{count}} Person hinzugefügt.",
+        "added_other": "{{count}} Personen hinzugefügt."
+      },
+      "title": "Kontakte importieren",
+      "toast": {
+        "failed": "Import fehlgeschlagen",
+        "imported_one": "{{count}} Person importiert",
+        "imported_other": "{{count}} Personen importiert"
+      }
+    },
+    "panel": {
+      "documentsWith": "Dokumente mit {{name}}",
+      "median": "Median {{value}}",
+      "noCompanyOnFile": "Kein Unternehmen hinterlegt",
+      "noDocuments": "Noch keine Dokumente.",
+      "notEnoughSigned": "Noch nicht genug unterzeichnete Dokumente",
+      "seeAll": "Alle {{count}} ansehen"
+    },
+    "selection": {
+      "count_one": "{{count}} Person ausgewählt",
+      "count_other": "{{count}} Personen ausgewählt"
+    },
+    "sort": {
+      "documents": "meiste Dokumente",
+      "name": "Name",
+      "recent": "zuletzt aktiv",
+      "trigger": "Sortierung: {{value}}"
+    },
+    "stats": {
+      "capped": "Die Dokumentenzahlen umfassen Ihre {{count}} zuletzt aktualisierten Dokumente.",
+      "error": "Dokumentenzahlen und Aktivität konnten nicht geladen werden. Die Kontaktdaten sind weiterhin korrekt."
+    },
+    "status": {
+      "waiting": "Wartet"
+    },
+    "table": {
+      "company": "Unternehmen",
+      "documents": "Dokumente",
+      "lastActivity": "Letzte Aktivität",
+      "people": "Personen",
+      "person": "Person"
+    },
+    "title": "Kontakte",
+    "toast": {
+      "addFailed": "Kontakt konnte nicht hinzugefügt werden",
+      "added": "Kontakt hinzugefügt",
+      "deleteFailed": "Löschen nicht möglich",
+      "deleted_one": "Kontakt gelöscht",
+      "deleted_other": "{{count}} Kontakte gelöscht",
+      "updateFailed": "Kontakt konnte nicht aktualisiert werden",
+      "updated": "Kontakt aktualisiert"
+    },
+    "view": {
+      "companies": "Unternehmen",
+      "people": "Personen"
+    }
+  },
+  "documents": {
+    "a11y": {
+      "back": "Zurück",
+      "backToDocuments": "Zurück zu Dokumente",
+      "breadcrumb": "Navigationspfad",
+      "collapseFolder": "{{name}} einklappen",
+      "expandFolder": "{{name}} ausklappen",
+      "fieldFor": "{{type}} für {{name}}",
+      "folderActions": "Aktionen für {{name}}",
+      "moreActions": "Weitere Aktionen",
+      "removeEmail": "{{email}} entfernen",
+      "rowActions": "Aktionen für {{name}}",
+      "selectAllOnPage": "Alle auf dieser Seite auswählen",
+      "selectRow": "{{name}} auswählen"
+    },
+    "actions": {
+      "changeOrder": "Reihenfolge ändern",
+      "completionCertificate": "Abschlusszertifikat",
+      "continueInEditor": "Im Editor fortfahren",
+      "copyShareLink": "Freigabelink kopieren",
+      "currentPdf": "Aktuelles PDF",
+      "downloadCertificate": "Zertifikat herunterladen",
+      "downloadCompletionCertificate": "Abschlusszertifikat herunterladen",
+      "downloadCurrent": "Aktuelles PDF herunterladen",
+      "downloadOriginal": "Original herunterladen",
+      "downloadSigned": "Unterzeichnetes PDF herunterladen",
+      "editRecipients": "Empfänger bearbeiten",
+      "exportCsv": "CSV exportieren",
+      "exportCsvShort": "CSV",
+      "exportPdf": "PDF exportieren",
+      "forward": "Weiterleiten",
+      "forwardCopy": "Kopie weiterleiten",
+      "move": "Verschieben",
+      "moveToFolder": "In Ordner verschieben",
+      "original": "Original",
+      "remindOthers": "Andere erinnern",
+      "resendLink": "Link erneut senden",
+      "reviewAndSign": "Prüfen und unterschreiben",
+      "saveAsTemplate": "Als Vorlage speichern",
+      "signedPdf": "Unterzeichnetes PDF",
+      "uploadDocument": "Dokument hochladen",
+      "verifyCopy": "Kopie überprüfen",
+      "void": "Annullieren"
+    },
+    "audit": {
+      "other": "{{activity}}.",
+      "signed": "hat das Dokument unterzeichnet.",
+      "viewed": "hat das Dokument geöffnet."
+    },
+    "card": {
+      "expires": "läuft ab {{when}}",
+      "noRecipients": "Keine Empfänger",
+      "updated": "Aktualisiert {{when}}"
+    },
+    "columns": {
+      "description": "Wählen Sie, was diese Tabelle zeigt. Ihre Auswahl wird auf diesem Gerät gespeichert.",
+      "labelFixed": "{{label}} (immer sichtbar)",
+      "title": "Spalten"
+    },
+    "commands": {
+      "needsYou": "Dokumente, die Sie betreffen"
+    },
+    "count": {
+      "subfolder_one": "{{count}} Unterordner",
+      "subfolder_other": "{{count}} Unterordner"
+    },
+    "csv": {
+      "created": "Erstellt",
+      "documentId": "Dokument-ID",
+      "expires": "Läuft ab",
+      "folder": "Ordner",
+      "name": "Name",
+      "owner": "Besitzer",
+      "recipients": "Empfänger",
+      "sent": "Gesendet",
+      "signed": "Unterzeichnet",
+      "status": "Status",
+      "template": "Vorlage",
+      "updated": "Aktualisiert"
+    },
+    "detail": {
+      "auditEmpty": "Noch nichts aufgezeichnet. Ereignisse erscheinen, sobald Empfänger öffnen und unterschreiben.",
+      "by": "von {{name}}",
+      "certPending": "Wird bei Abschluss angewendet",
+      "chainFailed": "Das Folgedokument „{{name}}“ konnte nicht gesendet werden: {{error}}",
+      "chainPending": "Sobald alle unterschrieben haben, wird „{{name}}“ automatisch an die Unterzeichner gesendet.",
+      "chainSent": "Das Folgedokument wurde automatisch gesendet: <docLink>öffnen</docLink>.",
+      "chainTitle": "Folgedokument",
+      "chainedFrom": "Dieses Dokument wurde automatisch gesendet, nachdem <docLink>ein früheres Dokument</docLink> abgeschlossen wurde.",
+      "changeOrderLocked": "Die Reihenfolge ist gesperrt, sobald das Dokument gesendet wurde",
+      "completedOn": "Abgeschlossen {{date}}",
+      "created": "erstellt {{date}}",
+      "createdBy": "erstellt {{date}} von {{name}}",
+      "declined": "Abgelehnt: {{reason}}",
+      "declinedNoCert": "Abgelehnt, kein Zertifikat",
+      "declinedWithReason": "abgelehnt: {{reason}}",
+      "documentId": "Dokument-ID",
+      "editRecipientsLocked": "Empfänger lassen sich nur ändern, solange das Dokument ein Entwurf ist",
+      "errorBody": "Es wurde möglicherweise gelöscht oder Sie haben keinen Zugriff darauf.",
+      "errorTitle": "Dieses Dokument konnte nicht geöffnet werden",
+      "expires": "läuft ab am {{date}}",
+      "finalHash": "Finaler Hash",
+      "fromTemplate": "aus Vorlage \"{{name}}\"",
+      "hashPending": "Wird geschrieben, sobald alle Empfänger unterschrieben haben",
+      "noFieldsBody": "Öffnen Sie dieses Dokument im Editor, um Unterschrifts- und Textfelder zu platzieren.",
+      "noFieldsTitle": "Keine Felder platziert",
+      "noFileBody": "Diesem Dokument ist kein PDF zugeordnet.",
+      "noFileTitle": "Noch keine Datei",
+      "noRecipients": "Noch keine Empfänger. Dieses Dokument ist ein Entwurf.",
+      "notCompleted": "Noch nicht abgeschlossen",
+      "openedTimes_one": "Einmal geöffnet, {{when}}",
+      "openedTimes_other": "{{count}}-mal geöffnet, zuletzt {{when}}",
+      "opensCount_one": "{{count}} Öffnung",
+      "opensCount_other": "{{count}} Öffnungen",
+      "opensEmpty": "Noch niemand hat dieses Dokument geöffnet.",
+      "opensFirst": "zuerst {{when}}",
+      "opensHint": "Jedes Öffnen des Signaturlinks zählt, auch nach dem Signieren. E-Mail-Öffnungen werden nicht erfasst.",
+      "opensLast": "zuletzt {{when}}",
+      "opensTitle": "Öffnungen",
+      "pkcs7": "Eingebettete PKCS#7-Signatur",
+      "recipientsInOrder": "Empfänger, in Reihenfolge",
+      "signedAt": "unterzeichnet {{when}}",
+      "signingCertificate": "Signaturzertifikat",
+      "statusLabel": "Status"
+    },
+    "dialog": {
+      "delete": {
+        "andMore_one": "und {{count}} weiteres",
+        "andMore_other": "und {{count}} weitere",
+        "description": "Es wird archiviert und verschwindet aus jeder Liste. Bereits an Empfänger gesendete unterzeichnete Kopien sind nicht betroffen.",
+        "title_one": "Dieses Dokument löschen?",
+        "title_other": "{{count}} Dokumente löschen?"
+      },
+      "deleteFolder": {
+        "body": "Er enthält {{documents}}. Alles darin wird zuerst in {{target}} verschoben, danach wird der Ordner selbst archiviert. Kein Dokument wird gelöscht.",
+        "bodyWithSubfolders": "Er enthält {{documents}} und {{subfolders}}. Alles darin wird zuerst in {{target}} verschoben, danach wird der Ordner selbst archiviert. Kein Dokument wird gelöscht.",
+        "checking": "Der Inhalt wird geprüft",
+        "confirm": "Ordner löschen",
+        "emptyBody": "Der Ordner ist leer. Er wird archiviert und verschwindet damit aus der Ablage. Sonst ändert sich nichts.",
+        "title": "Diesen Ordner löschen?"
+      },
+      "move": {
+        "description_one": "{{count}} Dokument wird verschoben.",
+        "description_other": "{{count}} Dokumente werden verschoben.",
+        "hint": "Die Ordner stammen aus Ihrer Ablage. Wählen Sie den Stammordner, um diese aus einem Ordner herauszunehmen.",
+        "loadingFolders": "Ordner werden geladen",
+        "rootOption": "Stammordner (kein Ordner)"
+      },
+      "moveFolder": {
+        "description": "Wählen Sie, wo \"{{name}}\" und alles darin liegen soll.",
+        "title": "Ordner verschieben"
+      },
+      "otp": {
+        "description": "Empfänger, die bereits einen Link haben, werden nach einem per E-Mail gesendeten Code gefragt, bevor sie das Dokument sehen können.",
+        "title": "Anmeldung zum Öffnen verlangen?"
+      },
+      "share": {
+        "description": "Jeder Empfänger erhält einen eigenen Link. Wer den Link hat, kann als dieser Empfänger öffnen und unterschreiben.",
+        "noRecipients": "Dieses Dokument hat noch keine Empfänger.",
+        "title": "Freigabelink"
+      },
+      "void": {
+        "confirm_one": "Dokument annullieren",
+        "confirm_other": "{{count}} Dokumente annullieren",
+        "defaultReason": "Vom Absender annulliert",
+        "description": "Empfänger können es nicht mehr unterschreiben. Das lässt sich nicht rückgängig machen, und alle Beteiligten werden per E-Mail informiert.",
+        "reasonHint": "Wird den Empfängern in der Benachrichtigungs-E-Mail angezeigt.",
+        "reasonPlaceholder": "Bedingungen geändert, eine neue Version folgt.",
+        "title": "Dieses Dokument annullieren?"
+      }
+    },
+    "empty": {
+      "body": "Laden Sie ein PDF hoch, platzieren Sie die Felder und senden Sie es zur Unterschrift.",
+      "clearSearch": "Suche leeren",
+      "errorTitle": "Dokumente konnten nicht geladen werden",
+      "folderTitle": "Dieser Ordner ist leer",
+      "noMatchBody": "Versuchen Sie einen anderen Namen oder leeren Sie die Suche.",
+      "noMatchTitle": "Nichts passt zu \"{{query}}\"",
+      "title": "Hier gibt es noch keine Dokumente"
+    },
+    "errors": {
+      "fileServer": "Der Dateiserver hat {{status}} zurückgegeben",
+      "folderExists": "Ein Ordner namens \"{{name}}\" liegt bereits hier.",
+      "folderNameRequired": "Geben Sie dem Ordner einen Namen.",
+      "folderNameTooLong": "Ordnernamen sind auf 250 Zeichen begrenzt.",
+      "noCertificate": "Noch kein Abschlusszertifikat",
+      "noFile": "Keine Datei an diesem Dokument",
+      "noTemplateReturned": "Der Server hat keine Vorlage zurückgegeben.",
+      "serverSilent": "Der Server hat nicht geantwortet."
+    },
+    "fallback": {
+      "activity": "Aktivität",
+      "someone": "Jemand",
+      "unassigned": "Nicht zugewiesen",
+      "untitledDocument": "Unbenannt",
+      "untitledFolder": "Unbenannter Ordner",
+      "untitledTemplate": "Unbenannte Vorlage"
+    },
+    "fieldType": {
+      "cells": "Zellen",
+      "checkbox": "Checkbox",
+      "choice": "Auswahl",
+      "company": "Unternehmen",
+      "date": "Datum",
+      "draw": "Zeichnung",
+      "dropdown": "Dropdown",
+      "email": "E-Mail",
+      "image": "Bild",
+      "initials": "Initialen",
+      "jobTitle": "Berufsbezeichnung",
+      "name": "Name",
+      "signature": "Unterschrift",
+      "stamp": "Stempel",
+      "text": "Text"
+    },
+    "fields": {
+      "expiresOn": "Läuft ab am",
+      "folder": "Ordner",
+      "notFilled": "Nicht ausgefüllt",
+      "optional": "Optional",
+      "reason": "Grund",
+      "required": "Pflichtfeld",
+      "templateName": "Vorlagenname"
+    },
+    "fileName": {
+      "certificate": "{{base}} - Zertifikat.pdf",
+      "signed": "{{base}} - Unterzeichnet.pdf"
+    },
+    "filters": {
+      "all": "Alle",
+      "anyDate": "Beliebiges Datum",
+      "anyTemplate": "Beliebige Vorlage",
+      "anyone": "Alle",
+      "drafts": "Entwürfe",
+      "expiringThisWeek": "Läuft diese Woche ab",
+      "last30": "Letzte 30 Tage",
+      "last7": "Letzte 7 Tage",
+      "last90": "Letzte 90 Tage",
+      "me": "Ich",
+      "needsYou": "Aktion erforderlich",
+      "ownerAnyone": "Besitzer: alle",
+      "ownerMe": "Besitzer: ich",
+      "sentByMe": "Von mir gesendet",
+      "template": "Vorlage",
+      "waitingOnMe": "Wartet auf mich"
+    },
+    "folders": {
+      "allDocuments": "Alle Dokumente",
+      "allDocumentsTopLevel": "Alle Dokumente (oberste Ebene)",
+      "driveRoot": "Stammordner",
+      "empty": "Noch keine Ordner. Erstellen Sie einen, um Dokumente nach Kunde oder Monat zu gruppieren.",
+      "loadError": "Ihre Ordner konnten nicht geladen werden.",
+      "moveTo": "Verschieben nach",
+      "namePlaceholder": "Ordnername",
+      "new": "Neuer Ordner",
+      "newInside": "Neuer Ordner darin",
+      "parentAbove": "den Ordner darüber",
+      "sheetDescription": "Wählen Sie einen Ordner zum Durchsuchen oder verwalten Sie die Ablage über das Menü am jeweiligen Ordner.",
+      "title": "Ordner"
+    },
+    "forward": {
+      "description": "\"{{name}}\" wird als PDF-Anhang per E-Mail gesendet. Empfänger können es nicht unterschreiben, sie erhalten nur die Kopie.",
+      "emailPlaceholder": "name@company.com",
+      "hint_one": "E-Mail eingeben und Enter drücken. Bis zu {{count}} auf einmal.",
+      "hint_other": "E-Mail eingeben und Enter drücken. Bis zu {{count}} auf einmal.",
+      "invalidEmail": "\"{{email}}\" ist keine E-Mail-Adresse.",
+      "limit_one": "Das Weiterleiten ist auf {{count}} Empfänger auf einmal begrenzt.",
+      "limit_other": "Das Weiterleiten ist auf {{count}} Empfänger auf einmal begrenzt.",
+      "needOne": "Fügen Sie mindestens eine E-Mail-Adresse hinzu.",
+      "noMatches": "Kein Kontakt passt dazu. Drücken Sie Enter, um die Adresse wie eingegeben zu verwenden.",
+      "recipientsLabel": "Empfänger",
+      "searching": "Ihre Kontakte werden durchsucht",
+      "send": "Kopie senden"
+    },
+    "hints": {
+      "backToDocuments": "zurück zu Dokumente",
+      "drag": "auf einen Ordner ziehen zum Verschieben",
+      "range": "Bereich",
+      "remind": "erinnern",
+      "toClear": "zum Leeren"
+    },
+    "list": {
+      "allDocuments": "allen Dokumenten",
+      "summary_one": "{{count}} in {{folder}}",
+      "summary_other": "{{count}} in {{folder}}",
+      "thisFolder": "diesem Ordner"
+    },
+    "nav": {
+      "inbox": "Posteingang"
+    },
+    "pager": {
+      "prev": "Zurück",
+      "range": "{{from}}-{{to}} von {{total}}"
+    },
+    "rail": {
+      "hide": "Ordner ausblenden",
+      "show": "Ordner anzeigen"
+    },
+    "recipientState": {
+      "declined": "abgelehnt",
+      "signed": "unterzeichnet",
+      "turn": "ist an der Reihe",
+      "viewed": "angesehen",
+      "waiting": "wartet"
+    },
+    "search": {
+      "placeholder": "Nach Name suchen"
+    },
+    "settings": {
+      "allowMods": "Empfängern erlauben, Felder hinzuzufügen",
+      "allowModsHint": "Unterzeichner dürfen eigene Elemente verschieben oder hinzufügen.",
+      "allowModsToggle": "Änderungen erlauben",
+      "automaticReminders": "Automatische Erinnerungen",
+      "automaticRemindersHint": "Hinweis: Dieser Stand speichert den Zeitplan, versendet ihn aber nie. Nutzen Sie Andere erinnern, um Empfänger anzustoßen.",
+      "expiryHint": "Nach diesem Datum können Empfänger nicht mehr unterschreiben. Eine Verlängerung öffnet das Dokument wieder.",
+      "notify": "Bei jeder Unterschrift benachrichtigen",
+      "notifyHint": "Sie erhalten jedes Mal eine E-Mail, wenn jemand unterschreibt.",
+      "notifyToggle": "Bei Unterschriften benachrichtigen",
+      "orderParallel": "Alle gleichzeitig",
+      "orderSequential": "Sequenziell",
+      "orderStrict": "Sequenziell, erzwungen",
+      "otp": "Anmeldung verlangen (OTP)",
+      "otpHint": "Empfänger müssen einen Einmalcode per E-Mail bestätigen, bevor sie das Dokument öffnen können.",
+      "otpToggle": "Anmeldung verlangen",
+      "readOnly": "Dieses Dokument ist {{status}}, seine Einstellungen sind daher schreibgeschützt.",
+      "remindEvery": "Erinnern alle",
+      "remindEveryHint": "Tage zwischen den Erinnerungen.",
+      "signingOrder": "Reihenfolge der Unterzeichnung",
+      "signingOrderHint": "Beim Senden festgelegt und danach gesperrt."
+    },
+    "statusLower": {
+      "completed": "abgeschlossen",
+      "declined": "abgelehnt",
+      "draft": "ein Entwurf",
+      "expired": "abgelaufen",
+      "in_progress": "in Bearbeitung"
+    },
+    "table": {
+      "assignedTo": "Zugewiesen an",
+      "created": "Erstellt",
+      "document": "Dokument",
+      "expires": "Läuft ab",
+      "folder": "Ordner",
+      "owner": "Besitzer",
+      "page": "Seite",
+      "recipients": "Empfänger",
+      "required": "Pflicht",
+      "signedRatio": "{{signed}}/{{total}}",
+      "status": "Status",
+      "template": "Vorlage",
+      "type": "Typ",
+      "updated": "Aktualisiert",
+      "value": "Wert"
+    },
+    "tabs": {
+      "audit": "Prüfpfad",
+      "fields": "Felder",
+      "overview": "Übersicht",
+      "settings": "Einstellungen"
+    },
+    "template": {
+      "description": "Das Layout und die Feldplatzierung werden kopiert. Unterzeichnete Werte, vorausgefüllte Standardwerte und die Empfänger selbst nicht.",
+      "keepRoles": "Namen der Unterzeichner als Rollen übernehmen",
+      "keepRolesHint": "Rollen werden ausgefüllt, wenn Sie die Vorlage verwenden. Niemand bleibt dauerhaft damit verknüpft.",
+      "keepRolesHintWithRoles": "Rollen in diesem Dokument: {{roles}}. Niemand bleibt in beiden Fällen verknüpft, die Rollen werden beim Verwenden der Vorlage ausgefüllt.",
+      "nameHint": "Bis zu 250 Zeichen.",
+      "noRoles": "noch keine Rollen",
+      "open": "Vorlage öffnen",
+      "roleNumber": "Rolle {{index}}",
+      "roles": "Rollen: {{roles}}",
+      "save": "Vorlage speichern",
+      "saved": "Vorlage gespeichert",
+      "savedDescription": "Sie ist einsatzbereit. Öffnen Sie sie, um die Rollen zu benennen und die Felder anzupassen."
+    },
+    "title": "Dokumente",
+    "toast": {
+      "clipboardBlocked": "Der Zugriff auf die Zwischenablage wurde blockiert.",
+      "copyLinkFailed": "Der Link konnte nicht kopiert werden",
+      "csvExported": "CSV exportiert",
+      "csvRows_one": "{{count}} Zeile auf dieser Seite.",
+      "csvRows_other": "{{count}} Zeilen auf dieser Seite.",
+      "deleteFailed": "Löschen nicht möglich",
+      "deleted_one": "Dokument gelöscht",
+      "deleted_other": "{{count}} Dokumente gelöscht",
+      "downloadFailed": "Dieses Dokument konnte nicht heruntergeladen werden",
+      "downloadStarted": "Download gestartet",
+      "duplicateFailed": "Dieses Dokument konnte nicht dupliziert werden",
+      "duplicated": "Dupliziert",
+      "duplicatedBody": "Eine Kopie von \"{{name}}\" wurde erstellt.",
+      "folderCreateFailed": "Der Ordner konnte nicht erstellt werden",
+      "folderCreated": "Ordner erstellt",
+      "folderDeleteFailed": "Der Ordner konnte nicht gelöscht werden",
+      "folderDeleted": "Ordner gelöscht",
+      "folderDeletedBody": "Der Inhalt wurde in {{target}} verschoben.",
+      "folderMoveFailed": "Der Ordner konnte nicht verschoben werden",
+      "folderMoved": "Ordner verschoben",
+      "folderRenameFailed": "Der Ordner konnte nicht umbenannt werden",
+      "folderRenamed": "Ordner umbenannt",
+      "forwardFailed": "Dieses Dokument konnte nicht weitergeleitet werden",
+      "forwardedBody": "\"{{name}}\" wurde als Anhang per E-Mail gesendet.",
+      "forwardedPartial": "An {{sent}} von {{total}} weitergeleitet",
+      "forwardedPartialBody": "Wir konnten {{emails}} nicht per E-Mail erreichen.",
+      "forwarded_one": "Dokument weitergeleitet",
+      "forwarded_other": "An {{count}} Personen weitergeleitet",
+      "moveFailed": "Verschieben nicht möglich",
+      "movedOutOfFolders": "Aus allen Ordnern herausgenommen.",
+      "movedToRoot": "In den Stammordner der Ablage verschoben.",
+      "moved_one": "Dokument verschoben",
+      "moved_other": "{{count}} Dokumente verschoben",
+      "nothingToExport": "Nichts zu exportieren",
+      "nothingToExportBody": "Diese Ansicht enthält keine Dokumente.",
+      "settingsFailed": "Einstellungen konnten nicht gespeichert werden",
+      "settingsSaved": "Einstellungen gespeichert",
+      "templateSaveFailed": "Das ließ sich nicht als Vorlage speichern",
+      "tooManyDownloads": "Zu viele auf einmal",
+      "tooManyDownloadsBody": "Es lassen sich höchstens 5 Dokumente gleichzeitig herunterladen.",
+      "voidFailed": "Annullieren nicht möglich",
+      "voided_one": "Dokument annulliert",
+      "voided_other": "{{count}} Dokumente annulliert"
+    },
+    "viewer": {
+      "fieldsToggle": "Felder: <1>{{state}}</1>",
+      "fit": "Anpassen",
+      "off": "aus",
+      "on": "an",
+      "openInSignerView": "In der Unterzeichneransicht öffnen",
+      "page": "Seite {{current}} / {{total}}"
+    }
+  },
+  "editor": {
+    "actions": {
+      "saveTemplate": "Vorlage speichern"
+    },
+    "autoDetect": {
+      "fallbackLabel": "Feld"
+    },
+    "banner": {
+      "completed": "Dieses Dokument ist abgeschlossen, seine Felder lassen sich nicht mehr ändern.",
+      "declined": "Dieses Dokument wurde abgelehnt, seine Felder lassen sich nicht mehr ändern.",
+      "sent": "Dieses Dokument wurde bereits gesendet. Änderungen betreffen Unterzeichner, die noch nicht unterschrieben haben."
+    },
+    "errors": {
+      "couldNotLoadDocument": "Dieses Dokument konnte nicht geladen werden.",
+      "pdfLinkExpired": "Der PDF-Link ist abgelaufen und konnte nicht erneuert werden."
+    },
+    "field": {
+      "label": "{{type}} · {{owner}}",
+      "owner": {
+        "prefill": "vorausgefüllt",
+        "unassigned": "nicht zugewiesen"
+      },
+      "required": "Pflichtfeld",
+      "selectPlaceholder": "Auswählen…"
+    },
+    "load": {
+      "errorBody": "Die Datei wurde möglicherweise entfernt oder der Link ist abgelaufen.",
+      "errorTitle": "Dieses Dokument konnte nicht geöffnet werden",
+      "goBack": "Zurück",
+      "untitled": "Unbenannt"
+    },
+    "palette": {
+      "editRoles": "Rollen bearbeiten",
+      "groups": {
+        "autofill": "Automatisch ausgefüllt",
+        "input": "Eingabe",
+        "signature": "Unterschrift"
+      },
+      "hint": {
+        "date": "Datum",
+        "intro": "Auf die Seite ziehen oder eine Taste drücken, um am Cursor zu platzieren:",
+        "signature": "Unterschrift",
+        "text": "Text"
+      },
+      "noMatches": "Kein Feldtyp passt dazu.",
+      "placeFieldsFor": "Felder für {{name}} platzieren",
+      "placingFor": "Felder werden platziert für",
+      "searchPlaceholder": "Feldtyp finden",
+      "signerSelect": "Unterzeichner, der neue Felder erhält",
+      "tileTitle": "{{label}} auf die Seite ziehen"
+    },
+    "properties": {
+      "addOption": "Option hinzufügen",
+      "assignedTo": "Zugewiesen an",
+      "cellCount": "Anzahl Zellen",
+      "cells": "Zellen",
+      "copyToEveryPage": "Auf jede Seite kopieren",
+      "dataMapping": "Datenzuordnung",
+      "dataMappingHelp": "Der Schlüssel, den die API und die CSV-Spalten für den Massenversand verwenden. Er muss über alle Unterzeichner hinweg eindeutig sein.",
+      "dateFormat": "Datumsformat",
+      "defaultValue": "Standardwert",
+      "defaultValuePlaceholder": "Leer lassen, damit der Unterzeichner ausfüllt",
+      "deleteField": "Feld löschen",
+      "fieldPosition": "Feld {{index}} von {{total}}",
+      "fontColour": "Schriftfarbe",
+      "fontColours": {
+        "black": "Schwarz",
+        "blue": "Blau",
+        "red": "Rot",
+        "yellow": "Gelb"
+      },
+      "fontSize": "Schriftgröße",
+      "fontSizeOption": "{{size}} pt",
+      "howManyPicked": "Wie viele auswählbar sind",
+      "layout": {
+        "sideBySide": "Nebeneinander",
+        "stacked": "Untereinander"
+      },
+      "max": "Max.",
+      "measuredFrom": "Gemessen ab der oberen linken Ecke von Seite {{page}}, in PDF-Punkten.",
+      "min": "Min.",
+      "optionLayout": "Anordnung der Optionen",
+      "options": "Optionen",
+      "readOnly": "Schreibgeschützt",
+      "readOnlyHelp": "Den Wert anzeigen, aber die Bearbeitung durch den Unterzeichner verhindern.",
+      "removeOption": "Option {{index}} entfernen",
+      "required": "Pflichtfeld",
+      "rotation": "Drehung",
+      "signatureAlwaysRequired": "Unterschriften sind immer erforderlich.",
+      "signerLabel": "Für den Unterzeichner sichtbare Beschriftung",
+      "size": {
+        "height": "H (pt)",
+        "width": "B (pt)",
+        "x": "X (pt)",
+        "y": "Y (pt)"
+      },
+      "sizeAndPosition": "Größe und Position",
+      "textStyle": "Textstil",
+      "unassigned": "Nicht zugewiesen",
+      "validation": "Validierung",
+      "validationTypes": {
+        "email": "E-Mail",
+        "letters": "Nur Buchstaben",
+        "none": "Keine",
+        "number": "Zahl",
+        "regex": "Eigener Regex",
+        "ssn": "SSN"
+      }
+    },
+    "roles": {
+      "add": "Rolle hinzufügen",
+      "defaultName": "Rolle {{index}}",
+      "description": "Rollen werden echten Empfängern zugeordnet, sobald aus dieser Vorlage ein Dokument erstellt wird.",
+      "nameLabel": "Name von Rolle {{index}}",
+      "prefill": "Vom Besitzer ausfüllen",
+      "remove": "{{role}} entfernen",
+      "removeBlocked": "Entfernen Sie zuerst die Felder dieser Rolle",
+      "removeTitle": "Rolle entfernen",
+      "save": "Rollen speichern",
+      "title": "Rollen"
+    },
+    "selection": {
+      "many_one": "{{count}} Feld ausgewählt. Zum Verschieben ziehen oder {{key}} zum Löschen drücken.",
+      "many_other": "{{count}} Felder ausgewählt. Zum gemeinsamen Verschieben ziehen oder {{key}} zum Löschen drücken.",
+      "none": "Wählen Sie ein Feld, um seine Eigenschaften zu bearbeiten, oder ziehen Sie eines aus der Palette auf die Seite."
+    },
+    "thumbnails": {
+      "pageLabel_one": "Seite {{page}}, {{count}} Feld",
+      "pageLabel_other": "Seite {{page}}, {{count}} Felder",
+      "title": "Seiten"
+    },
+    "toast": {
+      "autoDetectFailed": "Automatische Erkennung fehlgeschlagen",
+      "copiedToPages_one": "Auf {{count}} Seite kopiert",
+      "copiedToPages_other": "Auf {{count}} Seiten kopiert",
+      "fieldsAddedBody": "Prüfen Sie jedes Feld vor dem Senden.",
+      "fieldsAdded_one": "{{count}} Feld hinzugefügt",
+      "fieldsAdded_other": "{{count}} Felder hinzugefügt",
+      "noFieldsDetected": {
+        "body": "Dieses PDF enthält keine Unterstriche, die die Erkennung auswerten kann.",
+        "title": "Keine Felder erkannt"
+      },
+      "noSignatureField": "Kein Unterschriftsfeld für {{names}}",
+      "noSignatureFieldBody": "Es gäbe nichts zu unterschreiben. Klicken Sie erneut, um trotzdem fortzufahren.",
+      "onlyOnePage": {
+        "body": "Es gibt keine weitere Seite, auf die dieses Feld kopiert werden könnte.",
+        "title": "Nur eine Seite"
+      },
+      "saveFailed": "Die Felder konnten nicht gespeichert werden",
+      "stillUnassignedBody": "Weisen Sie jedem Feld einen Unterzeichner zu, bevor Sie fortfahren.",
+      "stillUnassigned_one": "{{count}} Feld ist noch nicht zugewiesen",
+      "stillUnassigned_other": "{{count}} Felder sind noch nicht zugewiesen",
+      "templateSaved": "Vorlage gespeichert"
+    },
+    "topBar": {
+      "autoDetect": "Felder automatisch erkennen",
+      "autoDetectTitle": "Den Seitentext nach Unterstrichen durchsuchen und Felder vorschlagen",
+      "previewAsSigner": "Vorschau als Unterzeichner",
+      "redo": "Wiederherstellen",
+      "snapOff": "Einrasten: aus",
+      "snapOn": "Einrasten: an",
+      "status": {
+        "dirty": "Nicht gespeicherte Änderungen",
+        "error": "Speichern fehlgeschlagen",
+        "saved": "Gespeichert",
+        "saving": "Wird gespeichert…"
+      },
+      "template": "Vorlage",
+      "unassigned_one": "{{count}} Feld nicht zugewiesen",
+      "unassigned_other": "{{count}} Felder nicht zugewiesen",
+      "undo": "Rückgängig",
+      "zoom": {
+        "fitWidth": "Breite anpassen"
+      }
+    },
+    "widgets": {
+      "cells": {
+        "keywords": "ssn kästchen zeichen",
+        "label": "Zellen"
+      },
+      "checkbox": {
+        "label": "Checkbox"
+      },
+      "company": {
+        "label": "Unternehmen"
+      },
+      "date": {
+        "keywords": "datum unterzeichnet heute",
+        "label": "Datum der Unterschrift"
+      },
+      "draw": {
+        "keywords": "freihand kritzeln",
+        "label": "Zeichnen"
+      },
+      "dropdown": {
+        "keywords": "auswahl liste",
+        "label": "Dropdown"
+      },
+      "email": {
+        "label": "E-Mail"
+      },
+      "image": {
+        "keywords": "bild hochladen foto",
+        "label": "Bild"
+      },
+      "initials": {
+        "label": "Initialen"
+      },
+      "jobTitle": {
+        "label": "Berufsbezeichnung"
+      },
+      "name": {
+        "label": "Vollständiger Name"
+      },
+      "radioButton": {
+        "keywords": "radio option auswahl",
+        "label": "Optionsfeld"
+      },
+      "signature": {
+        "label": "Unterschrift"
+      },
+      "stamp": {
+        "label": "Stempel"
+      },
+      "text": {
+        "keywords": "beschriftung absender",
+        "label": "Statischer Text"
+      },
+      "textInput": {
+        "keywords": "textfeld eingabe feld",
+        "label": "Text"
+      }
+    }
+  },
+  "inbox": {
+    "a11y": {
+      "nextPage": "Nächste Seite",
+      "previousPage": "Vorherige Seite",
+      "selectDocument": "{{name}} auswählen"
+    },
+    "actions": {
+      "downloadSignedPdf": "Unterzeichnetes PDF herunterladen",
+      "extend_one": "Um {{count}} Tag verlängern",
+      "extend_other": "Um {{count}} Tage verlängern",
+      "newRequest": "Neue Anfrage",
+      "openDocument": "Dokument öffnen",
+      "recreate": "Neu erstellen",
+      "remindOthers": "Andere erinnern",
+      "remindPerson": "{{name}} erinnern",
+      "reviewAndSign": "Prüfen und unterschreiben"
+    },
+    "activity": {
+      "line": "{{what}} von {{who}}",
+      "someone": "Jemand",
+      "updated": "Aktualisiert"
+    },
+    "ago": {
+      "days_one": "vor {{count}} Tg.",
+      "days_other": "vor {{count}} Tg.",
+      "hours_one": "vor {{count}} Std.",
+      "hours_other": "vor {{count}} Std.",
+      "justNow": "gerade eben",
+      "minutes_one": "vor {{count}} Min.",
+      "minutes_other": "vor {{count}} Min."
+    },
+    "commands": {
+      "group": "Posteingang",
+      "open": "\"{{name}}\" öffnen",
+      "refresh": "Posteingang aktualisieren",
+      "remind": "An \"{{name}}\" erinnern"
+    },
+    "duration": {
+      "days_one": "{{count}} Tg.",
+      "days_other": "{{count}} Tg.",
+      "hours_one": "{{count}} Std.",
+      "hours_other": "{{count}} Std.",
+      "minutes_one": "{{count}} Min.",
+      "minutes_other": "{{count}} Min."
+    },
+    "empty": {
+      "clearBody": "Senden Sie ein Dokument, dann erscheint es hier zusammen mit allem anderen, worauf Sie warten.",
+      "clearTitle": "Ihr Posteingang ist leer",
+      "filteredBody": "Probieren Sie einen anderen Tab oder leeren Sie die Filter oben.",
+      "filteredTitle": "Nichts in dieser Ansicht",
+      "noRecipients": "Noch keine Empfänger",
+      "noRecipientsSentence": "Noch keine Empfänger."
+    },
+    "errors": {
+      "detailFailed": "Das vollständige Dokument konnte nicht geladen werden.",
+      "documentUnavailable": "Dieses Dokument ist nicht verfügbar.",
+      "loadFailed": "Der Posteingang konnte nicht geladen werden",
+      "noFile": "Dieses Dokument hat noch keine Datei.",
+      "recreateFailed": "Das Dokument konnte nicht neu erstellt werden."
+    },
+    "expires": {
+      "expired": "ist abgelaufen",
+      "inDays_one": "läuft in {{count}} Tag ab",
+      "inDays_other": "läuft in {{count}} Tagen ab",
+      "inHours_one": "läuft in {{count}} Stunde ab",
+      "inHours_other": "läuft in {{count}} Stunden ab",
+      "tomorrow": "läuft morgen ab"
+    },
+    "filters": {
+      "last30Days": "Letzte 30 Tage",
+      "ownerAnyone": "Besitzer: alle",
+      "ownerMe": "Besitzer: ich"
+    },
+    "greeting": {
+      "afternoon": "Guten Tag.",
+      "afternoonNamed": "Guten Tag, {{name}}.",
+      "counting": "Es wird gezählt, was ansteht.",
+      "evening": "Guten Abend.",
+      "eveningNamed": "Guten Abend, {{name}}.",
+      "expires": "{{name}} {{phrase}}",
+      "join": "<1/> und <2/>.",
+      "morning": "Guten Morgen.",
+      "morningNamed": "Guten Morgen, {{name}}.",
+      "needsSignature_one": "<1>{{words}}</1> Dokument benötigt Ihre Unterschrift",
+      "needsSignature_other": "<1>{{words}}</1> Dokumente benötigen Ihre Unterschrift",
+      "nothing": "Es wartet nichts auf Sie.",
+      "single": "<1/>."
+    },
+    "hints": {
+      "allShortcuts": "alle Kürzel",
+      "remind": "erinnern"
+    },
+    "inspector": {
+      "activity": "Aktivität",
+      "noActivity": "Bisher ist nichts passiert.",
+      "notOpened": "Noch nicht geöffnet",
+      "openFullView": "Vollansicht öffnen",
+      "openedAt": "Geöffnet {{when}}",
+      "openedTimes_one": "Einmal geöffnet, {{when}}",
+      "openedTimes_other": "{{count}}-mal geöffnet, zuletzt {{when}}",
+      "reminded": "Erinnert {{ago}}",
+      "selected": "Ausgewählt",
+      "signNowHint": "Jetzt unterschreiben und es kann heute abgeschlossen werden.",
+      "signedAt": "Unterzeichnet {{when}}",
+      "signingOrder": "Reihenfolge der Unterzeichnung",
+      "theirTurn": "Ist an der Reihe",
+      "typicalHint": "{{name}} unterzeichnet meist innerhalb von {{duration}} nach Erhalt.",
+      "yourTurn": "Sie sind an der Reihe"
+    },
+    "kpi": {
+      "awaiting": "Wartet auf Sie",
+      "completedDelta": "{{delta}} ggü. den vorherigen 30",
+      "completedLabel": "Abgeschlossen, 30 Tage",
+      "expiringThisWeek_one": "{{count}} läuft diese Woche ab",
+      "expiringThisWeek_other": "{{count}} laufen diese Woche ab",
+      "fastestThisMonth": "schnellstes in diesem Monat: {{duration}}",
+      "medianSign": "Mediane Dauer bis zur Unterschrift",
+      "oldest": "ältestes: {{age}}",
+      "waiting": "Wartet auf andere"
+    },
+    "meta": {
+      "onlyYouSign": "nur Sie unterschreiben",
+      "reminded": "erinnert {{ago}}",
+      "sequential": "sequenziell",
+      "sequentialYouAreNext": "sequenziell, Sie sind als Nächstes dran"
+    },
+    "nudge": {
+      "expiring": "<1>{{name}}</1> {{phrase}}.",
+      "notOpened": "{{name}} hat es noch nicht geöffnet.",
+      "openedNotSigned": "{{name}} hat es {{ago}} geöffnet, aber nicht unterzeichnet."
+    },
+    "numberWord": {
+      "0": "null",
+      "1": "ein",
+      "2": "zwei",
+      "3": "drei",
+      "4": "vier",
+      "5": "fünf",
+      "6": "sechs",
+      "7": "sieben",
+      "8": "acht",
+      "9": "neun"
+    },
+    "pagination": {
+      "range": "{{from}}-{{to}} von {{total}}"
+    },
+    "shortcuts": {
+      "commandPalette": "Befehlspalette",
+      "moveDown": "Nach unten",
+      "moveUp": "Nach oben",
+      "newRequest": "Neue Signaturanfrage",
+      "openDocument": "Dokument öffnen",
+      "remind": "Ausstehenden Unterzeichner erinnern",
+      "signYourself": "Selbst etwas unterschreiben",
+      "thisList": "Diese Liste",
+      "title": "Tastaturkürzel",
+      "toggleRow": "Zeile aus- oder abwählen"
+    },
+    "status": {
+      "declinedWithReason": "Abgelehnt: \"{{reason}}\"",
+      "needsYourSignature": "Benötigt Ihre Unterschrift",
+      "signedOf": "{{signed}} von {{total}} unterzeichnet",
+      "waitingOn": "Wartet auf {{name}}"
+    },
+    "table": {
+      "action": "Aktion",
+      "document": "Dokument",
+      "progress": "Fortschritt",
+      "recipients": "Empfänger",
+      "rowsSelected_one": "{{count}} Zeile ausgewählt",
+      "rowsSelected_other": "{{count}} Zeilen ausgewählt",
+      "updated": "Aktualisiert"
+    },
+    "tabs": {
+      "all": "Alle",
+      "drafts": "Entwürfe"
+    },
+    "toast": {
+      "actionFailed": "Das hat nicht funktioniert",
+      "expiryFailed": "Das Ablaufdatum konnte nicht verschoben werden",
+      "expiryMoved": "Ablaufdatum verschoben",
+      "expiryMovedBody": "Neue Frist: {{date}}.",
+      "recreated": "Dokument neu erstellt",
+      "recreatedBody": "Senden Sie es erneut, sobald Sie bereit sind."
+    },
+    "untitled": "Unbenanntes Dokument",
+    "you": "Sie"
+  },
+  "misc": {
+    "comingSoon": {
+      "body": "Dieser Bereich ist in Arbeit.",
+      "title": "Demnächst verfügbar"
+    },
+    "legal": {
+      "privacy": {
+        "body": "[Hier steht Ihre Datenschutzerklärung. Ersetzen Sie diesen Text in src/features/misc/LegalPage.tsx oder verweisen Sie die Route /privacy auf Ihr gehostetes Dokument.]",
+        "title": "Datenschutzerklärung"
+      },
+      "status": {
+        "body": "[Verweisen Sie diese Route auf Ihre Statusseite oder entfernen Sie den Link in der Fußzeile der Anmeldeseite.]",
+        "title": "Status"
+      },
+      "terms": {
+        "body": "[Hier stehen Ihre Nutzungsbedingungen. Ersetzen Sie diesen Text in src/features/misc/LegalPage.tsx oder verweisen Sie die Route /terms auf Ihr gehostetes Dokument.]",
+        "title": "Nutzungsbedingungen"
+      }
+    },
+    "notFound": {
+      "action": "Zum Posteingang",
+      "body": "Der Link ist womöglich veraltet oder das Dokument wurde entfernt.",
+      "title": "Diese Seite existiert nicht"
+    }
+  },
+  "reports": {
+    "actions": {
+      "chartView": "Diagrammansicht",
+      "csv": "CSV",
+      "exportCsv": "CSV exportieren",
+      "fullReport": "Vollständiger Bericht",
+      "newRequest": "Neue Anfrage",
+      "remind": "Erinnern",
+      "tableView": "Tabellenansicht"
+    },
+    "buckets": {
+      "d1to3": {
+        "label": "1-3 Tg.",
+        "phrase": "innerhalb von drei Tagen"
+      },
+      "d3to7": {
+        "label": "3-7 Tg.",
+        "phrase": "innerhalb einer Woche"
+      },
+      "d7plus": {
+        "label": "7 Tg.+",
+        "phrase": "nach mehr als einer Woche"
+      },
+      "h1to6": {
+        "label": "1-6 Std.",
+        "phrase": "innerhalb von sechs Stunden"
+      },
+      "h6to24": {
+        "label": "6-24 Std.",
+        "phrase": "innerhalb eines Tages"
+      },
+      "lt1h": {
+        "label": "<1 Std.",
+        "phrase": "innerhalb einer Stunde"
+      }
+    },
+    "charts": {
+      "byTemplate": {
+        "title": "Nach Vorlage"
+      },
+      "funnel": {
+        "caption": "Signatur-Funnel",
+        "title": "Wo Dokumente hängen bleiben",
+        "tooltip": "{{stage}}: {{value}} von {{total}} Dokumenten ({{pct}})",
+        "unit": "Phase"
+      },
+      "templatesInRange": {
+        "title": "Vorlagen in diesem Zeitraum"
+      },
+      "timeToSign": {
+        "caption": "Verteilung der Dauer bis zur Unterschrift",
+        "title": "Dauer bis zur Unterschrift",
+        "tooltip": "{{value}} unterzeichnet in {{bucket}}",
+        "unit": "Intervall"
+      },
+      "valueHeader": "Dokumente",
+      "weekly": {
+        "title": "Abgeschlossene Dokumente pro Woche",
+        "tooltip": "Woche vom {{week}}: {{value}} abgeschlossen",
+        "unit": "Woche vom"
+      }
+    },
+    "count": {
+      "sender_one": "{{count, number}} Absender",
+      "sender_other": "{{count, number}} Absender"
+    },
+    "customRange": {
+      "apply": "Zeitraum anwenden",
+      "from": "Von",
+      "to": "Bis"
+    },
+    "duration": {
+      "days": "{{value}} Tg.",
+      "daysHours": "{{days}} Tg. {{hours}} Std.",
+      "hours": "{{value}} Std.",
+      "hoursMinutes": "{{hours}} Std. {{minutes}} Min.",
+      "minutes": "{{value}} Min."
+    },
+    "empty": {
+      "noRecipients": {
+        "body": "Senden Sie Ihr erstes Dokument, um Berichte zu sehen.",
+        "title": "Keine Empfänger in diesem Zeitraum"
+      },
+      "noReports": {
+        "body": "Senden Sie Ihr erstes Dokument, um Berichte zu sehen.",
+        "title": "Noch keine Berichte"
+      },
+      "noStalled": {
+        "body": "Jeder Empfänger, der in diesem Zeitraum ein Dokument geöffnet hat, hat es signiert.",
+        "title": "Niemand zögert"
+      },
+      "noTemplates": {
+        "body": "Wählen Sie einen längeren Zeitraum oder senden Sie Ihr erstes Dokument, um Berichte zu sehen.",
+        "title": "Keine Dokumente in diesem Zeitraum"
+      },
+      "oneMember": {
+        "body": "Dieser Server beschränkt den Lesezugriff auf Dokumente auf den Besitzer und die unterzeichnenden Personen. Eine Aufschlüsselung nach Mitglied benötigt daher Dokumente von mehr als einem Absender. Laden Sie Teammitglieder ein, dann erscheinen deren gesendete Dokumente hier.",
+        "title": "Nur Ihre eigenen Dokumente sind sichtbar"
+      }
+    },
+    "errors": {
+      "loadFailed": "Berichte konnten nicht geladen werden",
+      "unknown": "Unbekannter Fehler"
+    },
+    "exports": {
+      "documents": {
+        "body": "Eine Zeile pro Dokument, das in diesem Zeitraum gesendet wurde, mit Status, Besitzer, Vorlage, Empfängern und Dauer bis zur Unterschrift.",
+        "title": "Dokumente"
+      },
+      "intro": "Die Dateien werden im Browser aus den angezeigten Daten erzeugt und folgen daher dem aktuellen Zeitraum ({{range}}) und den Filtern.",
+      "members": {
+        "body": "Gesendet, Abschlussquote und mediane Dauer bis zur Unterschrift je Absender.",
+        "title": "Nach Teammitglied"
+      },
+      "recipients": {
+        "body": "Erhaltene Dokumente, Unterschriften, mediane Dauer bis zur Unterschrift, letzte Aktivität und Ablehnungen je Empfänger.",
+        "title": "Verhalten der Empfänger"
+      },
+      "stalled": {
+        "body": "Eine Zeile pro Empfänger, der ein noch offenes Dokument geöffnet hat, mit Anzahl der Öffnungen und letzter Öffnung.",
+        "title": "Geöffnet, nicht signiert"
+      },
+      "templates": {
+        "body": "Gesendet, Abschlussquote, mediane Dauer bis zur Unterschrift und Ablehnungen je Vorlage.",
+        "title": "Nach Vorlage"
+      }
+    },
+    "filters": {
+      "allTemplates": "Alle Vorlagen",
+      "everyone": "Alle",
+      "noTemplate": "Keine Vorlage"
+    },
+    "funnelStages": {
+      "lower": {
+        "opened": "geöffnet",
+        "sent": "gesendet",
+        "signed": "von allen Parteien unterzeichnet",
+        "started": "Unterzeichnung begonnen"
+      },
+      "opened": "Geöffnet",
+      "sent": "Gesendet",
+      "signed": "Von allen Parteien unterzeichnet",
+      "started": "Unterzeichnung begonnen"
+    },
+    "insight": {
+      "allSigned": "Jedes in diesem Zeitraum gesendete Dokument wurde von allen Parteien unterzeichnet.",
+      "biggestDrop": "Der größte Rückgang liegt zwischen {{from}} und {{to}}: {{drop}} von {{total}} Dokumenten ({{pct}}) bleiben dort stehen.",
+      "mostSigned": "Die meisten Dokumente werden {{phrase}} unterzeichnet.",
+      "mostSignedWithSlow": "Die meisten Dokumente werden {{phrase}} unterzeichnet. Bei {{slow}} von {{total}} dauerte es länger als eine Woche.",
+      "mostSignedWithTail": "Die meisten Dokumente werden {{phrase}} unterzeichnet. Der Ausläufer über 7 Tage besteht überwiegend aus {{name}}.",
+      "noCompletions": "In diesem Zeitraum wurde noch kein Dokument abgeschlossen.",
+      "noTemplateDocuments": "ohne Vorlage gesendete Dokumente",
+      "nothingSent": "In diesem Zeitraum wurde nichts gesendet."
+    },
+    "legend": {
+      "bestPerformer": "Bestes Ergebnis",
+      "bestValue": "{{name}} ({{rate}})",
+      "completion": "Abschluss",
+      "notEnoughData": "nicht genug Daten",
+      "sent": "Gesendet",
+      "templatesUsed": "Verwendete Vorlagen"
+    },
+    "nav": {
+      "sections": "Berichtsabschnitte"
+    },
+    "notes": {
+      "overview": "Selbst unterschriebene Dokumente und Ordner sind ausgenommen. Die Zeiten werden ab dem Versand eines Dokuments gemessen.",
+      "recipients": "Empfänger werden nach E-Mail-Adresse gruppiert. Die Dauer bis zur Unterschrift wird ab dem Versand des jeweiligen Dokuments gemessen.",
+      "stalled": "Noch offene Dokumente, bei denen ein Empfänger den Signaturlink geöffnet, aber nicht signiert hat. Gezählt werden nur Öffnungen der Signaturseite, jede zählt."
+    },
+    "ranges": {
+      "custom": "Benutzerdefiniert",
+      "days30": "30 Tage",
+      "days7": "7 Tage",
+      "days90": "90 Tage",
+      "months12": "12 Monate",
+      "previous": {
+        "custom": "dem vorherigen Zeitraum",
+        "days30": "den vorherigen 30 Tagen",
+        "days7": "den vorherigen 7 Tagen",
+        "days90": "den vorherigen 90 Tagen",
+        "months12": "den vorherigen 12 Monaten"
+      },
+      "span": "{{from}} bis {{to}}",
+      "withoutTemplate": "{{range}}, Dokumente ohne Vorlage"
+    },
+    "sections": {
+      "byMember": "Nach Teammitglied",
+      "byTemplate": "Nach Vorlage",
+      "exports": "Exporte",
+      "overview": "Übersicht",
+      "recipients": "Verhalten der Empfänger",
+      "stalled": "Geöffnet, nicht signiert"
+    },
+    "stats": {
+      "completed": {
+        "label": "Abgeschlossen",
+        "note": "{{rate}} Abschlussquote"
+      },
+      "declinedExpired": {
+        "label": "Abgelehnt oder abgelaufen",
+        "note": "{{declined}} abgelehnt, {{expired}} abgelaufen"
+      },
+      "median": {
+        "label": "Mediane Dauer bis zur Unterschrift",
+        "noComparison": "kein Vergleich für {{range}}",
+        "noCompletions": "noch keine Abschlüsse",
+        "wasPrevious": "waren {{duration}} in {{range}}"
+      },
+      "sent": {
+        "label": "Gesendet",
+        "note": "zur Unterschrift in diesem Zeitraum"
+      },
+      "waiting": {
+        "due_one": "{{count, number}} innerhalb von 3 Tagen fällig",
+        "due_other": "{{count, number}} innerhalb von 3 Tagen fällig",
+        "label": "Wartet auf andere",
+        "noneDue": "keine innerhalb von 3 Tagen fällig"
+      }
+    },
+    "table": {
+      "completed": "Abgeschlossen",
+      "completion": "Abschluss",
+      "completionTitle": "{{completed}} von {{sent}} abgeschlossen",
+      "declines": "Ablehnungen",
+      "document": "Dokument",
+      "documents": "Dokumente",
+      "expires": "Läuft ab",
+      "firstOpened": "Zuerst geöffnet",
+      "lastActivity": "Letzte Aktivität",
+      "lastOpened": "Zuletzt geöffnet",
+      "median": "Median",
+      "medianTimeToSign": "Mediane Dauer bis zur Unterschrift",
+      "noActivity": "keine Aktivität",
+      "opens": "Öffnungen",
+      "recipient": "Empfänger",
+      "sent": "Gesendet",
+      "signed": "Unterzeichnet",
+      "teamMember": "Teammitglied",
+      "template": "Vorlage",
+      "weekOf": "Woche vom"
+    },
+    "title": "Berichte",
+    "toast": {
+      "nothingToExport": "Nichts zu exportieren",
+      "nothingToExportBody": "In diesem Zeitraum wurden keine Dokumente gesendet."
+    },
+    "truncated": "Es werden die {{limit}} zuletzt aktualisierten Dokumente in diesem Zeitraum angezeigt. Grenzen Sie den Zeitraum ein, um exakte Summen zu erhalten.",
+    "untitledDocument": "Unbenanntes Dokument"
+  },
+  "send": {
+    "a11y": {
+      "bccEmail": "Bcc-E-Mail-Adresse",
+      "progress": "Fortschritt",
+      "recipientEmail": "E-Mail des Empfängers",
+      "recipientName": "Name des Empfängers",
+      "recipientOptions": "Empfängeroptionen",
+      "removeEmail": "{{email}} entfernen",
+      "removeRow": "Zeile entfernen",
+      "role": "Rolle"
+    },
+    "actions": {
+      "addCc": "CC hinzufügen",
+      "addMe": "Mich hinzufügen",
+      "addRecipient": "Empfänger hinzufügen",
+      "addRow": "Zeile hinzufügen",
+      "backToDocuments": "Zurück zu Dokumente",
+      "backToList": "Zurück zur Liste",
+      "change": "Ändern",
+      "discardAndClose": "Verwerfen und schließen",
+      "fix": "Beheben",
+      "fromContacts": "Aus Kontakten",
+      "keepEditing": "Weiter bearbeiten",
+      "replace": "Ersetzen",
+      "saveAndClose": "Speichern und schließen",
+      "use": "Verwenden"
+    },
+    "api": {
+      "documentNotCreated": "Das Dokument wurde nicht erstellt.",
+      "untitledTemplate": "Unbenannte Vorlage"
+    },
+    "bulk": {
+      "columns": "Spalten: name, email, phone (phone optional)",
+      "dropCsv": "CSV-Datei ablegen oder klicken, um eine auszuwählen",
+      "multiRole_one": "Diese Vorlage hat {{count}} Rolle. Der Massenversand füllt pro Dokument nur eine Rolle, verwenden Sie ihn also mit einer Vorlage für einen Unterzeichner und senden Sie mehrseitige Vorgänge einzeln.",
+      "multiRole_other": "Diese Vorlage hat {{count}} Rollen. Der Massenversand füllt pro Dokument nur eine Rolle, verwenden Sie ihn also mit einer Vorlage für einen Unterzeichner und senden Sie mehrseitige Vorgänge einzeln.",
+      "noRows": "Keine Zeilen gefunden. Die Datei benötigt pro Zeile einen Namen und eine E-Mail-Adresse.",
+      "ready": "{{valid}} von {{total}} bereit",
+      "subtitle": "Ein Dokument pro Zeile, alle aus {{template}}. Laden Sie eine CSV-Datei hoch oder wählen Sie aus den Kontakten.",
+      "theTemplate": "der Vorlage",
+      "title": "Wer erhält eine Kopie zum Unterschreiben?"
+    },
+    "bulkReview": {
+      "body": "Jede Zeile erhält eine eigene Kopie von {{template}}, die sofort gesendet wird.",
+      "each_one": "{{count}} Anfrage, je ein Dokument",
+      "each_other": "{{count}} Anfragen, je ein Dokument",
+      "emailAndReason": "E-Mail und Grund",
+      "expires": "Läuft ab am {{date}}",
+      "retryBody_one": "{{count}} Anfrage wurde gesendet. Die Zeilen unten nicht, jeweils mit Grund.",
+      "retryBody_other": "{{count}} Anfragen wurden gesendet. Die Zeilen unten nicht, jeweils mit Grund.",
+      "subject": "Betreff: {{subject}}",
+      "toRetry_one": "{{count}} Anfrage erneut versuchen",
+      "toRetry_other": "{{count}} Anfragen erneut versuchen"
+    },
+    "contacts": {
+      "addCount_one": "{{count}} Empfänger hinzufügen",
+      "addCount_other": "{{count}} Empfänger hinzufügen",
+      "added": "Hinzugefügt",
+      "description": "Alle, an die Sie bereits eine Anfrage gesendet haben.",
+      "emptyBody": "Fügen Sie einen Empfänger per E-Mail hinzu, dann wird er hier gespeichert.",
+      "emptySearch": "Nichts passt zu dieser Suche.",
+      "emptyTitle": "Keine Kontakte",
+      "loadError": "Kontakte konnten nicht geladen werden.",
+      "searchPlaceholder": "Nach Name oder E-Mail suchen",
+      "title": "Aus Kontakten"
+    },
+    "dialog": {
+      "leaveDescription": "Ihre letzten Änderungen wurden noch nicht in den Entwurf geschrieben.",
+      "leaveTitle": "Ohne Speichern verlassen?"
+    },
+    "documents": {
+      "ai": {
+        "body": "Dokument ablegen, sagen wer unterschreibt, und das Modell platziert jedes Feld für Sie.",
+        "cta": "Mit KI vorbereiten",
+        "title": "Von der KI einrichten lassen"
+      },
+      "dropFile": "Datei hier ablegen oder klicken, um eine auszuwählen",
+      "fileLimit": "PDF, DOCX oder DOC, bis zu {{size}} MB",
+      "keepTabOpen": "Diesen Tab geöffnet lassen",
+      "nameHint": "Das sehen die Empfänger in der Betreffzeile und im Prüfpfad.",
+      "nameLabel": "Dokumentname",
+      "namePlaceholder": "Unbenanntes Dokument",
+      "noteHint": "Optional. Wird in der Anfrage-E-Mail angezeigt, bis zu {{max}} Zeichen.",
+      "noteLabel": "Hinweis für Empfänger",
+      "notePlaceholder": "Alles, was vor dem Unterschreiben wichtig ist",
+      "ready": "Bereit",
+      "savingInto": "Wird in {{folder}} gespeichert",
+      "stage": {
+        "converting": "Word-Datei wird konvertiert",
+        "decrypting": "PDF wird entsperrt",
+        "reading": "Datei wird gelesen",
+        "uploading": "Hochladen {{percent}}%"
+      },
+      "subtitle": "PDF oder Word. Passwortgeschützte PDFs werden für Sie entsperrt.",
+      "templates": {
+        "empty": "Sie haben noch keine Vorlagen. Alles, was Sie senden, lässt sich später als Vorlage speichern.",
+        "error": "Vorlagen konnten nicht geladen werden.",
+        "heading": "Mit einer Vorlage beginnen",
+        "loading": "Vorlagen werden geladen",
+        "noRoles": "Noch keine Rollen"
+      },
+      "title": "Was muss unterschrieben werden?",
+      "titleSelf": "Was unterschreiben Sie?"
+    },
+    "errors": {
+      "aRecipient": "Ein Empfänger",
+      "aSigner": "Ein Unterzeichner",
+      "invalidEmail": "{{name}} benötigt eine gültige E-Mail-Adresse.",
+      "noDocument": "Noch kein Dokument hochgeladen.",
+      "noFields": "{{name}} hat keine Felder zum Ausfüllen.",
+      "noSigner": "Fügen Sie mindestens einen Unterzeichner hinzu.",
+      "noSubject": "Die E-Mail benötigt einen Betreff.",
+      "redirectUrl": "Die Weiterleitungs-URL muss mit http:// oder https:// beginnen.",
+      "rowNotCreated": "Die Anfrage wurde nicht erstellt.",
+      "rowNotReported": "Der Server hat zu dieser Zeile nichts gemeldet.",
+      "templateNoDocument": "Dieser Vorlage ist kein Dokument zugeordnet."
+    },
+    "fields": {
+      "email": "E-Mail",
+      "name": "Name",
+      "phone": "Telefon"
+    },
+    "header": {
+      "draftSaved": "Entwurf gespeichert {{when}}",
+      "stepOf": "Schritt {{index}} von {{total}}"
+    },
+    "mail": {
+      "aColleague": "Eine Kollegin oder ein Kollege",
+      "bodyDefault": "Hallo {{receiver_name}},\n\n{{senderName}} hat Ihnen {{document_title}} zur Unterschrift gesendet.\n\nÜber die Schaltfläche unten können Sie prüfen und unterschreiben. Das dauert nur eine Minute, und Sie erhalten eine Kopie, sobald alle unterschrieben haben.",
+      "subjectDefault": "Bitte unterschreiben: {{name}}",
+      "subjectDefaultUnnamed": "Bitte unterschreiben: ein Dokument"
+    },
+    "message": {
+      "body": "Text",
+      "bodyHint": "Sie können {{receiver_name}}, {{sender_name}}, {{document_title}} und {{expiry_date}} verwenden.",
+      "bodyPlaceholder": "Ein kurzer Hinweis, worum es geht",
+      "heading": "Nachricht",
+      "subject": "Betreff",
+      "subjectPlaceholder": "Bitte unterschreiben Sie dieses Dokument"
+    },
+    "more": {
+      "allowModifications": "Unterzeichner dürfen eigene Felder hinzufügen",
+      "allowModificationsHint": "Unterzeichner können zusätzliche Unterschriften, Initialen, Stempel und Text im Dokument platzieren. Ihre eigenen Felder bleiben, wo Sie sie gesetzt haben.",
+      "bccHint": "Blindkopien des fertigen Dokuments. Diese Personen werden nicht um eine Unterschrift gebeten und sind für andere Empfänger nicht sichtbar.",
+      "bccInvalid": "{{email}} ist keine gültige E-Mail-Adresse.",
+      "bccLabel": "Bcc",
+      "bccPlaceholder": "finance@company.com, dann Enter",
+      "chainHint": "Sobald alle unterschrieben haben, wird aus dieser Vorlage automatisch ein neues Dokument erstellt und an dieselben Unterzeichner gesendet.",
+      "chainLabel": "Nach Abschluss ein Folgedokument senden",
+      "chainNone": "Kein Folgedokument",
+      "chainTitleLabel": "Titel des Folgedokuments",
+      "chainTitlePlaceholder": "Standard: der Vorlagenname",
+      "redirectError": "Geben Sie eine vollständige URL ein, die mit http:// oder https:// beginnt.",
+      "redirectHint": "Wohin ein Unterzeichner nach Abschluss gelangt. Leer lassen, um auf der Bestätigungsseite zu bleiben.",
+      "redirectLabel": "Weiterleitung nach dem Unterschreiben",
+      "setCount_one": "({{count}} ist gesetzt)",
+      "setCount_other": "({{count}} sind gesetzt)",
+      "toggle": "Weitere Optionen"
+    },
+    "nav": {
+      "continueToDocuments": "Weiter zu Dokumente",
+      "continueToFields": "Weiter zu Felder",
+      "continueToRecipients": "Weiter zu Empfänger",
+      "continueToReview": "Weiter zu Prüfen und senden",
+      "sendNow": "Jetzt senden",
+      "sendRequests_one": "{{count}} Anfrage senden",
+      "sendRequests_other": "{{count}} Anfragen senden"
+    },
+    "password": {
+      "description": "Geben Sie das Passwort für {{fileName}} ein. Es wird vor dem Hochladen entfernt, sodass Unterzeichner es nicht brauchen.",
+      "label": "Passwort",
+      "placeholder": "Dokumentpasswort",
+      "title": "Dieses PDF ist gesperrt",
+      "unlock": "Entsperren",
+      "wrong": "Mit diesem Passwort ließ sich die Datei nicht öffnen."
+    },
+    "placeholders": {
+      "email": "name@company.com",
+      "fullName": "Vollständiger Name",
+      "optional": "Optional"
+    },
+    "preview": {
+      "addedTimes_one": "{{count}}× hinzugefügt",
+      "addedTimes_other": "{{count}}× hinzugefügt",
+      "convertedFromWord": "aus Word konvertiert",
+      "emptyHint": "Ihr Dokument erscheint hier, sobald es hochgeladen ist.",
+      "from_one": "Aus {{count}} früheren Anfrage mit {{domain}}.",
+      "from_other": "Aus {{count}} früheren Anfragen mit {{domain}}.",
+      "heading": "Dokumente",
+      "pageOf": "1 / {{total}}",
+      "passwordRemoved": "Passwort entfernt",
+      "reading": "Dokument wird gelesen",
+      "suggestedHeading": "Vorschlag aus Ihrem Verlauf",
+      "usualExpiry_one": "Üblicherweise geben Sie {{count}} Tag Zeit.",
+      "usualExpiry_other": "Üblicherweise geben Sie {{count}} Tage Zeit."
+    },
+    "progress": {
+      "preparing": "{{index}} von {{total}} wird vorbereitet",
+      "sending_one": "{{count}} Anfrage wird gesendet",
+      "sending_other": "{{count}} Anfragen werden gesendet"
+    },
+    "recipients": {
+      "empty": "Noch keine Empfänger. Fügen Sie die erste Person hinzu, die unterschreiben soll.",
+      "invalidEmail": "Prüfen Sie diese E-Mail-Adresse.",
+      "moveDown": "Nach unten",
+      "moveUp": "Nach oben",
+      "notifyToggle": "Bei jeder Unterschrift benachrichtigen",
+      "reminderNote": "Erinnerungen werden am Dokument gespeichert. Dieser Server berechnet das nächste Erinnerungsdatum, versendet Erinnerungen aber noch nicht selbst, betrachten Sie sie also als festgehaltene Absicht.",
+      "roleCc": "CC",
+      "roleSigner": "Unterzeichner",
+      "sendInOrder": "Der Reihe nach unterschreiben",
+      "sendInOrderOff": "Alle erhalten gleichzeitig eine E-Mail und können in beliebiger Reihenfolge unterschreiben.",
+      "sendInOrderOn": "Nur der erste Unterzeichner erhält jetzt eine E-Mail. Jede weitere Person wird eingeladen, sobald die vorherige unterschrieben hat.",
+      "strictOrder": "Reihenfolge erzwingen",
+      "strictOrderHint": "Eine Unterschrift verweigern, solange nicht alle davor unterschrieben haben, selbst wenn der Link vorliegt.",
+      "subtitle": "Jede Person erhält einen eigenen Link. Fügen Sie ein CC für alle hinzu, die nur eine Kopie brauchen.",
+      "title": "Wer muss unterschreiben?"
+    },
+    "review": {
+      "addSigner": "Fügen Sie vor dem Senden mindestens einen Unterzeichner hinzu.",
+      "allGood": "Alles in Ordnung.",
+      "ccNote": "CC-Empfänger unterschreiben nicht. Sie erhalten das fertige Dokument, sobald alle unterschrieben haben.",
+      "documentHeading": "Dokument",
+      "messageHeading": "Nachricht",
+      "noBody": "Kein Nachrichtentext.",
+      "noEmail": "Keine E-Mail",
+      "noName": "Kein Name",
+      "noRecipients": "Noch keine Empfänger.",
+      "noSubject": "Kein Betreff",
+      "note": "Hinweis: {{note}}",
+      "problems_one": "{{count}} Punkt zu beheben",
+      "problems_other": "{{count}} Punkte zu beheben",
+      "recipientsHeading": "Empfänger",
+      "settingsHeading": "Einstellungen",
+      "signersInOrder_one": "{{count}} Person wird um eine Unterschrift gebeten, nacheinander.",
+      "signersInOrder_other": "{{count}} Personen werden nacheinander um eine Unterschrift gebeten.",
+      "signers_one": "{{count}} Person wird um eine Unterschrift gebeten.",
+      "signers_other": "{{count}} Personen werden um eine Unterschrift gebeten.",
+      "title": "Bereit zum Senden"
+    },
+    "settings": {
+      "afterSigning": "Nach dem Unterschreiben",
+      "anyOrder": "Beliebige Reihenfolge",
+      "bcc": "Bcc",
+      "emailCode": "Code per E-Mail",
+      "emailLink": "Link per E-Mail",
+      "everyDays_one": "Alle {{count}} Tage",
+      "everyDays_other": "Alle {{count}} Tage",
+      "expires": "Läuft ab",
+      "heading": "Einstellungen",
+      "inOrder": "Der Reihe nach",
+      "inOrderEnforced": "Der Reihe nach, erzwungen",
+      "nobody": "Niemand",
+      "notifyMe": "Mich benachrichtigen",
+      "off": "Aus",
+      "onEachSignature": "Bei jeder Unterschrift",
+      "onlyYourFields": "Nur die von Ihnen platzierten Felder",
+      "order": "Reihenfolge",
+      "reminders": "Erinnerungen",
+      "signerCheck": "Prüfung des Unterzeichners",
+      "signerFields": "Felder der Unterzeichner",
+      "signersMayAdd": "Unterzeichner dürfen eigene hinzufügen",
+      "staysOnConfirmation": "Bleibt auf der Bestätigungsseite"
+    },
+    "state": {
+      "draftError": "Dieser Entwurf konnte nicht geöffnet werden",
+      "loadingDraft": "Ihr Entwurf wird geladen"
+    },
+    "steps": {
+      "documents": "Dokumente",
+      "fields": "Felder",
+      "recipients": "Empfänger",
+      "review": "Prüfen und senden"
+    },
+    "title": {
+      "bulk": "Massenversand",
+      "request": "Neue Anfrage",
+      "self": "Selbst unterschreiben"
+    },
+    "toast": {
+      "alreadySentBody": "Öffnen Sie es unter Dokumente, um den Fortschritt zu verfolgen.",
+      "alreadySentTitle": "Dieses Dokument wurde bereits gesendet",
+      "bulkBlockedBody": "Es fehlt ein Dokument oder eine Unterzeichnerrolle.",
+      "bulkBlockedTitle": "Diese Vorlage eignet sich nicht für den Massenversand",
+      "couldNotSaveDraft": "Entwurf konnte nicht gespeichert werden",
+      "couldNotSend": "Senden nicht möglich",
+      "draftNotSaved": "Entwurf nicht gespeichert",
+      "emailsFailedBody": "Das Dokument ist gesendet. Senden Sie von der Dokumentseite erneut.",
+      "emailsFailed_one": "{{count}} E-Mail wurde nicht gesendet",
+      "emailsFailed_other": "{{count}} E-Mails wurden nicht gesendet",
+      "profileLoadingBody": "Versuchen Sie es gleich erneut.",
+      "profileLoadingTitle": "Ihr Profil wird noch geladen",
+      "replaceFileBody": "Ein Dokument behält die Datei, mit der es erstellt wurde.",
+      "replaceFileTitle": "Starten Sie eine neue Anfrage, um die Datei zu ändern",
+      "rowsFailedBody": "Sie stehen unten weiterhin mit dem jeweiligen Grund.",
+      "rowsFailed_one": "{{count}} Zeile wurde nicht gesendet",
+      "rowsFailed_other": "{{count}} Zeilen wurden nicht gesendet",
+      "sentRequests_one": "{{count}} Anfrage gesendet",
+      "sentRequests_other": "{{count}} Anfragen gesendet",
+      "sentToPeople_one": "An {{count}} Person gesendet",
+      "sentToPeople_other": "An {{count}} Personen gesendet",
+      "templateFailed": "Diese Vorlage konnte nicht verwendet werden",
+      "uploadFailed": "Hochladen fehlgeschlagen"
+    },
+    "units": {
+      "bytes": "{{value}} B",
+      "kilobytes": "{{value}} KB",
+      "megabytes": "{{value}} MB"
+    },
+    "upload": {
+      "conversionFailed": "Die Word-Konvertierung ist fehlgeschlagen. Laden Sie stattdessen ein PDF hoch.",
+      "convertedDownloadFailed": "Die konvertierte Datei konnte nicht heruntergeladen werden.",
+      "passwordProtected": "Dieses PDF ist passwortgeschützt.",
+      "tooLarge": "Diese Datei ist größer als {{size}} MB.",
+      "unlockFailed": "Dieses PDF konnte nicht entsperrt werden.",
+      "unsupportedType": "Laden Sie ein PDF oder ein Word-Dokument hoch (.pdf, .docx, .doc).",
+      "untitledDocument": "Unbenanntes Dokument",
+      "uploadFailed": "Die Datei wurde nicht hochgeladen.",
+      "wrongPassword": "Mit diesem Passwort ließ sich die Datei nicht öffnen."
+    }
+  },
+  "settings": {
+    "apiWebhooks": {
+      "mcp": {
+        "claudeCode": "Claude Code",
+        "claudeDesktop": "Claude Desktop / andere Clients (über mcp-remote)",
+        "endpoint": "Endpunkt",
+        "note": "Zustandsloses Streamable HTTP. Jede Anfrage trägt Ihr Token, keine Anmeldung nötig.",
+        "title": "MCP-Server",
+        "tools": "Werkzeuge"
+      },
+      "rest": {
+        "example": "quick-send lädt das PDF hoch, lässt die KI die Felder platzieren und mailt die Unterzeichner in einem Aufruf. Weitere Routen: POST /files, POST /documents/analyze, POST /documents, GET /documents, GET /documents/:id, POST /documents/:id/send, POST /documents/:id/remind, GET /documents/:id/signing-links, GET|POST /contacts, GET /templates, POST /templates/:id/documents. Entwürfe bearbeiten und Verlauf: PATCH /documents/:id, GET /documents/:id/draft, GET /documents/:id/review, PUT|POST|DELETE /documents/:id/fields, PATCH /documents/:id/fields/:key, POST /documents/:id/ai-layout, GET|POST /documents/:id/versions, POST /documents/:id/versions/:v/restore, POST /documents/:id/undo, POST /documents/:id/duplicate, DELETE /documents/:id, POST /documents/:id/restore.",
+        "note": "Dieselben Vorgänge wie die MCP-Werkzeuge, als JSON über HTTPS.",
+        "title": "REST-API"
+      },
+      "token": {
+        "copy": "Token kopieren",
+        "created": "Erstellt",
+        "failed": "Token-Änderung fehlgeschlagen",
+        "generate": "Token erzeugen",
+        "generated": "Token erzeugt",
+        "lastUsed": "Zuletzt verwendet",
+        "never": "Nie",
+        "none": "Noch kein Token. Erzeugen Sie eines, um den MCP-Endpunkt oder die REST-API zu nutzen.",
+        "note": "Ein Token pro Konto. Es handelt als Sie: Alles, was Sie hier können, kann es auch.",
+        "prefix": "Token",
+        "revoke": "Widerrufen",
+        "revokeConfirm": "Skripte und Agenten mit diesem Token funktionieren sofort nicht mehr.",
+        "revoked": "Token widerrufen",
+        "rotate": "Token rotieren",
+        "shownOnce": "Jetzt kopieren. Es wird nicht noch einmal angezeigt.",
+        "title": "Persönliches API-Token"
+      },
+      "webhooks": {
+        "body": "Ausgehende Webhooks gibt es in diesem Build nicht. Fragen Sie GET /documents/:id oder das Werkzeug list_documents nach Statusänderungen ab.",
+        "title": "Webhooks"
+      }
+    },
+    "audit": {
+      "csv": {
+        "created": "Erstellt",
+        "declineReason": "Ablehnungsgrund",
+        "documentId": "Dokument-ID",
+        "expires": "Läuft ab",
+        "lastUpdated": "Zuletzt aktualisiert",
+        "name": "Name",
+        "owner": "Besitzer",
+        "ownerEmail": "E-Mail des Besitzers",
+        "sent": "Gesendet",
+        "signers": "Unterzeichner",
+        "status": "Status"
+      },
+      "data": {
+        "checking": "Wird geprüft",
+        "documents": "Von Ihnen erstellte Dokumente",
+        "endpoint": "API-Endpunkt",
+        "notTracked": "Auf diesem Server nicht erfasst",
+        "note": "Von diesem Server gemeldet.",
+        "storage": "Belegter Speicher",
+        "templates": "Von Ihnen erstellte Vorlagen",
+        "title": "Wo Ihre Daten liegen",
+        "workspace": "Arbeitsbereich"
+      },
+      "export": {
+        "body": "Enthält Name, Status, Unterzeichner, Datumsangaben und Ablehnungsgründe. Entwürfe sowie laufende, abgeschlossene, abgelehnte und abgelaufene Dokumente sind abgedeckt. Die Dateien selbst sind nicht enthalten.",
+        "button": "CSV exportieren",
+        "note": "Eine CSV-Datei der Dokumente, die Ihnen gehören, erzeugt aus den Berichten dieses Servers.",
+        "title": "Export"
+      },
+      "toast": {
+        "failed": "Export nicht möglich",
+        "nothing": "Nichts zu exportieren",
+        "nothingBody": "Ihnen gehören noch keine Dokumente.",
+        "ready": "Export bereit",
+        "readyBody_one": "{{count}} Dokument in die CSV-Datei geschrieben.",
+        "readyBody_other": "{{count}} Dokumente in die CSV-Datei geschrieben."
+      },
+      "trails": {
+        "body": "Jedes Dokument führt seinen eigenen Prüfpfad: wer es angesehen hat, wer unterschrieben hat, wann und von welcher IP-Adresse. Öffnen Sie ein Dokument und laden Sie sein Abschlusszertifikat für den unterzeichneten Nachweis herunter. Ein arbeitsbereichsweites Prüfprotokoll gibt es auf diesem Server nicht.",
+        "title": "Prüfpfade"
+      }
+    },
+    "billing": {
+      "body": "Dieser Build kennt keine Abonnements, Tarife oder Rechnungen. Er wird selbst gehostet, die Nutzung ist also nur durch die Maschine begrenzt, auf der er läuft.",
+      "title": "Die Abrechnung ist auf diesem Server nicht konfiguriert"
+    },
+    "branding": {
+      "identity": {
+        "accent": "Akzentfarbe",
+        "accentNote": "Dieser Server hat kein Feld für die Themenfarbe, daher wird überall der Akzent der App verwendet.",
+        "contrastAA": "Kontrast auf Weiß {{ratio}}:1 (AA)",
+        "contrastBelowAA": "Kontrast auf Weiß {{ratio}}:1 (unter AA)",
+        "logo": "Logo des Arbeitsbereichs",
+        "logoHint": "PNG, SVG oder JPG, bis 1 MB. Wird in der App, auf der Signaturseite und in E-Mails angezeigt.",
+        "memberNote": "Nur ein Workspace-Administrator kann Logo und Namen ändern.",
+        "noLogo": "Kein Logo hochgeladen",
+        "note": "Wie Ihr Arbeitsbereich für Unterzeichner erscheint.",
+        "remove": "Entfernen",
+        "replace": "Ersetzen",
+        "title": "Identität",
+        "tooLarge": "Das Logo darf höchstens 1 MB groß sein.",
+        "upload": "Logo hochladen",
+        "uploadFailed": "Logo konnte nicht hochgeladen werden",
+        "uploading": "Wird hochgeladen",
+        "workspaceName": "Name des Arbeitsbereichs",
+        "workspaceNameHint": "Unterzeichner sehen diesen Namen in E-Mails und auf der Signaturseite.",
+        "wrongType": "Verwenden Sie eine PNG-, SVG- oder JPG-Datei."
+      },
+      "preview": {
+        "certificate": "Abschlusszertifikat",
+        "email": "E-Mail",
+        "emailBody": "Ihre Unterschrift wird benötigt, um diese Vereinbarung abzuschließen. Der Link öffnet das Dokument, ein Konto ist nicht nötig.",
+        "emailCta": "Prüfen und unterschreiben",
+        "emailFooter": "Gesendet von {{workspace}}. Falls Sie das nicht erwartet haben, können Sie die E-Mail ignorieren.",
+        "emailHeading": "{{sender}} bittet Sie, {{document}} zu unterschreiben",
+        "emailSubject": "{{sender}} bittet Sie, {{document}} zu unterschreiben",
+        "finish": "Abschließen",
+        "issuedBy": "Ausgestellt von {{workspace}}",
+        "note": "Die Vorschau nutzt ein Beispieldokument und Ihre echten Arbeitsbereichswerte.",
+        "pdf": "Fertiges PDF",
+        "pdfSender": "Absender {{sender}}",
+        "pdfTimestamps": "Zeitstempel in Ihrer Zeitzone",
+        "poweredBy": "Wenn Sie diese E-Mail für unangemessen oder Spam halten, können Sie hier eine Beschwerde einreichen.",
+        "requestedBy": "Angefordert von {{sender}}",
+        "sampleDoc": "Rahmendienstleistungsvertrag",
+        "signHere": "Hier unterschreiben",
+        "signing": "Signaturseite",
+        "title": "Live-Vorschau",
+        "to": "an {{recipient}}"
+      },
+      "sender": {
+        "domain": "Domain der Signaturseite",
+        "footerHint": "Nur Text, höchstens 500 Zeichen. Wird unter jede ausgehende E-Mail gesetzt.",
+        "footerPlaceholder": "Acme Inc, 1 Main Street, Oslo",
+        "footerText": "Eigener Fußzeilentext",
+        "hidePoweredBy": "Die Fußzeile „Powered by“ ausblenden",
+        "hidePoweredByHint": "Entfernt die Plattform-Zeile und den Spam-Meldelink am Ende Ihrer E-Mails.",
+        "hidePoweredByToggle": "Powered by ausblenden",
+        "memberNote": "Nur ein Workspace-Administrator kann den E-Mail-Absender ändern.",
+        "note": "Gilt für die Anfragen, die Sie senden.",
+        "replyTo": "Antwortadresse",
+        "replyToPlaceholder": "name@company.com",
+        "senderName": "Absendername",
+        "senderNameHint": "Der Absendername in jeder E-Mail dieses Workspace. Die Adresse bleibt die, die auf diesem Server konfiguriert ist.",
+        "title": "E-Mail-Absender"
+      },
+      "toast": {
+        "saveFailed": "Branding konnte nicht gespeichert werden",
+        "saved": "Branding gespeichert"
+      }
+    },
+    "emailTemplates": {
+      "adminNote": "Im Arbeitsbereich gespeichert, sodass alle hier dieselbe E-Mail senden.",
+      "body": "Text",
+      "bodyHint": "HTML. Lassen Sie beide Felder leer, um auf die eingebaute E-Mail des Servers zurückzufallen.",
+      "completionTitle": "Abschluss-E-Mail",
+      "defaults": {
+        "completionBody": "<p>Hallo {{sender_name}},</p>\n<p>Alle Parteien haben {{document_title}} unterzeichnet. Die unterzeichnete Kopie ist angehängt.</p>\n<p>Vielen Dank</p>",
+        "completionSubject": "Das Dokument {{document_title}} wurde von allen Parteien unterzeichnet",
+        "requestBody": "<p>Hallo {{receiver_name}},</p>\n<p>{{sender_name}} bittet Sie, {{document_title}} zu prüfen und zu unterschreiben.</p>\n<p><a href='{{signing_url}}'>Hier unterschreiben</a></p>\n<p>Vielen Dank</p>",
+        "requestSubject": "{{sender_name}} bittet Sie, {{document_title}} zu unterschreiben"
+      },
+      "noTenant": "Dieser Server hat keinen Arbeitsbereichseintrag zurückgegeben, daher lassen sich die Vorlagen nicht bearbeiten.",
+      "preview": {
+        "custom": "Eigene",
+        "note": "Skripte und Inline-Handler werden aus dieser Vorschau entfernt. Der Server hängt an jede E-Mail seine eigene Spam-Hinweis-Fußzeile an.",
+        "serverDefault": "Server-Standard",
+        "title": "Vorschau"
+      },
+      "requestTitle": "E-Mail zur Signaturanfrage",
+      "sample": {
+        "documentTitle": "Rahmendienstleistungsvertrag",
+        "expiryDate": "in 15 Tagen",
+        "note": "Bitte bis Freitag unterschreiben.",
+        "senderName": "Sie"
+      },
+      "startFromDefault": "Mit der Standardvorlage beginnen",
+      "subject": "Betreff",
+      "tabs": {
+        "completion": "Abschluss",
+        "request": "Anfrage"
+      },
+      "toast": {
+        "cleared": "Geleert",
+        "clearedBody": "Speichern Sie, um zur eingebauten E-Mail zurückzukehren.",
+        "copyFailed": "Kopieren nicht möglich",
+        "noTenant": "Kein Arbeitsbereichseintrag zum Speichern vorhanden.",
+        "saveFailed": "Die Vorlagen konnten nicht gespeichert werden",
+        "saved": "E-Mail-Vorlagen gespeichert"
+      },
+      "userNote": "Vom Workspace-Admin festgelegt und für jede Anfrage aus diesem Arbeitsbereich verwendet. Bitten Sie einen Admin um Änderungen.",
+      "variables": {
+        "expiryNote": "{{expiry_date}} wird nur in Anfrage-E-Mails gefüllt. Unbekannte Variablen bleiben unverändert stehen.",
+        "note": "Zum Kopieren anklicken. Der Server ersetzt sie beim Versand.",
+        "title": "Variablen"
+      }
+    },
+    "errors": {
+      "canvasUnavailable": "Canvas ist nicht verfügbar",
+      "couldNotReadFile": "Die Datei konnte nicht gelesen werden",
+      "deleteFailed": "Löschen fehlgeschlagen: HTTP {{status}}",
+      "notSignedIn": "Nicht angemeldet",
+      "uploadNoUrl": "Der Upload hat keine URL zurückgegeben"
+    },
+    "form": {
+      "saveFailed": "Speichern nicht möglich",
+      "saved": "Gespeichert"
+    },
+    "general": {
+      "install": {
+        "apiUrl": "API-URL",
+        "appUrl": "App-URL",
+        "created": "Erstellt",
+        "note": "Wo die App und ihre API laufen.",
+        "title": "Diese Installation",
+        "workspaceId": "Arbeitsbereichs-ID"
+      },
+      "workspace": {
+        "active": "Aktiv",
+        "address": "Adresse",
+        "adminNote": "Dieser Server hält den Arbeitsbereichseintrag hinter dem Master Key, und sein Update-Endpunkt akzeptiert nur E-Mail-Vorlagen. Ändern Sie diese Werte auf dem Server oder in der Datenbank, dann erscheinen sie hier.",
+        "contactEmail": "Kontakt-E-Mail",
+        "contactNumber": "Kontaktnummer",
+        "domain": "Domain",
+        "domainPlaceholder": "Nicht gesetzt",
+        "inactive": "Inaktiv",
+        "memberNote": "Nur die Administration kann Angaben zum Arbeitsbereich ändern, und auf diesem Server werden sie außerhalb der App bearbeitet.",
+        "missing": "Dieser Server hat für Ihr Konto keinen Arbeitsbereichseintrag zurückgegeben. Bitten Sie die Administration, Ihr Profil zu prüfen.",
+        "name": "Name des Arbeitsbereichs",
+        "note": "Diese Angaben stammen aus dem Arbeitsbereichseintrag, der bei der Einrichtung dieses Servers erstellt wurde.",
+        "title": "Arbeitsbereich"
+      }
+    },
+    "integrations": {
+      "body": "Dieser Build hat keine ausgehenden Webhooks, keine Zapier-App und keine Konnektoren für Google Drive, Dropbox oder Box. Dokumente werden über die App selbst hoch- und heruntergeladen.",
+      "seeApi": "API und Webhooks ansehen",
+      "title": "Keine Integrationen auf diesem Server"
+    },
+    "nav": {
+      "backToInbox": "Zurück zum Posteingang",
+      "workspace": "Arbeitsbereich",
+      "you": "Sie"
+    },
+    "notifications": {
+      "always": {
+        "completed": "<1>Abgeschlossene Dokumente.</1> Alle Unterzeichner und der Absender erhalten das unterzeichnete PDF und dessen Zertifikat. Das lässt sich beim Senden pro Anfrage abschalten.",
+        "declined": "<1>Abgelehnte Dokumente.</1> Der Absender erhält eine E-Mail mit dem Grund.",
+        "note": "Automatische Erinnerungen sind auf diesem Server nicht umgesetzt. Erinnerungen gehen nur heraus, wenn Sie eine aus einem Dokument heraus senden.",
+        "requests": "<1>Signaturanfragen.</1> Werden von dieser App beim Senden eines Dokuments verschickt, nicht nach einem Zeitplan.",
+        "title": "Immer gesendet"
+      },
+      "emailMeAbout": {
+        "eachSignature": "Jedes Mal, wenn jemand unterschreibt",
+        "eachSignatureHint": "Wird gesendet, solange eine Anfrage noch auf andere wartet. Die letzte Unterschrift deckt stattdessen die Abschluss-E-Mail ab.",
+        "note": "Das ist die einzige Benachrichtigungseinstellung, die dieser Server speichert.",
+        "title": "Per E-Mail informieren über",
+        "toggleLabel": "Bei Unterschriften benachrichtigen"
+      },
+      "toast": {
+        "saveFailed": "Ihre Einstellungen konnten nicht gespeichert werden",
+        "saved": "Benachrichtigungseinstellungen gespeichert"
+      }
+    },
+    "parts": {
+      "loadError": "Dieser Abschnitt konnte nicht geladen werden.",
+      "notAvailable": "Auf diesem Server nicht verfügbar"
+    },
+    "profile": {
+      "appearance": {
+        "note": "Gilt nur auf diesem Gerät, einschließlich der Signaturseiten.",
+        "theme": "Design",
+        "themeHint": "System folgt der Einstellung Ihres Betriebssystems und ändert sich mit ihr."
+      },
+      "delete": {
+        "admin": "Sie erhalten einen Bestätigungslink per E-Mail. Anschließend geben Sie einen Einmalcode ein, um die Löschung abzuschließen.",
+        "button": "Mein Konto löschen",
+        "confirmLabel": "Geben Sie {{word}} ein, um fortzufahren",
+        "dialogDescription": "Damit werden Ihr Konto, Ihre Unterschrift und die Dokumente, die Ihnen gehören, entfernt.",
+        "emailLink": "Bestätigungslink per E-Mail senden",
+        "intro": "Die Löschung wird per E-Mail bestätigt: Ein Link geht an <1>{{email}}</1>, und diese Seite verlangt einen Einmalcode, bevor etwas entfernt wird.",
+        "nonAdmin": "Nur die Administration des Arbeitsbereichs kann hier ein Konto löschen. Bitten Sie eine administrierende Person darum.",
+        "note": "Entfernt Ihr Konto und die Dokumente, die Ihnen gehören. Das lässt sich nicht rückgängig machen.",
+        "sent": "Ein Link wurde an <1>{{email}}</1> gesendet. Öffnen Sie ihn, fordern Sie einen Einmalcode an und geben Sie den Code ein, um die Löschung abzuschließen. Nur über den Link lässt sich das abschließen, es wurde also noch nichts gelöscht.",
+        "title": "Mein Konto löschen",
+        "toastFailed": "Löschung konnte nicht gestartet werden",
+        "toastSent": "Bestätigungs-E-Mail gesendet",
+        "toastSentBody": "Sehen Sie in {{email}} nach, um die Löschung Ihres Kontos abzuschließen."
+      },
+      "details": {
+        "company": "Unternehmen",
+        "fullName": "Vollständiger Name",
+        "jobTitle": "Berufsbezeichnung",
+        "note": "Für Unterzeichner bei Anfragen sichtbar, die Sie senden.",
+        "phone": "Telefon",
+        "pictureHint": "PNG oder JPG, auf 240px skaliert.",
+        "signInEmail": "Anmelde-E-Mail",
+        "signInEmailHint": "Dieser Server erlaubt es nicht, die Anmelde-E-Mail über die App zu ändern.",
+        "title": "Ihre Angaben",
+        "uploadPicture": "Bild hochladen"
+      },
+      "language": {
+        "hint": "Ändert auch die Sprache dieser App."
+      },
+      "regional": {
+        "dateFormat": "Datumsformat",
+        "note": "Wird für Zeitstempel auf Zertifikaten und die Datumsangaben auf Unterschriften verwendet.",
+        "offset": "{{zone}} ist {{offset}}",
+        "offsetUnknown": "unbekannt",
+        "timezone": "Zeitzone",
+        "title": "Region"
+      },
+      "toast": {
+        "missingRow": "Ihr Profileintrag fehlt auf diesem Server.",
+        "pictureReady": "Bild bereit",
+        "pictureReadyBody": "Speichern Sie die Änderungen, um es zu übernehmen.",
+        "saveFailed": "Ihr Profil konnte nicht gespeichert werden",
+        "saved": "Profil gespeichert",
+        "unsupportedImage": "Nicht unterstütztes Bild",
+        "unsupportedImageBody": "Verwenden Sie eine PNG-, JPG- oder WebP-Datei.",
+        "uploadFailed": "Hochladen fehlgeschlagen"
+      }
+    },
+    "sections": {
+      "api": {
+        "description": "Persönliches Token, MCP-Endpunkt und REST-API für Skripte und KI-Agenten.",
+        "label": "API und MCP",
+        "title": "API und MCP"
+      },
+      "audit": {
+        "description": "Wo Ihre Dokumente liegen und wie sich deren Metadaten exportieren lassen.",
+        "label": "Prüfung und Compliance",
+        "title": "Prüfung und Compliance"
+      },
+      "billing": {
+        "description": "Tarif und Rechnungen für diesen Arbeitsbereich.",
+        "label": "Abrechnung",
+        "title": "Abrechnung"
+      },
+      "branding": {
+        "description": "Wie Ihr Arbeitsbereich in E-Mails und auf der Signaturseite erscheint.",
+        "label": "Branding",
+        "title": "Branding"
+      },
+      "email": {
+        "description": "Die Anfrage- und Abschluss-E-Mails an die Unterzeichner.",
+        "label": "E-Mail-Vorlagen",
+        "title": "E-Mail-Vorlagen"
+      },
+      "general": {
+        "description": "Name, Domain und Kontaktdaten dieses Arbeitsbereichs.",
+        "label": "Allgemein",
+        "title": "Arbeitsbereich"
+      },
+      "integrations": {
+        "description": "Verbindungen zu anderen Werkzeugen.",
+        "label": "Integrationen",
+        "title": "Integrationen"
+      },
+      "notifications": {
+        "description": "Welche E-Mails dieser Server zu Ihren Dokumenten versendet.",
+        "label": "Benachrichtigungen",
+        "title": "Benachrichtigungen"
+      },
+      "profile": {
+        "description": "Ihr Name, Ihre Kontaktdaten und die Darstellung von Datumsangaben.",
+        "label": "Profil",
+        "title": "Profil"
+      },
+      "security": {
+        "description": "Passwort ändern und prüfen, wo Sie angemeldet sind.",
+        "label": "Sicherheit und Sitzungen",
+        "title": "Sicherheit und Sitzungen"
+      },
+      "signature": {
+        "description": "Die Unterschrift, die beim Unterzeichnen eines Dokuments verwendet wird.",
+        "label": "Meine Unterschrift und Initialen",
+        "title": "Meine Unterschrift und Initialen"
+      },
+      "signing": {
+        "description": "Standards für jede neue Signaturanfrage, die Sie erstellen.",
+        "label": "Signatur-Standards",
+        "title": "Signatur-Standards"
+      },
+      "team": {
+        "description": "Personen, die sich in diesem Arbeitsbereich anmelden können.",
+        "label": "Team",
+        "title": "Team"
+      }
+    },
+    "security": {
+      "password": {
+        "confirm": "Neues Passwort bestätigen",
+        "current": "Aktuelles Passwort",
+        "mismatch": "Die beiden Passwörter stimmen nicht überein.",
+        "new": "Neues Passwort",
+        "note": "Sie benötigen Ihr aktuelles Passwort. Andere Sitzungen werden vom Server beendet.",
+        "rules": {
+          "case": "Groß- und Kleinbuchstaben sowie eine Ziffer",
+          "length": "Mindestens 8 Zeichen",
+          "special": "Ein Sonderzeichen"
+        },
+        "submit": "Passwort aktualisieren",
+        "title": "Passwort ändern",
+        "toast": {
+          "cannotChange": "Passwort kann nicht geändert werden",
+          "cannotChangeBody": "Ihr Konto hat keine E-Mail-Adresse.",
+          "failed": "Ihr Passwort konnte nicht geändert werden",
+          "updated": "Passwort aktualisiert",
+          "updatedBody": "Andere Geräte müssen sich möglicherweise erneut anmelden."
+        }
+      },
+      "sessions": {
+        "end": "Beenden",
+        "expires": "läuft ab {{when}}",
+        "note": "Aktive Sitzungen auf diesem Server.",
+        "signOutOthers": "Andere Geräte abmelden",
+        "started": "Begonnen {{when}}",
+        "thisDevice": "Dieses Gerät",
+        "title": "Wo Sie angemeldet sind",
+        "toast": {
+          "endOneFailed": "Diese Sitzung konnte nicht beendet werden",
+          "endOthersFailed": "Die anderen Sitzungen konnten nicht beendet werden",
+          "signedOutOthers": "Überall sonst abgemeldet",
+          "signedOutOthersBody_one": "{{count}} Sitzung beendet.",
+          "signedOutOthersBody_other": "{{count}} Sitzungen beendet."
+        }
+      },
+      "signOut": {
+        "listUnavailable": "Dieser Server erlaubt der App nicht, Ihre Sitzungen aufzulisten, daher lässt sich hier nur dieses Gerät abmelden.",
+        "thisDevice": "Beendet diese Sitzung auf diesem Gerät.",
+        "title": "Abmelden"
+      }
+    },
+    "signature": {
+      "change": "Ändern",
+      "initials": {
+        "add": "Initialen hinzufügen",
+        "empty": "Noch keine Initialen gespeichert.",
+        "note": "Werden von Initialenfeldern und bei mehrseitigen Bestätigungen verwendet.",
+        "title": "Initialen"
+      },
+      "note": "Bilder liegen auf diesem Server und werden bei jedem Abruf neu signiert, daher laufen die Vorschaulinks nach einigen Minuten ab. Laden Sie die Seite neu, wenn ein Bild nicht mehr lädt.",
+      "signature": {
+        "add": "Unterschrift hinzufügen",
+        "empty": "Noch keine Unterschrift gespeichert.",
+        "note": "Wird verwendet, wenn Sie ein Dokument oder selbst unterschreiben.",
+        "title": "Unterschrift"
+      },
+      "toast": {
+        "initialsSaved": "Initialen gespeichert",
+        "signatureSaved": "Unterschrift gespeichert"
+      }
+    },
+    "signatureDialog": {
+      "chooseImage": "Bild auswählen",
+      "description": "Gezeichnet, getippt oder hochgeladen. Sie wird einmal gespeichert und für jedes Dokument wiederverwendet.",
+      "errors": {
+        "chooseFirst": "Wählen Sie zuerst ein Bild.",
+        "couldNotRead": "Dieses Bild konnte nicht gelesen werden",
+        "drawFirst": "Zeichnen Sie zuerst etwas.",
+        "saveFailed": "Speichern nicht möglich",
+        "unsupportedImage": "Nicht unterstütztes Bild",
+        "unsupportedImageBody": "Verwenden Sie eine PNG- oder JPG-Datei."
+      },
+      "fields": {
+        "initials": "Ihre Initialen",
+        "name": "Ihr Name"
+      },
+      "ink": {
+        "blue": "Blau",
+        "ink": "Tinte",
+        "label": "Tinte"
+      },
+      "saveInitials": "Initialen speichern",
+      "saveSignature": "Unterschrift speichern",
+      "tabs": {
+        "draw": "Zeichnen",
+        "type": "Tippen",
+        "upload": "Hochladen"
+      },
+      "titleInitials": "Ihre Initialen",
+      "titleSignature": "Ihre Unterschrift",
+      "trimNote": "Die Ränder werden automatisch beschnitten.",
+      "uploadHint": "PNG oder JPG. Transparente oder weiße Hintergründe eignen sich am besten."
+    },
+    "signing": {
+      "dateFields": {
+        "note": "Verhalten der Datumsfelder, die Sie in einem Dokument platzieren.",
+        "readOnly": "Schreibgeschützt",
+        "readOnlyHint": "Unterzeichner können das von Ihnen gesetzte Datum nicht ändern.",
+        "readOnlyToggle": "Datum schreibgeschützt",
+        "sourceToast": "Legen Sie eine Quelle für das Datum fest",
+        "sourceToastBody": "Aktivieren Sie das Datum der Unterschrift oder wählen Sie ein Datum im Dokument.",
+        "title": "Datumsfelder",
+        "useSigningDate": "Mit dem Datum der Unterschrift füllen",
+        "useSigningDateHint": "Das Feld wird automatisch ausgefüllt, wenn die Person unterschreibt.",
+        "useSigningDateToggle": "Datum der Unterschrift verwenden"
+      },
+      "dates": {
+        "clock": "Uhrzeit",
+        "clock12": "12 Stunden",
+        "clock24": "24 Stunden",
+        "dateFormat": "Datumsformat",
+        "filename": "Name der heruntergeladenen Datei",
+        "note": "Wird für Unterschriftsdaten, Zertifikate und Downloads verwendet.",
+        "timezone": "Zeitzone",
+        "timezoneHint": "Wird auf Unterschriften und Zertifikaten vermerkt.",
+        "title": "Datumsangaben und Dateien"
+      },
+      "errors": {
+        "noTypes": "Aktivieren Sie mindestens eine Signaturart.",
+        "onlyDefault": "Die Wiederverwendung einer gespeicherten Unterschrift kann nicht die einzige Option sein."
+      },
+      "filenameFormats": {
+        "DOCNAME": "Dokumentname",
+        "DOCNAME_EMAIL": "Dokumentname + E-Mail des Unterzeichners",
+        "DOCNAME_EMAIL_DATE": "Dokumentname + E-Mail + Datum",
+        "DOCNAME_SIGNED": "Dokumentname + unterzeichnet"
+      },
+      "perRequest": {
+        "body": "Ablauf in Tagen, Erinnerungsrhythmus, Verifizierung per Einmalpasswort und ob Unterzeichner ihre Angaben ändern dürfen, werden pro Dokument gespeichert, nicht als Standards des Arbeitsbereichs. Wählen Sie sie beim Erstellen einer Anfrage im Sendeablauf.",
+        "title": "Pro Anfrage festgelegt"
+      },
+      "sending": {
+        "inOrder": "Der Reihe nach unterschreiben",
+        "inOrderHint": "Jeder Unterzeichner erhält erst dann eine E-Mail, wenn die Person davor unterschrieben hat.",
+        "ltv": "Langzeitvalidierung (LTV)",
+        "ltvHint": "Bettet Sperrinformationen in das unterzeichnete PDF ein, sodass es noch Jahre später validiert.",
+        "note": "Standards, die in jedes neue Dokument übernommen werden.",
+        "notify": "Bei jeder Unterschrift benachrichtigen",
+        "notifyHint": "Auch im Abschnitt Benachrichtigungen änderbar.",
+        "notifyToggle": "Bei Unterschriften benachrichtigen",
+        "title": "Versand",
+        "tour": "Geführte Tour anzeigen",
+        "tourHint": "Führt neue Unterzeichner durch die Signaturseite.",
+        "tourToggle": "Geführte Tour"
+      },
+      "toast": {
+        "saveFailed": "Signatur-Standards konnten nicht gespeichert werden",
+        "saved": "Signatur-Standards gespeichert"
+      },
+      "types": {
+        "labels": {
+          "default": "Gespeicherte Unterschrift wiederverwenden",
+          "draw": "Zeichnen",
+          "typed": "Tippen",
+          "upload": "Bild hochladen"
+        },
+        "note": "Gilt für jede Anfrage, die Sie erstellen.",
+        "title": "Wie unterschrieben werden kann",
+        "workspaceNote": "Ihr Arbeitsbereich bestimmt, welche Optionen hier erscheinen können."
+      }
+    },
+    "team": {
+      "actions": {
+        "label": "Aktionen für {{name}}",
+        "makeEditor": "Zu Bearbeiter machen",
+        "makeOrgAdmin": "Zu Org-Admin machen",
+        "makeUser": "Zu Benutzer machen",
+        "memberFallback": "Mitglied",
+        "remove": "Aus dem Arbeitsbereich entfernen",
+        "resetPassword": "Passwort zurücksetzen",
+        "restoreAccess": "Zugriff wiederherstellen",
+        "suspendAccess": "Zugriff sperren"
+      },
+      "countLine_one": "{{count}} Person in diesem Arbeitsbereich.",
+      "countLine_other": "{{count}} Personen in diesem Arbeitsbereich.",
+      "invite": {
+        "button": "Teammitglied einladen",
+        "created": "Das Konto ist bereit. Senden Sie dieses Passwort über einen Kanal, dem Sie vertrauen, es wird nicht erneut angezeigt.",
+        "description": "Dieser Server legt das Konto sofort an. Geben Sie das Passwort selbst weiter.",
+        "email": "E-Mail",
+        "fullName": "Vollständiger Name",
+        "newPassword": "Neu",
+        "password": "Temporäres Passwort",
+        "passwordHint": "Für Sie generiert. Es lässt sich in den eigenen Einstellungen ändern.",
+        "phone": "Telefon (optional)",
+        "role": "Rolle",
+        "submit": "Teammitglied hinzufügen",
+        "team": "Team",
+        "teamLoading": "Teams werden geladen",
+        "title": "Teammitglied einladen",
+        "toast": {
+          "added": "Teammitglied hinzugefügt",
+          "failed": "Diese Person konnte nicht hinzugefügt werden"
+        }
+      },
+      "noOrg": "Ihr Konto ist auf diesem Server keiner Organisation zugeordnet, daher lässt sich die Teamliste nicht laden.",
+      "note": "Die Administration des Arbeitsbereichs lässt sich hier nicht ändern oder entfernen, und Sie können nicht auf Ihre eigene Zeile einwirken. Neue Personen werden mit einem Passwort angelegt, das Sie weitergeben, denn dieser Server versendet keine Einladungs-E-Mail.",
+      "remove": {
+        "confirm": "Das lässt sich nicht rückgängig machen. Geben Sie <1>{{email}}</1> zur Bestätigung ein.",
+        "description": "Das Konto und die Dokumente dieser Person werden auf diesem Server gelöscht.",
+        "emailLabel": "E-Mail",
+        "title": "Aus dem Arbeitsbereich entfernen",
+        "toast": {
+          "cannot": "Entfernen nicht möglich",
+          "cannotBody": "Diese Person hat kein verknüpftes Anmeldekonto.",
+          "done": "Aus dem Arbeitsbereich entfernt",
+          "failed": "Diese Person konnte nicht entfernt werden"
+        }
+      },
+      "reset": {
+        "description": "Ein neues Passwort für {{name}}.",
+        "done": "Geben Sie dieses Passwort weiter. Es wird nicht erneut angezeigt.",
+        "generate": "Neu",
+        "newPassword": "Neues Passwort",
+        "newPasswordHint": "Mindestens 8 Zeichen mit Groß- und Kleinbuchstaben, einer Ziffer und einem Sonderzeichen.",
+        "submit": "Passwort zurücksetzen",
+        "title": "Passwort zurücksetzen",
+        "toast": {
+          "cannot": "Zurücksetzen nicht möglich",
+          "cannotBody": "Diese Person hat kein verknüpftes Anmeldekonto.",
+          "done": "Passwort zurückgesetzt",
+          "failed": "Dieses Passwort konnte nicht zurückgesetzt werden"
+        }
+      },
+      "roles": {
+        "admin": "Admin",
+        "editor": "Bearbeiter",
+        "orgAdmin": "Org-Admin",
+        "user": "Benutzer"
+      },
+      "self": {
+        "body": "Bitten Sie die Administration, Ihre Rolle zu ändern, Ihr Passwort zurückzusetzen oder Ihr Konto zu entfernen. Ihr eigenes Profil und Ihre Unterschrift können Sie in den Abschnitten oben aktualisieren.",
+        "note": "Nur die Administration kann das gesamte Team sehen und verwalten.",
+        "title": "Ihr Zugriff"
+      },
+      "table": {
+        "active": "Aktiv",
+        "added": "Hinzugefügt",
+        "email": "E-Mail",
+        "name": "Name",
+        "role": "Rolle",
+        "status": "Status",
+        "suspended": "Gesperrt",
+        "teams": "Teams",
+        "unnamed": "Ohne Namen"
+      },
+      "toast": {
+        "accessRestored": "Zugriff wiederhergestellt",
+        "accessSuspended": "Zugriff gesperrt",
+        "copyFailed": "Kopieren nicht möglich",
+        "copyFailedBody": "Kopieren Sie es stattdessen manuell.",
+        "removedFallback": "Benutzer gelöscht",
+        "roleFailed": "Diese Rolle konnte nicht geändert werden",
+        "roleUpdated": "Rolle aktualisiert",
+        "roleUpdatedBody": "{{name}} ist jetzt {{role}}.",
+        "updateFailed": "Diese Person konnte nicht aktualisiert werden"
+      }
+    },
+    "title": "Einstellungen",
+    "workspaceFallback": "Arbeitsbereich"
+  },
+  "signer": {
+    "a11y": {
+      "character": "Zeichen {{position}}",
+      "goToPage": "Zu Seite {{page}} springen",
+      "moreActions": "Weitere Aktionen",
+      "moveField": "Feld {{label}} verschieben",
+      "nextField": "Nächstes Feld",
+      "previousField": "Vorheriges Feld",
+      "removeField": "Feld {{label}} entfernen",
+      "signatureAdopted": "Unterschrift für {{name}} übernommen",
+      "widgetField": "Feld {{label}}"
+    },
+    "about": {
+      "expires": "Läuft ab am {{date}}",
+      "lastSigner": "Sie sind die letzte unterzeichnende Person. Sobald Sie fertig sind, erhalten alle das fertige PDF und das Zertifikat.",
+      "nextSigner": "Nach Ihnen unterschreibt {{name}}, danach erhalten alle das fertige PDF und das Zertifikat.",
+      "prevSigned": "{{name}} hat unterzeichnet.",
+      "prevSignedOn": "{{name}} hat am {{date}} unterzeichnet.",
+      "title": "Über diese Anfrage"
+    },
+    "actions": {
+      "addField": "Feld hinzufügen",
+      "askQuestion": "Frage stellen",
+      "downloadOriginal": "Original herunterladen",
+      "finish": "Abschließen",
+      "finishLater": "Später abschließen",
+      "nextField": "Nächstes Feld",
+      "signHere": "Hier unterschreiben"
+    },
+    "addField": {
+      "paletteHint": "Platziert das Feld in der Mitte von Seite {{page}}. Ziehen Sie am Eckgriff, um es zu verschieben oder zu skalieren.",
+      "sheetHint": "Es landet in der Mitte von Seite {{page}}.",
+      "title": "Feld hinzufügen"
+    },
+    "adopt": {
+      "adoptAndSign": "Übernehmen und unterschreiben",
+      "chooseAnother": "Andere wählen",
+      "chooseImage": "Bild auswählen",
+      "colors": {
+        "black": "schwarz",
+        "blue": "blau",
+        "red": "rot"
+      },
+      "consent": "Ich stimme zu, dass dies das elektronische Äquivalent meiner handschriftlichen Unterschrift ist und dass ihre Verwendung rechtsverbindlich ist.",
+      "description": "Bestätigen Sie Ihren Namen und zeichnen, tippen oder laden Sie dann das gewünschte Zeichen hoch. Es wird für den Rest dieses Dokuments wiederverwendet.",
+      "fields": {
+        "fullName": "Vollständiger Name",
+        "initials": "Initialen"
+      },
+      "hint": {
+        "draw": "Zeichnen Sie mit Maus, Trackpad oder Finger",
+        "saved": "In Ihrem Konto gespeichert",
+        "type": "Dargestellt in {{font}}",
+        "upload": "Ein Foto einer Unterschrift auf weißem Papier eignet sich gut"
+      },
+      "methods": {
+        "draw": "Zeichnen",
+        "saved": "Gespeichert",
+        "type": "Tippen",
+        "upload": "Hochladen"
+      },
+      "penColor": "{{color}}er Stift",
+      "preview": {
+        "saved": "Ihre gespeicherte Unterschrift",
+        "typed": "Vorschau der getippten Unterschrift",
+        "uploaded": "Hochgeladene Unterschrift"
+      },
+      "titleInitials": "Initialen übernehmen",
+      "titleSignature": "Unterschrift übernehmen",
+      "uploadHint": "PNG oder JPEG. Der Hintergrund wird für Sie freigestellt."
+    },
+    "decline": {
+      "confirm": "Dokument ablehnen",
+      "description": "{{sender}} wird darüber informiert, dass Sie \"{{document}}\" abgelehnt haben. Danach können Sie es nicht mehr unterschreiben.",
+      "keepReviewing": "Weiter prüfen",
+      "reasonHint": "Optional, erspart dem Absender aber eine Nachfrage per E-Mail.",
+      "reasonLabel": "Grund",
+      "reasonPlaceholder": "Nennen Sie den Grund, zum Beispiel: die Zahlungsbedingungen müssen zuerst geändert werden.",
+      "title": "Unterschrift ablehnen"
+    },
+    "disclosure": {
+      "agreeLink": "Mit Ihrer Unterschrift stimmen Sie der Erklärung zu elektronischen Aufzeichnungen und Unterschriften zu.",
+      "closing": "Indem Sie eine Unterschrift übernehmen und fortfahren, bestätigen Sie, dass Sie diese Erklärung verstanden haben und ihr zustimmen, und willigen ein, die Dokumente des Absenders elektronisch zu unterschreiben.",
+      "intro": "Diese Erklärung ist eine Vereinbarung zwischen der Person, die dieses Dokument gesendet hat (dem Absender), und Ihnen (der unterzeichnenden Person). Mit einer elektronischen Unterschrift stimmen Sie den folgenden Bedingungen zu. Bitte lesen Sie sie, bevor Sie fortfahren.",
+      "questions": "Fragen zu dieser Erklärung richten Sie bitte an den Absender.",
+      "questionsWithEmail": "Fragen zu dieser Erklärung richten Sie bitte an den Absender unter",
+      "sections": {
+        "acknowledgment": {
+          "heading": "6. Kenntnisnahme und Zustimmung",
+          "intro": "Indem Sie fortfahren:",
+          "points": [
+            "bestätigen Sie, dass Sie elektronische Dokumente wie hier beschrieben abrufen und prüfen können.",
+            "stimmen Sie der Verwendung elektronischer Aufzeichnungen und Unterschriften für diesen Vorgang zu.",
+            "verstehen Sie, dass diese Plattform den Vorgang lediglich ermöglicht und nicht Partei der Vereinbarung ist."
+          ]
+        },
+        "consent": {
+          "heading": "2. Einwilligung in elektronische Aufzeichnungen und Unterschriften",
+          "intro": "Mit Ihrer Zustimmung zu dieser Erklärung:",
+          "points": [
+            "willigen Sie ein, mit dem Absender elektronisch zu verkehren, und verstehen, dass diese Einwilligung gilt, bis Sie sie widerrufen.",
+            "stimmen Sie zu, Dokumente elektronisch zu prüfen, zu unterschreiben und zurückzusenden.",
+            "gilt diese Einwilligung nur für die vom Absender bereitgestellten Dokumente."
+          ]
+        },
+        "legal": {
+          "heading": "7. Rechtswirkung",
+          "intro": "Ihre elektronische Unterschrift:",
+          "points": [
+            "erfüllt das anwendbare Recht zu elektronischen Unterschriften, darunter den E-SIGN Act in den Vereinigten Staaten, die eIDAS-Verordnung der EU und den Information Technology Act Indiens.",
+            "ist zwischen Ihnen und dem Absender für die von Ihnen unterzeichneten Dokumente rechtsverbindlich."
+          ]
+        },
+        "platform": {
+          "heading": "8. Rolle der Plattform und Haftungsbeschränkung",
+          "intro": "Diese Plattform ermöglicht elektronische Vorgänge. Sie ist nicht verantwortlich für den Inhalt, die Gültigkeit oder die Durchsetzbarkeit der vom Absender gesendeten Dokumente. Streitigkeiten über ein Dokument oder dessen Unterzeichnung bestehen zwischen Ihnen und dem Absender."
+        },
+        "purpose": {
+          "heading": "1. Zweck und Geltungsbereich",
+          "intro": "Diese Erklärung regelt die Verwendung elektronischer Aufzeichnungen und Unterschriften für Dokumente, die Ihnen über diese Plattform gesendet werden. Mit Ihrer Zustimmung erkennen Sie an, dass:",
+          "points": [
+            "Sie Dokumente elektronisch erhalten und unterschreiben werden.",
+            "Ihre elektronische Unterschrift rechtsverbindlich und einer handschriftlichen Unterschrift gleichgestellt ist."
+          ]
+        },
+        "requirements": {
+          "heading": "4. Hardware- und Softwareanforderungen",
+          "intro": "Zum Unterschreiben benötigen Sie hier:",
+          "points": [
+            "ein Gerät mit Internetzugang.",
+            "einen aktuellen Webbrowser mit aktiviertem JavaScript.",
+            "ein E-Mail-Konto für Benachrichtigungen und das unterzeichnete Dokument."
+          ]
+        },
+        "retention": {
+          "heading": "5. Aufbewahrung von Aufzeichnungen und Papierkopien",
+          "intro": "Sie sind dafür verantwortlich, sicherzustellen, dass Sie auf die unterzeichneten Dokumente zugreifen und sie aufbewahren können. Sie können das unterzeichnete Dokument herunterladen oder drucken, sobald die Unterzeichnung abgeschlossen ist. Wenn Sie lieber eine Papierkopie hätten, fordern Sie sie beim Absender an. Der Absender darf dafür eine angemessene Gebühr erheben, sofern das Recht nichts anderes bestimmt."
+        },
+        "termination": {
+          "heading": "9. Beendigung",
+          "intro": "Ihre Einwilligung gilt für den aktuellen Vorgang, sofern der Absender nichts anderes festlegt. Der Zugang kann bei Verstößen gegen die Nutzungsbedingungen beendet werden."
+        },
+        "withdraw": {
+          "heading": "3. Recht auf Widerruf der Einwilligung",
+          "intro": "Sie können Ihre Einwilligung in elektronische Aufzeichnungen und Unterschriften widerrufen, indem Sie:",
+          "points": [
+            "den Absender direkt über die Kontaktdaten in seiner Nachricht kontaktieren.",
+            "den Absender benachrichtigen, bevor Sie den Unterzeichnungsvorgang abschließen."
+          ]
+        }
+      },
+      "title": "Erklärung zu elektronischen Aufzeichnungen und Unterschriften"
+    },
+    "doc": {
+      "theSender": "der Absender",
+      "untitled": "Unbenanntes Dokument"
+    },
+    "done": {
+      "accountBody": "Ein kostenloses Konto bewahrt Ihre unterzeichneten Kopien, Ihre übernommene Unterschrift und Ihren Prüfpfad an einem Ort auf.",
+      "accountCta": "Kostenloses Konto erstellen",
+      "accountTitle": "Alle unterzeichneten Dokumente an einem Ort.",
+      "continueTo": "Weiter: {{target}}",
+      "disclosure": "Erklärung",
+      "downloadCopy": "Meine unterzeichnete Kopie herunterladen",
+      "emailSender": "{{name}} eine E-Mail senden",
+      "nextSignerNotNotified": "Wir konnten die Anfrage nicht an {{name}} senden. Ihre Unterschrift ist gespeichert, und der Absender kann sie erneut senden.",
+      "nextUp": "Wie es weitergeht",
+      "recorded": "Ihre Unterschrift auf <1>{{document}}</1> wurde am {{date}} um {{time}} aufgezeichnet.",
+      "redirect": "Rückkehr in {{seconds}}s: {{target}}.",
+      "sealing": "Ihre unterzeichnete Kopie wird versiegelt. Sie erhalten sie per E-Mail, sobald sie bereit ist.",
+      "senderSite": "Website des Absenders",
+      "title": "Unterzeichnet. Fertig.",
+      "verifyLink": "Dieses Dokument überprüfen",
+      "waitingOnEveryone": "Alle haben unterzeichnet. Das fertige PDF und das Abschlusszertifikat sind per E-Mail an alle Unterzeichner unterwegs.",
+      "waitingOnNext": "Sobald {{name}} zustimmt, erhalten alle das finale PDF und das Abschlusszertifikat per E-Mail.",
+      "waitingOnSomeone": "der verbleibende Unterzeichner",
+      "yourDocument": "Ihr Dokument"
+    },
+    "email": {
+      "aboutSubject": "Zu {{document}}",
+      "cta": "Dokument prüfen und unterschreiben",
+      "greeting": "Hallo {{name}},",
+      "line": "{{signer}} hat <strong>{{document}}</strong> unterzeichnet. Jetzt sind Sie an der Reihe.",
+      "questionSubject": "Frage zu {{document}}",
+      "subject": "{{sender}} benötigt Ihre Unterschrift auf {{document}}"
+    },
+    "errors": {
+      "couldNotFetch": "{{url}} konnte nicht abgerufen werden",
+      "couldNotOpen": "Dieses Dokument konnte nicht geöffnet werden.",
+      "couldNotReadFile": "Diese Datei konnte nicht gelesen werden.",
+      "couldNotReadImage": "Dieses Bild konnte nicht gelesen werden.",
+      "emailNotMatched": "Ihre E-Mail-Adresse konnte diesem Dokument nicht zugeordnet werden.",
+      "expiredLink": "Dieses Dokument konnte nicht geöffnet werden. Der Link ist möglicherweise abgelaufen.",
+      "invalidLink": "Dieser Signaturlink ist ungültig oder das Dokument wurde entfernt.",
+      "missingDocId": "Diesem Signaturlink fehlt eine Dokument-ID.",
+      "noAccessAfterOtp": "Ihr Code wurde akzeptiert, aber dieses Dokument wurde nicht mit {{email}} geteilt. Bitten Sie den Absender, es erneut zu senden, oder prüfen Sie, ob Sie den an Sie adressierten Link geöffnet haben.",
+      "pdfLibMissing": "Die PDF-Signaturbibliothek ist in diesem Build nicht verfügbar. Bitten Sie Ihre Administration, pdf-lib zu installieren."
+    },
+    "field": {
+      "badge": {
+        "fill": "Ausfüllen",
+        "sign": "Unterschreiben"
+      },
+      "dateSigned": "Datum der Unterschrift",
+      "dragToMove": "Zum Verschieben ziehen",
+      "dragToResize": "Zum Skalieren ziehen",
+      "dropdown": "Dropdown",
+      "removeThisField": "Dieses Feld entfernen"
+    },
+    "header": {
+      "from": "Von {{name}}",
+      "pageOfShort": "S. {{current}}/{{total}}",
+      "progressDesktop": "{{done}} von {{total}} Pflichtfeldern erledigt",
+      "progressMobile": "{{done}} von {{total}} Feldern erledigt",
+      "sentBy": "Gesendet von {{name}}",
+      "sentByWithEmail": "Gesendet von {{name}} ({{email}})",
+      "signerPosition": "Sie sind Unterzeichner {{position}} von {{count}}"
+    },
+    "hints": {
+      "enterMovesNext": "springt zum nächsten Feld"
+    },
+    "loading": "Das Dokument wird geöffnet",
+    "menu": {
+      "language": "Sprache"
+    },
+    "otp": {
+      "codeLabel": "Verifizierungscode",
+      "codesNote": "Codes laufen nicht ab, aber nur der neueste funktioniert.",
+      "errors": {
+        "enterCode": "Geben Sie den Code aus der E-Mail ein.",
+        "noAccount": "Zu dieser E-Mail-Adresse gibt es kein Konto.",
+        "notVerified": "Dieser Code konnte nicht überprüft werden. Fordern Sie einen neuen an.",
+        "sendFailed": "Der Code konnte nicht gesendet werden. Versuchen Sie es gleich erneut.",
+        "unknownEmail": "Es ist nicht bekannt, zu welcher E-Mail-Adresse dieser Link gehört. Öffnen Sie den Link aus Ihrer Einladungs-E-Mail.",
+        "verifyFailed": "Dieser Code hat nicht funktioniert.",
+        "wrongCode": "Dieser Code stimmt nicht. Prüfen Sie die E-Mail und versuchen Sie es erneut."
+      },
+      "intro": "Dieses Dokument ist geschützt. Ein Code wird an <1>{{email}}</1> gesendet, um Ihre Identität zu bestätigen.",
+      "openDocument": "Dokument öffnen",
+      "resendIn": "Erneut senden in {{seconds}}s",
+      "sendCode": "Code per E-Mail senden",
+      "sendNewCode": "Neuen Code senden",
+      "sentBody": "Ein Code wurde an <1>{{email}}</1> gesendet. Geben Sie ihn ein, um das Dokument zu öffnen.",
+      "title": "Bestätigen Sie Ihre Identität",
+      "toast": {
+        "sentBody": "Sehen Sie in {{email}} nach.",
+        "sentTitle": "Code gesendet"
+      },
+      "yourAddress": "Ihre Adresse"
+    },
+    "party": {
+      "numbered": "Unterzeichner {{position}}",
+      "roleNumbered": "Rolle {{position}}",
+      "you": "Sie"
+    },
+    "rail": {
+      "empty": "Keine Felder zum Ausfüllen.",
+      "emptyCanAdd": "Noch nichts platziert. Fügen Sie unten ein Feld hinzu.",
+      "optionalField": "{{label}} (optional)",
+      "pageShort": "S.{{page}}",
+      "yourFields": "Ihre Felder"
+    },
+    "sealing": {
+      "body": "Das dauert einige Sekunden. Bitte lassen Sie diesen Tab geöffnet.",
+      "title": "Ihre Unterschrift wird angewendet und das Dokument versiegelt"
+    },
+    "status": {
+      "alreadySigned": {
+        "body": "Ihre Unterschrift liegt vor. Sobald alle anderen unterschrieben haben, erhalten {{sender}} und alle Unterzeichner das finale PDF und das Abschlusszertifikat per E-Mail.",
+        "title": "Sie haben bereits unterschrieben"
+      },
+      "completed": {
+        "body": "Dieses Dokument ist vollständig. Laden Sie die unterzeichnete Kopie unten herunter oder finden Sie sie in der gesendeten E-Mail.",
+        "title": "Alle haben unterzeichnet"
+      },
+      "declined": {
+        "byPerson": "{{name}} hat die Unterschrift abgelehnt. Jetzt kann niemand mehr unterschreiben.",
+        "byUnknown": "Es wurde abgelehnt. Jetzt kann niemand mehr unterschreiben.",
+        "reasonQuote": "\"{{reason}}\"",
+        "title": "Dieses Dokument wurde abgelehnt"
+      },
+      "downloadSigned": "Unterzeichnete Kopie herunterladen",
+      "expired": {
+        "body": "Der Zeitraum für die Unterschrift ist abgelaufen. Bitten Sie {{sender}}, es erneut zu senden.",
+        "bodyWithDate": "Der Zeitraum für die Unterschrift endete am {{date}}. Bitten Sie {{sender}}, es erneut zu senden.",
+        "title": "Dieses Dokument ist abgelaufen"
+      },
+      "fromSender": "von {{name}}",
+      "mailSubjectFallback": "Dokument",
+      "noFields": {
+        "body": "{{sender}} hat in diesem Dokument keine Felder für Sie platziert. Melden Sie sich dort, falls das ein Versehen ist.",
+        "title": "Hier gibt es nichts für Sie zu unterschreiben"
+      },
+      "notFound": {
+        "body": "Das Dokument wurde möglicherweise gelöscht oder der Link unvollständig kopiert. Bitten Sie den Absender um einen neuen Link.",
+        "title": "Dieser Link ist ungültig"
+      },
+      "pill": {
+        "notAvailable": "Nicht verfügbar",
+        "nothingToSign": "Nichts zu unterschreiben",
+        "waiting": "Wartet"
+      },
+      "verifyLink": "Unterzeichnetes Dokument überprüfen",
+      "waitingTurn": {
+        "body": "Es wird darauf gewartet, dass {{name}} zuerst unterschreibt. Sie erhalten eine E-Mail, sobald Sie an der Reihe sind.",
+        "someone": "ein vorheriger Unterzeichner",
+        "title": "Sie sind noch nicht an der Reihe"
+      }
+    },
+    "toast": {
+      "adoptFailed": "Diese Unterschrift konnte nicht übernommen werden",
+      "couldNotOpenDocument": "Das Dokument konnte nicht geöffnet werden",
+      "declineFailed": "Ablehnen nicht möglich",
+      "declined": {
+        "body": "{{name}} wurde informiert.",
+        "title": "Dokument abgelehnt"
+      },
+      "downloadFailed": "Der Download konnte nicht vorbereitet werden",
+      "fieldsOutstanding_one": "{{count}} Feld benötigt noch Ihre Eingabe",
+      "fieldsOutstanding_other": "{{count}} Felder benötigen noch Ihre Eingabe",
+      "imageTooLarge": {
+        "body": "Wählen Sie eine Datei unter 8 MB.",
+        "title": "Dieses Bild ist zu groß"
+      },
+      "imageUnreadable": "Dieses Bild konnte nicht gelesen werden",
+      "needSignature": {
+        "body": "Nutzen Sie Feld hinzufügen, um Ihre Unterschrift zu platzieren, und unterschreiben Sie dann.",
+        "title": "Fügen Sie zuerst eine Unterschrift hinzu"
+      },
+      "nextSignerNotNotified": {
+        "body": "Ihre Unterschrift ist gespeichert. Der Absender kann die Anfrage erneut senden.",
+        "title": "E-Mail an {{name}} nicht möglich"
+      },
+      "noIdentity": {
+        "body": "Öffnen Sie dieses Dokument über Ihre Einladungs-E-Mail und versuchen Sie es erneut.",
+        "title": "Sie konnten nicht identifiziert werden"
+      },
+      "noPdfLib": {
+        "body": "Die Abhängigkeit pdf-lib fehlt. Informieren Sie Ihre Administration.",
+        "title": "Unterschreiben ist in diesem Build nicht verfügbar"
+      },
+      "renderFailed": "Dieses PDF konnte nicht dargestellt werden",
+      "signFailed": "Die Unterschrift konnte nicht abgeschlossen werden",
+      "stillLoading": "Warten Sie, bis das Dokument fertig geladen ist"
+    },
+    "validation": {
+      "cellsTooLong": "Verwenden Sie höchstens {{count}} Zeichen.",
+      "email": "Geben Sie eine gültige E-Mail-Adresse ein.",
+      "format": "Verwenden Sie das Format {{hint}}.",
+      "notExpectedFormat": "Dieser Wert hat nicht das erwartete Format.",
+      "number": "Geben Sie eine Zahl ein.",
+      "required": "Dieses Feld ist erforderlich.",
+      "selectAtLeast_one": "Wählen Sie mindestens {{count}} Option.",
+      "selectAtLeast_other": "Wählen Sie mindestens {{count}} Optionen.",
+      "selectAtMost_one": "Wählen Sie höchstens {{count}} Option.",
+      "selectAtMost_other": "Wählen Sie höchstens {{count}} Optionen.",
+      "ssn": "Verwenden Sie das Format xxx-xx-xxxx."
+    },
+    "verify": {
+      "backHome": "Zurück zu Sign",
+      "cert": {
+        "range": "{{from}} bis {{to}}",
+        "rangeExpired": "{{from}} bis {{to}} (abgelaufen)"
+      },
+      "checking": "Die Signatur wird geprüft",
+      "choosePdf": "PDF auswählen",
+      "contentMatches": "Stimmt mit dem signierten Digest überein",
+      "contentMismatch": "Stimmt nicht überein",
+      "coverPartial": "Teilweise: Inhalt nach der Signatur ergänzt",
+      "coverWhole": "Gesamte Datei",
+      "detail": {
+        "altered": "Das Dokument wurde seit der Unterzeichnung verändert: Der Inhalt stimmt nicht mehr mit dem signierten Digest überein.",
+        "intact": "Die Signatur ist intakt und deckt die gesamte Datei ab.",
+        "intactAppended": "Die Signatur ist intakt, es wurde jedoch nach ihrer Anwendung Inhalt angehängt. Prüfen Sie die spätere Fassung.",
+        "keyUnchecked": "Der Dokumentinhalt stimmt mit dem signierten Digest überein, der Signaturschlüssel ließ sich in diesem Browser aber nicht prüfen (möglicherweise nutzt er ein Verfahren, das WebCrypto nicht bereitstellt).",
+        "notDecoded": "Der Signaturblock ist vorhanden, konnte aber nicht dekodiert werden.",
+        "notRead": "Die Signatur konnte nicht gelesen werden.",
+        "unchecked": "Die Signatur konnte in diesem Browser nicht geprüft werden."
+      },
+      "dropHere": "Unterzeichnetes PDF hier ablegen",
+      "footnote": "Ein gültiges Ergebnis bedeutet, dass die von der Signatur abgedeckten Bytes unverändert sind und die Signatur zum eingebetteten Zertifikat passt. Es wird nicht geprüft, ob das Zertifikat auf eine vertrauenswürdige Stelle zurückführt, denn dafür wäre ein Vertrauensspeicher nötig, den der Browser nicht bereitstellt.",
+      "intro": "Legen Sie unten ein unterzeichnetes PDF ab, um zu prüfen, ob seine digitale Signatur intakt ist und niemand den Inhalt nachträglich geändert hat. Die Datei bleibt auf Ihrem Gerät: Es wird nichts hochgeladen.",
+      "keyUnverified": "Nicht verifiziert",
+      "keyVerified": "Signatur verifiziert",
+      "kilobytes": "{{size}} KB",
+      "orPickOne": "oder wählen Sie eines von Ihrem Gerät",
+      "rows": {
+        "certificate": "Zertifikat",
+        "contentCheck": "Inhaltsprüfung",
+        "coverage": "Abdeckung",
+        "digest": "Digest",
+        "documentDigest": "Dokument-Digest",
+        "email": "E-Mail",
+        "issuedBy": "Ausgestellt von",
+        "keyCheck": "Schlüsselprüfung",
+        "organization": "Organisation",
+        "serial": "Seriennummer",
+        "signedAt": "Unterzeichnet am",
+        "signer": "Unterzeichner"
+      },
+      "signatureIndex": "Signatur {{position}}",
+      "signatureStatus": {
+        "altered": "Verändert",
+        "intact": "Intakt",
+        "unverified": "Nicht verifiziert"
+      },
+      "status": {
+        "inconclusive": "Nicht eindeutig",
+        "invalid": "Ungültig",
+        "unsigned": "Nicht signiert",
+        "valid": "Gültig"
+      },
+      "summary": {
+        "invalid": "Mindestens eine Signatur passt nicht zum Dokument. Behandeln Sie diese Datei als verändert.",
+        "unknown": "Die Signatur wurde gelesen, ließ sich im Browser aber nicht vollständig verifizieren. Die Details unten zeigen, wie weit die Prüfung kam.",
+        "unsigned": "Dieses PDF trägt keine digitale Signatur. Es kann trotzdem sichtbare Unterschriftsbilder auf der Seite enthalten, kryptografisch versiegelt ist es aber nicht.",
+        "valid_one": "Verifiziert. {{count}} Signatur intakt und der Inhalt ist seit der Unterzeichnung unverändert.",
+        "valid_other": "Verifiziert. {{count}} Signaturen intakt und der Inhalt ist seit der Unterzeichnung unverändert."
+      },
+      "summaryLabels": {
+        "sha256": "SHA-256",
+        "signatures": "Signaturen",
+        "size": "Größe"
+      },
+      "title": "Unterzeichnetes Dokument überprüfen",
+      "toast": {
+        "notPdfBody": "Wählen Sie das unterzeichnete PDF, das Sie prüfen möchten.",
+        "notPdfTitle": "Das ist kein PDF",
+        "unreadable": "Diese Datei konnte nicht gelesen werden"
+      }
+    },
+    "widget": {
+      "cells": "Zellen",
+      "checkbox": "Checkbox",
+      "company": "Unternehmen",
+      "date": "Datum der Unterschrift",
+      "draw": "Zeichnung",
+      "dropdown": "Dropdown",
+      "email": "E-Mail",
+      "image": "Bild",
+      "initials": "Initialen",
+      "jobTitle": "Berufsbezeichnung",
+      "name": "Vollständiger Name",
+      "radioButton": "Auswahl",
+      "signature": "Unterschrift",
+      "stamp": "Stempel",
+      "text": "Text",
+      "textInput": "Text"
+    }
+  },
+  "templates": {
+    "a11y": {
+      "moreActions": "Weitere Aktionen",
+      "use": "{{name}} verwenden"
+    },
+    "actions": {
+      "bulkSend": "Massenversand",
+      "import": "Aus PDF oder DOCX importieren",
+      "new": "Neue Vorlage",
+      "shareWithTeam": "Mit Team teilen",
+      "use": "Verwenden"
+    },
+    "badge": {
+      "bulkReady": "Massenversand bereit",
+      "publicForm": "Öffentliches Formular"
+    },
+    "card": {
+      "by": "von {{name}}",
+      "moreRoles": "+{{value}}",
+      "noFolder": "Kein Ordner",
+      "noRoles": "Noch keine Rollen",
+      "untitled": "Unbenannte Vorlage",
+      "updated": "aktualisiert {{when}}",
+      "uses": "{{value}}× verwendet"
+    },
+    "defaults": {
+      "note": "Bitte prüfen und unterschreiben Sie dieses Dokument"
+    },
+    "dialog": {
+      "delete": {
+        "confirm": "Vorlage löschen",
+        "description": "{{name}} wird aus der Galerie entfernt. Bereits daraus gesendete Dokumente sind nicht betroffen.",
+        "title": "Diese Vorlage löschen?"
+      },
+      "password": {
+        "confirm": "Entsperren und fortfahren",
+        "description": "Geben Sie das Passwort ein, damit die Datei einmalig entsperrt und als Vorlage gespeichert werden kann.",
+        "title": "Dieses PDF ist passwortgeschützt"
+      },
+      "share": {
+        "confirm": "Freigabe speichern",
+        "description": "Alle Mitglieder eines ausgewählten Teams können diese Vorlage finden und verwenden.",
+        "error": "Teams konnten nicht geladen werden. {{message}}",
+        "loading": "Teams werden geladen",
+        "noTeams": "Dieser Arbeitsbereich hat noch keine Teams. Erstellen Sie in den Einstellungen eines, um Vorlagen zu teilen.",
+        "title": "Mit Team teilen"
+      }
+    },
+    "empty": {
+      "body": "Eine Vorlage ist ein Dokument mit bereits platzierten Feldern, sodass der nächste Versand Sekunden statt Minuten dauert.",
+      "noMatch": "Keine Vorlage entspricht diesem Filter. Leeren Sie die Suche oder wechseln Sie zurück zu Meine und Team.",
+      "title": "Noch keine Vorlagen"
+    },
+    "errors": {
+      "convertDocx": "Diese DOCX-Datei konnte nicht konvertiert werden.",
+      "createFailed": "Die Vorlage wurde nicht erstellt.",
+      "downloadConverted": "Das konvertierte PDF konnte nicht heruntergeladen werden.",
+      "listFailed": "Vorlagen konnten nicht geladen werden. {{message}}",
+      "notReadablePdf": "Diese Datei ist kein lesbares PDF.",
+      "pdfLocked": "Dieses PDF ist passwortgeschützt.",
+      "pdfUnreadable": "Dieses PDF konnte nicht geöffnet werden.",
+      "profileLoading": "Ihr Profil wird noch geladen. Versuchen Sie es gleich erneut.",
+      "signedOut": "Sie sind abgemeldet.",
+      "tooLarge": "Dateien müssen kleiner als {{size}} MB sein.",
+      "unsupportedFile": "Nur PDF- und DOCX-Dateien können zu Vorlagen werden.",
+      "uploadNoUrl": "Der Upload hat keine URL zurückgegeben."
+    },
+    "fields": {
+      "name": "Vorlagenname",
+      "password": "Passwort"
+    },
+    "hints": {
+      "edit": "bearbeiten",
+      "new": "neue Vorlage",
+      "use": "verwenden"
+    },
+    "meta": {
+      "sendsThisQuarter_one": "{{count}} Versand in diesem Quartal",
+      "sendsThisQuarter_other": "{{count}} Versände in diesem Quartal"
+    },
+    "new": {
+      "hint": "Legen Sie hier ein PDF oder DOCX ab. Felder werden anhand von Unterstrichen und Beschriftungen automatisch erkannt.",
+      "preparing": "Ihre Vorlage wird vorbereitet"
+    },
+    "roles": {
+      "fallback": "Rolle {{index}}",
+      "prefill": "Von mir ausfüllen"
+    },
+    "scopes": {
+      "all": "Meine und Team",
+      "mine": "Meine",
+      "shared": "Für mich freigegeben"
+    },
+    "search": {
+      "label": "Vorlagen durchsuchen",
+      "placeholder": "Vorlagen durchsuchen"
+    },
+    "share": {
+      "unnamedTeam": "Team"
+    },
+    "sort": {
+      "label": "Sortierung: {{sort}}",
+      "name": "Name",
+      "updated": "zuletzt aktualisiert",
+      "used": "am häufigsten verwendet"
+    },
+    "title": "Vorlagen",
+    "toast": {
+      "createFailed": "Vorlage konnte nicht erstellt werden",
+      "deleteFailed": "Löschen nicht möglich",
+      "deleted": {
+        "body": "{{name}} wurde aus der Galerie entfernt.",
+        "title": "Vorlage gelöscht"
+      },
+      "duplicateFailed": "Duplizieren nicht möglich",
+      "duplicated": {
+        "body": "Eine Kopie von {{name}} liegt in Ihrer Galerie.",
+        "title": "Vorlage dupliziert"
+      },
+      "profileNotReady": {
+        "body": "Ihr Arbeitsbereichsprofil wird noch geladen.",
+        "title": "Profil nicht bereit"
+      },
+      "renameFailed": "Umbenennen nicht möglich",
+      "shareFailed": "Teilen nicht möglich",
+      "shared": {
+        "body": "{{name}} ist für Ihre Teams freigegeben.",
+        "title": "Freigabe aktualisiert"
+      }
+    }
+  }
+}

@@ -1,0 +1,51 @@
+DocuStamp
+Copyright (C) 2026 Gboyega Ofi and the DocuStamp contributors
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU Affero General Public License, version 3, as published by
+the Free Software Foundation. See LICENSE for the full text.
+
+
+Based on OpenSign
+-----------------
+
+DocuStamp began as a fork of OpenSign (https://github.com/OpenSignLabs/OpenSign),
+copyright its authors (OpenSign Labs and the OpenSign contributors), licensed
+under the GNU Affero General Public License, version 3.
+The fork point is OpenSign version 2.37.0 (upstream commit a5456dadc, August 2026).
+LICENSE holds the unmodified text of the GNU AGPL, version 3. OpenSign's copy of
+that file opened with the following statement, reproduced here unchanged:
+
+    * All content that resides under the "apps/OpenSignServer/cloud/customRoute" directory of this repository, if that directory exists, is licensed under the license defined in "apps/OpenSignServer/cloud/customRoute".
+    * All third party components incorporated into the OpenSign Software are licensed under the original license provided by the owner of the applicable component.
+    * Content outside of the above mentioned directories or restrictions above is available under the "GNU AFFERO GENERAL PUBLIC LICENSE" as defined below -
+
+The directory it refers to does not exist in DocuStamp; that code now lives in
+apps/server/cloud/routes.
+
+Since then the code has been modified substantially, including:
+
+  - a new web app (apps/web) replacing the original frontend;
+  - a REST API (/api/v1), personal API tokens, webhooks and an MCP server;
+  - optional AI document preparation;
+  - security hardening across the server, and a self-signed signing
+    certificate created on first boot when none is configured;
+  - the server moved from apps/OpenSignServer to apps/server, and the product
+    renamed to DocuStamp.
+
+The full history of changes since the fork point is in this repository's git log.
+
+
+Trademarks
+----------
+
+OpenSign is a trademark of its owner, and DocuSign is a trademark of DocuSign,
+Inc. DocuStamp is an independent project and is not affiliated with, endorsed
+by or sponsored by either of them.
+
+
+Third-party components
+----------------------
+
+Dependencies listed in apps/server/package.json and apps/web/package.json are
+distributed under their own licenses.

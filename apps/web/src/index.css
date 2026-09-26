@@ -1,0 +1,315 @@
+@import url("https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap");
+@import "tailwindcss";
+
+/*
+  Design tokens for direction E.
+  Light is the default: warm off-white ground, white surfaces, hairline borders.
+  Green = action / "needs you", amber = in progress,
+  terracotta = urgency / decline, ink = completed.
+
+  Dark is a selected palette (see the override blocks below), not an inversion:
+  warm near-black grounds, a lighter green accent so it carries on dark, and
+  every "on ink" pairing flipped so bars that read dark-on-light in light mode
+  read light-on-dark in dark mode.
+*/
+@theme {
+  --font-sans: "Instrument Sans", system-ui, -apple-system, sans-serif;
+  --font-serif: "Newsreader", Georgia, "Times New Roman", serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --color-ground: #faf8f4;
+  --color-surface: #ffffff;
+  --color-surface-2: #fdfcfa;
+  --color-surface-3: #f7f5f1;
+  --color-paper: #f1eee7;
+  --color-sand: #f4f1ea;
+  --color-line: #e8e4dc;
+  --color-line-soft: #efece5;
+  --color-line-strong: #ddd8ce;
+
+  --color-ink: #1c1b18;
+  --color-ink-2: #4a4740;
+  --color-ink-strong: #000000;
+  --color-muted: #6e6a62;
+  --color-muted-2: #8a857b;
+  --color-faint: #cfc9be;
+
+  --color-accent: #0f6e56;
+  --color-accent-deep: #0a4f3e;
+  --color-accent-soft: #e7f1ed;
+  --color-accent-tint: #f3f7f5;
+  --color-accent-line: #bfd9cf;
+
+  --color-warn: #b07a12;
+  --color-warn-ink: #8a5e0a;
+  --color-warn-soft: #fbf1dc;
+
+  --color-danger: #b5412e;
+  --color-danger-2: #c2705c;
+  --color-danger-soft: #fbeeea;
+  --color-danger-line: #ebcfc9;
+
+  --color-violet: #6b5bd6;
+  --color-violet-soft: #eeebfa;
+
+  /* Foreground for anything sitting on a filled accent surface. */
+  --color-on-accent: #ffffff;
+  /* Switch knob: has to read on both the accent track and the off track. */
+  --color-knob: #ffffff;
+  /* Foreground for the danger action inside an inverted (bg-ink) bar. */
+  --color-danger-on-ink: #f0a697;
+  /* Kbd hint tones that sit inside filled buttons. */
+  --color-kbd-accent-line: #2e8a72;
+  --color-kbd-accent-ink: #ddf0e8;
+  --color-kbd-ink-line: #3b3a36;
+  --color-kbd-ink-ink: #b8b4ab;
+  /* Modal / drawer backdrop. */
+  --color-scrim: rgb(28 27 24 / 0.38);
+  /* The deep green marketing panel on the auth screens. Stays deep in both
+     themes so the white type on it keeps its contrast. */
+  --color-brand-panel: #0f6e56;
+
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 10px;
+  --radius-xl: 12px;
+
+  --shadow-card: 0 1px 2px rgb(28 27 24 / 0.04);
+  --shadow-raise: 0 1px 2px rgb(28 27 24 / 0.08);
+  --shadow-pop: 0 12px 32px -16px rgb(28 27 24 / 0.35);
+  --shadow-page: 0 2px 14px rgb(28 27 24 / 0.08);
+  --shadow-focus: 0 0 0 4px rgb(15 110 86 / 0.15);
+}
+
+/*
+  Dark palette. Declared twice on purpose:
+    1. under prefers-color-scheme for the "system" setting (anything that is not
+       an explicit light choice),
+    2. on [data-theme="dark"] so an explicit dark choice wins on a light system.
+  The explicit block comes second so it also wins over the media query.
+  Only the values change: every utility (bg-ground, text-ink, border-line, ...)
+  keeps pointing at the same custom property.
+*/
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+
+    --color-ground: #121210;
+    --color-surface: #1a1a17;
+    --color-surface-2: #1f1f1b;
+    --color-surface-3: #2a2a25;
+    --color-paper: #232320;
+    --color-sand: #26261f;
+    --color-line: #2c2c27;
+    --color-line-soft: #262622;
+    --color-line-strong: #3a3a33;
+
+    --color-ink: #f2efe8;
+    --color-ink-2: #cfcac0;
+    --color-ink-strong: #ffffff;
+    --color-muted: #a19b8f;
+    --color-muted-2: #807a6f;
+    --color-faint: #55514a;
+
+    --color-accent: #3fa386;
+    --color-accent-deep: #5fbf9f;
+    --color-accent-soft: #173a30;
+    --color-accent-tint: #15221d;
+    --color-accent-line: #24513f;
+
+    --color-warn: #d9a441;
+    --color-warn-ink: #e8b95a;
+    --color-warn-soft: #33290f;
+
+    --color-danger: #e06a55;
+    --color-danger-2: #c97e68;
+    --color-danger-soft: #3a1c17;
+    --color-danger-line: #5a2a22;
+
+    --color-violet: #9b8cf0;
+    --color-violet-soft: #221e3d;
+
+    --color-on-accent: #0d1a16;
+    --color-knob: #f2efe8;
+    --color-danger-on-ink: #9e3823;
+    --color-kbd-accent-line: #2c7a63;
+    --color-kbd-accent-ink: #0d2b23;
+    --color-kbd-ink-line: #c9c4ba;
+    --color-kbd-ink-ink: #4a4740;
+    --color-scrim: rgb(0 0 0 / 0.62);
+    --color-brand-panel: #0d5744;
+
+    --shadow-card: 0 1px 2px rgb(0 0 0 / 0.45);
+    --shadow-raise: 0 1px 2px rgb(0 0 0 / 0.5);
+    --shadow-pop: 0 16px 38px -16px rgb(0 0 0 / 0.7);
+    --shadow-page: 0 2px 18px rgb(0 0 0 / 0.55);
+    --shadow-focus: 0 0 0 4px rgb(63 163 134 / 0.24);
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --color-ground: #121210;
+  --color-surface: #1a1a17;
+  --color-surface-2: #1f1f1b;
+  --color-surface-3: #2a2a25;
+  --color-paper: #232320;
+  --color-sand: #26261f;
+  --color-line: #2c2c27;
+  --color-line-soft: #262622;
+  --color-line-strong: #3a3a33;
+
+  --color-ink: #f2efe8;
+  --color-ink-2: #cfcac0;
+  --color-ink-strong: #ffffff;
+  --color-muted: #a19b8f;
+  --color-muted-2: #807a6f;
+  --color-faint: #55514a;
+
+  --color-accent: #3fa386;
+  --color-accent-deep: #5fbf9f;
+  --color-accent-soft: #173a30;
+  --color-accent-tint: #15221d;
+  --color-accent-line: #24513f;
+
+  --color-warn: #d9a441;
+  --color-warn-ink: #e8b95a;
+  --color-warn-soft: #33290f;
+
+  --color-danger: #e06a55;
+  --color-danger-2: #c97e68;
+  --color-danger-soft: #3a1c17;
+  --color-danger-line: #5a2a22;
+
+  --color-violet: #9b8cf0;
+  --color-violet-soft: #221e3d;
+
+  --color-on-accent: #0d1a16;
+  --color-knob: #f2efe8;
+  --color-danger-on-ink: #9e3823;
+  --color-kbd-accent-line: #2c7a63;
+  --color-kbd-accent-ink: #0d2b23;
+  --color-kbd-ink-line: #c9c4ba;
+  --color-kbd-ink-ink: #4a4740;
+  --color-scrim: rgb(0 0 0 / 0.62);
+  --color-brand-panel: #0d5744;
+
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.45);
+  --shadow-raise: 0 1px 2px rgb(0 0 0 / 0.5);
+  --shadow-pop: 0 16px 38px -16px rgb(0 0 0 / 0.7);
+  --shadow-page: 0 2px 18px rgb(0 0 0 / 0.55);
+  --shadow-focus: 0 0 0 4px rgb(63 163 134 / 0.24);
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+  body {
+    @apply bg-ground text-ink font-sans antialiased;
+    font-size: 13px;
+  }
+  a {
+    @apply text-accent hover:text-accent-deep;
+  }
+  ::selection {
+    background: var(--color-accent-soft);
+    color: var(--color-ink);
+  }
+  .num {
+    font-variant-numeric: tabular-nums;
+  }
+  /* Keep every button/link target comfortable */
+  button,
+  [role="button"] {
+    cursor: pointer;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  .scroll-thin {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-faint) transparent;
+  }
+  /*
+    Always-white paper: the rendered PDF page, its thumbnails and the signature
+    pad. These keep a white ground in both themes because the artefacts they
+    show are printed on white and their overlay colours were chosen for white.
+  */
+  .paper-white {
+    background-color: #ffffff;
+    color-scheme: light;
+  }
+}
+
+@layer components {
+  /*
+    Per-signer colours arrive with the document (blockColor) and were picked for
+    a white page, so several of them go muddy on the dark ground. Pass the raw
+    colour in as `style={{ "--swatch": color }}` and read `var(--swatch-on)`,
+    which is the same colour in light and a lifted version in dark.
+  */
+  .swatch {
+    --swatch-on: var(--swatch);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .swatch {
+      --swatch-on: color-mix(in srgb, var(--swatch) 55%, #f2efe8);
+    }
+  }
+  :root[data-theme="dark"] .swatch {
+    --swatch-on: color-mix(in srgb, var(--swatch) 55%, #f2efe8);
+  }
+
+  /*
+    Pins a subtree to the light palette. Used for previews of things that always
+    render light no matter what this app is set to: the branding email preview
+    and the completed-PDF preview.
+  */
+  .theme-light {
+    color-scheme: light;
+    --color-ground: #faf8f4;
+    --color-surface: #ffffff;
+    --color-surface-2: #fdfcfa;
+    --color-surface-3: #f7f5f1;
+    --color-paper: #f1eee7;
+    --color-sand: #f4f1ea;
+    --color-line: #e8e4dc;
+    --color-line-soft: #efece5;
+    --color-line-strong: #ddd8ce;
+    --color-ink: #1c1b18;
+    --color-ink-2: #4a4740;
+    --color-ink-strong: #000000;
+    --color-muted: #6e6a62;
+    --color-muted-2: #8a857b;
+    --color-faint: #cfc9be;
+    --color-accent: #0f6e56;
+    --color-accent-deep: #0a4f3e;
+    --color-accent-soft: #e7f1ed;
+    --color-accent-tint: #f3f7f5;
+    --color-accent-line: #bfd9cf;
+    --color-warn: #b07a12;
+    --color-warn-ink: #8a5e0a;
+    --color-warn-soft: #fbf1dc;
+    --color-danger: #b5412e;
+    --color-danger-2: #c2705c;
+    --color-danger-soft: #fbeeea;
+    --color-danger-line: #ebcfc9;
+    --color-violet: #6b5bd6;
+    --color-violet-soft: #eeebfa;
+    --color-on-accent: #ffffff;
+    --color-knob: #ffffff;
+    color: var(--color-ink);
+  }
+}

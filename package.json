@@ -1,0 +1,31 @@
+{
+  "name": "docustamp",
+  "version": "1.0.6",
+  "description": "Open source, self-hostable e-signature app",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "husky install",
+    "lint-staged-changes": "lint-staged"
+  },
+  "homepage": "https://docustamp.dev",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ophydami/docustamp"
+  },
+  "keywords": [
+    "digital",
+    "signature",
+    "e-signature",
+    "esign",
+    "electronic",
+    "self-hosted"
+  ],
+  "author": "DocuStamp contributors",
+  "license": "AGPL-3.0-only",
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
+    "prettier": "^3.6.2"
+  }
+}
