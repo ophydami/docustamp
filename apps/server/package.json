@@ -55,7 +55,7 @@
     "p-limit": "^7.3.3",
     "parse": "^8.6.0",
     "parse-dbtool": "^1.2.0",
-    "parse-server": "^8.6.84",
+    "parse-server": "^9.10.0",
     "parse-server-api-mail-adapter": "^5.0.5",
     "pdf-lib": "^1.17.1",
     "pdfjs-dist": "^6.3.289",
