@@ -1,0 +1,62 @@
+name: Bug report
+description: Something in DocuStamp is not working as it should
+labels: ["bug"]
+title: "[Bug]: "
+body:
+  - type: markdown
+    attributes:
+      value: Security problems should not be reported here. See SECURITY.md for how to report them privately.
+  - type: textarea
+    attributes:
+      label: What happened
+      description: A clear description of the problem, including any error messages.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: What you expected
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Steps to reproduce
+      description: Step by step, so someone else can see the same thing.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Screenshots or logs (optional)
+  - type: input
+    attributes:
+      label: Version or commit
+      description: The release tag or the commit you are running, e.g. from `git rev-parse --short HEAD`.
+    validations:
+      required: true
+  - type: dropdown
+    attributes:
+      label: How are you running it?
+      options:
+        - Docker Compose on my own server
+        - A hosting platform (Railway, Render, Fly.io or similar)
+        - Local development
+        - Other
+    validations:
+      required: true
+  - type: dropdown
+    attributes:
+      label: Browsers affected
+      multiple: true
+      options:
+        - Chrome
+        - Firefox
+        - Safari
+        - Microsoft Edge
+        - Other
+  - type: checkboxes
+    attributes:
+      label: Checks
+      options:
+        - label: I searched the existing issues and this is not a duplicate.
+          required: true
+        - label: I agree to follow the project's Code of Conduct.
+          required: true

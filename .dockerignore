@@ -1,0 +1,22 @@
+# Root build context is used by apps/server/Dockerfile (COPY apps/server/ .)
+.git
+**/node_modules
+**/dist
+**/build
+apps/web
+deploy
+.playwright-mcp
+*.log
+.env
+.env.*
+
+# Runtime artefacts a developer machine accumulates inside the server tree.
+# They must never reach the image: the log files carry the full params of
+# failed cloud functions, and files/files is the local FSFilesAdapter store,
+# which Docker would seed a fresh opensign-files volume from.
+logs
+apps/server/logs
+apps/server/files/files
+apps/server/exports
+**/*.err.*
+**/*.info.*

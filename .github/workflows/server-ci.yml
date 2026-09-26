@@ -1,0 +1,66 @@
+# Lint and test for apps/server.
+#
+# This lives at the repository root on purpose: GitHub Actions only reads
+# .github/workflows from the root, so the copy that used to sit at
+# apps/server/.github/workflows/ci.yml never ran.
+name: server-ci
+
+on:
+  push:
+    branches:
+      - main
+      - staging
+  pull_request:
+    branches:
+      - '**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    working-directory: apps/server
+
+jobs:
+  test:
+    name: node ${{ matrix.node-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: ['22.x']
+    services:
+      mongo:
+        # The specs talk to a local mongod on the default port
+        # (spec/utils/test-runner.js -> testDatabaseUri()).
+        image: mongo:8
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --quiet --eval 'db.runCommand({ ping: 1 }).ok'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+          cache-dependency-path: apps/server/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Test
+        run: npx jasmine
+        env:
+          SERVER_URL: http://localhost:30001/test
+          TESTING: 'true'

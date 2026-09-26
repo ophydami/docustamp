@@ -1,0 +1,11 @@
+{
+  "spec_dir": "spec",
+  "spec_files": ["**/*[sS]pec.js"],
+  "helpers": ["helper.js"],
+  "env": {
+    "stopSpecOnExpectationFailure": false,
+    "random": false,
+    "failSpecWithNoExpectations": false,
+    "defaultTimeoutInterval": 60000
+  }
+}

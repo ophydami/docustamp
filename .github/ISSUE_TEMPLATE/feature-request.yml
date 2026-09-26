@@ -1,0 +1,29 @@
+name: Feature request
+description: Suggest an idea for DocuStamp
+labels: ["enhancement"]
+title: "[Feature]: "
+body:
+  - type: textarea
+    attributes:
+      label: The problem
+      description: What are you trying to do, and what makes it hard today?
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: The idea
+      description: How you would like it to work.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Anything else (optional)
+      description: Alternatives you considered, examples from other tools, screenshots.
+  - type: checkboxes
+    attributes:
+      label: Checks
+      options:
+        - label: I searched the existing issues and this is not a duplicate.
+          required: true
+        - label: I agree to follow the project's Code of Conduct.
+          required: true

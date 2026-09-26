@@ -1,0 +1,3255 @@
+{
+  "_meta": "machine-translated 2026-08-21, review welcome",
+  "ai": {
+    "actions": {
+      "adjust": "निर्देश बदलें",
+      "analyze": "दस्तावेज़ का विश्लेषण करें",
+      "analyzing": "दस्तावेज़ पढ़ा जा रहा है",
+      "analyzingHint": "आमतौर पर 10 से 30 सेकंड।",
+      "openEditor": "ड्राफ़्ट सहेजें और एडिटर खोलें",
+      "sendNow": "हस्ताक्षर के लिए भेजें"
+    },
+    "disabled": {
+      "body": "इसे चालू करने के लिए सर्वर पर AI_ENABLED और Bedrock क्रेडेंशियल सेट करें।",
+      "title": "इस सर्वर पर AI तैयारी बंद है"
+    },
+    "drop": {
+      "aria": "दस्तावेज़ चुनें",
+      "hint": "PDF, DOCX या DOC, {{size}} MB तक",
+      "title": "PDF या Word फ़ाइल यहाँ छोड़ें, या चुनने के लिए क्लिक करें"
+    },
+    "file": {
+      "converted": "Word से बदला गया",
+      "replace": "बदलें"
+    },
+    "instructions": {
+      "hint": "सादी भाषा काफ़ी है। बताएं आप कौन हैं, पहले कौन हस्ताक्षर करेगा, या भेजने से पहले मॉडल क्या भरे।",
+      "label": "निर्देश (वैकल्पिक)",
+      "placeholder": "जैसे: मैं मकान मालिक हूँ। किरायेदार पहले हस्ताक्षर करेगा, फिर मैं। हर पेज पर इनिशियल जोड़ें।"
+    },
+    "known": {
+      "add": "व्यक्ति जोड़ें",
+      "email": "ईमेल",
+      "empty": "खाली छोड़ें ताकि मॉडल दस्तावेज़ में छपे नाम और ईमेल ढूँढ सके।",
+      "label": "पहले से ज्ञात लोग (वैकल्पिक)",
+      "name": "नाम"
+    },
+    "poweredBy": "{{model}} ({{provider}} के ज़रिए)",
+    "preview": {
+      "empty": "दस्तावेज़ चुनते ही यहाँ दिखेगा।",
+      "legend": "रंगीन बॉक्स प्रस्तावित फ़ील्ड हैं।",
+      "title": "पूर्वावलोकन"
+    },
+    "review": {
+      "inOrder": "क्रम में हस्ताक्षर",
+      "missing_one": "{{count}} हस्ताक्षरकर्ता का ईमेल अभी बाकी है।",
+      "missing_other": "{{count}} हस्ताक्षरकर्ताओं के ईमेल अभी बाकी हैं।",
+      "signers": "कौन हस्ताक्षर करेगा",
+      "signersHint": "भेजने से पहले छूटे हुए ईमेल भरें।",
+      "title": "दस्तावेज़ का शीर्षक",
+      "you": "आप"
+    },
+    "steps": {
+      "document": "1. दस्तावेज़",
+      "instructions": "2. आप क्या चाहते हैं?",
+      "review": "3. जाँचें"
+    },
+    "subtitle": "एक दस्तावेज़ छोड़ें और बताएं कि आप क्या चाहते हैं। मॉडल उसे पढ़ता है, तय करता है कि कौन कहाँ हस्ताक्षर करेगा, और हर फ़ील्ड रख देता है। आप जाँचें, फिर भेजें या एडिटर में सुधारें।",
+    "title": "AI से पूछें",
+    "toast": {
+      "analysisFailed": "दस्तावेज़ का विश्लेषण नहीं हो सका",
+      "draftCreated": "ड्राफ़्ट बन गया। एडिटर में फ़ील्ड जाँचें।",
+      "draftFailed": "ड्राफ़्ट नहीं बन सका",
+      "missingEmails_one": "{{count}} हस्ताक्षरकर्ता का ईमेल नहीं है।",
+      "missingEmails_other": "{{count}} हस्ताक्षरकर्ताओं का ईमेल नहीं है।",
+      "sendFailed": "दस्तावेज़ नहीं भेजा जा सका",
+      "sentWithFailures_one": "बन गया, पर {{count}} ईमेल नहीं भेजा जा सका।",
+      "sentWithFailures_other": "बन गया, पर {{count}} ईमेल नहीं भेजे जा सके।",
+      "sent_one": "{{count}} व्यक्ति को भेजा गया",
+      "sent_other": "{{count}} लोगों को भेजा गया"
+    }
+  },
+  "app": {
+    "a11y": {
+      "closeNav": "नेविगेशन बंद करें",
+      "mainNav": "मुख्य नेविगेशन",
+      "openNav": "नेविगेशन खोलें"
+    },
+    "actions": {
+      "bulkSend": "थोक भेजें",
+      "new": "नया",
+      "newRequest": "नया अनुरोध",
+      "signYourself": "स्वयं हस्ताक्षर करें",
+      "useTemplate": "टेम्पलेट उपयोग करें"
+    },
+    "nav": {
+      "ai": "AI से पूछें",
+      "automations": "ऑटोमेशन",
+      "contacts": "संपर्क",
+      "documents": "दस्तावेज़",
+      "inbox": "इनबॉक्स",
+      "reports": "रिपोर्ट",
+      "settings": "सेटिंग्स",
+      "templates": "टेम्पलेट्स"
+    },
+    "palette": {
+      "groupActions": "क्रियाएँ",
+      "groupGoTo": "यहाँ जाएँ",
+      "groupThisPage": "यह पेज",
+      "label": "कमांड पैलेट",
+      "noResults": "कोई परिणाम नहीं।",
+      "toggleDark": "डार्क मोड बदलें",
+      "useATemplate": "टेम्पलेट उपयोग करें"
+    },
+    "savedViews": {
+      "expiring": "इस सप्ताह समाप्त हो रहे",
+      "sentByMe": "मेरे द्वारा भेजे गए",
+      "title": "सहेजे गए व्यू",
+      "waitingOnMe": "मेरी प्रतीक्षा में"
+    },
+    "topbar": {
+      "searchPlaceholder": "खोजें या कमांड लिखें",
+      "searchPlaceholderLong": "दस्तावेज़, लोग, टेम्पलेट खोजें, या कमांड लिखें"
+    }
+  },
+  "auth": {
+    "a11y": {
+      "acceptTerms": "सेवा शर्तें और गोपनीयता नीति स्वीकार करें",
+      "hidePassword": "पासवर्ड छिपाएँ",
+      "showPassword": "पासवर्ड दिखाएँ"
+    },
+    "actions": {
+      "backToSignIn": "साइन इन पर वापस",
+      "createWorkspace": "वर्कस्पेस बनाएँ",
+      "emailMeACode": "मुझे ईमेल पर कोड भेजें",
+      "forgot": "भूल गए?",
+      "goToSignIn": "साइन इन पर जाएँ",
+      "openDocument": "दस्तावेज़ खोलें",
+      "resendCode": "कोड पुनः भेजें",
+      "resendIn": "{{seconds}} सेकंड में पुनः भेजें",
+      "sendResetLink": "रीसेट लिंक भेजें",
+      "sendToDifferentAddress": "इसे किसी दूसरे पते पर भेजें",
+      "signIn": "साइन इन करें",
+      "switchToOtp": "पासवर्ड नहीं चाहिए? मुझे ईमेल पर साइन-इन कोड भेजें",
+      "switchToPassword": "इसके बजाय पासवर्ड से साइन इन करें",
+      "useDifferentAccount": "दूसरे खाते का उपयोग करें",
+      "useDifferentEmail": "दूसरा ईमेल उपयोग करें"
+    },
+    "checkEmail": {
+      "sentTo": "हमने <1>{{email}}</1> पर 4 अंकों का कोड भेजा है।",
+      "title": "अपना ईमेल देखें"
+    },
+    "code": {
+      "digitAria": "{{label}}, अंक {{index}}",
+      "label": "साइन-इन कोड"
+    },
+    "divider": {
+      "or": "या"
+    },
+    "errors": {
+      "accountDisabled": "यह खाता निष्क्रिय कर दिया गया है। अपने वर्कस्पेस एडमिन से संपर्क करें।",
+      "accountNotCreated": "खाता नहीं बनाया जा सका।",
+      "badCredentials": "यह ईमेल और पासवर्ड किसी खाते से मेल नहीं खाते।",
+      "cannotReachServer": "सर्वर तक नहीं पहुँचा जा सका। अपना कनेक्शन जाँचें और पुनः प्रयास करें।",
+      "codeEmailFailed": "कोड ईमेल नहीं किया जा सका। पुनः प्रयास करें।",
+      "codeFourDigits": "अपने ईमेल में आया 6 अंकों का कोड दर्ज करें।",
+      "codeInvalid": "यह कोड सही नहीं है। इसे जाँचें और पुनः प्रयास करें।",
+      "codeSendFailed": "कोड नहीं भेजा जा सका। पुनः प्रयास करें।",
+      "codeVerifyFailed": "कोड सत्यापित नहीं हो सका। नया कोड मँगाएँ।",
+      "codeVerifyFallback": "कोड सत्यापित नहीं हो सका।",
+      "companyRequired": "अपनी कंपनी या वर्कस्पेस का नाम दर्ज करें।",
+      "documentUnavailable": "यह दस्तावेज़ अब उपलब्ध नहीं है।",
+      "emailNotVerified": "यह ईमेल अभी सत्यापित नहीं है। सत्यापन कोड के लिए अपना इनबॉक्स देखें।",
+      "emailTaken": "इस ईमेल से पहले ही एक खाता है। इसके बजाय साइन इन करें।",
+      "googleFailed": "Google साइन-इन विफल रहा।",
+      "googleNoSession": "Google साइन-इन से कोई सत्र नहीं मिला।",
+      "googleNoToken": "Google से कोई साइन-इन टोकन नहीं मिला।",
+      "googleUnusableToken": "Google से उपयोग योग्य साइन-इन टोकन नहीं मिला।",
+      "invalidEmail": "मान्य कार्य ईमेल पता दर्ज करें।",
+      "jobTitleRequired": "अपना पद दर्ज करें।",
+      "nameRequired": "अपना पूरा नाम दर्ज करें।",
+      "noAccountForEmail": "उस ईमेल पते से कोई खाता नहीं है।",
+      "notAllowed": "इस खाते को साइन इन करने की अनुमति नहीं है। अपने वर्कस्पेस एडमिन से संपर्क करें।",
+      "passwordRequired": "अपना पासवर्ड दर्ज करें।",
+      "passwordRules": "ऐसा पासवर्ड चुनें जो तीनों नियम पूरे करे।",
+      "profileLoadFailed": "साइन इन हो गया, लेकिन आपकी प्रोफ़ाइल लोड नहीं हो सकी।",
+      "requestNotOpenable": "यह हस्ताक्षर अनुरोध खोला नहीं जा सका।",
+      "resetSendFailed": "रीसेट ईमेल नहीं भेजा जा सका। पुनः प्रयास करें।",
+      "sessionExpired": "आपका सत्र समाप्त हो गया। फिर से साइन इन करें।",
+      "setupFailed": "आपके वर्कस्पेस का सेटअप पूरा नहीं हो सका।",
+      "signInFailed": "साइन इन नहीं हो सका। पुनः प्रयास करें।",
+      "termsRequired": "जारी रखने के लिए शर्तें स्वीकार करें।"
+    },
+    "fields": {
+      "company": "कंपनी",
+      "fullName": "पूरा नाम",
+      "jobTitle": "पद",
+      "password": "पासवर्ड",
+      "phone": "फ़ोन",
+      "workEmail": "कार्य ईमेल",
+      "yourEmail": "आपका ईमेल"
+    },
+    "footer": {
+      "guestNote": "हस्ताक्षर करने के लिए खाते की ज़रूरत नहीं है। कोड सिर्फ़ यह पुष्टि करता है कि यह अनुरोध आपका है।",
+      "openSource": "AGPL-3.0 के अंतर्गत ओपन सोर्स",
+      "signerNote": "किसी के भेजे दस्तावेज़ पर हस्ताक्षर कर रहे हैं? अपने ईमेल का लिंक उपयोग करें, खाते की ज़रूरत नहीं।",
+      "source": "स्रोत",
+      "status": "स्थिति"
+    },
+    "forgot": {
+      "sentBody": "अगर <1>{{email}}</1> का कोई खाता है, तो रीसेट लिंक भेजा जा रहा है। यह लिंक एक ऐसा पेज खोलता है जहाँ आप नया पासवर्ड सेट कर सकते हैं।",
+      "subtitle": "अपना कार्य ईमेल दर्ज करें और हम नया पासवर्ड सेट करने का लिंक भेजेंगे।",
+      "title": "अपना पासवर्ड रीसेट करें"
+    },
+    "guest": {
+      "goneBody": "दस्तावेज़ हटा दिया गया, या अब आपके साथ साझा नहीं है।",
+      "goneTitle": "यह अनुरोध उपलब्ध नहीं है",
+      "invalidBody": "पता अधूरा है या रास्ते में बदल गया। अपने ईमेल का मूल लिंक खोलें, या भेजने वाले से अनुरोध दोबारा भेजने को कहें।",
+      "invalidTitle": "यह लिंक मान्य नहीं है",
+      "verifyBody": "यह दस्तावेज़ एक बार उपयोग होने वाले कोड से सुरक्षित है। हम भेजने वाले के दिए पते पर कोड ईमेल करेंगे।",
+      "verifyTitle": "पुष्टि करें कि यह आप हैं"
+    },
+    "hints": {
+      "phone": "वैकल्पिक। केवल पूर्णता प्रमाण पत्र पर उपयोग होता है।"
+    },
+    "marketing": {
+      "body": "अनुबंध, ऑफ़र लेटर, NDA और फ़ॉर्म, मिनटों में हस्ताक्षरित, पूरे ऑडिट ट्रेल और सत्यापन योग्य पूर्णता प्रमाण पत्र के साथ।",
+      "headline": "भेजें, हस्ताक्षर कराएँ, और हर पल जानें कि बात कहाँ तक पहुँची।"
+    },
+    "password": {
+      "rules": {
+        "length": "कम से कम 8 वर्ण",
+        "mix": "बड़े और छोटे अक्षर तथा एक अंक",
+        "special": "एक विशेष वर्ण, उदाहरण के लिए ! @ # $ %"
+      }
+    },
+    "placeholders": {
+      "email": "you@company.com",
+      "fullName": "Ada Lovelace",
+      "jobTitle": "संचालन प्रमुख",
+      "phone": "+44 7700 900000"
+    },
+    "profile": {
+      "subtitle": "बस कुछ विवरण और {{email}} दस्तावेज़ भेजने के लिए तैयार है।",
+      "title": "अपना वर्कस्पेस पूरा करें"
+    },
+    "signIn": {
+      "newHere": "यहाँ नए हैं? <1>वर्कस्पेस बनाएँ</1>",
+      "title": "साइन इन करें"
+    },
+    "signUp": {
+      "firstAccountNotice": "यह इस सर्वर का पहला खाता है, इसलिए यह वर्कस्पेस एडमिन बन जाएगा।",
+      "haveAccount": "खाता है? <1>साइन इन करें</1>",
+      "termsAgreement": "मैं <1>सेवा शर्तों</1> और <2>गोपनीयता नीति</2> से सहमत हूँ।",
+      "title": "वर्कस्पेस बनाएँ"
+    },
+    "status": {
+      "checkingSession": "आपका सत्र जाँचा जा रहा है",
+      "openingDocument": "आपका दस्तावेज़ खोला जा रहा है"
+    },
+    "toast": {
+      "codeSendFailed": "कोड नहीं भेजा जा सका",
+      "existingAccount": "फिर से स्वागत है",
+      "existingAccountBody": "इस ईमेल पर पहले से खाता था, इसलिए हमने आपको उसी में साइन इन कर दिया।",
+      "googleFailed": "Google साइन-इन विफल रहा",
+      "profileLoadFailed": "आपकी प्रोफ़ाइल लोड नहीं हो सकी",
+      "resetFailed": "रीसेट ईमेल विफल रहा",
+      "setupFailed": "सेटअप विफल रहा",
+      "signInFailed": "साइन इन विफल रहा",
+      "signUpFailed": "साइन अप विफल रहा",
+      "verificationFailed": "सत्यापन विफल रहा",
+      "workspaceCreated": "वर्कस्पेस बन गया",
+      "workspaceCreatedBody": "स्वागत है, {{name}}।"
+    }
+  },
+  "common": {
+    "actions": {
+      "add": "जोड़ें",
+      "back": "वापस",
+      "cancel": "रद्द करें",
+      "clear": "साफ़ करें",
+      "close": "बंद करें",
+      "continue": "जारी रखें",
+      "copied": "कॉपी हो गया",
+      "copy": "कॉपी करें",
+      "decline": "अस्वीकार करें",
+      "delete": "हटाएं",
+      "discard": "छोड़ दें",
+      "dismiss": "खारिज करें",
+      "done": "हो गया",
+      "download": "डाउनलोड करें",
+      "duplicate": "प्रतिलिपि बनाएँ",
+      "edit": "संपादित करें",
+      "import": "आयात करें",
+      "next": "अगला",
+      "open": "खोलें",
+      "preview": "पूर्वावलोकन",
+      "remind": "याद दिलाएँ",
+      "remove": "हटाएं",
+      "rename": "नाम बदलें",
+      "reset": "रीसेट करें",
+      "saveChanges": "बदलाव सहेजें",
+      "select": "चुनें",
+      "sign": "हस्ताक्षर करें",
+      "signOut": "साइन आउट",
+      "tryAgain": "पुनः प्रयास करें",
+      "upload": "अपलोड करें"
+    },
+    "count": {
+      "company_one": "{{count}} कंपनी",
+      "company_other": "{{count}} कंपनियाँ",
+      "day_one": "{{count}} दिन",
+      "day_other": "{{count}} दिन",
+      "document_one": "{{count}} दस्तावेज़",
+      "document_other": "{{count}} दस्तावेज़",
+      "field_one": "{{count}} फ़ील्ड",
+      "field_other": "{{count}} फ़ील्ड",
+      "hour_one": "{{count}} घंटा",
+      "hour_other": "{{count}} घंटे",
+      "page_one": "{{count}} पेज",
+      "page_other": "{{count}} पेज",
+      "person_one": "{{count}} व्यक्ति",
+      "person_other": "{{count}} लोग",
+      "recipient_one": "{{count}} प्राप्तकर्ता",
+      "recipient_other": "{{count}} प्राप्तकर्ता",
+      "role_one": "{{count}} भूमिका",
+      "role_other": "{{count}} भूमिकाएँ",
+      "signer_one": "{{count}} हस्ताक्षरकर्ता",
+      "signer_other": "{{count}} हस्ताक्षरकर्ता",
+      "template_one": "{{count}} टेम्पलेट",
+      "template_other": "{{count}} टेम्पलेट्स"
+    },
+    "date": {
+      "daysShort_one": "{{count}}दि",
+      "daysShort_other": "{{count}}दि",
+      "expired": "समाप्त",
+      "hoursShort_one": "{{count}}घं",
+      "hoursShort_other": "{{count}}घं",
+      "yesterday": "कल"
+    },
+    "errors": {
+      "generic": "कुछ गलत हो गया",
+      "invalidEmail": "मान्य ईमेल पता दर्ज करें"
+    },
+    "hints": {
+      "move": "जाएँ",
+      "open": "खोलें",
+      "select": "चुनें",
+      "selected_one": "{{count}} चयनित",
+      "selected_other": "{{count}} चयनित"
+    },
+    "language": {
+      "label": "भाषा"
+    },
+    "reminder": {
+      "couldNotSendTitle": "अनुस्मारक नहीं भेजा जा सका",
+      "everyoneSigned": "सभी पहले ही हस्ताक्षर कर चुके हैं।",
+      "failedDocuments_one": "{{count}} दस्तावेज़ विफल रहा: {{message}}",
+      "failedDocuments_other": "{{count}} दस्तावेज़ विफल रहे: {{message}}",
+      "nobodyToRemind": "याद दिलाने के लिए कोई नहीं",
+      "noneSent": "कोई अनुस्मारक नहीं भेजा गया",
+      "notSentTitle": "अनुस्मारक नहीं भेजा गया",
+      "reason": {
+        "alreadySigned": "पहले ही हस्ताक्षर कर चुके",
+        "mailFailed": "मेल विफल",
+        "noEmail": "कोई ईमेल पता नहीं",
+        "notTheirTurn": "उनकी बारी नहीं"
+      },
+      "remindedAcross_one": "{{count}} दस्तावेज़ में {{people}} लोगों को याद दिलाया",
+      "remindedAcross_other": "{{count}} दस्तावेज़ों में {{people}} लोगों को याद दिलाया",
+      "reminded_one": "{{count}} व्यक्ति को याद दिलाया",
+      "reminded_other": "{{count}} लोगों को याद दिलाया",
+      "sentToOne": "{{email}} को अनुस्मारक भेजा गया",
+      "skipped_one": "{{count}} छोड़ा गया ({{reasons}})",
+      "skipped_other": "{{count}} छोड़े गए ({{reasons}})",
+      "titleWithSkips": "{{title}}, {{skipped}}"
+    },
+    "state": {
+      "loading": "लोड हो रहा है",
+      "none": "कोई नहीं",
+      "saving": "सहेजा जा रहा है",
+      "unknown": "अज्ञात"
+    },
+    "status": {
+      "completed": "पूरा हुआ",
+      "declined": "अस्वीकृत",
+      "draft": "ड्राफ्ट",
+      "expired": "समाप्त",
+      "inProgress": "प्रगति में है",
+      "needsYou": "आपकी बारी",
+      "signed": "हस्ताक्षरित"
+    },
+    "theme": {
+      "dark": "डार्क",
+      "label": "दिखावट",
+      "light": "लाइट",
+      "system": "सिस्टम",
+      "toDark": "डार्क मोड पर जाएँ",
+      "toLight": "लाइट मोड पर जाएँ"
+    }
+  },
+  "contacts": {
+    "a11y": {
+      "closePanel": "पैनल बंद करें",
+      "contactActions": "संपर्क क्रियाएँ",
+      "rowActions": "{{name}} के लिए क्रियाएँ",
+      "selectAll": "सभी संपर्क चुनें",
+      "selectOne": "{{name}} चुनें"
+    },
+    "actions": {
+      "addPerson": "व्यक्ति जोड़ें",
+      "importCsv": "CSV आयात करें",
+      "remind": "याद दिलाएँ ({{count}})",
+      "sendDocument": "दस्तावेज़ भेजें"
+    },
+    "activity": {
+      "declined": "अस्वीकृत, {{when}}",
+      "none": "अभी कुछ नहीं",
+      "sent": "भेजा गया, {{when}}",
+      "signed": "हस्ताक्षरित, {{when}}",
+      "viewed": "खोला गया, {{when}}",
+      "viewedStale": "खोला, हस्ताक्षर नहीं किया · {{when}}"
+    },
+    "company": {
+      "fromEmail": "ईमेल से",
+      "none": "कोई कंपनी नहीं"
+    },
+    "dialog": {
+      "deleteManyBody": "इन्हें आपकी संपर्क पुस्तिका से हटा दिया जाएगा। इन्हें पहले भेजे गए दस्तावेज़ों पर कोई असर नहीं पड़ेगा।",
+      "deleteOneBody": "{{name}} को आपकी संपर्क पुस्तिका से हटा दिया जाएगा। इन्हें पहले भेजे गए दस्तावेज़ों पर कोई असर नहीं पड़ेगा।",
+      "deleteTitle_one": "यह संपर्क हटाएं?",
+      "deleteTitle_other": "ये संपर्क हटाएं?"
+    },
+    "doc": {
+      "untitled": "बिना शीर्षक"
+    },
+    "duration": {
+      "days_one": "{{value}} दिन",
+      "days_other": "{{value}} दिन",
+      "hours_one": "{{count}}घं",
+      "hours_other": "{{count}}घं",
+      "minutes_one": "{{count}}मि",
+      "minutes_other": "{{count}}मि"
+    },
+    "empty": {
+      "clearFilter": "फ़िल्टर साफ़ करें",
+      "loadFailedBody": "आपकी संपर्क पुस्तिका पढ़ने में कुछ गलत हो गया।",
+      "loadFailedTitle": "संपर्क लोड नहीं हुए",
+      "noCompaniesBody": "जैसे ही आपके संपर्कों में कंपनी जुड़ेगी, कंपनियाँ यहाँ दिखेंगी।",
+      "noCompaniesTitle": "अभी कोई कंपनी नहीं",
+      "noContactsBody": "जिन्हें आप दस्तावेज़ भेजते हैं उन्हें जोड़ें, या शुरू करने के लिए CSV आयात करें।",
+      "noContactsTitle": "अभी कोई संपर्क नहीं",
+      "noMatchBody": "कोई दूसरा नाम, ईमेल या कंपनी आज़माएँ।",
+      "noMatchTitle": "इससे कोई मेल नहीं खाता"
+    },
+    "errors": {
+      "notSignedIn": "साइन इन नहीं हैं"
+    },
+    "fields": {
+      "added": "जोड़ा गया",
+      "company": "कंपनी",
+      "email": "ईमेल",
+      "jobTitle": "पद",
+      "name": "नाम",
+      "phone": "फ़ोन",
+      "signsIn": "हस्ताक्षर में समय"
+    },
+    "filter": {
+      "label": "संपर्क फ़िल्टर करें",
+      "placeholder": "नाम, ईमेल या कंपनी से फ़िल्टर करें"
+    },
+    "form": {
+      "addDescription": "वे बिना खाता बनाए हस्ताक्षर कर सकेंगे।",
+      "addTitle": "व्यक्ति जोड़ें",
+      "editDescription": "सहेजने पर एक नया संपर्क रिकॉर्ड बनता है, इसलिए पहले भेजे गए दस्तावेज़ों में पुराना विवरण ही रहता है।",
+      "editTitle": "व्यक्ति संपादित करें",
+      "errors": {
+        "duplicate": "यह व्यक्ति पहले से आपके संपर्कों में है।",
+        "emailInvalid": "यह ईमेल पते जैसा नहीं लगता।",
+        "emailRequired": "ईमेल पता आवश्यक है।",
+        "name": "इस व्यक्ति का नाम दें।"
+      },
+      "optional": "वैकल्पिक",
+      "placeholders": {
+        "company": "Northbay",
+        "email": "rosa@northbay.co",
+        "jobTitle": "वित्त प्रमुख",
+        "name": "Rosa Almeida",
+        "phone": "+351 912 000 000"
+      }
+    },
+    "hints": {
+      "addPerson": "व्यक्ति जोड़ें",
+      "newRequest": "व्यक्ति को नया अनुरोध"
+    },
+    "import": {
+      "actions": {
+        "importCount": "{{count}} आयात करें"
+      },
+      "description": "Name और Email कॉलम वाली एक CSV। Phone, Company और Job title वैकल्पिक हैं।",
+      "dropzone": "यहाँ CSV छोड़ें, या चुनने के लिए क्लिक करें",
+      "errors": {
+        "empty": "वह फ़ाइल खाली है।",
+        "missingColumns": "फ़ाइल में एक Name कॉलम और एक Email कॉलम चाहिए।",
+        "notCsv": "कोई .csv फ़ाइल चुनें। xlsx है तो स्प्रेडशीट से CSV एक्सपोर्ट करें।"
+      },
+      "problem": {
+        "duplicate": "इस फ़ाइल में दोहराया गया",
+        "invalidEmail": "अमान्य ईमेल",
+        "noEmail": "ईमेल नहीं",
+        "noName": "नाम नहीं",
+        "ready": "तैयार"
+      },
+      "progress": "{{total}} में से {{done}} आयात हो रहे हैं",
+      "readyWithSkipped_one": "{{count}} पंक्ति तैयार, {{skipped}} छोड़ी गईं",
+      "readyWithSkipped_other": "{{count}} पंक्तियाँ तैयार, {{skipped}} छोड़ी गईं",
+      "ready_one": "{{count}} पंक्ति तैयार",
+      "ready_other": "{{count}} पंक्तियाँ तैयार",
+      "showingFirst_one": "{{count}} पंक्ति में से पहली {{shown}} दिखाई जा रही है।",
+      "showingFirst_other": "{{count}} पंक्तियों में से पहली {{shown}} दिखाई जा रही हैं।",
+      "summary": {
+        "addedFailed_one": "{{count}} व्यक्ति जोड़ा गया, {{failed}} विफल रहे।",
+        "addedFailed_other": "{{count}} लोग जोड़े गए, {{failed}} विफल रहे।",
+        "addedSkippedFailed_one": "{{count}} व्यक्ति जोड़ा गया, {{skipped}} छोड़े गए जो पहले से पुस्तिका में थे या अनुपयोगी थे, {{failed}} विफल रहे।",
+        "addedSkippedFailed_other": "{{count}} लोग जोड़े गए, {{skipped}} छोड़े गए जो पहले से पुस्तिका में थे या अनुपयोगी थे, {{failed}} विफल रहे।",
+        "addedSkipped_one": "{{count}} व्यक्ति जोड़ा गया, {{skipped}} छोड़े गए जो पहले से पुस्तिका में थे या अनुपयोगी थे।",
+        "addedSkipped_other": "{{count}} लोग जोड़े गए, {{skipped}} छोड़े गए जो पहले से पुस्तिका में थे या अनुपयोगी थे।",
+        "added_one": "{{count}} व्यक्ति जोड़ा गया।",
+        "added_other": "{{count}} लोग जोड़े गए।"
+      },
+      "title": "संपर्क आयात करें",
+      "toast": {
+        "failed": "आयात विफल रहा",
+        "imported_one": "{{count}} व्यक्ति आयात हुआ",
+        "imported_other": "{{count}} लोग आयात हुए"
+      }
+    },
+    "panel": {
+      "documentsWith": "{{name}} के साथ दस्तावेज़",
+      "median": "माध्य {{value}}",
+      "noCompanyOnFile": "रिकॉर्ड में कोई कंपनी नहीं",
+      "noDocuments": "अभी कोई दस्तावेज़ नहीं।",
+      "notEnoughSigned": "अभी पर्याप्त हस्ताक्षरित दस्तावेज़ नहीं",
+      "seeAll": "सभी {{count}} देखें"
+    },
+    "selection": {
+      "count_one": "{{count}} व्यक्ति चयनित",
+      "count_other": "{{count}} लोग चयनित"
+    },
+    "sort": {
+      "documents": "सबसे अधिक दस्तावेज़",
+      "name": "नाम",
+      "recent": "हाल के",
+      "trigger": "क्रम: {{value}}"
+    },
+    "stats": {
+      "capped": "दस्तावेज़ गणना आपके {{count}} सबसे हाल में अपडेट हुए दस्तावेज़ों पर आधारित है।",
+      "error": "दस्तावेज़ गणना और गतिविधि लोड नहीं हो सकी। संपर्क विवरण फिर भी सही हैं।"
+    },
+    "status": {
+      "waiting": "प्रतीक्षा में"
+    },
+    "table": {
+      "company": "कंपनी",
+      "documents": "दस्तावेज़",
+      "lastActivity": "अंतिम गतिविधि",
+      "people": "लोग",
+      "person": "व्यक्ति"
+    },
+    "title": "संपर्क",
+    "toast": {
+      "addFailed": "संपर्क नहीं जोड़ा जा सका",
+      "added": "संपर्क जोड़ा गया",
+      "deleteFailed": "हटाया नहीं जा सका",
+      "deleted_one": "संपर्क हटाया गया",
+      "deleted_other": "{{count}} संपर्क हटाए गए",
+      "updateFailed": "संपर्क अपडेट नहीं हो सका",
+      "updated": "संपर्क अपडेट हुआ"
+    },
+    "view": {
+      "companies": "कंपनियाँ",
+      "people": "लोग"
+    }
+  },
+  "documents": {
+    "a11y": {
+      "back": "वापस",
+      "backToDocuments": "दस्तावेज़ों पर वापस",
+      "breadcrumb": "ब्रेडक्रंब",
+      "collapseFolder": "{{name}} समेटें",
+      "expandFolder": "{{name}} खोलें",
+      "fieldFor": "{{name}} के लिए {{type}}",
+      "folderActions": "{{name}} के लिए क्रियाएँ",
+      "moreActions": "और क्रियाएँ",
+      "removeEmail": "{{email}} हटाएं",
+      "rowActions": "{{name}} के लिए क्रियाएँ",
+      "selectAllOnPage": "इस पेज पर सब चुनें",
+      "selectRow": "{{name}} चुनें"
+    },
+    "actions": {
+      "changeOrder": "क्रम बदलें",
+      "completionCertificate": "पूर्णता प्रमाण पत्र",
+      "continueInEditor": "एडिटर में जारी रखें",
+      "copyShareLink": "साझा लिंक कॉपी करें",
+      "currentPdf": "मौजूदा PDF",
+      "downloadCertificate": "प्रमाण पत्र डाउनलोड करें",
+      "downloadCompletionCertificate": "पूर्णता प्रमाण पत्र डाउनलोड करें",
+      "downloadCurrent": "मौजूदा PDF डाउनलोड करें",
+      "downloadOriginal": "मूल डाउनलोड करें",
+      "downloadSigned": "हस्ताक्षरित PDF डाउनलोड करें",
+      "editRecipients": "प्राप्तकर्ता संपादित करें",
+      "exportCsv": "CSV निर्यात करें",
+      "exportCsvShort": "CSV",
+      "exportPdf": "PDF निर्यात करें",
+      "forward": "अग्रेषित करें",
+      "forwardCopy": "एक प्रति अग्रेषित करें",
+      "move": "ले जाएँ",
+      "moveToFolder": "फ़ोल्डर में ले जाएँ",
+      "original": "मूल",
+      "remindOthers": "दूसरों को याद दिलाएँ",
+      "resendLink": "लिंक पुनः भेजें",
+      "reviewAndSign": "समीक्षा कर हस्ताक्षर करें",
+      "saveAsTemplate": "टेम्पलेट के रूप में सहेजें",
+      "signedPdf": "हस्ताक्षरित PDF",
+      "uploadDocument": "दस्तावेज़ अपलोड करें",
+      "verifyCopy": "प्रति सत्यापित करें",
+      "void": "रद्द करें"
+    },
+    "audit": {
+      "other": "{{activity}}.",
+      "signed": "दस्तावेज़ पर हस्ताक्षर किए।",
+      "viewed": "दस्तावेज़ खोला।"
+    },
+    "card": {
+      "expires": "{{when}} समाप्त",
+      "noRecipients": "कोई प्राप्तकर्ता नहीं",
+      "updated": "{{when}} अपडेट हुआ"
+    },
+    "columns": {
+      "description": "चुनें कि यह तालिका क्या दिखाए। आपका चुनाव इस डिवाइस पर याद रखा जाता है।",
+      "labelFixed": "{{label}} (हमेशा दिखता है)",
+      "title": "कॉलम"
+    },
+    "commands": {
+      "needsYou": "वे दस्तावेज़ जिन पर आपका काम बाकी है"
+    },
+    "count": {
+      "subfolder_one": "{{count}} उपफ़ोल्डर",
+      "subfolder_other": "{{count}} उपफ़ोल्डर"
+    },
+    "csv": {
+      "created": "बनाया गया",
+      "documentId": "दस्तावेज़ ID",
+      "expires": "समाप्ति",
+      "folder": "फ़ोल्डर",
+      "name": "नाम",
+      "owner": "मालिक",
+      "recipients": "प्राप्तकर्ता",
+      "sent": "भेजा गया",
+      "signed": "हस्ताक्षरित",
+      "status": "स्थिति",
+      "template": "टेम्पलेट",
+      "updated": "अपडेट हुआ"
+    },
+    "detail": {
+      "auditEmpty": "अभी कुछ दर्ज नहीं हुआ। प्राप्तकर्ताओं के खोलने और हस्ताक्षर करने पर घटनाएँ दिखेंगी।",
+      "by": "{{name}} द्वारा",
+      "certPending": "पूरा होने पर लगाया जाएगा",
+      "chainFailed": "फ़ॉलो-अप “{{name}}” नहीं भेजा जा सका: {{error}}",
+      "chainPending": "जब सभी हस्ताक्षर कर लेंगे, तो “{{name}}” हस्ताक्षरकर्ताओं को स्वतः भेज दिया जाएगा।",
+      "chainSent": "फ़ॉलो-अप स्वतः भेज दिया गया: <docLink>खोलें</docLink>।",
+      "chainTitle": "फ़ॉलो-अप",
+      "chainedFrom": "यह दस्तावेज़ <docLink>पिछले दस्तावेज़</docLink> के पूरा होने पर स्वतः भेजा गया था।",
+      "changeOrderLocked": "दस्तावेज़ भेजे जाने के बाद क्रम बदला नहीं जा सकता",
+      "completedOn": "{{date}} को पूरा हुआ",
+      "created": "{{date}} को बनाया गया",
+      "createdBy": "{{date}} को {{name}} द्वारा बनाया गया",
+      "declined": "अस्वीकृत: {{reason}}",
+      "declinedNoCert": "अस्वीकृत, कोई प्रमाण पत्र नहीं",
+      "declinedWithReason": "अस्वीकृत: {{reason}}",
+      "documentId": "दस्तावेज़ ID",
+      "editRecipientsLocked": "प्राप्तकर्ता केवल तभी बदले जा सकते हैं जब दस्तावेज़ ड्राफ्ट हो",
+      "errorBody": "यह हटाया जा चुका हो सकता है, या आपके पास इसकी पहुँच न हो।",
+      "errorTitle": "यह दस्तावेज़ खोला नहीं जा सका",
+      "expires": "{{date}} को समाप्त",
+      "finalHash": "अंतिम हैश",
+      "fromTemplate": "टेम्पलेट \"{{name}}\" से",
+      "hashPending": "हर प्राप्तकर्ता के हस्ताक्षर करने पर लिखा जाता है",
+      "noFieldsBody": "हस्ताक्षर और टेक्स्ट फ़ील्ड रखने के लिए इस दस्तावेज़ को एडिटर में खोलें।",
+      "noFieldsTitle": "कोई फ़ील्ड नहीं रखा गया",
+      "noFileBody": "इस दस्तावेज़ से कोई PDF जुड़ी नहीं है।",
+      "noFileTitle": "अभी कोई फ़ाइल नहीं",
+      "noRecipients": "अभी कोई प्राप्तकर्ता नहीं। यह दस्तावेज़ एक ड्राफ्ट है।",
+      "notCompleted": "अभी पूरा नहीं हुआ",
+      "openedTimes_one": "एक बार खोला गया, {{when}}",
+      "openedTimes_other": "{{count}} बार खोला गया, आख़िरी बार {{when}}",
+      "opensCount_one": "{{count}} बार खोला गया",
+      "opensCount_other": "{{count}} बार खोला गया",
+      "opensEmpty": "अभी तक किसी ने यह दस्तावेज़ नहीं खोला है।",
+      "opensFirst": "पहली बार {{when}}",
+      "opensHint": "प्राप्तकर्ता जब भी अपना हस्ताक्षर लिंक खोलता है, वह गिना जाता है, हस्ताक्षर के बाद भी। ईमेल खोलने को ट्रैक नहीं किया जाता।",
+      "opensLast": "आख़िरी बार {{when}}",
+      "opensTitle": "खोले जाने की संख्या",
+      "pkcs7": "एम्बेडेड PKCS#7 हस्ताक्षर",
+      "recipientsInOrder": "प्राप्तकर्ता, क्रम में",
+      "signedAt": "{{when}} हस्ताक्षर किए",
+      "signingCertificate": "हस्ताक्षर प्रमाण पत्र",
+      "statusLabel": "स्थिति"
+    },
+    "dialog": {
+      "delete": {
+        "andMore_one": "और {{count}} अन्य",
+        "andMore_other": "और {{count}} अन्य",
+        "description": "यह संग्रहित हो जाता है और हर सूची से हट जाता है। प्राप्तकर्ताओं को पहले ईमेल की जा चुकी हस्ताक्षरित प्रतियों पर कोई असर नहीं पड़ता।",
+        "title_one": "यह दस्तावेज़ हटाएं?",
+        "title_other": "{{count}} दस्तावेज़ हटाएं?"
+      },
+      "deleteFolder": {
+        "body": "इसमें {{documents}} हैं। अंदर की हर चीज़ पहले {{target}} में चली जाती है, फिर फ़ोल्डर संग्रहित हो जाता है। कोई दस्तावेज़ नहीं हटता।",
+        "bodyWithSubfolders": "इसमें {{documents}} और {{subfolders}} हैं। अंदर की हर चीज़ पहले {{target}} में चली जाती है, फिर फ़ोल्डर संग्रहित हो जाता है। कोई दस्तावेज़ नहीं हटता।",
+        "checking": "देखा जा रहा है कि अंदर क्या है",
+        "confirm": "फ़ोल्डर हटाएं",
+        "emptyBody": "फ़ोल्डर खाली है। यह संग्रहित हो जाता है, इसलिए ड्राइव से हट जाता है। और कुछ नहीं बदलता।",
+        "title": "यह फ़ोल्डर हटाएं?"
+      },
+      "move": {
+        "description_one": "{{count}} दस्तावेज़ ले जाया जाएगा।",
+        "description_other": "{{count}} दस्तावेज़ ले जाए जाएँगे।",
+        "hint": "फ़ोल्डर आपकी ड्राइव से आते हैं। इन्हें किसी फ़ोल्डर से बाहर निकालने के लिए रूट चुनें।",
+        "loadingFolders": "फ़ोल्डर लोड हो रहे हैं",
+        "rootOption": "ड्राइव रूट (कोई फ़ोल्डर नहीं)"
+      },
+      "moveFolder": {
+        "description": "चुनें कि \"{{name}}\" और उसमें रखी हर चीज़ कहाँ रहे।",
+        "title": "फ़ोल्डर ले जाएँ"
+      },
+      "otp": {
+        "description": "जिन प्राप्तकर्ताओं के पास पहले से लिंक है, उन्हें दस्तावेज़ देखने से पहले ईमेल पर आया कोड डालना होगा।",
+        "title": "खोलने के लिए साइन-इन अनिवार्य करें?"
+      },
+      "share": {
+        "description": "हर प्राप्तकर्ता को अपना अलग लिंक मिलता है। लिंक वाला कोई भी व्यक्ति उस प्राप्तकर्ता के रूप में खोलकर हस्ताक्षर कर सकता है।",
+        "noRecipients": "इस दस्तावेज़ में अभी कोई प्राप्तकर्ता नहीं है।",
+        "title": "साझा लिंक"
+      },
+      "void": {
+        "confirm_one": "दस्तावेज़ रद्द करें",
+        "confirm_other": "{{count}} दस्तावेज़ रद्द करें",
+        "defaultReason": "भेजने वाले ने रद्द किया",
+        "description": "प्राप्तकर्ता अब इस पर हस्ताक्षर नहीं कर सकते। इसे पलटा नहीं जा सकता, और दस्तावेज़ से जुड़े सभी लोगों को ईमेल जाता है।",
+        "reasonHint": "सूचना ईमेल में प्राप्तकर्ताओं को यही दिखता है।",
+        "reasonPlaceholder": "शर्तें बदल गई हैं, नया संस्करण जल्द आ रहा है।",
+        "title": "यह दस्तावेज़ रद्द करें?"
+      }
+    },
+    "empty": {
+      "body": "PDF अपलोड करें, फ़ील्ड रखें, और हस्ताक्षर के लिए भेजें।",
+      "clearSearch": "खोज साफ़ करें",
+      "errorTitle": "दस्तावेज़ लोड नहीं हो सके",
+      "folderTitle": "यह फ़ोल्डर खाली है",
+      "noMatchBody": "कोई दूसरा नाम आज़माएँ, या खोज साफ़ करें।",
+      "noMatchTitle": "\"{{query}}\" से कुछ मेल नहीं खाता",
+      "title": "यहाँ अभी कोई दस्तावेज़ नहीं"
+    },
+    "errors": {
+      "fileServer": "फ़ाइल सर्वर ने {{status}} लौटाया",
+      "folderExists": "\"{{name}}\" नाम का फ़ोल्डर यहाँ पहले से है।",
+      "folderNameRequired": "फ़ोल्डर को एक नाम दें।",
+      "folderNameTooLong": "फ़ोल्डर के नाम 250 वर्ण तक ही हो सकते हैं।",
+      "noCertificate": "अभी कोई पूर्णता प्रमाण पत्र नहीं",
+      "noFile": "इस दस्तावेज़ पर कोई फ़ाइल नहीं",
+      "noTemplateReturned": "सर्वर ने कोई टेम्पलेट नहीं लौटाया।",
+      "serverSilent": "सर्वर ने कोई जवाब नहीं दिया।"
+    },
+    "fallback": {
+      "activity": "गतिविधि",
+      "someone": "किसी ने",
+      "unassigned": "असाइन नहीं",
+      "untitledDocument": "बिना शीर्षक",
+      "untitledFolder": "बिना शीर्षक फ़ोल्डर",
+      "untitledTemplate": "बिना शीर्षक टेम्पलेट"
+    },
+    "fieldType": {
+      "cells": "खाने",
+      "checkbox": "चेकबॉक्स",
+      "choice": "चयन",
+      "company": "कंपनी",
+      "date": "दिनांक",
+      "draw": "चित्र",
+      "dropdown": "ड्रॉपडाउन",
+      "email": "ईमेल",
+      "image": "छवि",
+      "initials": "आद्याक्षर",
+      "jobTitle": "पद",
+      "name": "नाम",
+      "signature": "हस्ताक्षर",
+      "stamp": "मोहर",
+      "text": "टेक्स्ट"
+    },
+    "fields": {
+      "expiresOn": "समाप्ति तिथि",
+      "folder": "फ़ोल्डर",
+      "notFilled": "भरा नहीं",
+      "optional": "वैकल्पिक",
+      "reason": "कारण",
+      "required": "आवश्यक",
+      "templateName": "टेम्पलेट नाम"
+    },
+    "fileName": {
+      "certificate": "{{base}} - Certificate.pdf",
+      "signed": "{{base}} - Signed.pdf"
+    },
+    "filters": {
+      "all": "सभी",
+      "anyDate": "कोई भी तिथि",
+      "anyTemplate": "कोई भी टेम्पलेट",
+      "anyone": "कोई भी",
+      "drafts": "ड्राफ्ट",
+      "expiringThisWeek": "इस सप्ताह समाप्त हो रहे",
+      "last30": "पिछले 30 दिन",
+      "last7": "पिछले 7 दिन",
+      "last90": "पिछले 90 दिन",
+      "me": "मैं",
+      "needsYou": "आपकी बारी",
+      "ownerAnyone": "मालिक: कोई भी",
+      "ownerMe": "मालिक: मैं",
+      "sentByMe": "मेरे द्वारा भेजे गए",
+      "template": "टेम्पलेट",
+      "waitingOnMe": "मेरी प्रतीक्षा में"
+    },
+    "folders": {
+      "allDocuments": "सभी दस्तावेज़",
+      "allDocumentsTopLevel": "सभी दस्तावेज़ (शीर्ष स्तर)",
+      "driveRoot": "ड्राइव रूट",
+      "empty": "अभी कोई फ़ोल्डर नहीं। ग्राहक या महीने के हिसाब से दस्तावेज़ समूहित करने के लिए एक बनाएँ।",
+      "loadError": "आपके फ़ोल्डर लोड नहीं हो सके।",
+      "moveTo": "यहाँ ले जाएँ",
+      "namePlaceholder": "फ़ोल्डर का नाम",
+      "new": "नया फ़ोल्डर",
+      "newInside": "अंदर नया फ़ोल्डर",
+      "parentAbove": "इसके ऊपर वाला फ़ोल्डर",
+      "sheetDescription": "ब्राउज़ करने के लिए फ़ोल्डर चुनें, या हर फ़ोल्डर के मेन्यू से ड्राइव प्रबंधित करें।",
+      "title": "फ़ोल्डर"
+    },
+    "forward": {
+      "description": "\"{{name}}\" PDF अटैचमेंट के रूप में ईमेल किया जाता है। प्राप्तकर्ता इस पर हस्ताक्षर नहीं कर सकते, उन्हें केवल प्रति मिलती है।",
+      "emailPlaceholder": "name@company.com",
+      "hint_one": "ईमेल लिखकर Enter दबाएँ। एक बार में {{count}} तक।",
+      "hint_other": "ईमेल लिखकर Enter दबाएँ। एक बार में {{count}} तक।",
+      "invalidEmail": "\"{{email}}\" ईमेल पता नहीं है।",
+      "limit_one": "अग्रेषण एक बार में {{count}} प्राप्तकर्ता तक सीमित है।",
+      "limit_other": "अग्रेषण एक बार में {{count}} प्राप्तकर्ताओं तक सीमित है।",
+      "needOne": "कम से कम एक ईमेल पता जोड़ें।",
+      "noMatches": "कोई संपर्क मेल नहीं खाता। जैसा लिखा है वैसा ही पता उपयोग करने के लिए Enter दबाएँ।",
+      "recipientsLabel": "प्राप्तकर्ता",
+      "searching": "आपके संपर्क खोजे जा रहे हैं",
+      "send": "प्रति भेजें"
+    },
+    "hints": {
+      "backToDocuments": "दस्तावेज़ों पर वापस",
+      "drag": "ले जाने के लिए फ़ोल्डर पर खींचें",
+      "range": "अवधि",
+      "remind": "याद दिलाएँ",
+      "toClear": "साफ़ करने के लिए"
+    },
+    "list": {
+      "allDocuments": "सभी दस्तावेज़",
+      "summary_one": "{{folder}} में {{count}}",
+      "summary_other": "{{folder}} में {{count}}",
+      "thisFolder": "यह फ़ोल्डर"
+    },
+    "nav": {
+      "inbox": "इनबॉक्स"
+    },
+    "pager": {
+      "prev": "पिछला",
+      "range": "{{total}} में से {{from}}-{{to}}"
+    },
+    "rail": {
+      "hide": "फ़ोल्डर छिपाएँ",
+      "show": "फ़ोल्डर दिखाएँ"
+    },
+    "recipientState": {
+      "declined": "अस्वीकृत",
+      "signed": "हस्ताक्षरित",
+      "turn": "उनकी बारी",
+      "viewed": "देखा गया",
+      "waiting": "प्रतीक्षा में"
+    },
+    "search": {
+      "placeholder": "नाम से खोजें"
+    },
+    "settings": {
+      "allowMods": "प्राप्तकर्ताओं को फ़ील्ड जोड़ने दें",
+      "allowModsHint": "हस्ताक्षरकर्ता अपने विजेट हटा-बढ़ा या जोड़ सकते हैं।",
+      "allowModsToggle": "बदलाव की अनुमति दें",
+      "automaticReminders": "स्वचालित अनुस्मारक",
+      "automaticRemindersHint": "ध्यान दें: यह बिल्ड समय-सारणी सहेजता तो है पर भेजता कभी नहीं। प्राप्तकर्ताओं को याद दिलाने के लिए दूसरों को याद दिलाएँ का उपयोग करें।",
+      "expiryHint": "इस तिथि के बाद प्राप्तकर्ता हस्ताक्षर नहीं कर सकते। इसे बढ़ाने पर दस्तावेज़ फिर से खुल जाता है।",
+      "notify": "हर हस्ताक्षर पर मुझे सूचित करें",
+      "notifyHint": "जब भी कोई हस्ताक्षर करे, आपको ईमेल भेजता है।",
+      "notifyToggle": "हस्ताक्षर पर सूचित करें",
+      "orderParallel": "सभी एक साथ",
+      "orderSequential": "क्रमिक",
+      "orderStrict": "क्रमिक, अनिवार्य",
+      "otp": "साइन-इन अनिवार्य करें (OTP)",
+      "otpHint": "प्राप्तकर्ताओं को खोलने से पहले ईमेल पर आया एक बार का कोड सत्यापित करना होगा।",
+      "otpToggle": "साइन-इन अनिवार्य करें",
+      "readOnly": "यह दस्तावेज़ {{status}} है, इसलिए इसकी सेटिंग्स केवल पढ़ने योग्य हैं।",
+      "remindEvery": "इतने दिनों में एक बार याद दिलाएँ",
+      "remindEveryHint": "अनुस्मारकों के बीच के दिन।",
+      "signingOrder": "हस्ताक्षर क्रम",
+      "signingOrderHint": "दस्तावेज़ भेजते समय तय हुआ था और उसके बाद लॉक हो गया।"
+    },
+    "statusLower": {
+      "completed": "पूरा हुआ",
+      "declined": "अस्वीकृत",
+      "draft": "ड्राफ्ट",
+      "expired": "समाप्त",
+      "in_progress": "प्रगति में"
+    },
+    "table": {
+      "assignedTo": "किसे सौंपा",
+      "created": "बनाया गया",
+      "document": "दस्तावेज़",
+      "expires": "समाप्ति",
+      "folder": "फ़ोल्डर",
+      "owner": "मालिक",
+      "page": "पेज",
+      "recipients": "प्राप्तकर्ता",
+      "required": "आवश्यक",
+      "signedRatio": "{{signed}}/{{total}}",
+      "status": "स्थिति",
+      "template": "टेम्पलेट",
+      "type": "प्रकार",
+      "updated": "अपडेट हुआ",
+      "value": "मान"
+    },
+    "tabs": {
+      "audit": "ऑडिट ट्रेल",
+      "fields": "फ़ील्ड",
+      "overview": "अवलोकन",
+      "settings": "सेटिंग्स"
+    },
+    "template": {
+      "description": "लेआउट और फ़ील्ड की जगह कॉपी होती है। हस्ताक्षरित मान, पहले से भरे डिफ़ॉल्ट और प्राप्तकर्ता कॉपी नहीं होते।",
+      "keepRoles": "हस्ताक्षरकर्ताओं के नाम भूमिकाओं के रूप में रखें",
+      "keepRolesHint": "टेम्पलेट उपयोग करते समय भूमिकाएँ भरी जाती हैं। कोई भी इससे जुड़ा नहीं रहता।",
+      "keepRolesHintWithRoles": "इस दस्तावेज़ पर भूमिकाएँ: {{roles}}। किसी भी हाल में कोई जुड़ा नहीं रहता, भूमिकाएँ टेम्पलेट उपयोग करते समय भरी जाती हैं।",
+      "nameHint": "250 वर्ण तक।",
+      "noRoles": "अभी कोई भूमिका नहीं",
+      "open": "टेम्पलेट खोलें",
+      "roleNumber": "भूमिका {{index}}",
+      "roles": "भूमिकाएँ: {{roles}}",
+      "save": "टेम्पलेट सहेजें",
+      "saved": "टेम्पलेट सहेजा गया",
+      "savedDescription": "यह उपयोग के लिए तैयार है। भूमिकाओं के नाम रखने और फ़ील्ड सुधारने के लिए इसे खोलें।"
+    },
+    "title": "दस्तावेज़",
+    "toast": {
+      "clipboardBlocked": "क्लिपबोर्ड तक पहुँच रोक दी गई।",
+      "copyLinkFailed": "लिंक कॉपी नहीं हो सका",
+      "csvExported": "CSV निर्यात हुई",
+      "csvRows_one": "इस पेज पर {{count}} पंक्ति।",
+      "csvRows_other": "इस पेज पर {{count}} पंक्तियाँ।",
+      "deleteFailed": "हटाया नहीं जा सका",
+      "deleted_one": "दस्तावेज़ हटाया गया",
+      "deleted_other": "{{count}} दस्तावेज़ हटाए गए",
+      "downloadFailed": "यह दस्तावेज़ डाउनलोड नहीं हो सका",
+      "downloadStarted": "डाउनलोड शुरू हुआ",
+      "duplicateFailed": "इस दस्तावेज़ की प्रतिलिपि नहीं बन सकी",
+      "duplicated": "प्रतिलिपि बनी",
+      "duplicatedBody": "\"{{name}}\" की एक प्रति बना दी गई।",
+      "folderCreateFailed": "फ़ोल्डर नहीं बनाया जा सका",
+      "folderCreated": "फ़ोल्डर बनाया गया",
+      "folderDeleteFailed": "फ़ोल्डर हटाया नहीं जा सका",
+      "folderDeleted": "फ़ोल्डर हटाया गया",
+      "folderDeletedBody": "इसकी सामग्री {{target}} में चली गई।",
+      "folderMoveFailed": "फ़ोल्डर ले जाया नहीं जा सका",
+      "folderMoved": "फ़ोल्डर ले जाया गया",
+      "folderRenameFailed": "फ़ोल्डर का नाम नहीं बदला जा सका",
+      "folderRenamed": "फ़ोल्डर का नाम बदला",
+      "forwardFailed": "यह दस्तावेज़ अग्रेषित नहीं हो सका",
+      "forwardedBody": "\"{{name}}\" अटैचमेंट के रूप में ईमेल किया गया।",
+      "forwardedPartial": "{{total}} में से {{sent}} को अग्रेषित किया गया",
+      "forwardedPartialBody": "हम {{emails}} को ईमेल नहीं भेज सके।",
+      "forwarded_one": "दस्तावेज़ अग्रेषित हुआ",
+      "forwarded_other": "{{count}} लोगों को अग्रेषित हुआ",
+      "moveFailed": "ले जाया नहीं जा सका",
+      "movedOutOfFolders": "हर फ़ोल्डर से बाहर निकाल दिया गया।",
+      "movedToRoot": "ड्राइव के रूट में ले जाया गया।",
+      "moved_one": "दस्तावेज़ ले जाया गया",
+      "moved_other": "{{count}} दस्तावेज़ ले जाए गए",
+      "nothingToExport": "निर्यात के लिए कुछ नहीं",
+      "nothingToExportBody": "इस व्यू में कोई दस्तावेज़ नहीं है।",
+      "settingsFailed": "सेटिंग्स सहेजी नहीं जा सकीं",
+      "settingsSaved": "सेटिंग्स सहेजी गईं",
+      "templateSaveFailed": "इसे टेम्पलेट के रूप में सहेजा नहीं जा सका",
+      "tooManyDownloads": "एक साथ बहुत ज़्यादा",
+      "tooManyDownloadsBody": "एक बार में केवल 5 दस्तावेज़ ही डाउनलोड किए जा सकते हैं।",
+      "voidFailed": "रद्द नहीं किया जा सका",
+      "voided_one": "दस्तावेज़ रद्द हुआ",
+      "voided_other": "{{count}} दस्तावेज़ रद्द हुए"
+    },
+    "viewer": {
+      "fieldsToggle": "फ़ील्ड: <1>{{state}}</1>",
+      "fit": "फ़िट",
+      "off": "बंद",
+      "on": "चालू",
+      "openInSignerView": "हस्ताक्षरकर्ता व्यू में खोलें",
+      "page": "पेज {{current}} / {{total}}"
+    }
+  },
+  "editor": {
+    "actions": {
+      "saveTemplate": "टेम्पलेट सहेजें"
+    },
+    "autoDetect": {
+      "fallbackLabel": "फ़ील्ड"
+    },
+    "banner": {
+      "completed": "यह दस्तावेज़ पूरा हो चुका है, इसलिए इसके फ़ील्ड अब बदले नहीं जा सकते।",
+      "declined": "यह दस्तावेज़ अस्वीकृत है, इसलिए इसके फ़ील्ड अब बदले नहीं जा सकते।",
+      "sent": "यह दस्तावेज़ पहले ही भेजा जा चुका है। बदलाव उन हस्ताक्षरकर्ताओं पर लागू होंगे जिन्होंने अभी हस्ताक्षर नहीं किए।"
+    },
+    "errors": {
+      "couldNotLoadDocument": "यह दस्तावेज़ लोड नहीं हो सका।",
+      "pdfLinkExpired": "PDF लिंक समाप्त हो गया और रिफ़्रेश नहीं हो सका।"
+    },
+    "field": {
+      "label": "{{type}} · {{owner}}",
+      "owner": {
+        "prefill": "पहले से भरा",
+        "unassigned": "असाइन नहीं"
+      },
+      "required": "आवश्यक",
+      "selectPlaceholder": "चुनें…"
+    },
+    "load": {
+      "errorBody": "फ़ाइल हटा दी गई हो सकती है या लिंक समाप्त हो गया हो।",
+      "errorTitle": "यह दस्तावेज़ खोला नहीं जा सका",
+      "goBack": "वापस जाएँ",
+      "untitled": "बिना शीर्षक"
+    },
+    "palette": {
+      "editRoles": "भूमिकाएँ संपादित करें",
+      "groups": {
+        "autofill": "स्वतः भरे",
+        "input": "इनपुट",
+        "signature": "हस्ताक्षर"
+      },
+      "hint": {
+        "date": "दिनांक",
+        "intro": "पेज पर खींचकर छोड़ें, या कर्सर पर रखने के लिए कोई कुंजी दबाएँ:",
+        "signature": "हस्ताक्षर",
+        "text": "टेक्स्ट"
+      },
+      "noMatches": "इससे कोई फ़ील्ड प्रकार मेल नहीं खाता।",
+      "placeFieldsFor": "{{name}} के लिए फ़ील्ड रखें",
+      "placingFor": "इनके लिए फ़ील्ड रखे जा रहे हैं",
+      "searchPlaceholder": "फ़ील्ड प्रकार खोजें",
+      "signerSelect": "नए फ़ील्ड पाने वाला हस्ताक्षरकर्ता",
+      "tileTitle": "{{label}} को पेज पर खींचें"
+    },
+    "properties": {
+      "addOption": "विकल्प जोड़ें",
+      "assignedTo": "किसे सौंपा",
+      "cellCount": "खानों की संख्या",
+      "cells": "खाने",
+      "copyToEveryPage": "हर पेज पर कॉपी करें",
+      "dataMapping": "डेटा मैपिंग",
+      "dataMappingHelp": "API और थोक-भेजने वाली CSV कॉलम में उपयोग होने वाली कुंजी। यह हर हस्ताक्षरकर्ता के लिए अलग होनी चाहिए।",
+      "dateFormat": "दिनांक प्रारूप",
+      "defaultValue": "डिफ़ॉल्ट मान",
+      "defaultValuePlaceholder": "हस्ताक्षरकर्ता को भरने देने के लिए खाली छोड़ें",
+      "deleteField": "फ़ील्ड हटाएं",
+      "fieldPosition": "{{total}} में से फ़ील्ड {{index}}",
+      "fontColour": "फ़ॉन्ट रंग",
+      "fontColours": {
+        "black": "काला",
+        "blue": "नीला",
+        "red": "लाल",
+        "yellow": "पीला"
+      },
+      "fontSize": "फ़ॉन्ट आकार",
+      "fontSizeOption": "{{size}} pt",
+      "howManyPicked": "कितने चुने जा सकते हैं",
+      "layout": {
+        "sideBySide": "साथ-साथ",
+        "stacked": "एक के नीचे एक"
+      },
+      "max": "अधिकतम",
+      "measuredFrom": "पेज {{page}} के ऊपरी-बाएँ कोने से, PDF पॉइंट में मापा गया।",
+      "min": "न्यूनतम",
+      "optionLayout": "विकल्प लेआउट",
+      "options": "विकल्प",
+      "readOnly": "केवल पढ़ने योग्य",
+      "readOnlyHelp": "मान दिखाएँ पर हस्ताक्षरकर्ता को संपादित न करने दें।",
+      "removeOption": "विकल्प {{index}} हटाएं",
+      "required": "आवश्यक",
+      "rotation": "घुमाव",
+      "signatureAlwaysRequired": "हस्ताक्षर हमेशा आवश्यक होते हैं।",
+      "signerLabel": "हस्ताक्षरकर्ता को दिखने वाला लेबल",
+      "size": {
+        "height": "H (pt)",
+        "width": "W (pt)",
+        "x": "X (pt)",
+        "y": "Y (pt)"
+      },
+      "sizeAndPosition": "आकार और स्थिति",
+      "textStyle": "टेक्स्ट शैली",
+      "unassigned": "असाइन नहीं",
+      "validation": "मान्यता जाँच",
+      "validationTypes": {
+        "email": "ईमेल",
+        "letters": "केवल अक्षर",
+        "none": "कोई नहीं",
+        "number": "संख्या",
+        "regex": "कस्टम regex",
+        "ssn": "SSN"
+      }
+    },
+    "roles": {
+      "add": "भूमिका जोड़ें",
+      "defaultName": "भूमिका {{index}}",
+      "description": "इस टेम्पलेट से दस्तावेज़ बनने पर भूमिकाएँ असली प्राप्तकर्ताओं से जुड़ जाती हैं।",
+      "nameLabel": "भूमिका {{index}} का नाम",
+      "prefill": "मालिक द्वारा पहले से भरा",
+      "remove": "{{role}} हटाएं",
+      "removeBlocked": "पहले इस भूमिका के फ़ील्ड हटाएं",
+      "removeTitle": "भूमिका हटाएं",
+      "save": "भूमिकाएँ सहेजें",
+      "title": "भूमिकाएँ"
+    },
+    "selection": {
+      "many_one": "{{count}} फ़ील्ड चयनित। खींचकर हटाएँ, या हटाने के लिए {{key}} दबाएँ।",
+      "many_other": "{{count}} फ़ील्ड चयनित। इन्हें एक साथ खींचकर ले जाएँ, या हटाने के लिए {{key}} दबाएँ।",
+      "none": "गुण संपादित करने के लिए कोई फ़ील्ड चुनें, या पैलेट से एक फ़ील्ड पेज पर खींचें।"
+    },
+    "thumbnails": {
+      "pageLabel_one": "पेज {{page}}, {{count}} फ़ील्ड",
+      "pageLabel_other": "पेज {{page}}, {{count}} फ़ील्ड",
+      "title": "पेज"
+    },
+    "toast": {
+      "autoDetectFailed": "स्वतः पहचान विफल रही",
+      "copiedToPages_one": "{{count}} पेज पर कॉपी हुआ",
+      "copiedToPages_other": "{{count}} पेजों पर कॉपी हुआ",
+      "fieldsAddedBody": "भेजने से पहले हर एक को जाँच लें।",
+      "fieldsAdded_one": "{{count}} फ़ील्ड जोड़ा गया",
+      "fieldsAdded_other": "{{count}} फ़ील्ड जोड़े गए",
+      "noFieldsDetected": {
+        "body": "इस PDF में ऐसी कोई रेखाएँ नहीं हैं जिन्हें स्कैनर पहचान सके।",
+        "title": "कोई फ़ील्ड नहीं मिला"
+      },
+      "noSignatureField": "{{names}} के लिए कोई हस्ताक्षर फ़ील्ड नहीं",
+      "noSignatureFieldBody": "उनके पास हस्ताक्षर करने को कुछ नहीं होगा। फिर भी जारी रखने के लिए दोबारा क्लिक करें।",
+      "onlyOnePage": {
+        "body": "इस फ़ील्ड को कॉपी करने के लिए कोई और पेज नहीं है।",
+        "title": "केवल एक पेज"
+      },
+      "saveFailed": "फ़ील्ड सहेजे नहीं जा सके",
+      "stillUnassignedBody": "जारी रखने से पहले हर फ़ील्ड को एक हस्ताक्षरकर्ता दें।",
+      "stillUnassigned_one": "{{count}} फ़ील्ड अब भी असाइन नहीं है",
+      "stillUnassigned_other": "{{count}} फ़ील्ड अब भी असाइन नहीं हैं",
+      "templateSaved": "टेम्पलेट सहेजा गया"
+    },
+    "topBar": {
+      "autoDetect": "फ़ील्ड स्वतः पहचानें",
+      "autoDetectTitle": "पेज के टेक्स्ट में रेखाएँ ढूँढकर फ़ील्ड सुझाएँ",
+      "previewAsSigner": "हस्ताक्षरकर्ता के रूप में देखें",
+      "redo": "फिर से करें",
+      "snapOff": "स्नैप: बंद",
+      "snapOn": "स्नैप: चालू",
+      "status": {
+        "dirty": "बिना सहेजे बदलाव",
+        "error": "सहेजना विफल",
+        "saved": "सहेजा गया",
+        "saving": "सहेजा जा रहा है…"
+      },
+      "template": "टेम्पलेट",
+      "unassigned_one": "{{count}} फ़ील्ड असाइन नहीं",
+      "unassigned_other": "{{count}} फ़ील्ड असाइन नहीं",
+      "undo": "पूर्ववत करें",
+      "zoom": {
+        "fitWidth": "चौड़ाई में फ़िट करें"
+      }
+    },
+    "widgets": {
+      "cells": {
+        "keywords": "ssn खाने अक्षर boxes characters",
+        "label": "खाने"
+      },
+      "checkbox": {
+        "label": "चेकबॉक्स"
+      },
+      "company": {
+        "label": "कंपनी"
+      },
+      "date": {
+        "keywords": "दिनांक तारीख आज date signed today",
+        "label": "हस्ताक्षर की तिथि"
+      },
+      "draw": {
+        "keywords": "मुक्तहस्त लिखावट freehand scribble",
+        "label": "बनाएँ"
+      },
+      "dropdown": {
+        "keywords": "चयन सूची select list",
+        "label": "ड्रॉपडाउन"
+      },
+      "email": {
+        "label": "ईमेल"
+      },
+      "image": {
+        "keywords": "चित्र अपलोड फ़ोटो picture upload photo",
+        "label": "छवि"
+      },
+      "initials": {
+        "label": "आद्याक्षर"
+      },
+      "jobTitle": {
+        "label": "पद"
+      },
+      "name": {
+        "label": "पूरा नाम"
+      },
+      "radioButton": {
+        "keywords": "रेडियो विकल्प चुनाव radio option choice",
+        "label": "रेडियो"
+      },
+      "signature": {
+        "label": "हस्ताक्षर"
+      },
+      "stamp": {
+        "label": "मोहर"
+      },
+      "text": {
+        "keywords": "लेबल भेजने वाला label sender",
+        "label": "स्थिर टेक्स्ट"
+      },
+      "textInput": {
+        "keywords": "टेक्स्टबॉक्स इनपुट फ़ील्ड textbox input field",
+        "label": "टेक्स्ट"
+      }
+    }
+  },
+  "inbox": {
+    "a11y": {
+      "nextPage": "अगला पेज",
+      "previousPage": "पिछला पेज",
+      "selectDocument": "{{name}} चुनें"
+    },
+    "actions": {
+      "downloadSignedPdf": "हस्ताक्षरित PDF डाउनलोड करें",
+      "extend_one": "{{count}} दिन बढ़ाएँ",
+      "extend_other": "{{count}} दिन बढ़ाएँ",
+      "newRequest": "नया अनुरोध",
+      "openDocument": "दस्तावेज़ खोलें",
+      "recreate": "फिर से बनाएँ",
+      "remindOthers": "दूसरों को याद दिलाएँ",
+      "remindPerson": "{{name}} को याद दिलाएँ",
+      "reviewAndSign": "समीक्षा कर हस्ताक्षर करें"
+    },
+    "activity": {
+      "line": "{{who}} द्वारा {{what}}",
+      "someone": "किसी ने",
+      "updated": "अपडेट हुआ"
+    },
+    "ago": {
+      "days_one": "{{count}} दिन पहले",
+      "days_other": "{{count}} दिन पहले",
+      "hours_one": "{{count}} घंटे पहले",
+      "hours_other": "{{count}} घंटे पहले",
+      "justNow": "अभी",
+      "minutes_one": "{{count}} मिनट पहले",
+      "minutes_other": "{{count}} मिनट पहले"
+    },
+    "commands": {
+      "group": "इनबॉक्स",
+      "open": "\"{{name}}\" खोलें",
+      "refresh": "इनबॉक्स रिफ़्रेश करें",
+      "remind": "\"{{name}}\" पर याद दिलाएँ"
+    },
+    "duration": {
+      "days_one": "{{count}} दि",
+      "days_other": "{{count}} दि",
+      "hours_one": "{{count}} घं",
+      "hours_other": "{{count}} घं",
+      "minutes_one": "{{count}} मि",
+      "minutes_other": "{{count}} मि"
+    },
+    "empty": {
+      "clearBody": "कोई दस्तावेज़ भेजें और वह यहाँ बाकी सब के साथ दिखने लगेगा जिनका आप इंतज़ार कर रहे हैं।",
+      "clearTitle": "आपका इनबॉक्स खाली है",
+      "filteredBody": "कोई दूसरा टैब आज़माएँ, या ऊपर के फ़िल्टर साफ़ करें।",
+      "filteredTitle": "इस व्यू में कुछ नहीं",
+      "noRecipients": "अभी कोई प्राप्तकर्ता नहीं",
+      "noRecipientsSentence": "अभी कोई प्राप्तकर्ता नहीं।"
+    },
+    "errors": {
+      "detailFailed": "पूरा दस्तावेज़ लोड नहीं हो सका।",
+      "documentUnavailable": "यह दस्तावेज़ उपलब्ध नहीं है।",
+      "loadFailed": "इनबॉक्स लोड नहीं हो सका",
+      "noFile": "इस दस्तावेज़ में अभी कोई फ़ाइल नहीं है।",
+      "recreateFailed": "दस्तावेज़ फिर से नहीं बनाया जा सका।"
+    },
+    "expires": {
+      "expired": "समाप्त हो चुका है",
+      "inDays_one": "{{count}} दिन में",
+      "inDays_other": "{{count}} दिनों में",
+      "inHours_one": "{{count}} घंटे में",
+      "inHours_other": "{{count}} घंटों में",
+      "tomorrow": "कल"
+    },
+    "filters": {
+      "last30Days": "पिछले 30 दिन",
+      "ownerAnyone": "मालिक: कोई भी",
+      "ownerMe": "मालिक: मैं"
+    },
+    "greeting": {
+      "afternoon": "नमस्कार।",
+      "afternoonNamed": "नमस्कार, {{name}}।",
+      "counting": "देख रहे हैं कि आपको किन पर काम करना है।",
+      "evening": "शुभ संध्या।",
+      "eveningNamed": "शुभ संध्या, {{name}}।",
+      "expires": "{{name}} {{phrase}} समाप्त हो रहा है",
+      "join": "<1/>, और <2/>।",
+      "morning": "सुप्रभात।",
+      "morningNamed": "सुप्रभात, {{name}}।",
+      "needsSignature_one": "<1>{{words}}</1> दस्तावेज़ को आपके हस्ताक्षर चाहिए",
+      "needsSignature_other": "<1>{{words}}</1> दस्तावेज़ों को आपके हस्ताक्षर चाहिए",
+      "nothing": "आपके लिए कुछ भी लंबित नहीं है।",
+      "single": "<1/>।"
+    },
+    "hints": {
+      "allShortcuts": "सभी शॉर्टकट",
+      "remind": "याद दिलाएँ"
+    },
+    "inspector": {
+      "activity": "गतिविधि",
+      "noActivity": "अभी तक कुछ नहीं हुआ।",
+      "notOpened": "अभी तक खोला नहीं गया",
+      "openFullView": "पूरा व्यू खोलें",
+      "openedAt": "{{when}} खोला गया",
+      "openedTimes_one": "एक बार खोला गया, {{when}}",
+      "openedTimes_other": "{{count}} बार खोला गया, आख़िरी बार {{when}}",
+      "reminded": "{{ago}} याद दिलाया",
+      "selected": "चयनित",
+      "signNowHint": "अभी हस्ताक्षर करें और यह आज ही पूरा हो सकता है।",
+      "signedAt": "{{when}} हस्ताक्षर हुए",
+      "signingOrder": "हस्ताक्षर क्रम",
+      "theirTurn": "उनकी बारी",
+      "typicalHint": "{{name}} आमतौर पर मिलने के {{duration}} के भीतर हस्ताक्षर कर देते हैं।",
+      "yourTurn": "आपकी बारी"
+    },
+    "kpi": {
+      "awaiting": "आपकी प्रतीक्षा में",
+      "completedDelta": "पिछले 30 की तुलना में {{delta}}",
+      "completedLabel": "पूरे हुए, 30 दिन",
+      "expiringThisWeek_one": "{{count}} इस सप्ताह समाप्त हो रहा है",
+      "expiringThisWeek_other": "{{count}} इस सप्ताह समाप्त हो रहे हैं",
+      "fastestThisMonth": "इस महीने सबसे तेज़: {{duration}}",
+      "medianSign": "हस्ताक्षर में माध्य समय",
+      "oldest": "सबसे पुराना: {{age}}",
+      "waiting": "दूसरों की प्रतीक्षा में"
+    },
+    "meta": {
+      "onlyYouSign": "केवल आप हस्ताक्षर करते हैं",
+      "reminded": "{{ago}} याद दिलाया",
+      "sequential": "क्रमिक",
+      "sequentialYouAreNext": "क्रमिक, अगली बारी आपकी"
+    },
+    "nudge": {
+      "expiring": "<1>{{name}}</1> {{phrase}} समाप्त हो रहा है।",
+      "notOpened": "{{name}} ने इसे अभी तक खोला नहीं है।",
+      "openedNotSigned": "{{name}} ने इसे {{ago}} खोला था पर हस्ताक्षर नहीं किए।"
+    },
+    "numberWord": {
+      "0": "शून्य",
+      "1": "एक",
+      "2": "दो",
+      "3": "तीन",
+      "4": "चार",
+      "5": "पाँच",
+      "6": "छह",
+      "7": "सात",
+      "8": "आठ",
+      "9": "नौ"
+    },
+    "pagination": {
+      "range": "{{total}} में से {{from}}-{{to}}"
+    },
+    "shortcuts": {
+      "commandPalette": "कमांड पैलेट",
+      "moveDown": "नीचे जाएँ",
+      "moveUp": "ऊपर जाएँ",
+      "newRequest": "नया हस्ताक्षर अनुरोध",
+      "openDocument": "दस्तावेज़ खोलें",
+      "remind": "लंबित हस्ताक्षरकर्ता को याद दिलाएँ",
+      "signYourself": "स्वयं कुछ हस्ताक्षर करें",
+      "thisList": "यह सूची",
+      "title": "कीबोर्ड शॉर्टकट",
+      "toggleRow": "पंक्ति चुनें या चयन हटाएँ"
+    },
+    "status": {
+      "declinedWithReason": "अस्वीकृत: \"{{reason}}\"",
+      "needsYourSignature": "आपके हस्ताक्षर चाहिए",
+      "signedOf": "{{total}} में से {{signed}} ने हस्ताक्षर किए",
+      "waitingOn": "{{name}} की प्रतीक्षा में"
+    },
+    "table": {
+      "action": "क्रिया",
+      "document": "दस्तावेज़",
+      "progress": "प्रगति",
+      "recipients": "प्राप्तकर्ता",
+      "rowsSelected_one": "{{count}} पंक्ति चयनित",
+      "rowsSelected_other": "{{count}} पंक्तियाँ चयनित",
+      "updated": "अपडेट हुआ"
+    },
+    "tabs": {
+      "all": "सभी",
+      "drafts": "ड्राफ्ट"
+    },
+    "toast": {
+      "actionFailed": "यह काम नहीं कर सका",
+      "expiryFailed": "समाप्ति तिथि नहीं बदली जा सकी",
+      "expiryMoved": "समाप्ति तिथि बदली",
+      "expiryMovedBody": "अब {{date}} तक।",
+      "recreated": "दस्तावेज़ फिर से बना",
+      "recreatedBody": "तैयार होने पर इसे दोबारा भेजें।"
+    },
+    "untitled": "बिना शीर्षक दस्तावेज़",
+    "you": "आप"
+  },
+  "misc": {
+    "comingSoon": {
+      "body": "यह स्क्रीन जल्द आ रही है।",
+      "title": "जल्द आ रहा है"
+    },
+    "legal": {
+      "privacy": {
+        "body": "[आपकी गोपनीयता नीति यहाँ आएगी। इस टेक्स्ट को src/features/misc/LegalPage.tsx में बदलें या /privacy रूट को अपने होस्ट किए गए दस्तावेज़ पर भेजें।]",
+        "title": "गोपनीयता नीति"
+      },
+      "status": {
+        "body": "[इस रूट को अपने स्टेटस पेज से जोड़ें, या साइन-इन स्क्रीन पर फ़ुटर लिंक हटा दें।]",
+        "title": "स्थिति"
+      },
+      "terms": {
+        "body": "[आपकी सेवा शर्तें यहाँ आएँगी। इस टेक्स्ट को src/features/misc/LegalPage.tsx में बदलें या /terms रूट को अपने होस्ट किए गए दस्तावेज़ पर भेजें।]",
+        "title": "सेवा शर्तें"
+      }
+    },
+    "notFound": {
+      "action": "इनबॉक्स पर जाएँ",
+      "body": "लिंक पुराना हो सकता है, या दस्तावेज़ हटा दिया गया था।",
+      "title": "यह पेज मौजूद नहीं है"
+    }
+  },
+  "reports": {
+    "actions": {
+      "chartView": "चार्ट व्यू",
+      "csv": "CSV",
+      "exportCsv": "CSV निर्यात करें",
+      "fullReport": "पूरी रिपोर्ट",
+      "newRequest": "नया अनुरोध",
+      "remind": "याद दिलाएँ",
+      "tableView": "तालिका व्यू"
+    },
+    "buckets": {
+      "d1to3": {
+        "label": "1-3दि",
+        "phrase": "तीन दिन के भीतर"
+      },
+      "d3to7": {
+        "label": "3-7दि",
+        "phrase": "एक सप्ताह के भीतर"
+      },
+      "d7plus": {
+        "label": "7दि+",
+        "phrase": "एक सप्ताह से ज़्यादा में"
+      },
+      "h1to6": {
+        "label": "1-6घं",
+        "phrase": "छह घंटे के भीतर"
+      },
+      "h6to24": {
+        "label": "6-24घं",
+        "phrase": "एक दिन के भीतर"
+      },
+      "lt1h": {
+        "label": "<1घं",
+        "phrase": "एक घंटे के भीतर"
+      }
+    },
+    "charts": {
+      "byTemplate": {
+        "title": "टेम्पलेट अनुसार"
+      },
+      "funnel": {
+        "caption": "हस्ताक्षर फ़नल",
+        "title": "दस्तावेज़ कहाँ अटकते हैं",
+        "tooltip": "{{stage}}: {{total}} में से {{value}} दस्तावेज़ ({{pct}})",
+        "unit": "चरण"
+      },
+      "templatesInRange": {
+        "title": "इस अवधि के टेम्पलेट"
+      },
+      "timeToSign": {
+        "caption": "हस्ताक्षर में लगे समय का वितरण",
+        "title": "हस्ताक्षर में लगा समय",
+        "tooltip": "{{bucket}} में {{value}} हस्ताक्षरित",
+        "unit": "श्रेणी"
+      },
+      "valueHeader": "दस्तावेज़",
+      "weekly": {
+        "title": "प्रति सप्ताह पूरे हुए दस्तावेज़",
+        "tooltip": "{{week}} का सप्ताह: {{value}} पूरे हुए",
+        "unit": "सप्ताह"
+      }
+    },
+    "count": {
+      "sender_one": "{{count, number}} भेजने वाला",
+      "sender_other": "{{count, number}} भेजने वाले"
+    },
+    "customRange": {
+      "apply": "अवधि लागू करें",
+      "from": "से",
+      "to": "तक"
+    },
+    "duration": {
+      "days": "{{value}}दि",
+      "daysHours": "{{days}}दि {{hours}}घं",
+      "hours": "{{value}}घं",
+      "hoursMinutes": "{{hours}}घं {{minutes}}मि",
+      "minutes": "{{value}}मि"
+    },
+    "empty": {
+      "noRecipients": {
+        "body": "रिपोर्ट देखने के लिए अपना पहला दस्तावेज़ भेजें।",
+        "title": "इस अवधि में कोई प्राप्तकर्ता नहीं"
+      },
+      "noReports": {
+        "body": "रिपोर्ट देखने के लिए अपना पहला दस्तावेज़ भेजें।",
+        "title": "अभी कोई रिपोर्ट नहीं"
+      },
+      "noStalled": {
+        "body": "इस अवधि में दस्तावेज़ खोलने वाले हर प्राप्तकर्ता ने हस्ताक्षर कर दिए हैं।",
+        "title": "कोई देरी नहीं कर रहा"
+      },
+      "noTemplates": {
+        "body": "लंबी अवधि चुनें, या रिपोर्ट देखने के लिए अपना पहला दस्तावेज़ भेजें।",
+        "title": "इस अवधि में कोई दस्तावेज़ नहीं"
+      },
+      "oneMember": {
+        "body": "यह सर्वर दस्तावेज़ केवल मालिक और उन पर हस्ताक्षर करने वालों को दिखाता है, इसलिए प्रति-सदस्य विश्लेषण के लिए एक से अधिक भेजने वालों के दस्तावेज़ चाहिए। साथियों को आमंत्रित करें और उनके भेजे दस्तावेज़ यहाँ दिखने लगेंगे।",
+        "title": "केवल आपके अपने दस्तावेज़ दिख रहे हैं"
+      }
+    },
+    "errors": {
+      "loadFailed": "रिपोर्ट लोड नहीं हो सकीं",
+      "unknown": "अज्ञात त्रुटि"
+    },
+    "exports": {
+      "documents": {
+        "body": "इस अवधि में भेजे गए हर दस्तावेज़ के लिए एक पंक्ति, जिसमें स्थिति, मालिक, टेम्पलेट, प्राप्तकर्ता और हस्ताक्षर में लगा समय शामिल है।",
+        "title": "दस्तावेज़"
+      },
+      "intro": "फ़ाइलें स्क्रीन पर दिख रहे डेटा से आपके ब्राउज़र में बनती हैं, इसलिए वे मौजूदा अवधि ({{range}}) और फ़िल्टर का पालन करती हैं।",
+      "members": {
+        "body": "प्रति भेजने वाले भेजे गए, पूर्णता दर और हस्ताक्षर में माध्य समय।",
+        "title": "टीम सदस्य अनुसार"
+      },
+      "recipients": {
+        "body": "प्रति प्राप्तकर्ता प्राप्त दस्तावेज़, हस्ताक्षर, हस्ताक्षर में माध्य समय, अंतिम गतिविधि और अस्वीकृतियाँ।",
+        "title": "प्राप्तकर्ता व्यवहार"
+      },
+      "stalled": {
+        "body": "अभी लंबित दस्तावेज़ खोलने वाले हर प्राप्तकर्ता की एक पंक्ति, खोलने की संख्या और आख़िरी बार खोलने के समय के साथ।",
+        "title": "खोला गया, हस्ताक्षर नहीं"
+      },
+      "templates": {
+        "body": "प्रति टेम्पलेट भेजे गए, पूर्णता दर, हस्ताक्षर में माध्य समय और अस्वीकृतियाँ।",
+        "title": "टेम्पलेट अनुसार"
+      }
+    },
+    "filters": {
+      "allTemplates": "सभी टेम्पलेट",
+      "everyone": "सभी",
+      "noTemplate": "कोई टेम्पलेट नहीं"
+    },
+    "funnelStages": {
+      "lower": {
+        "opened": "खोला गया",
+        "sent": "भेजा गया",
+        "signed": "सभी पक्षों ने हस्ताक्षर किए",
+        "started": "हस्ताक्षर शुरू किए"
+      },
+      "opened": "खोला गया",
+      "sent": "भेजा गया",
+      "signed": "सभी पक्षों ने हस्ताक्षर किए",
+      "started": "हस्ताक्षर शुरू किए"
+    },
+    "insight": {
+      "allSigned": "इस अवधि में भेजे गए हर दस्तावेज़ पर सभी पक्षों ने हस्ताक्षर किए।",
+      "biggestDrop": "सबसे बड़ी गिरावट {{from}} से {{to}} के बीच है: {{total}} में से {{drop}} दस्तावेज़ ({{pct}}) वहीं रुक जाते हैं।",
+      "mostSigned": "ज़्यादातर दस्तावेज़ {{phrase}} हस्ताक्षरित हो जाते हैं।",
+      "mostSignedWithSlow": "ज़्यादातर दस्तावेज़ {{phrase}} हस्ताक्षरित हो जाते हैं। {{total}} में से {{slow}} को एक सप्ताह से ज़्यादा लगा।",
+      "mostSignedWithTail": "ज़्यादातर दस्तावेज़ {{phrase}} हस्ताक्षरित हो जाते हैं। 7दि+ वाली पूँछ में मुख्यतः {{name}} है।",
+      "noCompletions": "इस अवधि में अभी तक कोई दस्तावेज़ पूरा नहीं हुआ है।",
+      "noTemplateDocuments": "बिना टेम्पलेट भेजे गए दस्तावेज़",
+      "nothingSent": "इस अवधि में कुछ नहीं भेजा गया।"
+    },
+    "legend": {
+      "bestPerformer": "सर्वश्रेष्ठ प्रदर्शन",
+      "bestValue": "{{name}} ({{rate}})",
+      "completion": "पूर्णता",
+      "notEnoughData": "पर्याप्त डेटा नहीं",
+      "sent": "भेजे गए",
+      "templatesUsed": "उपयोग किए गए टेम्पलेट"
+    },
+    "nav": {
+      "sections": "रिपोर्ट अनुभाग"
+    },
+    "notes": {
+      "overview": "स्वयं हस्ताक्षरित दस्तावेज़ और फ़ोल्डर शामिल नहीं हैं। समय दस्तावेज़ भेजे जाने के क्षण से मापा जाता है।",
+      "recipients": "प्राप्तकर्ता ईमेल पते के अनुसार समूहित हैं। हस्ताक्षर में लगा समय हर दस्तावेज़ भेजे जाने के समय से मापा जाता है।",
+      "stalled": "अभी भी लंबित दस्तावेज़ जिनमें प्राप्तकर्ता ने हस्ताक्षर लिंक खोला है लेकिन हस्ताक्षर नहीं किए। केवल हस्ताक्षर पृष्ठ के खुलने गिने जाते हैं, और हर बार गिना जाता है।"
+    },
+    "ranges": {
+      "custom": "कस्टम",
+      "days30": "30 दिन",
+      "days7": "7 दिन",
+      "days90": "90 दिन",
+      "months12": "12 महीने",
+      "previous": {
+        "custom": "पिछली अवधि",
+        "days30": "पिछले 30 दिन",
+        "days7": "पिछले 7 दिन",
+        "days90": "पिछले 90 दिन",
+        "months12": "पिछले 12 महीने"
+      },
+      "span": "{{from}} से {{to}} तक",
+      "withoutTemplate": "{{range}}, बिना टेम्पलेट वाले दस्तावेज़"
+    },
+    "sections": {
+      "byMember": "टीम सदस्य अनुसार",
+      "byTemplate": "टेम्पलेट अनुसार",
+      "exports": "निर्यात",
+      "overview": "अवलोकन",
+      "recipients": "प्राप्तकर्ता व्यवहार",
+      "stalled": "खोला गया, हस्ताक्षर नहीं"
+    },
+    "stats": {
+      "completed": {
+        "label": "पूरा हुआ",
+        "note": "{{rate}} पूर्णता दर"
+      },
+      "declinedExpired": {
+        "label": "अस्वीकृत या समाप्त",
+        "note": "{{declined}} अस्वीकृत, {{expired}} समाप्त"
+      },
+      "median": {
+        "label": "हस्ताक्षर में माध्य समय",
+        "noComparison": "{{range}} के लिए कोई तुलना नहीं",
+        "noCompletions": "अभी तक कुछ पूरा नहीं हुआ",
+        "wasPrevious": "{{range}} में {{duration}} था"
+      },
+      "sent": {
+        "label": "भेजे गए",
+        "note": "इस अवधि में हस्ताक्षर के लिए"
+      },
+      "waiting": {
+        "due_one": "{{count, number}} की समयसीमा 3 दिन में",
+        "due_other": "{{count, number}} की समयसीमा 3 दिन में",
+        "label": "दूसरों की प्रतीक्षा में",
+        "noneDue": "3 दिन में किसी की समयसीमा नहीं"
+      }
+    },
+    "table": {
+      "completed": "पूरे हुए",
+      "completion": "पूर्णता",
+      "completionTitle": "{{sent}} में से {{completed}} पूरे हुए",
+      "declines": "अस्वीकृतियाँ",
+      "document": "दस्तावेज़",
+      "documents": "दस्तावेज़",
+      "expires": "समाप्ति",
+      "firstOpened": "पहली बार खोला",
+      "lastActivity": "अंतिम गतिविधि",
+      "lastOpened": "आख़िरी बार खोला",
+      "median": "माध्य",
+      "medianTimeToSign": "हस्ताक्षर में माध्य समय",
+      "noActivity": "कोई गतिविधि नहीं",
+      "opens": "खोले जाने की संख्या",
+      "recipient": "प्राप्तकर्ता",
+      "sent": "भेजे गए",
+      "signed": "हस्ताक्षरित",
+      "teamMember": "टीम सदस्य",
+      "template": "टेम्पलेट",
+      "weekOf": "सप्ताह"
+    },
+    "title": "रिपोर्ट",
+    "toast": {
+      "nothingToExport": "निर्यात के लिए कुछ नहीं",
+      "nothingToExportBody": "इस अवधि में कोई दस्तावेज़ नहीं भेजा गया।"
+    },
+    "truncated": "इस अवधि के {{limit}} सबसे हाल में अपडेट हुए दस्तावेज़ दिखाए जा रहे हैं। सटीक कुल के लिए अवधि छोटी करें।",
+    "untitledDocument": "बिना शीर्षक दस्तावेज़"
+  },
+  "send": {
+    "a11y": {
+      "bccEmail": "Bcc ईमेल पता",
+      "progress": "प्रगति",
+      "recipientEmail": "प्राप्तकर्ता ईमेल",
+      "recipientName": "प्राप्तकर्ता नाम",
+      "recipientOptions": "प्राप्तकर्ता विकल्प",
+      "removeEmail": "{{email}} हटाएं",
+      "removeRow": "पंक्ति हटाएं",
+      "role": "भूमिका"
+    },
+    "actions": {
+      "addCc": "CC जोड़ें",
+      "addMe": "मुझे जोड़ें",
+      "addRecipient": "प्राप्तकर्ता जोड़ें",
+      "addRow": "एक पंक्ति जोड़ें",
+      "backToDocuments": "दस्तावेज़ों पर वापस",
+      "backToList": "सूची पर वापस",
+      "change": "बदलें",
+      "discardAndClose": "छोड़ें और बंद करें",
+      "fix": "ठीक करें",
+      "fromContacts": "संपर्कों से",
+      "keepEditing": "संपादन जारी रखें",
+      "replace": "बदलें",
+      "saveAndClose": "सहेजें और बंद करें",
+      "use": "उपयोग करें"
+    },
+    "api": {
+      "documentNotCreated": "दस्तावेज़ नहीं बनाया गया।",
+      "untitledTemplate": "बिना शीर्षक टेम्पलेट"
+    },
+    "bulk": {
+      "columns": "कॉलम: name, email, phone (phone वैकल्पिक)",
+      "dropCsv": "यहाँ CSV छोड़ें, या चुनने के लिए क्लिक करें",
+      "multiRole_one": "इस टेम्पलेट में {{count}} भूमिका है। थोक भेजना हर दस्तावेज़ में केवल एक भूमिका भरता है, इसलिए इसे एक-हस्ताक्षरकर्ता टेम्पलेट के साथ उपयोग करें और कई पक्षों वाले अलग-अलग भेजें।",
+      "multiRole_other": "इस टेम्पलेट में {{count}} भूमिकाएँ हैं। थोक भेजना हर दस्तावेज़ में केवल एक भूमिका भरता है, इसलिए इसे एक-हस्ताक्षरकर्ता टेम्पलेट के साथ उपयोग करें और कई पक्षों वाले अलग-अलग भेजें।",
+      "noRows": "कोई पंक्ति नहीं मिली। फ़ाइल की हर पंक्ति में एक नाम और एक ईमेल चाहिए।",
+      "ready": "{{total}} में से {{valid}} तैयार",
+      "subtitle": "हर पंक्ति के लिए एक दस्तावेज़, सभी {{template}} से। CSV अपलोड करें या संपर्कों में से चुनें।",
+      "theTemplate": "टेम्पलेट",
+      "title": "हस्ताक्षर के लिए प्रति किसे मिलेगी?"
+    },
+    "bulkReview": {
+      "body": "हर पंक्ति को {{template}} की अपनी प्रति मिलती है, जो तुरंत भेजी जाती है।",
+      "each_one": "{{count}} अनुरोध, हर एक के लिए एक दस्तावेज़",
+      "each_other": "{{count}} अनुरोध, हर एक के लिए एक दस्तावेज़",
+      "emailAndReason": "ईमेल और कारण",
+      "expires": "{{date}} को समाप्त",
+      "retryBody_one": "{{count}} अनुरोध चला गया। नीचे दी गई पंक्तियाँ नहीं गईं, हर एक का कारण साथ है।",
+      "retryBody_other": "{{count}} अनुरोध चले गए। नीचे दी गई पंक्तियाँ नहीं गईं, हर एक का कारण साथ है।",
+      "subject": "विषय: {{subject}}",
+      "toRetry_one": "{{count}} अनुरोध फिर से आज़माने के लिए",
+      "toRetry_other": "{{count}} अनुरोध फिर से आज़माने के लिए"
+    },
+    "contacts": {
+      "addCount_one": "{{count}} प्राप्तकर्ता जोड़ें",
+      "addCount_other": "{{count}} प्राप्तकर्ता जोड़ें",
+      "added": "जोड़ा गया",
+      "description": "वे सभी जिन्हें आपने पहले अनुरोध भेजा है।",
+      "emptyBody": "ईमेल से प्राप्तकर्ता जोड़ें और वह यहाँ सहेज लिया जाता है।",
+      "emptySearch": "उस खोज से कुछ मेल नहीं खाता।",
+      "emptyTitle": "कोई संपर्क नहीं",
+      "loadError": "संपर्क लोड नहीं हो सके।",
+      "searchPlaceholder": "नाम या ईमेल से खोजें",
+      "title": "संपर्कों से"
+    },
+    "dialog": {
+      "leaveDescription": "आपके पिछले कुछ बदलाव अभी ड्राफ्ट में सहेजे नहीं गए हैं।",
+      "leaveTitle": "बिना सहेजे बाहर जाएँ?"
+    },
+    "documents": {
+      "ai": {
+        "body": "दस्तावेज़ छोड़ें, बताएं कौन हस्ताक्षर करेगा, और मॉडल हर फ़ील्ड आपके लिए रख देगा।",
+        "cta": "AI से तैयार करें",
+        "title": "AI को सेटअप करने दें"
+      },
+      "dropFile": "यहाँ फ़ाइल छोड़ें, या चुनने के लिए क्लिक करें",
+      "fileLimit": "PDF, DOCX या DOC, {{size}} MB तक",
+      "keepTabOpen": "यह टैब खुला रखें",
+      "nameHint": "प्राप्तकर्ताओं को विषय पंक्ति और ऑडिट ट्रेल में यही दिखता है।",
+      "nameLabel": "दस्तावेज़ का नाम",
+      "namePlaceholder": "बिना शीर्षक दस्तावेज़",
+      "noteHint": "वैकल्पिक। अनुरोध ईमेल में दिखता है, {{max}} वर्ण तक।",
+      "noteLabel": "प्राप्तकर्ताओं के लिए टिप्पणी",
+      "notePlaceholder": "हस्ताक्षर से पहले उन्हें जो जानना चाहिए",
+      "ready": "तैयार",
+      "savingInto": "{{folder}} में सहेजा जा रहा है",
+      "stage": {
+        "converting": "Word फ़ाइल परिवर्तित हो रही है",
+        "decrypting": "PDF अनलॉक हो रही है",
+        "reading": "फ़ाइल पढ़ी जा रही है",
+        "uploading": "अपलोड हो रहा है {{percent}}%"
+      },
+      "subtitle": "PDF या Word। पासवर्ड से सुरक्षित PDF आपके लिए अनलॉक कर दी जाती हैं।",
+      "templates": {
+        "empty": "आपके पास अभी कोई टेम्पलेट नहीं है। आप जो भी भेजते हैं उसे बाद में टेम्पलेट के रूप में सहेजा जा सकता है।",
+        "error": "टेम्पलेट लोड नहीं हो सके।",
+        "heading": "टेम्पलेट से शुरू करें",
+        "loading": "टेम्पलेट लोड हो रहे हैं",
+        "noRoles": "अभी कोई भूमिका नहीं"
+      },
+      "title": "किस पर हस्ताक्षर चाहिए?",
+      "titleSelf": "आप किस पर हस्ताक्षर कर रहे हैं?"
+    },
+    "errors": {
+      "aRecipient": "एक प्राप्तकर्ता",
+      "aSigner": "एक हस्ताक्षरकर्ता",
+      "invalidEmail": "{{name}} के लिए मान्य ईमेल पता चाहिए।",
+      "noDocument": "अभी कोई दस्तावेज़ अपलोड नहीं हुआ।",
+      "noFields": "{{name}} के लिए भरने को कोई फ़ील्ड नहीं है।",
+      "noSigner": "कम से कम एक हस्ताक्षरकर्ता जोड़ें।",
+      "noSubject": "ईमेल के लिए विषय चाहिए।",
+      "redirectUrl": "रीडायरेक्ट URL http:// या https:// से शुरू होना चाहिए।",
+      "rowNotCreated": "अनुरोध नहीं बनाया गया।",
+      "rowNotReported": "सर्वर ने इस पंक्ति के बारे में कुछ नहीं बताया।",
+      "templateNoDocument": "उस टेम्पलेट से कोई दस्तावेज़ जुड़ा नहीं है।"
+    },
+    "fields": {
+      "email": "ईमेल",
+      "name": "नाम",
+      "phone": "फ़ोन"
+    },
+    "header": {
+      "draftSaved": "ड्राफ्ट {{when}} सहेजा गया",
+      "stepOf": "चरण {{index}} / {{total}}"
+    },
+    "mail": {
+      "aColleague": "एक सहकर्मी",
+      "bodyDefault": "नमस्ते {{receiver_name}},\n\n{{senderName}} ने आपको {{document_title}} पर हस्ताक्षर के लिए भेजा है।\n\nसमीक्षा कर हस्ताक्षर करने के लिए नीचे दिए बटन का उपयोग करें। इसमें एक मिनट लगता है, और सबके हस्ताक्षर हो जाने पर आपको एक प्रति मिल जाएगी।",
+      "subjectDefault": "कृपया हस्ताक्षर करें: {{name}}",
+      "subjectDefaultUnnamed": "कृपया हस्ताक्षर करें: एक दस्तावेज़"
+    },
+    "message": {
+      "body": "मुख्य भाग",
+      "bodyHint": "आप {{receiver_name}}, {{sender_name}}, {{document_title}} और {{expiry_date}} उपयोग कर सकते हैं।",
+      "bodyPlaceholder": "एक छोटी टिप्पणी कि यह क्या है",
+      "heading": "संदेश",
+      "subject": "विषय",
+      "subjectPlaceholder": "कृपया इस दस्तावेज़ पर हस्ताक्षर करें"
+    },
+    "more": {
+      "allowModifications": "हस्ताक्षरकर्ताओं को अपने फ़ील्ड जोड़ने दें",
+      "allowModificationsHint": "हस्ताक्षरकर्ता दस्तावेज़ पर अतिरिक्त हस्ताक्षर, आद्याक्षर, मोहर और टेक्स्ट रख सकते हैं। आपके अपने फ़ील्ड वहीं रहते हैं जहाँ आपने रखे थे।",
+      "bccHint": "पूरे हुए दस्तावेज़ की गुप्त प्रतियाँ। उनसे हस्ताक्षर नहीं माँगे जाते और दूसरे प्राप्तकर्ता उन्हें नहीं देखते।",
+      "bccInvalid": "{{email}} मान्य ईमेल पता नहीं है।",
+      "bccLabel": "Bcc",
+      "bccPlaceholder": "finance@company.com, फिर Enter",
+      "chainHint": "जब सभी हस्ताक्षर कर लेंगे, तो इस टेम्पलेट से एक नया दस्तावेज़ बनाकर उन्हीं हस्ताक्षरकर्ताओं को स्वतः भेज दिया जाएगा।",
+      "chainLabel": "पूरा होने पर, एक फ़ॉलो-अप भेजें",
+      "chainNone": "कोई फ़ॉलो-अप नहीं",
+      "chainTitleLabel": "फ़ॉलो-अप का शीर्षक",
+      "chainTitlePlaceholder": "डिफ़ॉल्ट रूप से टेम्पलेट का नाम",
+      "redirectError": "http:// या https:// से शुरू होने वाला पूरा URL दर्ज करें।",
+      "redirectHint": "हस्ताक्षर पूरा होने पर हस्ताक्षरकर्ता कहाँ पहुँचे। उन्हें पुष्टि पेज पर ही रखने के लिए खाली छोड़ें।",
+      "redirectLabel": "हस्ताक्षर के बाद रीडायरेक्ट",
+      "setCount_one": "({{count}} सेट है)",
+      "setCount_other": "({{count}} सेट हैं)",
+      "toggle": "और विकल्प"
+    },
+    "nav": {
+      "continueToDocuments": "दस्तावेज़ों पर जारी रखें",
+      "continueToFields": "फ़ील्ड पर जारी रखें",
+      "continueToRecipients": "प्राप्तकर्ताओं पर जारी रखें",
+      "continueToReview": "समीक्षा और भेजने पर जारी रखें",
+      "sendNow": "अभी भेजें",
+      "sendRequests_one": "{{count}} अनुरोध भेजें",
+      "sendRequests_other": "{{count}} अनुरोध भेजें"
+    },
+    "password": {
+      "description": "{{fileName}} का पासवर्ड दर्ज करें। हम अपलोड से पहले इसे हटा देते हैं, इसलिए हस्ताक्षरकर्ताओं को इसकी ज़रूरत नहीं होगी।",
+      "label": "पासवर्ड",
+      "placeholder": "दस्तावेज़ पासवर्ड",
+      "title": "यह PDF लॉक है",
+      "unlock": "अनलॉक करें",
+      "wrong": "उस पासवर्ड से फ़ाइल नहीं खुली।"
+    },
+    "placeholders": {
+      "email": "name@company.com",
+      "fullName": "पूरा नाम",
+      "optional": "वैकल्पिक"
+    },
+    "preview": {
+      "addedTimes_one": "{{count}} बार जोड़ा गया",
+      "addedTimes_other": "{{count}} बार जोड़ा गया",
+      "convertedFromWord": "Word से परिवर्तित",
+      "emptyHint": "अपलोड होते ही आपका दस्तावेज़ यहाँ दिखेगा।",
+      "from_one": "{{domain}} से जुड़े {{count}} पिछले अनुरोध से।",
+      "from_other": "{{domain}} से जुड़े {{count}} पिछले अनुरोधों से।",
+      "heading": "दस्तावेज़",
+      "pageOf": "1 / {{total}}",
+      "passwordRemoved": "पासवर्ड हटाया गया",
+      "reading": "दस्तावेज़ पढ़ा जा रहा है",
+      "suggestedHeading": "आपके इतिहास से सुझाए गए",
+      "usualExpiry_one": "आप आमतौर पर {{count}} दिन देते हैं।",
+      "usualExpiry_other": "आप आमतौर पर {{count}} दिन देते हैं।"
+    },
+    "progress": {
+      "preparing": "{{total}} में से {{index}} तैयार हो रहा है",
+      "sending_one": "{{count}} अनुरोध भेजा जा रहा है",
+      "sending_other": "{{count}} अनुरोध भेजे जा रहे हैं"
+    },
+    "recipients": {
+      "empty": "अभी कोई प्राप्तकर्ता नहीं। पहले व्यक्ति को जोड़ें जिसे हस्ताक्षर करना है।",
+      "invalidEmail": "यह ईमेल पता जाँचें।",
+      "moveDown": "नीचे ले जाएँ",
+      "moveUp": "ऊपर ले जाएँ",
+      "notifyToggle": "हर हस्ताक्षर पर मुझे सूचित करें",
+      "reminderNote": "अनुस्मारक दस्तावेज़ पर सहेजे जाते हैं। यह सर्वर अगली अनुस्मारक तिथि निकालता है पर अभी खुद अनुस्मारक नहीं भेजता, इसलिए इन्हें केवल एक रिकॉर्ड मानें।",
+      "roleCc": "CC",
+      "roleSigner": "हस्ताक्षरकर्ता",
+      "sendInOrder": "क्रम से हस्ताक्षर",
+      "sendInOrderOff": "सभी को एक साथ ईमेल जाता है और वे किसी भी क्रम में हस्ताक्षर कर सकते हैं।",
+      "sendInOrderOn": "अभी केवल पहले हस्ताक्षरकर्ता को ईमेल जाता है। हर अगले व्यक्ति को तब आमंत्रित किया जाता है जब उससे पहले वाला हस्ताक्षर कर दे।",
+      "strictOrder": "क्रम अनिवार्य करें",
+      "strictOrderHint": "जब तक उस व्यक्ति से पहले सभी हस्ताक्षर न कर दें, हस्ताक्षर स्वीकार न करें, भले ही उनके पास लिंक हो।",
+      "subtitle": "हर किसी को अपना अलग लिंक मिलता है। जिन्हें केवल प्रति चाहिए उनके लिए CC जोड़ें।",
+      "title": "किसे हस्ताक्षर करना है?"
+    },
+    "review": {
+      "addSigner": "भेजने से पहले कम से कम एक हस्ताक्षरकर्ता जोड़ें।",
+      "allGood": "सब कुछ ठीक है।",
+      "ccNote": "CC प्राप्तकर्ता हस्ताक्षर नहीं करते। सबके हस्ताक्षर हो जाने पर उन्हें पूरा दस्तावेज़ मिल जाता है।",
+      "documentHeading": "दस्तावेज़",
+      "messageHeading": "संदेश",
+      "noBody": "कोई संदेश नहीं।",
+      "noEmail": "कोई ईमेल नहीं",
+      "noName": "कोई नाम नहीं",
+      "noRecipients": "अभी कोई प्राप्तकर्ता नहीं।",
+      "noSubject": "कोई विषय नहीं",
+      "note": "टिप्पणी: {{note}}",
+      "problems_one": "{{count}} चीज़ ठीक करनी है",
+      "problems_other": "{{count}} चीज़ें ठीक करनी हैं",
+      "recipientsHeading": "प्राप्तकर्ता",
+      "settingsHeading": "सेटिंग्स",
+      "signersInOrder_one": "{{count}} व्यक्ति से एक-एक करके हस्ताक्षर करने को कहा जाएगा।",
+      "signersInOrder_other": "{{count}} लोगों से एक-एक करके हस्ताक्षर करने को कहा जाएगा।",
+      "signers_one": "{{count}} व्यक्ति से हस्ताक्षर करने को कहा जाएगा।",
+      "signers_other": "{{count}} लोगों से हस्ताक्षर करने को कहा जाएगा।",
+      "title": "भेजने के लिए तैयार"
+    },
+    "settings": {
+      "afterSigning": "हस्ताक्षर के बाद",
+      "anyOrder": "कोई भी क्रम",
+      "bcc": "Bcc",
+      "emailCode": "ईमेल कोड",
+      "emailLink": "ईमेल लिंक",
+      "everyDays_one": "हर {{count}} दिन",
+      "everyDays_other": "हर {{count}} दिन",
+      "expires": "समाप्ति",
+      "heading": "सेटिंग्स",
+      "inOrder": "क्रम से",
+      "inOrderEnforced": "क्रम से, अनिवार्य",
+      "nobody": "कोई नहीं",
+      "notifyMe": "मुझे सूचित करें",
+      "off": "बंद",
+      "onEachSignature": "हर हस्ताक्षर पर",
+      "onlyYourFields": "केवल आपके रखे फ़ील्ड",
+      "order": "क्रम",
+      "reminders": "अनुस्मारक",
+      "signerCheck": "हस्ताक्षरकर्ता जाँच",
+      "signerFields": "हस्ताक्षरकर्ता फ़ील्ड",
+      "signersMayAdd": "हस्ताक्षरकर्ता अपने जोड़ सकते हैं",
+      "staysOnConfirmation": "पुष्टि पेज पर ही रहते हैं"
+    },
+    "state": {
+      "draftError": "यह ड्राफ्ट खोला नहीं जा सका",
+      "loadingDraft": "आपका ड्राफ्ट लोड हो रहा है"
+    },
+    "steps": {
+      "documents": "दस्तावेज़",
+      "fields": "फ़ील्ड",
+      "recipients": "प्राप्तकर्ता",
+      "review": "समीक्षा और भेजें"
+    },
+    "title": {
+      "bulk": "थोक भेजें",
+      "request": "नया अनुरोध",
+      "self": "स्वयं हस्ताक्षर करें"
+    },
+    "toast": {
+      "alreadySentBody": "इसकी प्रगति देखने के लिए इसे दस्तावेज़ों से खोलें।",
+      "alreadySentTitle": "यह दस्तावेज़ पहले ही भेजा जा चुका है",
+      "bulkBlockedBody": "इसमें कोई दस्तावेज़ या कोई हस्ताक्षरकर्ता भूमिका नहीं है।",
+      "bulkBlockedTitle": "यह टेम्पलेट थोक में नहीं भेजा जा सकता",
+      "couldNotSaveDraft": "ड्राफ्ट सहेजा नहीं जा सका",
+      "couldNotSend": "भेजा नहीं जा सका",
+      "draftNotSaved": "ड्राफ्ट सहेजा नहीं गया",
+      "emailsFailedBody": "दस्तावेज़ भेज दिया गया है। दस्तावेज़ पेज से पुनः भेजें।",
+      "emailsFailed_one": "{{count}} ईमेल नहीं गया",
+      "emailsFailed_other": "{{count}} ईमेल नहीं गए",
+      "profileLoadingBody": "थोड़ी देर में पुनः प्रयास करें।",
+      "profileLoadingTitle": "आपकी प्रोफ़ाइल अभी लोड हो रही है",
+      "replaceFileBody": "दस्तावेज़ में वही फ़ाइल रहती है जिससे वह बना था।",
+      "replaceFileTitle": "फ़ाइल बदलने के लिए नया अनुरोध शुरू करें",
+      "rowsFailedBody": "वे कारण के साथ नीचे सूचीबद्ध हैं।",
+      "rowsFailed_one": "{{count}} पंक्ति नहीं गई",
+      "rowsFailed_other": "{{count}} पंक्तियाँ नहीं गईं",
+      "sentRequests_one": "{{count}} अनुरोध भेजा गया",
+      "sentRequests_other": "{{count}} अनुरोध भेजे गए",
+      "sentToPeople_one": "{{count}} व्यक्ति को भेजा गया",
+      "sentToPeople_other": "{{count}} लोगों को भेजा गया",
+      "templateFailed": "वह टेम्पलेट उपयोग नहीं हो सका",
+      "uploadFailed": "अपलोड विफल रहा"
+    },
+    "units": {
+      "bytes": "{{value}} B",
+      "kilobytes": "{{value}} KB",
+      "megabytes": "{{value}} MB"
+    },
+    "upload": {
+      "conversionFailed": "Word परिवर्तन विफल रहा। इसके बजाय PDF अपलोड करके देखें।",
+      "convertedDownloadFailed": "परिवर्तित फ़ाइल डाउनलोड नहीं हो सकी।",
+      "passwordProtected": "यह PDF पासवर्ड से सुरक्षित है।",
+      "tooLarge": "वह फ़ाइल {{size}} MB से बड़ी है।",
+      "unlockFailed": "यह PDF अनलॉक नहीं हो सकी।",
+      "unsupportedType": "PDF या Word दस्तावेज़ अपलोड करें (.pdf, .docx, .doc)।",
+      "untitledDocument": "बिना शीर्षक दस्तावेज़",
+      "uploadFailed": "फ़ाइल अपलोड नहीं हुई।",
+      "wrongPassword": "उस पासवर्ड से फ़ाइल नहीं खुली।"
+    }
+  },
+  "settings": {
+    "apiWebhooks": {
+      "mcp": {
+        "claudeCode": "Claude Code",
+        "claudeDesktop": "Claude Desktop / अन्य क्लाइंट (mcp-remote के ज़रिए)",
+        "endpoint": "एंडपॉइंट",
+        "note": "स्टेटलेस Streamable HTTP। हर अनुरोध में आपका टोकन होता है, लॉगिन की ज़रूरत नहीं।",
+        "title": "MCP सर्वर",
+        "tools": "टूल"
+      },
+      "rest": {
+        "example": "quick-send एक ही कॉल में PDF अपलोड करता है, AI से फ़ील्ड रखवाता है और हस्ताक्षरकर्ताओं को ईमेल भेजता है। अन्य रूट: POST /files, POST /documents/analyze, POST /documents, GET /documents, GET /documents/:id, POST /documents/:id/send, POST /documents/:id/remind, GET /documents/:id/signing-links, GET|POST /contacts, GET /templates, POST /templates/:id/documents. ड्राफ़्ट संपादन और इतिहास: PATCH /documents/:id, GET /documents/:id/draft, GET /documents/:id/review, PUT|POST|DELETE /documents/:id/fields, PATCH /documents/:id/fields/:key, POST /documents/:id/ai-layout, GET|POST /documents/:id/versions, POST /documents/:id/versions/:v/restore, POST /documents/:id/undo, POST /documents/:id/duplicate, DELETE /documents/:id, POST /documents/:id/restore.",
+        "note": "MCP टूल जैसे ही काम, HTTPS पर JSON के रूप में।",
+        "title": "REST API"
+      },
+      "token": {
+        "copy": "टोकन कॉपी करें",
+        "created": "बनाया गया",
+        "failed": "टोकन बदलना विफल",
+        "generate": "टोकन बनाएं",
+        "generated": "टोकन बन गया",
+        "lastUsed": "अंतिम उपयोग",
+        "never": "कभी नहीं",
+        "none": "अभी कोई टोकन नहीं। MCP एंडपॉइंट या REST API के लिए एक बनाएं।",
+        "note": "प्रति खाता एक टोकन। यह आपकी तरह काम करता है: जो आप यहाँ कर सकते हैं, यह भी कर सकता है।",
+        "prefix": "टोकन",
+        "revoke": "रद्द करें",
+        "revokeConfirm": "इस टोकन का उपयोग करने वाली स्क्रिप्ट और एजेंट तुरंत काम करना बंद कर देंगे।",
+        "revoked": "टोकन रद्द हुआ",
+        "rotate": "टोकन बदलें",
+        "shownOnce": "अभी कॉपी करें। यह दोबारा नहीं दिखेगा।",
+        "title": "व्यक्तिगत API टोकन"
+      },
+      "webhooks": {
+        "body": "इस बिल्ड में आउटबाउंड वेबहुक उपलब्ध नहीं हैं। स्थिति बदलाव के लिए GET /documents/:id या list_documents टूल को पोल करें।",
+        "title": "वेबहुक"
+      }
+    },
+    "audit": {
+      "csv": {
+        "created": "बनाया गया",
+        "declineReason": "अस्वीकार करने का कारण",
+        "documentId": "दस्तावेज़ id",
+        "expires": "समाप्ति",
+        "lastUpdated": "अंतिम अपडेट",
+        "name": "नाम",
+        "owner": "मालिक",
+        "ownerEmail": "मालिक का ईमेल",
+        "sent": "भेजा गया",
+        "signers": "हस्ताक्षरकर्ता",
+        "status": "स्थिति"
+      },
+      "data": {
+        "checking": "जाँचा जा रहा है",
+        "documents": "आपके बनाए दस्तावेज़",
+        "endpoint": "API एंडपॉइंट",
+        "notTracked": "इस सर्वर पर दर्ज नहीं होता",
+        "note": "इस सर्वर द्वारा बताया गया।",
+        "storage": "उपयोग हुआ संग्रहण",
+        "templates": "आपके बनाए टेम्पलेट",
+        "title": "आपका डेटा कहाँ रहता है",
+        "workspace": "वर्कस्पेस"
+      },
+      "export": {
+        "body": "इसमें नाम, स्थिति, हस्ताक्षरकर्ता, तिथियाँ और अस्वीकार करने के कारण शामिल हैं। ड्राफ्ट, प्रगति में, पूरे हुए, अस्वीकृत और समाप्त दस्तावेज़ सभी शामिल हैं। फ़ाइलें स्वयं शामिल नहीं हैं।",
+        "button": "CSV निर्यात करें",
+        "note": "आपके मालिकाना दस्तावेज़ों की एक CSV, जो इस सर्वर की रिपोर्ट से बनती है।",
+        "title": "निर्यात"
+      },
+      "toast": {
+        "failed": "निर्यात नहीं हो सका",
+        "nothing": "निर्यात के लिए कुछ नहीं",
+        "nothingBody": "अभी आपके मालिकाना कोई दस्तावेज़ नहीं हैं।",
+        "ready": "निर्यात तैयार",
+        "readyBody_one": "{{count}} दस्तावेज़ CSV में लिखा गया।",
+        "readyBody_other": "{{count}} दस्तावेज़ CSV में लिखे गए।"
+      },
+      "trails": {
+        "body": "हर दस्तावेज़ का अपना ऑडिट ट्रेल होता है: किसने देखा, किसने हस्ताक्षर किए, कब, और किस IP पते से। हस्ताक्षरित रिकॉर्ड के लिए दस्तावेज़ खोलें और उसका पूर्णता प्रमाण पत्र डाउनलोड करें। इस सर्वर पर पूरे वर्कस्पेस का कोई ऑडिट लॉग नहीं है।",
+        "title": "ऑडिट ट्रेल"
+      }
+    },
+    "billing": {
+      "body": "इस बिल्ड में कोई सब्सक्रिप्शन, प्लान या चालान नहीं है। यह स्वयं-होस्टेड है, इसलिए उपयोग की सीमा केवल उस मशीन तक है जिस पर यह चलता है।",
+      "title": "इस सर्वर पर बिलिंग कॉन्फ़िगर नहीं है"
+    },
+    "branding": {
+      "identity": {
+        "accent": "एक्सेंट रंग",
+        "accentNote": "इस सर्वर पर थीम रंग का कोई फ़ील्ड नहीं है, इसलिए हर जगह ऐप का एक्सेंट ही उपयोग होता है।",
+        "contrastAA": "सफ़ेद पर कंट्रास्ट {{ratio}}:1 (AA)",
+        "contrastBelowAA": "सफ़ेद पर कंट्रास्ट {{ratio}}:1 (AA से कम)",
+        "logo": "वर्कस्पेस लोगो",
+        "logoHint": "PNG, SVG या JPG, 1 MB तक। ऐप में, हस्ताक्षर पृष्ठ पर और ईमेल में दिखाया जाता है।",
+        "memberNote": "केवल वर्कस्पेस व्यवस्थापक ही लोगो और नाम बदल सकता है।",
+        "noLogo": "कोई लोगो अपलोड नहीं हुआ",
+        "note": "हस्ताक्षरकर्ताओं को आपका वर्कस्पेस कैसा दिखता है।",
+        "remove": "हटाएँ",
+        "replace": "बदलें",
+        "title": "पहचान",
+        "tooLarge": "लोगो 1 MB या उससे छोटा होना चाहिए।",
+        "upload": "लोगो अपलोड करें",
+        "uploadFailed": "लोगो अपलोड नहीं हो सका",
+        "uploading": "अपलोड हो रहा है",
+        "workspaceName": "वर्कस्पेस का नाम",
+        "workspaceNameHint": "हस्ताक्षरकर्ता यह नाम ईमेल में और हस्ताक्षर पृष्ठ पर देखते हैं।",
+        "wrongType": "PNG, SVG या JPG फ़ाइल का उपयोग करें।"
+      },
+      "preview": {
+        "certificate": "पूर्णता प्रमाण पत्र",
+        "email": "ईमेल",
+        "emailBody": "इस करार को पूरा करने के लिए आपके हस्ताक्षर चाहिए। लिंक दस्तावेज़ खोल देता है, किसी खाते की ज़रूरत नहीं।",
+        "emailCta": "समीक्षा कर हस्ताक्षर करें",
+        "emailFooter": "{{workspace}} द्वारा भेजा गया। अगर आपको इसकी उम्मीद नहीं थी, तो आप इस ईमेल को अनदेखा कर सकते हैं।",
+        "emailHeading": "{{sender}} ने आपसे {{document}} पर हस्ताक्षर करने को कहा है",
+        "emailSubject": "{{sender}} ने आपसे {{document}} पर हस्ताक्षर करने का अनुरोध किया है",
+        "finish": "पूरा करें",
+        "issuedBy": "{{workspace}} द्वारा जारी",
+        "note": "पूर्वावलोकन एक नमूना दस्तावेज़ और आपके असली वर्कस्पेस मानों का उपयोग करता है।",
+        "pdf": "पूरी हुई PDF",
+        "pdfSender": "भेजने वाला {{sender}}",
+        "pdfTimestamps": "आपके टाइमज़ोन में टाइमस्टैम्प",
+        "poweredBy": "यदि आपको यह ईमेल अनुचित या स्पैम लगता है, तो आप यहाँ शिकायत दर्ज कर सकते हैं।",
+        "requestedBy": "{{sender}} द्वारा अनुरोधित",
+        "sampleDoc": "मास्टर सेवा अनुबंध",
+        "signHere": "यहाँ हस्ताक्षर करें",
+        "signing": "हस्ताक्षर पेज",
+        "title": "लाइव पूर्वावलोकन",
+        "to": "{{recipient}} को"
+      },
+      "sender": {
+        "domain": "हस्ताक्षर पेज का डोमेन",
+        "footerHint": "सादा टेक्स्ट, अधिकतम 500 अक्षर। हर बाहर जाने वाले ईमेल के नीचे जोड़ा जाता है।",
+        "footerPlaceholder": "Acme Inc, 1 Main Street, Oslo",
+        "footerText": "कस्टम फ़ुटर टेक्स्ट",
+        "hidePoweredBy": "“Powered by” फ़ुटर छिपाएँ",
+        "hidePoweredByHint": "आपके ईमेल के नीचे से प्लेटफ़ॉर्म की पंक्ति और स्पैम रिपोर्ट लिंक हटा देता है।",
+        "hidePoweredByToggle": "powered by छिपाएँ",
+        "memberNote": "केवल वर्कस्पेस व्यवस्थापक ही ईमेल प्रेषक बदल सकता है।",
+        "note": "आपके भेजे अनुरोधों पर लागू होता है।",
+        "replyTo": "उत्तर देने का पता",
+        "replyToPlaceholder": "name@company.com",
+        "senderName": "प्रेषक का नाम",
+        "senderNameHint": "इस वर्कस्पेस से भेजे गए हर ईमेल में From नाम। पता वही रहता है जो इस सर्वर पर कॉन्फ़िगर है।",
+        "title": "ईमेल भेजने वाला"
+      },
+      "toast": {
+        "saveFailed": "ब्रांडिंग सहेजी नहीं जा सकी",
+        "saved": "ब्रांडिंग सहेजी गई"
+      }
+    },
+    "emailTemplates": {
+      "adminNote": "वर्कस्पेस पर सहेजा जाता है, इसलिए यहाँ हर कोई एक ही ईमेल भेजता है।",
+      "body": "मुख्य भाग",
+      "bodyHint": "HTML। सर्वर के अंतर्निहित ईमेल पर लौटने के लिए दोनों फ़ील्ड खाली छोड़ें।",
+      "completionTitle": "पूर्णता ईमेल",
+      "defaults": {
+        "completionBody": "<p>नमस्ते {{sender_name}},</p>\n<p>सभी पक्षों ने {{document_title}} पर हस्ताक्षर कर दिए हैं। हस्ताक्षरित प्रति संलग्न है।</p>\n<p>धन्यवाद</p>",
+        "completionSubject": "दस्तावेज़ {{document_title}} पर सभी पक्षों ने हस्ताक्षर कर दिए हैं",
+        "requestBody": "<p>नमस्ते {{receiver_name}},</p>\n<p>{{sender_name}} ने आपसे {{document_title}} की समीक्षा कर हस्ताक्षर करने का अनुरोध किया है।</p>\n<p><a href='{{signing_url}}'>यहाँ हस्ताक्षर करें</a></p>\n<p>धन्यवाद</p>",
+        "requestSubject": "{{sender_name}} ने आपसे {{document_title}} पर हस्ताक्षर करने का अनुरोध किया है"
+      },
+      "noTenant": "इस सर्वर ने कोई वर्कस्पेस रिकॉर्ड नहीं लौटाया, इसलिए टेम्पलेट संपादित नहीं किए जा सकते।",
+      "preview": {
+        "custom": "कस्टम",
+        "note": "इस पूर्वावलोकन से स्क्रिप्ट और इनलाइन हैंडलर हटा दिए जाते हैं। सर्वर हर ईमेल में अपना स्पैम-रिपोर्ट फ़ुटर जोड़ता है।",
+        "serverDefault": "सर्वर डिफ़ॉल्ट",
+        "title": "पूर्वावलोकन"
+      },
+      "requestTitle": "हस्ताक्षर अनुरोध ईमेल",
+      "sample": {
+        "documentTitle": "मास्टर सेवा अनुबंध",
+        "expiryDate": "15 दिन में",
+        "note": "कृपया शुक्रवार तक हस्ताक्षर कर दें।",
+        "senderName": "आप"
+      },
+      "startFromDefault": "डिफ़ॉल्ट से शुरू करें",
+      "subject": "विषय",
+      "tabs": {
+        "completion": "पूर्णता",
+        "request": "अनुरोध"
+      },
+      "toast": {
+        "cleared": "साफ़ किया गया",
+        "clearedBody": "अंतर्निहित ईमेल पर लौटने के लिए सहेजें।",
+        "copyFailed": "कॉपी नहीं हो सका",
+        "noTenant": "सहेजने के लिए कोई वर्कस्पेस रिकॉर्ड नहीं है।",
+        "saveFailed": "टेम्पलेट सहेजे नहीं जा सके",
+        "saved": "ईमेल टेम्पलेट सहेजे गए"
+      },
+      "userNote": "वर्कस्पेस एडमिन द्वारा सेट किया गया और यहाँ से भेजे गए हर अनुरोध में उपयोग होता है। बदलने के लिए एडमिन से कहें।",
+      "variables": {
+        "expiryNote": "{{expiry_date}} केवल अनुरोध ईमेल में भरा जाता है। अज्ञात वेरिएबल जैसे लिखे हैं वैसे ही रह जाते हैं।",
+        "note": "कॉपी करने के लिए क्लिक करें। भेजते समय सर्वर इन्हें बदल देता है।",
+        "title": "वेरिएबल"
+      }
+    },
+    "errors": {
+      "canvasUnavailable": "कैनवास उपलब्ध नहीं है",
+      "couldNotReadFile": "फ़ाइल पढ़ी नहीं जा सकी",
+      "deleteFailed": "हटाना विफल रहा: HTTP {{status}}",
+      "notSignedIn": "साइन इन नहीं हैं",
+      "uploadNoUrl": "अपलोड से कोई URL नहीं मिला"
+    },
+    "form": {
+      "saveFailed": "सहेजा नहीं जा सका",
+      "saved": "सहेजा गया"
+    },
+    "general": {
+      "install": {
+        "apiUrl": "API URL",
+        "appUrl": "ऐप URL",
+        "created": "बनाया गया",
+        "note": "ऐप और उसका API कहाँ चल रहे हैं।",
+        "title": "यह इंस्टॉल",
+        "workspaceId": "वर्कस्पेस id"
+      },
+      "workspace": {
+        "active": "सक्रिय",
+        "address": "पता",
+        "adminNote": "यह सर्वर वर्कस्पेस रिकॉर्ड को मास्टर कुंजी के पीछे रखता है, और उसका अपडेट एंडपॉइंट केवल ईमेल टेम्पलेट स्वीकार करता है। इन मानों को सर्वर पर या डेटाबेस में बदलें, वे यहाँ दिखने लगेंगे।",
+        "contactEmail": "संपर्क ईमेल",
+        "contactNumber": "संपर्क नंबर",
+        "domain": "डोमेन",
+        "domainPlaceholder": "सेट नहीं",
+        "inactive": "निष्क्रिय",
+        "memberNote": "वर्कस्पेस विवरण केवल कोई प्रशासक ही बदल सकता है, और इस सर्वर पर वे ऐप के बाहर संपादित होते हैं।",
+        "missing": "इस सर्वर ने आपके खाते के लिए कोई वर्कस्पेस रिकॉर्ड नहीं लौटाया। किसी प्रशासक से अपनी प्रोफ़ाइल जाँचने को कहें।",
+        "name": "वर्कस्पेस का नाम",
+        "note": "यह विवरण उस वर्कस्पेस रिकॉर्ड से आता है जो इस सर्वर के सेटअप के समय बना था।",
+        "title": "वर्कस्पेस"
+      }
+    },
+    "integrations": {
+      "body": "इस बिल्ड में कोई आउटबाउंड वेबहूक, कोई Zapier ऐप और कोई Google Drive, Dropbox या Box कनेक्टर नहीं है। दस्तावेज़ ऐप से ही अपलोड और डाउनलोड होते हैं।",
+      "seeApi": "API और वेबहूक देखें",
+      "title": "इस सर्वर पर कोई इंटीग्रेशन नहीं"
+    },
+    "nav": {
+      "backToInbox": "इनबॉक्स पर वापस",
+      "workspace": "वर्कस्पेस",
+      "you": "आप"
+    },
+    "notifications": {
+      "always": {
+        "completed": "<1>पूरे हुए दस्तावेज़।</1> हर हस्ताक्षरकर्ता और भेजने वाले को हस्ताक्षरित PDF और उसका प्रमाण पत्र मिलता है। भेजते समय इसे हर अनुरोध के लिए बंद किया जा सकता है।",
+        "declined": "<1>अस्वीकृत दस्तावेज़।</1> भेजने वाले को कारण सहित ईमेल जाता है।",
+        "note": "इस सर्वर पर स्वचालित अनुस्मारक लागू नहीं हैं। अनुस्मारक तभी जाते हैं जब आप किसी दस्तावेज़ से भेजते हैं।",
+        "requests": "<1>हस्ताक्षर अनुरोध।</1> दस्तावेज़ भेजते समय यह ऐप भेजता है, किसी समय-सारणी पर नहीं।",
+        "title": "हमेशा भेजे जाते हैं"
+      },
+      "emailMeAbout": {
+        "eachSignature": "जब भी कोई हस्ताक्षर करे",
+        "eachSignatureHint": "तब भेजा जाता है जब अनुरोध अभी दूसरों की प्रतीक्षा में हो। अंतिम हस्ताक्षर की सूचना पूर्णता ईमेल से मिलती है।",
+        "note": "यह सर्वर केवल यही सूचना प्राथमिकता सहेजता है।",
+        "title": "मुझे इस बारे में ईमेल करें",
+        "toggleLabel": "हस्ताक्षर पर सूचित करें"
+      },
+      "toast": {
+        "saveFailed": "आपकी प्राथमिकताएँ सहेजी नहीं जा सकीं",
+        "saved": "सूचना प्राथमिकताएँ सहेजी गईं"
+      }
+    },
+    "parts": {
+      "loadError": "यह अनुभाग लोड नहीं हो सका।",
+      "notAvailable": "इस सर्वर पर उपलब्ध नहीं"
+    },
+    "profile": {
+      "appearance": {
+        "note": "केवल इस डिवाइस पर लागू होता है, हस्ताक्षर पेजों सहित।",
+        "theme": "थीम",
+        "themeHint": "सिस्टम आपके ऑपरेटिंग सिस्टम की सेटिंग का पालन करता है और उसी के साथ बदलता है।"
+      },
+      "delete": {
+        "admin": "हम आपको एक पुष्टि लिंक ईमेल करते हैं। फिर आप हटाने की प्रक्रिया पूरी करने के लिए एक बार का कोड दर्ज करते हैं।",
+        "button": "मेरा खाता हटाएं",
+        "confirmLabel": "जारी रखने के लिए {{word}} लिखें",
+        "dialogDescription": "इससे आपका खाता, आपका हस्ताक्षर और आपके मालिकाना दस्तावेज़ हट जाते हैं।",
+        "emailLink": "मुझे पुष्टि लिंक ईमेल करें",
+        "intro": "हटाने की पुष्टि ईमेल से होती है: हम <1>{{email}}</1> पर एक लिंक भेजते हैं, और वह पेज कुछ भी हटाने से पहले एक बार का कोड माँगता है।",
+        "nonAdmin": "यहाँ से केवल वर्कस्पेस एडमिन ही खाता हटा सकता है। किसी एडमिन से आपको हटाने को कहें।",
+        "note": "आपका खाता और आपके मालिकाना दस्तावेज़ हटा देता है। इसे पलटा नहीं जा सकता।",
+        "sent": "हमने <1>{{email}}</1> पर एक लिंक भेजा है। उसे खोलें, एक बार का कोड माँगें और हटाने की प्रक्रिया पूरी करने के लिए कोड दर्ज करें। यह लिंक ही एकमात्र रास्ता है, इसलिए अभी कुछ भी नहीं हटा है।",
+        "title": "मेरा खाता हटाएं",
+        "toastFailed": "हटाने की प्रक्रिया शुरू नहीं हो सकी",
+        "toastSent": "पुष्टि ईमेल भेजा गया",
+        "toastSentBody": "अपना खाता हटाना पूरा करने के लिए {{email}} देखें।"
+      },
+      "details": {
+        "company": "कंपनी",
+        "fullName": "पूरा नाम",
+        "jobTitle": "पद",
+        "note": "आपके भेजे अनुरोधों पर हस्ताक्षरकर्ताओं को यही दिखता है।",
+        "phone": "फ़ोन",
+        "pictureHint": "PNG या JPG, 240px पर आकार बदला जाएगा।",
+        "signInEmail": "साइन-इन ईमेल",
+        "signInEmailHint": "यह सर्वर ऐप से आपका साइन-इन ईमेल बदलने की सुविधा नहीं देता।",
+        "title": "आपका विवरण",
+        "uploadPicture": "तस्वीर अपलोड करें"
+      },
+      "language": {
+        "hint": "इससे इस ऐप की भाषा भी बदल जाती है।"
+      },
+      "regional": {
+        "dateFormat": "दिनांक प्रारूप",
+        "note": "प्रमाण पत्र के टाइमस्टैम्प और हस्ताक्षरों पर लगने वाली तिथियों के लिए उपयोग होता है।",
+        "offset": "{{zone}} {{offset}} है",
+        "offsetUnknown": "अज्ञात",
+        "timezone": "टाइमज़ोन",
+        "title": "क्षेत्रीय"
+      },
+      "toast": {
+        "missingRow": "इस सर्वर पर आपकी प्रोफ़ाइल पंक्ति मौजूद नहीं है।",
+        "pictureReady": "तस्वीर तैयार",
+        "pictureReadyBody": "लागू करने के लिए बदलाव सहेजें।",
+        "saveFailed": "आपकी प्रोफ़ाइल सहेजी नहीं जा सकी",
+        "saved": "प्रोफ़ाइल सहेजी गई",
+        "unsupportedImage": "असमर्थित छवि",
+        "unsupportedImageBody": "PNG, JPG या WebP फ़ाइल उपयोग करें।",
+        "uploadFailed": "अपलोड विफल रहा"
+      }
+    },
+    "sections": {
+      "api": {
+        "description": "स्क्रिप्ट और AI एजेंट के लिए व्यक्तिगत टोकन, MCP एंडपॉइंट और REST API।",
+        "label": "API और MCP",
+        "title": "API और MCP"
+      },
+      "audit": {
+        "description": "आपके दस्तावेज़ कहाँ रहते हैं और उनका मेटाडेटा कैसे निर्यात करें।",
+        "label": "ऑडिट और अनुपालन",
+        "title": "ऑडिट और अनुपालन"
+      },
+      "billing": {
+        "description": "इस वर्कस्पेस के लिए प्लान और चालान।",
+        "label": "बिलिंग",
+        "title": "बिलिंग"
+      },
+      "branding": {
+        "description": "ईमेल में और हस्ताक्षर पेज पर आपका वर्कस्पेस कैसा दिखता है।",
+        "label": "ब्रांडिंग",
+        "title": "ब्रांडिंग"
+      },
+      "email": {
+        "description": "हस्ताक्षरकर्ताओं को भेजे जाने वाले अनुरोध और पूर्णता ईमेल।",
+        "label": "ईमेल टेम्पलेट",
+        "title": "ईमेल टेम्पलेट"
+      },
+      "general": {
+        "description": "इस वर्कस्पेस का नाम, डोमेन और संपर्क विवरण।",
+        "label": "सामान्य",
+        "title": "वर्कस्पेस"
+      },
+      "integrations": {
+        "description": "अन्य टूल से कनेक्शन।",
+        "label": "इंटीग्रेशन",
+        "title": "इंटीग्रेशन"
+      },
+      "notifications": {
+        "description": "यह सर्वर आपके दस्तावेज़ों के बारे में आपको कौन से ईमेल भेजता है।",
+        "label": "सूचनाएँ",
+        "title": "सूचनाएँ"
+      },
+      "profile": {
+        "description": "आपका नाम, संपर्क विवरण और आपको तिथियाँ कैसे दिखें।",
+        "label": "प्रोफ़ाइल",
+        "title": "प्रोफ़ाइल"
+      },
+      "security": {
+        "description": "अपना पासवर्ड बदलें और देखें कि आप कहाँ-कहाँ साइन इन हैं।",
+        "label": "सुरक्षा और सत्र",
+        "title": "सुरक्षा और सत्र"
+      },
+      "signature": {
+        "description": "दस्तावेज़ पर हस्ताक्षर करते समय लगने वाला हस्ताक्षर।",
+        "label": "मेरे हस्ताक्षर और आद्याक्षर",
+        "title": "मेरे हस्ताक्षर और आद्याक्षर"
+      },
+      "signing": {
+        "description": "आपके बनाए हर नए हस्ताक्षर अनुरोध पर लागू होने वाले डिफ़ॉल्ट।",
+        "label": "हस्ताक्षर डिफ़ॉल्ट",
+        "title": "हस्ताक्षर डिफ़ॉल्ट"
+      },
+      "team": {
+        "description": "वे लोग जो इस वर्कस्पेस में साइन इन कर सकते हैं।",
+        "label": "टीम",
+        "title": "टीम"
+      }
+    },
+    "security": {
+      "password": {
+        "confirm": "नए पासवर्ड की पुष्टि करें",
+        "current": "मौजूदा पासवर्ड",
+        "mismatch": "दोनों पासवर्ड मेल नहीं खाते।",
+        "new": "नया पासवर्ड",
+        "note": "आपको अपना मौजूदा पासवर्ड चाहिए। बाकी सत्र सर्वर द्वारा समाप्त कर दिए जाते हैं।",
+        "rules": {
+          "case": "बड़े और छोटे अक्षर तथा एक अंक",
+          "length": "कम से कम 8 वर्ण",
+          "special": "एक विशेष वर्ण"
+        },
+        "submit": "पासवर्ड अपडेट करें",
+        "title": "पासवर्ड बदलें",
+        "toast": {
+          "cannotChange": "पासवर्ड नहीं बदला जा सकता",
+          "cannotChangeBody": "आपके खाते में कोई ईमेल पता नहीं है।",
+          "failed": "आपका पासवर्ड नहीं बदला जा सका",
+          "updated": "पासवर्ड अपडेट हुआ",
+          "updatedBody": "दूसरे डिवाइस पर फिर से साइन इन करना पड़ सकता है।"
+        }
+      },
+      "sessions": {
+        "end": "समाप्त करें",
+        "expires": "{{when}} समाप्त",
+        "note": "इस सर्वर पर सक्रिय सत्र।",
+        "signOutOthers": "दूसरे डिवाइस से साइन आउट करें",
+        "started": "{{when}} शुरू हुआ",
+        "thisDevice": "यह डिवाइस",
+        "title": "आप कहाँ साइन इन हैं",
+        "toast": {
+          "endOneFailed": "वह सत्र समाप्त नहीं किया जा सका",
+          "endOthersFailed": "दूसरे सत्र समाप्त नहीं किए जा सके",
+          "signedOutOthers": "बाकी हर जगह से साइन आउट हो गए",
+          "signedOutOthersBody_one": "{{count}} सत्र समाप्त हुआ।",
+          "signedOutOthersBody_other": "{{count}} सत्र समाप्त हुए।"
+        }
+      },
+      "signOut": {
+        "listUnavailable": "यह सर्वर ऐप को आपके सत्रों की सूची नहीं देने देता, इसलिए यहाँ से केवल इसी डिवाइस को साइन आउट किया जा सकता है।",
+        "thisDevice": "इस डिवाइस पर यह सत्र समाप्त करता है।",
+        "title": "साइन आउट"
+      }
+    },
+    "signature": {
+      "change": "बदलें",
+      "initials": {
+        "add": "आद्याक्षर जोड़ें",
+        "empty": "अभी कोई आद्याक्षर सहेजा नहीं गया।",
+        "note": "आद्याक्षर फ़ील्ड और कई पेजों वाली स्वीकृतियों में उपयोग होता है।",
+        "title": "आद्याक्षर"
+      },
+      "note": "छवियाँ इसी सर्वर पर रखी जाती हैं और हर बार पढ़े जाने पर फिर से साइन होती हैं, इसलिए पूर्वावलोकन लिंक कुछ मिनटों में समाप्त हो जाते हैं। कोई छवि लोड होना बंद कर दे तो पेज फिर से लोड करें।",
+      "signature": {
+        "add": "हस्ताक्षर जोड़ें",
+        "empty": "अभी कोई हस्ताक्षर सहेजा नहीं गया।",
+        "note": "जब आप किसी दस्तावेज़ पर या स्वयं हस्ताक्षर करते हैं तब लगता है।",
+        "title": "हस्ताक्षर"
+      },
+      "toast": {
+        "initialsSaved": "आद्याक्षर सहेजे गए",
+        "signatureSaved": "हस्ताक्षर सहेजा गया"
+      }
+    },
+    "signatureDialog": {
+      "chooseImage": "छवि चुनें",
+      "description": "बनाया, टाइप किया या अपलोड किया गया। यह एक बार सहेजा जाता है और आपके हस्ताक्षर किए हर दस्तावेज़ पर फिर से उपयोग होता है।",
+      "errors": {
+        "chooseFirst": "पहले कोई छवि चुनें।",
+        "couldNotRead": "वह छवि पढ़ी नहीं जा सकी",
+        "drawFirst": "पहले कुछ बनाएँ।",
+        "saveFailed": "सहेजा नहीं जा सका",
+        "unsupportedImage": "असमर्थित छवि",
+        "unsupportedImageBody": "PNG या JPG फ़ाइल उपयोग करें।"
+      },
+      "fields": {
+        "initials": "आपके आद्याक्षर",
+        "name": "आपका नाम"
+      },
+      "ink": {
+        "blue": "नीली",
+        "ink": "स्याही",
+        "label": "स्याही"
+      },
+      "saveInitials": "आद्याक्षर सहेजें",
+      "saveSignature": "हस्ताक्षर सहेजें",
+      "tabs": {
+        "draw": "बनाएँ",
+        "type": "टाइप करें",
+        "upload": "अपलोड करें"
+      },
+      "titleInitials": "आपके आद्याक्षर",
+      "titleSignature": "आपका हस्ताक्षर",
+      "trimNote": "किनारे अपने आप काट दिए जाते हैं।",
+      "uploadHint": "PNG या JPG। पारदर्शी या सफ़ेद पृष्ठभूमि सबसे अच्छी रहती है।"
+    },
+    "signing": {
+      "dateFields": {
+        "note": "दस्तावेज़ पर रखे दिनांक विजेट का व्यवहार।",
+        "readOnly": "केवल पढ़ने योग्य",
+        "readOnlyHint": "हस्ताक्षरकर्ता आपकी तय की गई तिथि बदल नहीं सकते।",
+        "readOnlyToggle": "केवल पढ़ने योग्य तिथि",
+        "sourceToast": "तिथि के लिए एक स्रोत तय करें",
+        "sourceToastBody": "हस्ताक्षर तिथि चालू करें, या दस्तावेज़ पर कोई तिथि चुनें।",
+        "title": "दिनांक फ़ील्ड",
+        "useSigningDate": "हस्ताक्षर की तिथि से भरें",
+        "useSigningDateHint": "व्यक्ति के हस्ताक्षर करते ही फ़ील्ड अपने आप भर जाता है।",
+        "useSigningDateToggle": "हस्ताक्षर तिथि उपयोग करें"
+      },
+      "dates": {
+        "clock": "घड़ी",
+        "clock12": "12 घंटे",
+        "clock24": "24 घंटे",
+        "dateFormat": "दिनांक प्रारूप",
+        "filename": "डाउनलोड फ़ाइल का नाम",
+        "note": "हस्ताक्षर तिथियों, प्रमाण पत्रों और डाउनलोड पर उपयोग होता है।",
+        "timezone": "टाइमज़ोन",
+        "timezoneHint": "हस्ताक्षरों और प्रमाण पत्रों पर अंकित होता है।",
+        "title": "तिथियाँ और फ़ाइलें"
+      },
+      "errors": {
+        "noTypes": "कम से कम एक हस्ताक्षर प्रकार सक्षम करें।",
+        "onlyDefault": "सहेजे हुए हस्ताक्षर का दोबारा उपयोग अकेला विकल्प नहीं हो सकता।"
+      },
+      "filenameFormats": {
+        "DOCNAME": "दस्तावेज़ का नाम",
+        "DOCNAME_EMAIL": "दस्तावेज़ का नाम + हस्ताक्षरकर्ता का ईमेल",
+        "DOCNAME_EMAIL_DATE": "दस्तावेज़ का नाम + ईमेल + दिनांक",
+        "DOCNAME_SIGNED": "दस्तावेज़ का नाम + signed"
+      },
+      "perRequest": {
+        "body": "दिनों में समाप्ति, अनुस्मारक की आवृत्ति, एक बार के पासवर्ड से सत्यापन और हस्ताक्षरकर्ता अपने उत्तर बदल सकते हैं या नहीं, ये सब हर दस्तावेज़ पर सहेजे जाते हैं, वर्कस्पेस डिफ़ॉल्ट के रूप में नहीं। अनुरोध बनाते समय भेजने की प्रक्रिया में इन्हें चुनें।",
+        "title": "हर अनुरोध पर तय होता है"
+      },
+      "sending": {
+        "inOrder": "क्रम से हस्ताक्षर",
+        "inOrderHint": "हर हस्ताक्षरकर्ता को तभी ईमेल जाता है जब उससे पहले वाला हस्ताक्षर कर दे।",
+        "ltv": "दीर्घकालिक सत्यापन (LTV)",
+        "ltvHint": "हस्ताक्षरित PDF में निरस्तीकरण डेटा जोड़ता है ताकि वह वर्षों बाद भी मान्य रहे।",
+        "note": "हर नए दस्तावेज़ पर कॉपी होने वाले डिफ़ॉल्ट।",
+        "notify": "हर हस्ताक्षर पर मुझे सूचित करें",
+        "notifyHint": "सूचना अनुभाग से भी बदला जा सकता है।",
+        "notifyToggle": "हस्ताक्षर पर सूचित करें",
+        "title": "भेजना",
+        "tour": "गाइडेड टूर दिखाएँ",
+        "tourHint": "नए हस्ताक्षरकर्ताओं को हस्ताक्षर पेज समझाता है।",
+        "tourToggle": "गाइडेड टूर"
+      },
+      "toast": {
+        "saveFailed": "हस्ताक्षर डिफ़ॉल्ट सहेजे नहीं जा सके",
+        "saved": "हस्ताक्षर डिफ़ॉल्ट सहेजे गए"
+      },
+      "types": {
+        "labels": {
+          "default": "मेरा सहेजा हुआ हस्ताक्षर दोबारा उपयोग करें",
+          "draw": "बनाएँ",
+          "typed": "टाइप करें",
+          "upload": "छवि अपलोड करें"
+        },
+        "note": "आपके बनाए हर अनुरोध पर लागू होता है।",
+        "title": "लोग कैसे हस्ताक्षर कर सकते हैं",
+        "workspaceNote": "यहाँ कौन से विकल्प दिख सकते हैं, यह आपका वर्कस्पेस तय करता है।"
+      }
+    },
+    "team": {
+      "actions": {
+        "label": "{{name}} के लिए क्रियाएँ",
+        "makeEditor": "संपादक बनाएँ",
+        "makeOrgAdmin": "संगठन एडमिन बनाएँ",
+        "makeUser": "उपयोगकर्ता बनाएँ",
+        "memberFallback": "सदस्य",
+        "remove": "वर्कस्पेस से हटाएं",
+        "resetPassword": "पासवर्ड रीसेट करें",
+        "restoreAccess": "पहुँच बहाल करें",
+        "suspendAccess": "पहुँच निलंबित करें"
+      },
+      "countLine_one": "इस वर्कस्पेस में {{count}} व्यक्ति।",
+      "countLine_other": "इस वर्कस्पेस में {{count}} लोग।",
+      "invite": {
+        "button": "साथी को आमंत्रित करें",
+        "created": "खाता तैयार है। यह पासवर्ड उन्हें किसी भरोसेमंद माध्यम से भेजें; यह दोबारा नहीं दिखाया जाएगा।",
+        "description": "यह सर्वर खाता तुरंत बना देता है। पासवर्ड आप खुद उन्हें भेजें।",
+        "email": "ईमेल",
+        "fullName": "पूरा नाम",
+        "newPassword": "नया",
+        "password": "अस्थायी पासवर्ड",
+        "passwordHint": "आपके लिए बनाया गया। वे इसे अपनी सेटिंग्स से बदल सकते हैं।",
+        "phone": "फ़ोन (वैकल्पिक)",
+        "role": "भूमिका",
+        "submit": "साथी जोड़ें",
+        "team": "टीम",
+        "teamLoading": "टीमें लोड हो रही हैं",
+        "title": "साथी को आमंत्रित करें",
+        "toast": {
+          "added": "साथी जोड़ा गया",
+          "failed": "वह व्यक्ति जोड़ा नहीं जा सका"
+        }
+      },
+      "noOrg": "इस सर्वर पर आपका खाता किसी संगठन से जुड़ा नहीं है, इसलिए टीम सूची लोड नहीं हो सकती।",
+      "note": "वर्कस्पेस एडमिन को यहाँ से बदला या हटाया नहीं जा सकता, और आप अपनी ही पंक्ति पर कोई कार्रवाई नहीं कर सकते। नए लोग एक पासवर्ड के साथ बनते हैं जो आप उन्हें भेजते हैं; इस सर्वर पर कोई आमंत्रण ईमेल नहीं है।",
+      "remove": {
+        "confirm": "इसे पलटा नहीं जा सकता। पुष्टि के लिए <1>{{email}}</1> लिखें।",
+        "description": "इस सर्वर पर उनका खाता और उनके मालिकाना दस्तावेज़ हटा दिए जाते हैं।",
+        "emailLabel": "ईमेल",
+        "title": "वर्कस्पेस से हटाएं",
+        "toast": {
+          "cannot": "हटाया नहीं जा सकता",
+          "cannotBody": "इस व्यक्ति का कोई लॉगिन खाता जुड़ा नहीं है।",
+          "done": "वर्कस्पेस से हटाया गया",
+          "failed": "वह व्यक्ति हटाया नहीं जा सका"
+        }
+      },
+      "reset": {
+        "description": "{{name}} के लिए नया पासवर्ड।",
+        "done": "यह पासवर्ड उन्हें भेजें। यह दोबारा नहीं दिखाया जाएगा।",
+        "generate": "नया",
+        "newPassword": "नया पासवर्ड",
+        "newPasswordHint": "कम से कम 8 वर्ण, जिनमें बड़ा और छोटा अक्षर, एक अंक और एक चिह्न हो।",
+        "submit": "पासवर्ड रीसेट करें",
+        "title": "पासवर्ड रीसेट करें",
+        "toast": {
+          "cannot": "रीसेट नहीं हो सकता",
+          "cannotBody": "इस व्यक्ति का कोई लॉगिन खाता जुड़ा नहीं है।",
+          "done": "पासवर्ड रीसेट हुआ",
+          "failed": "वह पासवर्ड रीसेट नहीं हो सका"
+        }
+      },
+      "roles": {
+        "admin": "एडमिन",
+        "editor": "संपादक",
+        "orgAdmin": "संगठन एडमिन",
+        "user": "उपयोगकर्ता"
+      },
+      "self": {
+        "body": "अपनी भूमिका बदलने, पासवर्ड रीसेट करने या खाता हटाने के लिए किसी प्रशासक से कहें। अपनी प्रोफ़ाइल और हस्ताक्षर आप ऊपर के अनुभागों से खुद अपडेट कर सकते हैं।",
+        "note": "पूरी टीम केवल प्रशासक ही देख और प्रबंधित कर सकते हैं।",
+        "title": "आपकी पहुँच"
+      },
+      "table": {
+        "active": "सक्रिय",
+        "added": "जोड़ा गया",
+        "email": "ईमेल",
+        "name": "नाम",
+        "role": "भूमिका",
+        "status": "स्थिति",
+        "suspended": "निलंबित",
+        "teams": "टीमें",
+        "unnamed": "बिना नाम"
+      },
+      "toast": {
+        "accessRestored": "पहुँच बहाल हुई",
+        "accessSuspended": "पहुँच निलंबित हुई",
+        "copyFailed": "कॉपी नहीं हो सका",
+        "copyFailedBody": "इसके बजाय इसे हाथ से कॉपी करें।",
+        "removedFallback": "उपयोगकर्ता हटाया गया",
+        "roleFailed": "वह भूमिका बदली नहीं जा सकी",
+        "roleUpdated": "भूमिका अपडेट हुई",
+        "roleUpdatedBody": "{{name}} अब {{role}} हैं।",
+        "updateFailed": "वह व्यक्ति अपडेट नहीं हो सका"
+      }
+    },
+    "title": "सेटिंग्स",
+    "workspaceFallback": "वर्कस्पेस"
+  },
+  "signer": {
+    "a11y": {
+      "character": "वर्ण {{position}}",
+      "goToPage": "पेज {{page}} पर जाएँ",
+      "moreActions": "और क्रियाएँ",
+      "moveField": "{{label}} फ़ील्ड ले जाएँ",
+      "nextField": "अगला फ़ील्ड",
+      "previousField": "पिछला फ़ील्ड",
+      "removeField": "{{label}} फ़ील्ड हटाएं",
+      "signatureAdopted": "{{name}} के लिए हस्ताक्षर अपनाया गया",
+      "widgetField": "{{label}} फ़ील्ड"
+    },
+    "about": {
+      "expires": "{{date}} को समाप्त",
+      "lastSigner": "आप अंतिम हस्ताक्षरकर्ता हैं। आपके पूरा करते ही सभी को पूरी PDF और प्रमाण पत्र मिल जाएगा।",
+      "nextSigner": "आपके बाद {{name}} हस्ताक्षर करते हैं, फिर सभी को पूरी PDF और प्रमाण पत्र मिल जाता है।",
+      "prevSigned": "{{name}} हस्ताक्षर कर चुके हैं।",
+      "prevSignedOn": "{{name}} ने {{date}} को हस्ताक्षर किए।",
+      "title": "इस अनुरोध के बारे में"
+    },
+    "actions": {
+      "addField": "फ़ील्ड जोड़ें",
+      "askQuestion": "प्रश्न पूछें",
+      "downloadOriginal": "मूल डाउनलोड करें",
+      "finish": "पूरा करें",
+      "finishLater": "बाद में पूरा करें",
+      "nextField": "अगला फ़ील्ड",
+      "signHere": "यहाँ हस्ताक्षर करें"
+    },
+    "addField": {
+      "paletteHint": "फ़ील्ड को पेज {{page}} के बीच में रखता है। इसे हटाने या आकार बदलने के लिए कोने का हैंडल खींचें।",
+      "sheetHint": "यह पेज {{page}} के बीच में आता है।",
+      "title": "फ़ील्ड जोड़ें"
+    },
+    "adopt": {
+      "adoptAndSign": "अपनाएँ और हस्ताक्षर करें",
+      "chooseAnother": "दूसरा चुनें",
+      "chooseImage": "छवि चुनें",
+      "colors": {
+        "black": "काली",
+        "blue": "नीली",
+        "red": "लाल"
+      },
+      "consent": "मैं सहमत हूँ कि यह मेरे हस्तलिखित हस्ताक्षर के समकक्ष है और इसका मेरा उपयोग कानूनी रूप से बाध्यकारी है।",
+      "description": "अपना नाम पक्का करें, फिर जो निशान उपयोग करना है उसे बनाएँ, टाइप करें या अपलोड करें। हम इसे इस दस्तावेज़ में आगे भी उपयोग करेंगे।",
+      "fields": {
+        "fullName": "पूरा नाम",
+        "initials": "आद्याक्षर"
+      },
+      "hint": {
+        "draw": "माउस, ट्रैकपैड या अपनी उंगली से बनाएँ",
+        "saved": "आपके खाते में सहेजा गया",
+        "type": "{{font}} में दिखाया गया",
+        "upload": "सफ़ेद कागज़ पर किए हस्ताक्षर की फ़ोटो अच्छी रहती है"
+      },
+      "methods": {
+        "draw": "बनाएँ",
+        "saved": "सहेजा हुआ",
+        "type": "टाइप करें",
+        "upload": "अपलोड करें"
+      },
+      "penColor": "{{color}} कलम",
+      "preview": {
+        "saved": "आपका सहेजा हुआ हस्ताक्षर",
+        "typed": "टाइप किए हस्ताक्षर का पूर्वावलोकन",
+        "uploaded": "अपलोड किया हस्ताक्षर"
+      },
+      "titleInitials": "अपने आद्याक्षर अपनाएँ",
+      "titleSignature": "अपना हस्ताक्षर अपनाएँ",
+      "uploadHint": "PNG या JPEG। हम आपके लिए पृष्ठभूमि हटा देते हैं।"
+    },
+    "decline": {
+      "confirm": "दस्तावेज़ अस्वीकार करें",
+      "description": "{{sender}} को बता दिया जाएगा कि आपने \"{{document}}\" अस्वीकार कर दिया। इसके बाद आप इस पर हस्ताक्षर नहीं कर पाएँगे।",
+      "keepReviewing": "समीक्षा जारी रखें",
+      "reasonHint": "वैकल्पिक, पर इससे भेजने वाले को दोबारा पूछने की ज़रूरत नहीं पड़ती।",
+      "reasonLabel": "कारण",
+      "reasonPlaceholder": "उन्हें कारण बताएँ, उदाहरण के लिए: पहले भुगतान शर्तें बदलनी होंगी।",
+      "title": "हस्ताक्षर से इनकार करें"
+    },
+    "disclosure": {
+      "agreeLink": "हस्ताक्षर करके आप इलेक्ट्रॉनिक रिकॉर्ड और हस्ताक्षर प्रकटीकरण से सहमत होते हैं।",
+      "closing": "हस्ताक्षर अपनाकर और आगे बढ़कर, आप पुष्टि करते हैं कि आप इस प्रकटीकरण को समझते और स्वीकार करते हैं, और भेजने वाले के दस्तावेज़ों पर इलेक्ट्रॉनिक रूप से हस्ताक्षर करने की सहमति देते हैं।",
+      "intro": "यह प्रकटीकरण इस दस्तावेज़ को भेजने वाले व्यक्ति (भेजने वाला) और आप (हस्ताक्षरकर्ता) के बीच एक करार है। इलेक्ट्रॉनिक रूप से हस्ताक्षर करके आप नीचे दी गई शर्तों से सहमत होते हैं। आगे बढ़ने से पहले कृपया इन्हें पढ़ें।",
+      "questions": "इस प्रकटीकरण के बारे में प्रश्न भेजने वाले से पूछें।",
+      "questionsWithEmail": "इस प्रकटीकरण के बारे में प्रश्न भेजने वाले से यहाँ पूछें",
+      "sections": {
+        "acknowledgment": {
+          "heading": "6. स्वीकृति और सहमति",
+          "intro": "आगे बढ़कर आप:",
+          "points": [
+            "पुष्टि करते हैं कि आप यहाँ बताए अनुसार इलेक्ट्रॉनिक दस्तावेज़ देख और पढ़ सकते हैं।",
+            "इस लेनदेन के लिए इलेक्ट्रॉनिक रिकॉर्ड और हस्ताक्षर उपयोग करने से सहमत हैं।",
+            "समझते हैं कि यह प्लेटफ़ॉर्म केवल लेनदेन को सुगम बनाता है और करार का पक्षकार नहीं है।"
+          ]
+        },
+        "consent": {
+          "heading": "2. इलेक्ट्रॉनिक रिकॉर्ड और हस्ताक्षर उपयोग करने की सहमति",
+          "intro": "इस प्रकटीकरण से सहमत होकर:",
+          "points": [
+            "आप भेजने वाले के साथ इलेक्ट्रॉनिक रूप से लेनदेन करने की सहमति देते हैं, और समझते हैं कि यह सहमति तब तक मान्य है जब तक आप इसे वापस न लें।",
+            "आप दस्तावेज़ों को इलेक्ट्रॉनिक रूप से पढ़ने, हस्ताक्षर करने और लौटाने से सहमत हैं।",
+            "यह सहमति केवल उन्हीं दस्तावेज़ों पर लागू होती है जो भेजने वाले ने दिए हैं।"
+          ]
+        },
+        "legal": {
+          "heading": "7. कानूनी प्रभाव",
+          "intro": "आपका इलेक्ट्रॉनिक हस्ताक्षर:",
+          "points": [
+            "लागू इलेक्ट्रॉनिक हस्ताक्षर कानूनों का पालन करता है, जिनमें संयुक्त राज्य का E-SIGN अधिनियम, यूरोपीय संघ का eIDAS विनियमन और भारत का सूचना प्रौद्योगिकी अधिनियम शामिल हैं।",
+            "आपके और भेजने वाले के बीच, जिन दस्तावेज़ों पर आप हस्ताक्षर करते हैं उनके लिए कानूनी रूप से बाध्यकारी है।"
+          ]
+        },
+        "platform": {
+          "heading": "8. प्लेटफ़ॉर्म की भूमिका और दायित्व की सीमा",
+          "intro": "यह प्लेटफ़ॉर्म इलेक्ट्रॉनिक लेनदेन को सुगम बनाता है। भेजने वाले द्वारा भेजे गए दस्तावेज़ों की सामग्री, वैधता या प्रवर्तनीयता के लिए यह ज़िम्मेदार नहीं है। किसी दस्तावेज़ या उसके हस्ताक्षर को लेकर कोई भी विवाद आपके और भेजने वाले के बीच है।"
+        },
+        "purpose": {
+          "heading": "1. उद्देश्य और दायरा",
+          "intro": "यह प्रकटीकरण इस प्लेटफ़ॉर्म के ज़रिए आपको भेजे गए दस्तावेज़ों के लिए इलेक्ट्रॉनिक रिकॉर्ड और हस्ताक्षर के उपयोग को नियंत्रित करता है। सहमत होकर आप स्वीकार करते हैं कि:",
+          "points": [
+            "आप दस्तावेज़ इलेक्ट्रॉनिक रूप से प्राप्त करेंगे और उन पर हस्ताक्षर करेंगे।",
+            "आपका इलेक्ट्रॉनिक हस्ताक्षर कानूनी रूप से बाध्यकारी और हस्तलिखित हस्ताक्षर के समकक्ष है।"
+          ]
+        },
+        "requirements": {
+          "heading": "4. हार्डवेयर और सॉफ़्टवेयर आवश्यकताएँ",
+          "intro": "यहाँ दस्तावेज़ों पर हस्ताक्षर करने के लिए आपको चाहिए:",
+          "points": [
+            "इंटरनेट से जुड़ा एक डिवाइस।",
+            "JavaScript सक्षम एक मौजूदा वेब ब्राउज़र।",
+            "सूचनाएँ और हस्ताक्षरित दस्तावेज़ पाने के लिए एक ईमेल खाता।"
+          ]
+        },
+        "retention": {
+          "heading": "5. रिकॉर्ड रखना और कागज़ी प्रतियाँ",
+          "intro": "यह पक्का करना आपकी ज़िम्मेदारी है कि आप हस्ताक्षरित दस्तावेज़ देख और सुरक्षित रख सकें। हस्ताक्षर पूरे होते ही आप हस्ताक्षरित दस्तावेज़ डाउनलोड या प्रिंट कर सकते हैं। यदि आप कागज़ी प्रति चाहते हैं, तो भेजने वाले से माँगें। कानून के अन्यथा कहे बिना भेजने वाला उचित शुल्क ले सकता है।"
+        },
+        "termination": {
+          "heading": "9. समाप्ति",
+          "intro": "जब तक भेजने वाला अन्यथा न बताए, आपकी सहमति मौजूदा लेनदेन पर लागू होती है। सेवा शर्तों के उल्लंघन पर पहुँच समाप्त की जा सकती है।"
+        },
+        "withdraw": {
+          "heading": "3. सहमति वापस लेने का अधिकार",
+          "intro": "आप इलेक्ट्रॉनिक रिकॉर्ड और हस्ताक्षर उपयोग करने की अपनी सहमति इस तरह वापस ले सकते हैं:",
+          "points": [
+            "भेजने वाले के संदेश में दिए संपर्क विवरण से सीधे उनसे संपर्क करके।",
+            "हस्ताक्षर प्रक्रिया पूरी करने से पहले भेजने वाले को सूचित करके।"
+          ]
+        }
+      },
+      "title": "इलेक्ट्रॉनिक रिकॉर्ड और हस्ताक्षर प्रकटीकरण"
+    },
+    "doc": {
+      "theSender": "भेजने वाला",
+      "untitled": "बिना शीर्षक दस्तावेज़"
+    },
+    "done": {
+      "accountBody": "एक मुफ़्त खाता आपकी हस्ताक्षरित प्रतियाँ, अपनाया हुआ हस्ताक्षर और ऑडिट ट्रेल एक ही जगह रखता है।",
+      "accountCta": "मुफ़्त खाता बनाएँ",
+      "accountTitle": "अपने हस्ताक्षर किए हर दस्तावेज़ को एक जगह रखें।",
+      "continueTo": "{{target}} पर जारी रखें",
+      "disclosure": "प्रकटीकरण",
+      "downloadCopy": "मेरी हस्ताक्षरित प्रति डाउनलोड करें",
+      "emailSender": "{{name}} को ईमेल करें",
+      "nextSignerNotNotified": "हम {{name}} को अनुरोध ईमेल नहीं कर सके। आपका हस्ताक्षर सहेजा गया है और भेजने वाला इसे दोबारा भेज सकता है।",
+      "nextUp": "आगे क्या होगा",
+      "recorded": "<1>{{document}}</1> पर आपका हस्ताक्षर {{date}} को {{time}} बजे दर्ज किया गया।",
+      "redirect": "{{seconds}} सेकंड में आपको {{target}} पर वापस ले जाया जा रहा है।",
+      "sealing": "आपकी हस्ताक्षरित प्रति सील की जा रही है। तैयार होते ही हम इसे आपको ईमेल कर देंगे।",
+      "senderSite": "भेजने वाले की साइट",
+      "title": "हस्ताक्षर हो गए। आपका काम पूरा।",
+      "verifyLink": "यह दस्तावेज़ सत्यापित करें",
+      "waitingOnEveryone": "सभी ने हस्ताक्षर कर दिए हैं। पूरी PDF और पूर्णता प्रमाण पत्र हर हस्ताक्षरकर्ता को ईमेल से भेजे जा रहे हैं।",
+      "waitingOnNext": "{{name}} की स्वीकृति मिलते ही सभी को अंतिम PDF और पूर्णता प्रमाण पत्र ईमेल से मिल जाएगा।",
+      "waitingOnSomeone": "बाकी हस्ताक्षरकर्ता",
+      "yourDocument": "आपका दस्तावेज़"
+    },
+    "email": {
+      "aboutSubject": "{{document}} के बारे में",
+      "cta": "दस्तावेज़ की समीक्षा कर हस्ताक्षर करें",
+      "greeting": "नमस्ते {{name}},",
+      "line": "{{signer}} ने <strong>{{document}}</strong> पर हस्ताक्षर कर दिए हैं। अब आपकी बारी है।",
+      "questionSubject": "{{document}} के बारे में प्रश्न",
+      "subject": "{{sender}} को {{document}} पर आपके हस्ताक्षर चाहिए"
+    },
+    "errors": {
+      "couldNotFetch": "{{url}} नहीं लाया जा सका",
+      "couldNotOpen": "हम यह दस्तावेज़ नहीं खोल सके।",
+      "couldNotReadFile": "वह फ़ाइल नहीं पढ़ी जा सकी।",
+      "couldNotReadImage": "वह छवि नहीं पढ़ी जा सकी।",
+      "emailNotMatched": "हम आपके ईमेल को इस दस्तावेज़ से मिला नहीं सके।",
+      "expiredLink": "हम यह दस्तावेज़ नहीं खोल सके। लिंक समाप्त हो चुका हो सकता है।",
+      "invalidLink": "यह हस्ताक्षर लिंक मान्य नहीं है, या दस्तावेज़ हटा दिया गया था।",
+      "missingDocId": "इस हस्ताक्षर लिंक में दस्तावेज़ id नहीं है।",
+      "noAccessAfterOtp": "आपका कोड स्वीकार कर लिया गया, लेकिन यह दस्तावेज़ {{email}} के साथ साझा नहीं किया गया है। भेजने वाले से इसे दोबारा भेजने को कहें या जांचें कि आपने अपने नाम का लिंक खोला है।",
+      "pdfLibMissing": "इस बिल्ड में PDF हस्ताक्षर लाइब्रेरी उपलब्ध नहीं है। अपने प्रशासक से pdf-lib इंस्टॉल करने को कहें।"
+    },
+    "field": {
+      "badge": {
+        "fill": "भरें",
+        "sign": "हस्ताक्षर करें"
+      },
+      "dateSigned": "हस्ताक्षर की तिथि",
+      "dragToMove": "ले जाने के लिए खींचें",
+      "dragToResize": "आकार बदलने के लिए खींचें",
+      "dropdown": "ड्रॉपडाउन",
+      "removeThisField": "यह फ़ील्ड हटाएं"
+    },
+    "header": {
+      "from": "{{name}} की ओर से",
+      "pageOfShort": "पृ. {{current}}/{{total}}",
+      "progressDesktop": "{{total}} आवश्यक फ़ील्ड में से {{done}} पूरे",
+      "progressMobile": "{{total}} में से {{done}} फ़ील्ड पूरे",
+      "sentBy": "{{name}} द्वारा भेजा गया",
+      "sentByWithEmail": "{{name}} ({{email}}) द्वारा भेजा गया",
+      "signerPosition": "आप {{count}} में से {{position}} हस्ताक्षरकर्ता हैं"
+    },
+    "hints": {
+      "enterMovesNext": "अगले फ़ील्ड पर ले जाता है"
+    },
+    "loading": "दस्तावेज़ खोला जा रहा है",
+    "menu": {
+      "language": "भाषा"
+    },
+    "otp": {
+      "codeLabel": "सत्यापन कोड",
+      "codesNote": "कोड समाप्त नहीं होते, पर केवल सबसे नया ही काम करता है।",
+      "errors": {
+        "enterCode": "ईमेल में आया कोड दर्ज करें।",
+        "noAccount": "उस ईमेल पते के लिए हमारे पास कोई खाता नहीं है।",
+        "notVerified": "हम वह कोड सत्यापित नहीं कर सके। नया कोड मँगाएँ।",
+        "sendFailed": "हम कोड नहीं भेज सके। थोड़ी देर में पुनः प्रयास करें।",
+        "unknownEmail": "हम नहीं जानते कि यह लिंक किस ईमेल का है। अपने आमंत्रण ईमेल से लिंक खोलें।",
+        "verifyFailed": "वह कोड काम नहीं आया।",
+        "wrongCode": "वह कोड सही नहीं है। ईमेल जाँचें और पुनः प्रयास करें।"
+      },
+      "intro": "यह दस्तावेज़ सुरक्षित है। यह आप ही हैं, इसकी पुष्टि के लिए हम <1>{{email}}</1> पर एक कोड ईमेल करेंगे।",
+      "openDocument": "दस्तावेज़ खोलें",
+      "resendIn": "{{seconds}} सेकंड में पुनः भेजें",
+      "sendCode": "मुझे ईमेल पर कोड भेजें",
+      "sendNewCode": "नया कोड भेजें",
+      "sentBody": "हमने <1>{{email}}</1> पर एक कोड ईमेल किया है। दस्तावेज़ खोलने के लिए इसे दर्ज करें।",
+      "title": "पुष्टि करें कि यह आप हैं",
+      "toast": {
+        "sentBody": "{{email}} देखें।",
+        "sentTitle": "कोड भेजा गया"
+      },
+      "yourAddress": "आपका पता"
+    },
+    "party": {
+      "numbered": "हस्ताक्षरकर्ता {{position}}",
+      "roleNumbered": "भूमिका {{position}}",
+      "you": "आप"
+    },
+    "rail": {
+      "empty": "भरने के लिए कोई फ़ील्ड नहीं।",
+      "emptyCanAdd": "अभी कुछ नहीं रखा गया। नीचे फ़ील्ड जोड़ें।",
+      "optionalField": "{{label}} (वैकल्पिक)",
+      "pageShort": "पृ.{{page}}",
+      "yourFields": "आपके फ़ील्ड"
+    },
+    "sealing": {
+      "body": "इसमें कुछ सेकंड लगते हैं। कृपया यह टैब खुला रखें।",
+      "title": "आपका हस्ताक्षर लगाकर दस्तावेज़ सील किया जा रहा है"
+    },
+    "status": {
+      "alreadySigned": {
+        "body": "आपका हस्ताक्षर दर्ज है। जब बाकी सब हस्ताक्षर कर देंगे, तब {{sender}} और हर हस्ताक्षरकर्ता को अंतिम PDF और पूर्णता प्रमाण पत्र ईमेल से मिल जाएगा।",
+        "title": "आप इस पर पहले ही हस्ताक्षर कर चुके हैं"
+      },
+      "completed": {
+        "body": "यह दस्तावेज़ पूरा हो चुका है। नीचे से हस्ताक्षरित प्रति डाउनलोड करें, या हमारे भेजे ईमेल में देखें।",
+        "title": "सभी ने हस्ताक्षर कर दिए"
+      },
+      "declined": {
+        "byPerson": "{{name}} ने हस्ताक्षर से इनकार कर दिया। अब कोई इस पर हस्ताक्षर नहीं कर सकता।",
+        "byUnknown": "यह अस्वीकार कर दिया गया। अब कोई इस पर हस्ताक्षर नहीं कर सकता।",
+        "reasonQuote": "\"{{reason}}\"",
+        "title": "यह दस्तावेज़ अस्वीकार कर दिया गया"
+      },
+      "downloadSigned": "हस्ताक्षरित प्रति डाउनलोड करें",
+      "expired": {
+        "body": "हस्ताक्षर की अवधि बंद हो गई। {{sender}} से इसे दोबारा भेजने को कहें।",
+        "bodyWithDate": "हस्ताक्षर की अवधि {{date}} को बंद हो गई। {{sender}} से इसे दोबारा भेजने को कहें।",
+        "title": "यह दस्तावेज़ समाप्त हो चुका है"
+      },
+      "fromSender": "{{name}} की ओर से",
+      "mailSubjectFallback": "दस्तावेज़",
+      "noFields": {
+        "body": "{{sender}} ने इस दस्तावेज़ पर आपके लिए कोई फ़ील्ड नहीं रखा। अगर आपको लगता है कि यह गलती है तो उनसे संपर्क करें।",
+        "title": "यहाँ आपके हस्ताक्षर के लिए कुछ नहीं है"
+      },
+      "notFound": {
+        "body": "दस्तावेज़ हटा दिया गया हो सकता है, या लिंक अधूरा कॉपी हुआ हो। भेजने वाले से नया लिंक माँगें।",
+        "title": "यह लिंक मान्य नहीं है"
+      },
+      "pill": {
+        "notAvailable": "उपलब्ध नहीं",
+        "nothingToSign": "हस्ताक्षर के लिए कुछ नहीं",
+        "waiting": "प्रतीक्षा में"
+      },
+      "verifyLink": "हस्ताक्षरित दस्तावेज़ सत्यापित करें",
+      "waitingTurn": {
+        "body": "पहले {{name}} के हस्ताक्षर की प्रतीक्षा है। आपकी बारी आते ही हम आपको ईमेल कर देंगे।",
+        "someone": "पहले वाला हस्ताक्षरकर्ता",
+        "title": "अभी आपकी बारी नहीं है"
+      }
+    },
+    "toast": {
+      "adoptFailed": "वह हस्ताक्षर अपनाया नहीं जा सका",
+      "couldNotOpenDocument": "दस्तावेज़ नहीं खोला जा सका",
+      "declineFailed": "अस्वीकार नहीं किया जा सका",
+      "declined": {
+        "body": "{{name}} को बता दिया गया है।",
+        "title": "दस्तावेज़ अस्वीकार किया गया"
+      },
+      "downloadFailed": "डाउनलोड तैयार नहीं हो सका",
+      "fieldsOutstanding_one": "{{count}} फ़ील्ड पर अब भी आपका काम बाकी है",
+      "fieldsOutstanding_other": "{{count}} फ़ील्ड पर अब भी आपका काम बाकी है",
+      "imageTooLarge": {
+        "body": "8 MB से छोटी फ़ाइल चुनें।",
+        "title": "वह छवि बहुत बड़ी है"
+      },
+      "imageUnreadable": "वह छवि पढ़ी नहीं जा सकी",
+      "needSignature": {
+        "body": "अपना हस्ताक्षर रखने के लिए फ़ील्ड जोड़ें का उपयोग करें, फिर हस्ताक्षर करें।",
+        "title": "पहले हस्ताक्षर जोड़ें"
+      },
+      "nextSignerNotNotified": {
+        "body": "आपका हस्ताक्षर सहेज लिया गया है। भेजने वाला अनुरोध दोबारा भेज सकता है।",
+        "title": "{{name}} को ईमेल नहीं भेजा जा सका"
+      },
+      "noIdentity": {
+        "body": "इस दस्तावेज़ को अपने आमंत्रण ईमेल से खोलें और पुनः प्रयास करें।",
+        "title": "हम आपकी पहचान नहीं कर सके"
+      },
+      "noPdfLib": {
+        "body": "pdf-lib निर्भरता गायब है। अपने प्रशासक को बताएँ।",
+        "title": "इस बिल्ड में हस्ताक्षर उपलब्ध नहीं है"
+      },
+      "renderFailed": "यह PDF दिखाई नहीं जा सकी",
+      "signFailed": "हम हस्ताक्षर पूरा नहीं कर सके",
+      "stillLoading": "दस्तावेज़ पूरी तरह लोड होने तक प्रतीक्षा करें"
+    },
+    "validation": {
+      "cellsTooLong": "अधिकतम {{count}} वर्ण उपयोग करें।",
+      "email": "मान्य ईमेल पता दर्ज करें।",
+      "format": "{{hint}} प्रारूप उपयोग करें।",
+      "notExpectedFormat": "यह मान अपेक्षित प्रारूप में नहीं है।",
+      "number": "एक संख्या दर्ज करें।",
+      "required": "यह फ़ील्ड आवश्यक है।",
+      "selectAtLeast_one": "कम से कम {{count}} विकल्प चुनें।",
+      "selectAtLeast_other": "कम से कम {{count}} विकल्प चुनें।",
+      "selectAtMost_one": "अधिकतम {{count}} विकल्प चुनें।",
+      "selectAtMost_other": "अधिकतम {{count}} विकल्प चुनें।",
+      "ssn": "xxx-xx-xxxx प्रारूप उपयोग करें।"
+    },
+    "verify": {
+      "backHome": "Sign पर वापस",
+      "cert": {
+        "range": "{{from}} से {{to}} तक",
+        "rangeExpired": "{{from}} से {{to}} तक (समाप्त)"
+      },
+      "checking": "हस्ताक्षर जाँचा जा रहा है",
+      "choosePdf": "PDF चुनें",
+      "contentMatches": "हस्ताक्षरित डाइजेस्ट से मेल खाता है",
+      "contentMismatch": "मेल नहीं खाता",
+      "coverPartial": "आंशिक: हस्ताक्षर के बाद सामग्री जोड़ी गई",
+      "coverWhole": "पूरी फ़ाइल",
+      "detail": {
+        "altered": "हस्ताक्षर के बाद दस्तावेज़ बदला गया है: सामग्री अब हस्ताक्षरित डाइजेस्ट से मेल नहीं खाती।",
+        "intact": "हस्ताक्षर सुरक्षित है और पूरी फ़ाइल को कवर करता है।",
+        "intactAppended": "हस्ताक्षर सुरक्षित है, पर लगाने के बाद सामग्री जोड़ी गई थी। बाद वाले संस्करण की समीक्षा करें।",
+        "keyUnchecked": "दस्तावेज़ की सामग्री हस्ताक्षरित डाइजेस्ट से मेल खाती है, पर हम इस ब्राउज़र में हस्ताक्षर कुंजी नहीं जाँच सके (शायद यह ऐसा एल्गोरिदम उपयोग करती है जो WebCrypto उपलब्ध नहीं कराता)।",
+        "notDecoded": "हस्ताक्षर ब्लॉक मौजूद है पर डिकोड नहीं हो सका।",
+        "notRead": "हस्ताक्षर पढ़ा नहीं जा सका।",
+        "unchecked": "इस ब्राउज़र में हस्ताक्षर जाँचा नहीं जा सका।"
+      },
+      "dropHere": "यहाँ हस्ताक्षरित PDF छोड़ें",
+      "footnote": "मान्य परिणाम का अर्थ है कि हस्ताक्षर से कवर किए गए बाइट अपरिवर्तित हैं और हस्ताक्षर एम्बेडेड प्रमाण पत्र से मेल खाता है। यह नहीं जाँचता कि प्रमाण पत्र किसी विश्वसनीय प्राधिकरण तक जुड़ता है या नहीं, उसके लिए एक ट्रस्ट स्टोर चाहिए जो ब्राउज़र उपलब्ध नहीं कराता।",
+      "intro": "नीचे हस्ताक्षरित PDF छोड़ें और जाँचें कि उसका डिजिटल हस्ताक्षर सुरक्षित है और बाद में किसी ने सामग्री नहीं बदली। फ़ाइल आपके डिवाइस पर ही रहती है: कुछ भी अपलोड नहीं होता।",
+      "keyUnverified": "सत्यापित नहीं",
+      "keyVerified": "हस्ताक्षर सत्यापित",
+      "kilobytes": "{{size}} KB",
+      "orPickOne": "या अपने डिवाइस से कोई चुनें",
+      "rows": {
+        "certificate": "प्रमाण पत्र",
+        "contentCheck": "सामग्री जाँच",
+        "coverage": "कवरेज",
+        "digest": "डाइजेस्ट",
+        "documentDigest": "दस्तावेज़ डाइजेस्ट",
+        "email": "ईमेल",
+        "issuedBy": "जारीकर्ता",
+        "keyCheck": "कुंजी जाँच",
+        "organization": "संगठन",
+        "serial": "क्रमांक",
+        "signedAt": "हस्ताक्षर का समय",
+        "signer": "हस्ताक्षरकर्ता"
+      },
+      "signatureIndex": "हस्ताक्षर {{position}}",
+      "signatureStatus": {
+        "altered": "बदला गया",
+        "intact": "सुरक्षित",
+        "unverified": "असत्यापित"
+      },
+      "status": {
+        "inconclusive": "अनिर्णीत",
+        "invalid": "अमान्य",
+        "unsigned": "हस्ताक्षरित नहीं",
+        "valid": "मान्य"
+      },
+      "summary": {
+        "invalid": "कम से कम एक हस्ताक्षर दस्तावेज़ से मेल नहीं खाता। इस फ़ाइल को बदली हुई मानें।",
+        "unknown": "हमने हस्ताक्षर पढ़ लिया पर ब्राउज़र में इसे पूरी तरह सत्यापित नहीं कर सके। नीचे दिए विवरण बताते हैं कि हम कहाँ तक पहुँचे।",
+        "unsigned": "इस PDF पर कोई डिजिटल हस्ताक्षर नहीं है। पेज पर दिखने वाली हस्ताक्षर छवियाँ हो सकती हैं, पर इसे क्रिप्टोग्राफ़िक रूप से कुछ भी सील नहीं करता।",
+        "valid_one": "सत्यापित। {{count}} हस्ताक्षर सुरक्षित है और हस्ताक्षर के बाद सामग्री अपरिवर्तित है।",
+        "valid_other": "सत्यापित। {{count}} हस्ताक्षर सुरक्षित हैं और हस्ताक्षर के बाद सामग्री अपरिवर्तित है।"
+      },
+      "summaryLabels": {
+        "sha256": "SHA-256",
+        "signatures": "हस्ताक्षर",
+        "size": "आकार"
+      },
+      "title": "हस्ताक्षरित दस्तावेज़ सत्यापित करें",
+      "toast": {
+        "notPdfBody": "जिस हस्ताक्षरित PDF को जाँचना है वह चुनें।",
+        "notPdfTitle": "यह PDF नहीं है",
+        "unreadable": "वह फ़ाइल पढ़ी नहीं जा सकी"
+      }
+    },
+    "widget": {
+      "cells": "खाने",
+      "checkbox": "चेकबॉक्स",
+      "company": "कंपनी",
+      "date": "हस्ताक्षर की तिथि",
+      "draw": "चित्र",
+      "dropdown": "ड्रॉपडाउन",
+      "email": "ईमेल",
+      "image": "छवि",
+      "initials": "आद्याक्षर",
+      "jobTitle": "पद",
+      "name": "पूरा नाम",
+      "radioButton": "चयन",
+      "signature": "हस्ताक्षर",
+      "stamp": "मोहर",
+      "text": "टेक्स्ट",
+      "textInput": "टेक्स्ट"
+    }
+  },
+  "templates": {
+    "a11y": {
+      "moreActions": "और क्रियाएँ",
+      "use": "{{name}} उपयोग करें"
+    },
+    "actions": {
+      "bulkSend": "थोक भेजें",
+      "import": "PDF या DOCX से आयात करें",
+      "new": "नया टेम्पलेट",
+      "shareWithTeam": "टीम के साथ साझा करें",
+      "use": "उपयोग करें"
+    },
+    "badge": {
+      "bulkReady": "थोक के लिए तैयार",
+      "publicForm": "सार्वजनिक फ़ॉर्म"
+    },
+    "card": {
+      "by": "{{name}} द्वारा",
+      "moreRoles": "+{{value}}",
+      "noFolder": "कोई फ़ोल्डर नहीं",
+      "noRoles": "अभी कोई भूमिका नहीं",
+      "untitled": "बिना शीर्षक टेम्पलेट",
+      "updated": "{{when}} अपडेट हुआ",
+      "uses": "{{value}}× उपयोग हुआ"
+    },
+    "defaults": {
+      "note": "कृपया इस दस्तावेज़ की समीक्षा कर हस्ताक्षर करें"
+    },
+    "dialog": {
+      "delete": {
+        "confirm": "टेम्पलेट हटाएं",
+        "description": "{{name}} गैलरी से हटा दिया जाएगा। इससे पहले भेजे गए दस्तावेज़ों पर कोई असर नहीं पड़ेगा।",
+        "title": "यह टेम्पलेट हटाएं?"
+      },
+      "password": {
+        "confirm": "अनलॉक करके जारी रखें",
+        "description": "पासवर्ड दर्ज करें ताकि फ़ाइल एक बार अनलॉक होकर टेम्पलेट के रूप में सहेजी जा सके।",
+        "title": "यह PDF पासवर्ड से सुरक्षित है"
+      },
+      "share": {
+        "confirm": "साझाकरण सहेजें",
+        "description": "चुनी गई टीम का हर सदस्य यह टेम्पलेट पा सकता है और उपयोग कर सकता है।",
+        "error": "टीमें लोड नहीं हो सकीं। {{message}}",
+        "loading": "टीमें लोड हो रही हैं",
+        "noTeams": "इस वर्कस्पेस में अभी कोई टीम नहीं है। टेम्पलेट साझा करने के लिए सेटिंग्स में एक बनाएँ।",
+        "title": "टीम के साथ साझा करें"
+      }
+    },
+    "empty": {
+      "body": "टेम्पलेट एक ऐसा दस्तावेज़ है जिसमें फ़ील्ड पहले से लगे होते हैं, इसलिए अगली बार भेजने में कुछ मिनट नहीं, कुछ सेकंड लगते हैं।",
+      "noMatch": "इस फ़िल्टर से कोई टेम्पलेट मेल नहीं खाता। खोज साफ़ करें या वापस मेरे और टीम के पर जाएँ।",
+      "title": "अभी कोई टेम्पलेट नहीं"
+    },
+    "errors": {
+      "convertDocx": "यह DOCX फ़ाइल परिवर्तित नहीं हो सकी।",
+      "createFailed": "टेम्पलेट नहीं बनाया गया।",
+      "downloadConverted": "परिवर्तित PDF डाउनलोड नहीं हो सकी।",
+      "listFailed": "टेम्पलेट लोड नहीं हो सके। {{message}}",
+      "notReadablePdf": "यह फ़ाइल पढ़ी जा सकने वाली PDF नहीं है।",
+      "pdfLocked": "यह PDF पासवर्ड से सुरक्षित है।",
+      "pdfUnreadable": "यह PDF खोली नहीं जा सकी।",
+      "profileLoading": "आपकी प्रोफ़ाइल अभी लोड हो रही है। थोड़ी देर में पुनः प्रयास करें।",
+      "signedOut": "आप साइन आउट हैं।",
+      "tooLarge": "फ़ाइलें {{size}} MB से कम होनी चाहिए।",
+      "unsupportedFile": "केवल PDF और DOCX फ़ाइलें ही टेम्पलेट बन सकती हैं।",
+      "uploadNoUrl": "अपलोड से कोई URL नहीं मिला।"
+    },
+    "fields": {
+      "name": "टेम्पलेट नाम",
+      "password": "पासवर्ड"
+    },
+    "hints": {
+      "edit": "संपादित करें",
+      "new": "नया टेम्पलेट",
+      "use": "उपयोग करें"
+    },
+    "meta": {
+      "sendsThisQuarter_one": "इस तिमाही में {{count}} बार भेजा",
+      "sendsThisQuarter_other": "इस तिमाही में {{count}} बार भेजा"
+    },
+    "new": {
+      "hint": "यहाँ PDF या DOCX छोड़ें। रेखाओं और लेबल से फ़ील्ड अपने आप पहचान लिए जाते हैं।",
+      "preparing": "आपका टेम्पलेट तैयार हो रहा है"
+    },
+    "roles": {
+      "fallback": "भूमिका {{index}}",
+      "prefill": "मेरे द्वारा पहले से भरा"
+    },
+    "scopes": {
+      "all": "मेरे और टीम के",
+      "mine": "मेरे",
+      "shared": "मेरे साथ साझा"
+    },
+    "search": {
+      "label": "टेम्पलेट खोजें",
+      "placeholder": "टेम्पलेट खोजें"
+    },
+    "share": {
+      "unnamedTeam": "टीम"
+    },
+    "sort": {
+      "label": "क्रम: {{sort}}",
+      "name": "नाम",
+      "updated": "हाल में अपडेट",
+      "used": "सबसे अधिक उपयोग"
+    },
+    "title": "टेम्पलेट्स",
+    "toast": {
+      "createFailed": "टेम्पलेट नहीं बन सका",
+      "deleteFailed": "हटाया नहीं जा सका",
+      "deleted": {
+        "body": "{{name}} गैलरी से हटा दिया गया।",
+        "title": "टेम्पलेट हटाया गया"
+      },
+      "duplicateFailed": "प्रतिलिपि नहीं बन सकी",
+      "duplicated": {
+        "body": "{{name}} की एक प्रति आपकी गैलरी में है।",
+        "title": "टेम्पलेट की प्रतिलिपि बनी"
+      },
+      "profileNotReady": {
+        "body": "आपकी वर्कस्पेस प्रोफ़ाइल अभी लोड हो रही है।",
+        "title": "प्रोफ़ाइल तैयार नहीं"
+      },
+      "renameFailed": "नाम नहीं बदला जा सका",
+      "shareFailed": "साझा नहीं किया जा सका",
+      "shared": {
+        "body": "{{name}} आपकी टीमों के साथ साझा है।",
+        "title": "साझाकरण अपडेट हुआ"
+      }
+    }
+  }
+}

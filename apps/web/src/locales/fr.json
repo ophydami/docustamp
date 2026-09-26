@@ -1,0 +1,3255 @@
+{
+  "_meta": "machine-translated 2026-08-21, review welcome",
+  "ai": {
+    "actions": {
+      "adjust": "Modifier les instructions",
+      "analyze": "Analyser le document",
+      "analyzing": "Lecture du document",
+      "analyzingHint": "Généralement 10 à 30 secondes.",
+      "openEditor": "Enregistrer le brouillon et ouvrir l'éditeur",
+      "sendNow": "Envoyer pour signature"
+    },
+    "disabled": {
+      "body": "Définissez AI_ENABLED et les identifiants Bedrock sur le serveur pour l'activer.",
+      "title": "La préparation par l'IA est désactivée sur ce serveur"
+    },
+    "drop": {
+      "aria": "Choisir un document",
+      "hint": "PDF, DOCX ou DOC, jusqu'à {{size}} Mo",
+      "title": "Déposez un PDF ou un fichier Word ici, ou cliquez pour choisir"
+    },
+    "file": {
+      "converted": "converti depuis Word",
+      "replace": "Remplacer"
+    },
+    "instructions": {
+      "hint": "Le langage courant suffit. Dites qui vous êtes, qui signe en premier, ou ce que le modèle doit remplir avant l'envoi.",
+      "label": "Instructions (facultatif)",
+      "placeholder": "p. ex. Je suis le bailleur. Le locataire signe d'abord, puis moi. Ajoutez des initiales sur chaque page."
+    },
+    "known": {
+      "add": "Ajouter une personne",
+      "email": "E-mail",
+      "empty": "Laissez vide pour que le modèle trouve les noms et e-mails imprimés dans le document.",
+      "label": "Personnes déjà connues (facultatif)",
+      "name": "Nom"
+    },
+    "poweredBy": "{{model}} via {{provider}}",
+    "preview": {
+      "empty": "Le document s'affiche ici dès que vous en choisissez un.",
+      "legend": "Les cadres colorés sont les champs proposés.",
+      "title": "Aperçu"
+    },
+    "review": {
+      "inOrder": "Signe dans l'ordre",
+      "missing_one": "{{count}} signataire n'a pas encore d'adresse e-mail.",
+      "missing_other": "{{count}} signataires n'ont pas encore d'adresse e-mail.",
+      "signers": "Qui signe",
+      "signersHint": "Complétez les e-mails manquants avant d'envoyer.",
+      "title": "Titre du document",
+      "you": "Vous"
+    },
+    "steps": {
+      "document": "1. Document",
+      "instructions": "2. Que voulez-vous ?",
+      "review": "3. Vérifier"
+    },
+    "subtitle": "Déposez un document et dites ce que vous voulez. Le modèle le lit, détermine qui signe et où, et place chaque champ. Vous vérifiez, puis envoyez ou ajustez dans l'éditeur.",
+    "title": "Demander à l'IA",
+    "toast": {
+      "analysisFailed": "Impossible d'analyser le document",
+      "draftCreated": "Brouillon créé. Vérifiez les champs dans l'éditeur.",
+      "draftFailed": "Impossible de créer le brouillon",
+      "missingEmails_one": "{{count}} signataire n'a pas d'adresse e-mail.",
+      "missingEmails_other": "{{count}} signataires n'ont pas d'adresse e-mail.",
+      "sendFailed": "Impossible d'envoyer le document",
+      "sentWithFailures_one": "Créé, mais {{count}} e-mail n'a pas pu être envoyé.",
+      "sentWithFailures_other": "Créé, mais {{count}} e-mails n'ont pas pu être envoyés.",
+      "sent_one": "Envoyé à {{count}} personne",
+      "sent_other": "Envoyé à {{count}} personnes"
+    }
+  },
+  "app": {
+    "a11y": {
+      "closeNav": "Fermer la navigation",
+      "mainNav": "Navigation principale",
+      "openNav": "Ouvrir la navigation"
+    },
+    "actions": {
+      "bulkSend": "Envoi groupé",
+      "new": "Nouveau",
+      "newRequest": "Nouvelle demande",
+      "signYourself": "Signez vous-même",
+      "useTemplate": "Utiliser un modèle"
+    },
+    "nav": {
+      "ai": "Demander à l'IA",
+      "automations": "Automatisations",
+      "contacts": "Contacts",
+      "documents": "Documents",
+      "inbox": "Boîte de réception",
+      "reports": "Rapports",
+      "settings": "Paramètres",
+      "templates": "Modèles"
+    },
+    "palette": {
+      "groupActions": "Actions",
+      "groupGoTo": "Aller à",
+      "groupThisPage": "Cette page",
+      "label": "Palette de commandes",
+      "noResults": "Aucun résultat.",
+      "toggleDark": "Basculer le mode sombre",
+      "useATemplate": "Utiliser un modèle"
+    },
+    "savedViews": {
+      "expiring": "Expire cette semaine",
+      "sentByMe": "Envoyés par moi",
+      "title": "Vues enregistrées",
+      "waitingOnMe": "En attente de moi"
+    },
+    "topbar": {
+      "searchPlaceholder": "Rechercher ou saisir une commande",
+      "searchPlaceholderLong": "Rechercher des documents, des personnes, des modèles ou saisir une commande"
+    }
+  },
+  "auth": {
+    "a11y": {
+      "acceptTerms": "Accepter les conditions d'utilisation et la politique de confidentialité",
+      "hidePassword": "Masquer le mot de passe",
+      "showPassword": "Afficher le mot de passe"
+    },
+    "actions": {
+      "backToSignIn": "Retour à la connexion",
+      "createWorkspace": "Créer un espace de travail",
+      "emailMeACode": "Envoyez-moi un code par e-mail",
+      "forgot": "Oublié ?",
+      "goToSignIn": "Aller à la connexion",
+      "openDocument": "Ouvrir le document",
+      "resendCode": "Renvoyer le code",
+      "resendIn": "Renvoyer dans {{seconds}} s",
+      "sendResetLink": "Envoyer le lien de réinitialisation",
+      "sendToDifferentAddress": "L'envoyer à une autre adresse",
+      "signIn": "Se connecter",
+      "switchToOtp": "Pas de mot de passe ? Recevoir un code de connexion par e-mail",
+      "switchToPassword": "Se connecter avec un mot de passe",
+      "useDifferentAccount": "Utiliser un autre compte",
+      "useDifferentEmail": "Utiliser une autre adresse e-mail"
+    },
+    "checkEmail": {
+      "sentTo": "Nous avons envoyé un code à 4 chiffres à <1>{{email}}</1>.",
+      "title": "Consultez votre messagerie"
+    },
+    "code": {
+      "digitAria": "{{label}}, chiffre {{index}}",
+      "label": "Code de connexion"
+    },
+    "divider": {
+      "or": "ou"
+    },
+    "errors": {
+      "accountDisabled": "Ce compte a été désactivé. Contactez l'administrateur de votre espace de travail.",
+      "accountNotCreated": "Le compte n'a pas pu être créé.",
+      "badCredentials": "Cet e-mail et ce mot de passe ne correspondent à aucun compte.",
+      "cannotReachServer": "Impossible de joindre le serveur. Vérifiez votre connexion et réessayez.",
+      "codeEmailFailed": "Impossible d'envoyer un code par e-mail. Réessayez.",
+      "codeFourDigits": "Saisissez le code à 6 chiffres reçu par e-mail.",
+      "codeInvalid": "Ce code n'est pas correct. Vérifiez-le et réessayez.",
+      "codeSendFailed": "Impossible d'envoyer le code. Réessayez.",
+      "codeVerifyFailed": "Impossible de vérifier le code. Demandez-en un nouveau.",
+      "codeVerifyFallback": "Impossible de vérifier le code.",
+      "companyRequired": "Saisissez le nom de votre entreprise ou de votre espace de travail.",
+      "documentUnavailable": "Ce document n'est plus disponible.",
+      "emailNotVerified": "Cette adresse e-mail n'est pas encore vérifiée. Cherchez le code de vérification dans votre messagerie.",
+      "emailTaken": "Un compte utilise déjà cette adresse e-mail. Connectez-vous plutôt.",
+      "googleFailed": "La connexion avec Google a échoué.",
+      "googleNoSession": "La connexion avec Google n'a pas renvoyé de session.",
+      "googleNoToken": "Google n'a pas renvoyé de jeton de connexion.",
+      "googleUnusableToken": "Google n'a pas renvoyé de jeton de connexion utilisable.",
+      "invalidEmail": "Saisissez une adresse e-mail professionnelle valide.",
+      "jobTitleRequired": "Saisissez votre fonction.",
+      "nameRequired": "Saisissez votre nom complet.",
+      "noAccountForEmail": "Aucun compte n'utilise cette adresse e-mail.",
+      "notAllowed": "Ce compte n'est pas autorisé à se connecter. Contactez l'administrateur de votre espace de travail.",
+      "passwordRequired": "Saisissez votre mot de passe.",
+      "passwordRules": "Choisissez un mot de passe qui respecte les trois règles.",
+      "profileLoadFailed": "Vous êtes connecté, mais votre profil n'a pas pu être chargé.",
+      "requestNotOpenable": "Cette demande de signature n'a pas pu être ouverte.",
+      "resetSendFailed": "Impossible d'envoyer l'e-mail de réinitialisation. Réessayez.",
+      "sessionExpired": "Votre session a expiré. Reconnectez-vous.",
+      "setupFailed": "Impossible de terminer la configuration de votre espace de travail.",
+      "signInFailed": "Connexion impossible. Réessayez.",
+      "termsRequired": "Acceptez les conditions pour continuer."
+    },
+    "fields": {
+      "company": "Entreprise",
+      "fullName": "Nom complet",
+      "jobTitle": "Fonction",
+      "password": "Mot de passe",
+      "phone": "Téléphone",
+      "workEmail": "E-mail professionnel",
+      "yourEmail": "Votre e-mail"
+    },
+    "footer": {
+      "guestNote": "Vous n'avez pas besoin de compte pour signer. Le code confirme seulement que cette demande vous est destinée.",
+      "openSource": "Open source sous licence AGPL-3.0",
+      "signerNote": "Vous signez un document qu'on vous a envoyé ? Utilisez le lien reçu par e-mail, aucun compte n'est nécessaire.",
+      "source": "Source",
+      "status": "Statut"
+    },
+    "forgot": {
+      "sentBody": "Si <1>{{email}}</1> correspond à un compte, un lien de réinitialisation est en route. Ce lien ouvre une page où définir un nouveau mot de passe.",
+      "subtitle": "Saisissez votre e-mail professionnel et nous vous enverrons un lien pour définir un nouveau mot de passe.",
+      "title": "Réinitialiser votre mot de passe"
+    },
+    "guest": {
+      "goneBody": "Le document a été supprimé, ou il n'est plus partagé avec vous.",
+      "goneTitle": "Cette demande n'est pas disponible",
+      "invalidBody": "L'adresse est incomplète ou a été modifiée en chemin. Ouvrez le lien d'origine reçu par e-mail, ou demandez à l'expéditeur de renvoyer la demande.",
+      "invalidTitle": "Ce lien n'est pas valide",
+      "verifyBody": "Ce document est protégé par un code à usage unique. Nous en enverrons un à l'adresse utilisée par l'expéditeur.",
+      "verifyTitle": "Vérifiez votre identité"
+    },
+    "hints": {
+      "phone": "Facultatif. Utilisé uniquement sur le certificat de finalisation."
+    },
+    "marketing": {
+      "body": "Contrats, promesses d'embauche, accords de confidentialité et formulaires, signés en quelques minutes avec une piste d'audit complète et un certificat de finalisation vérifiable.",
+      "headline": "Envoyez, faites signer et sachez exactement où en est chaque document."
+    },
+    "password": {
+      "rules": {
+        "length": "Au moins 8 caractères",
+        "mix": "Majuscules et minuscules, plus un chiffre",
+        "special": "Un caractère spécial, par exemple ! @ # $ %"
+      }
+    },
+    "placeholders": {
+      "email": "you@company.com",
+      "fullName": "Ada Lovelace",
+      "jobTitle": "Responsable des opérations",
+      "phone": "+44 7700 900000"
+    },
+    "profile": {
+      "subtitle": "Encore quelques détails et {{email}} pourra envoyer des documents.",
+      "title": "Finalisez votre espace de travail"
+    },
+    "signIn": {
+      "newHere": "Nouveau ici ? <1>Créez un espace de travail</1>",
+      "title": "Se connecter"
+    },
+    "signUp": {
+      "firstAccountNotice": "C'est le premier compte de ce serveur : il devient donc administrateur de l'espace de travail.",
+      "haveAccount": "Vous avez déjà un compte ? <1>Connectez-vous</1>",
+      "termsAgreement": "J'accepte les <1>conditions d'utilisation</1> et la <2>politique de confidentialité</2>.",
+      "title": "Créer un espace de travail"
+    },
+    "status": {
+      "checkingSession": "Vérification de votre session",
+      "openingDocument": "Ouverture de votre document"
+    },
+    "toast": {
+      "codeSendFailed": "Impossible d'envoyer le code",
+      "existingAccount": "Bon retour",
+      "existingAccountBody": "Cette adresse avait déjà un compte, nous vous y avons connecté.",
+      "googleFailed": "La connexion avec Google a échoué",
+      "profileLoadFailed": "Impossible de charger votre profil",
+      "resetFailed": "Échec de l'e-mail de réinitialisation",
+      "setupFailed": "Échec de la configuration",
+      "signInFailed": "Échec de la connexion",
+      "signUpFailed": "Échec de l'inscription",
+      "verificationFailed": "Échec de la vérification",
+      "workspaceCreated": "Espace de travail créé",
+      "workspaceCreatedBody": "Bienvenue, {{name}}."
+    }
+  },
+  "common": {
+    "actions": {
+      "add": "Ajouter",
+      "back": "Retour",
+      "cancel": "Annuler",
+      "clear": "Effacer",
+      "close": "Fermer",
+      "continue": "Continuer",
+      "copied": "Copié",
+      "copy": "Copier",
+      "decline": "Refuser",
+      "delete": "Supprimer",
+      "discard": "Abandonner",
+      "dismiss": "Ignorer",
+      "done": "Terminé",
+      "download": "Télécharger",
+      "duplicate": "Dupliquer",
+      "edit": "Modifier",
+      "import": "Importer",
+      "next": "Suivant",
+      "open": "Ouvrir",
+      "preview": "Aperçu",
+      "remind": "Relancer",
+      "remove": "Retirer",
+      "rename": "Renommer",
+      "reset": "Réinitialiser",
+      "saveChanges": "Enregistrer les modifications",
+      "select": "Sélectionner",
+      "sign": "Signer",
+      "signOut": "Se déconnecter",
+      "tryAgain": "Réessayer",
+      "upload": "Téléverser"
+    },
+    "count": {
+      "company_one": "{{count}} entreprise",
+      "company_other": "{{count}} entreprises",
+      "day_one": "{{count}} jour",
+      "day_other": "{{count}} jours",
+      "document_one": "{{count}} document",
+      "document_other": "{{count}} documents",
+      "field_one": "{{count}} champ",
+      "field_other": "{{count}} champs",
+      "hour_one": "{{count}} heure",
+      "hour_other": "{{count}} heures",
+      "page_one": "{{count}} page",
+      "page_other": "{{count}} pages",
+      "person_one": "{{count}} personne",
+      "person_other": "{{count}} personnes",
+      "recipient_one": "{{count}} destinataire",
+      "recipient_other": "{{count}} destinataires",
+      "role_one": "{{count}} rôle",
+      "role_other": "{{count}} rôles",
+      "signer_one": "{{count}} signataire",
+      "signer_other": "{{count}} signataires",
+      "template_one": "{{count}} modèle",
+      "template_other": "{{count}} modèles"
+    },
+    "date": {
+      "daysShort_one": "{{count}} j",
+      "daysShort_other": "{{count}} j",
+      "expired": "expiré",
+      "hoursShort_one": "{{count}} h",
+      "hoursShort_other": "{{count}} h",
+      "yesterday": "Hier"
+    },
+    "errors": {
+      "generic": "Une erreur est survenue",
+      "invalidEmail": "Saisissez une adresse e-mail valide"
+    },
+    "hints": {
+      "move": "déplacer",
+      "open": "ouvrir",
+      "select": "sélectionner",
+      "selected_one": "{{count}} sélectionné",
+      "selected_other": "{{count}} sélectionnés"
+    },
+    "language": {
+      "label": "Langue"
+    },
+    "reminder": {
+      "couldNotSendTitle": "Impossible d'envoyer le rappel",
+      "everyoneSigned": "Tout le monde a déjà signé.",
+      "failedDocuments_one": "Échec pour {{count}} document : {{message}}",
+      "failedDocuments_other": "Échec pour {{count}} documents : {{message}}",
+      "nobodyToRemind": "Personne à relancer",
+      "noneSent": "Aucun rappel envoyé",
+      "notSentTitle": "Rappel non envoyé",
+      "reason": {
+        "alreadySigned": "a déjà signé",
+        "mailFailed": "échec de l'envoi",
+        "noEmail": "pas d'adresse e-mail",
+        "notTheirTurn": "ce n'est pas son tour"
+      },
+      "remindedAcross_one": "{{people}} personnes relancées sur {{count}} document",
+      "remindedAcross_other": "{{people}} personnes relancées sur {{count}} documents",
+      "reminded_one": "{{count}} personne relancée",
+      "reminded_other": "{{count}} personnes relancées",
+      "sentToOne": "Rappel envoyé à {{email}}",
+      "skipped_one": "{{count}} ignoré ({{reasons}})",
+      "skipped_other": "{{count}} ignorés ({{reasons}})",
+      "titleWithSkips": "{{title}}, {{skipped}}"
+    },
+    "state": {
+      "loading": "Chargement",
+      "none": "Aucun",
+      "saving": "Enregistrement",
+      "unknown": "Inconnu"
+    },
+    "status": {
+      "completed": "Complété",
+      "declined": "Refusé",
+      "draft": "Brouillon",
+      "expired": "Expiré",
+      "inProgress": "En cours",
+      "needsYou": "Action requise",
+      "signed": "Signé"
+    },
+    "theme": {
+      "dark": "Sombre",
+      "label": "Apparence",
+      "light": "Clair",
+      "system": "Système",
+      "toDark": "Passer en mode sombre",
+      "toLight": "Passer en mode clair"
+    }
+  },
+  "contacts": {
+    "a11y": {
+      "closePanel": "Fermer le panneau",
+      "contactActions": "Actions sur le contact",
+      "rowActions": "Actions pour {{name}}",
+      "selectAll": "Sélectionner tous les contacts",
+      "selectOne": "Sélectionner {{name}}"
+    },
+    "actions": {
+      "addPerson": "Ajouter une personne",
+      "importCsv": "Importer un CSV",
+      "remind": "Relancer ({{count}})",
+      "sendDocument": "Envoyer un document"
+    },
+    "activity": {
+      "declined": "Refusé, {{when}}",
+      "none": "Rien pour l'instant",
+      "sent": "Envoyé, {{when}}",
+      "signed": "Signé, {{when}}",
+      "viewed": "Ouvert, {{when}}",
+      "viewedStale": "Ouvert, sans signature · {{when}}"
+    },
+    "company": {
+      "fromEmail": "d'après l'e-mail",
+      "none": "Aucune entreprise"
+    },
+    "dialog": {
+      "deleteManyBody": "Elles seront retirées de votre carnet de contacts. Les documents déjà envoyés ne sont pas affectés.",
+      "deleteOneBody": "{{name}} sera retiré de votre carnet de contacts. Les documents déjà envoyés ne sont pas affectés.",
+      "deleteTitle_one": "Supprimer ce contact ?",
+      "deleteTitle_other": "Supprimer ces contacts ?"
+    },
+    "doc": {
+      "untitled": "Sans titre"
+    },
+    "duration": {
+      "days_one": "{{value}} jour",
+      "days_other": "{{value}} jours",
+      "hours_one": "{{count}} h",
+      "hours_other": "{{count}} h",
+      "minutes_one": "{{count}} min",
+      "minutes_other": "{{count}} min"
+    },
+    "empty": {
+      "clearFilter": "Effacer le filtre",
+      "loadFailedBody": "Une erreur est survenue lors de la lecture de votre carnet de contacts.",
+      "loadFailedTitle": "Les contacts ne se sont pas chargés",
+      "noCompaniesBody": "Les entreprises apparaissent dès que vos contacts en ont une.",
+      "noCompaniesTitle": "Aucune entreprise pour l'instant",
+      "noContactsBody": "Ajoutez les personnes à qui vous envoyez des documents, ou importez un CSV pour commencer.",
+      "noContactsTitle": "Aucun contact pour l'instant",
+      "noMatchBody": "Essayez un autre nom, e-mail ou entreprise.",
+      "noMatchTitle": "Personne ne correspond"
+    },
+    "errors": {
+      "notSignedIn": "Non connecté"
+    },
+    "fields": {
+      "added": "Ajouté le",
+      "company": "Entreprise",
+      "email": "E-mail",
+      "jobTitle": "Fonction",
+      "name": "Nom",
+      "phone": "Téléphone",
+      "signsIn": "Signe en"
+    },
+    "filter": {
+      "label": "Filtrer les contacts",
+      "placeholder": "Filtrer par nom, e-mail ou entreprise"
+    },
+    "form": {
+      "addDescription": "Cette personne pourra signer sans créer de compte.",
+      "addTitle": "Ajouter une personne",
+      "editDescription": "L'enregistrement crée une nouvelle fiche de contact : les documents déjà envoyés conservent les anciennes coordonnées.",
+      "editTitle": "Modifier la personne",
+      "errors": {
+        "duplicate": "Cette personne figure déjà dans vos contacts.",
+        "emailInvalid": "Cela ne ressemble pas à une adresse e-mail.",
+        "emailRequired": "Une adresse e-mail est obligatoire.",
+        "name": "Donnez un nom à cette personne."
+      },
+      "optional": "Facultatif",
+      "placeholders": {
+        "company": "Northbay",
+        "email": "rosa@northbay.co",
+        "jobTitle": "Responsable financière",
+        "name": "Rosa Almeida",
+        "phone": "+351 912 000 000"
+      }
+    },
+    "hints": {
+      "addPerson": "ajouter une personne",
+      "newRequest": "nouvelle demande à la personne"
+    },
+    "import": {
+      "actions": {
+        "importCount": "Importer {{count}}"
+      },
+      "description": "Un CSV avec les colonnes Nom et E-mail. Téléphone, Entreprise et Fonction sont facultatifs.",
+      "dropzone": "Déposez un CSV ici, ou cliquez pour en choisir un",
+      "errors": {
+        "empty": "Ce fichier est vide.",
+        "missingColumns": "Le fichier doit contenir une colonne Nom et une colonne E-mail.",
+        "notCsv": "Choisissez un fichier .csv. Exportez-en un depuis un tableur si vous avez du xlsx."
+      },
+      "problem": {
+        "duplicate": "En double dans ce fichier",
+        "invalidEmail": "E-mail invalide",
+        "noEmail": "Pas d'e-mail",
+        "noName": "Pas de nom",
+        "ready": "Prêt"
+      },
+      "progress": "Import de {{done}} sur {{total}}",
+      "readyWithSkipped_one": "{{count}} ligne prête, {{skipped}} ignorée",
+      "readyWithSkipped_other": "{{count}} lignes prêtes, {{skipped}} ignorées",
+      "ready_one": "{{count}} ligne prête",
+      "ready_other": "{{count}} lignes prêtes",
+      "showingFirst_one": "Affichage de {{shown}} ligne sur {{count}}.",
+      "showingFirst_other": "Affichage des {{shown}} premières lignes sur {{count}}.",
+      "summary": {
+        "addedFailed_one": "{{count}} personne ajoutée, {{failed}} en échec.",
+        "addedFailed_other": "{{count}} personnes ajoutées, {{failed}} en échec.",
+        "addedSkippedFailed_one": "{{count}} personne ajoutée, {{skipped}} ignorée car déjà dans votre carnet ou inutilisable, {{failed}} en échec.",
+        "addedSkippedFailed_other": "{{count}} personnes ajoutées, {{skipped}} ignorées car déjà dans votre carnet ou inutilisables, {{failed}} en échec.",
+        "addedSkipped_one": "{{count}} personne ajoutée, {{skipped}} ignorée car déjà dans votre carnet ou inutilisable.",
+        "addedSkipped_other": "{{count}} personnes ajoutées, {{skipped}} ignorées car déjà dans votre carnet ou inutilisables.",
+        "added_one": "{{count}} personne ajoutée.",
+        "added_other": "{{count}} personnes ajoutées."
+      },
+      "title": "Importer des contacts",
+      "toast": {
+        "failed": "Échec de l'import",
+        "imported_one": "{{count}} personne importée",
+        "imported_other": "{{count}} personnes importées"
+      }
+    },
+    "panel": {
+      "documentsWith": "Documents avec {{name}}",
+      "median": "médiane {{value}}",
+      "noCompanyOnFile": "Aucune entreprise renseignée",
+      "noDocuments": "Aucun document pour l'instant.",
+      "notEnoughSigned": "Pas encore assez de documents signés",
+      "seeAll": "Voir les {{count}}"
+    },
+    "selection": {
+      "count_one": "{{count}} personne sélectionnée",
+      "count_other": "{{count}} personnes sélectionnées"
+    },
+    "sort": {
+      "documents": "le plus de documents",
+      "name": "nom",
+      "recent": "récent",
+      "trigger": "Trier : {{value}}"
+    },
+    "stats": {
+      "capped": "Le nombre de documents porte sur vos {{count}} documents les plus récemment mis à jour.",
+      "error": "Le nombre de documents et l'activité n'ont pas pu être chargés. Les coordonnées restent correctes."
+    },
+    "status": {
+      "waiting": "En attente"
+    },
+    "table": {
+      "company": "Entreprise",
+      "documents": "Documents",
+      "lastActivity": "Dernière activité",
+      "people": "Personnes",
+      "person": "Personne"
+    },
+    "title": "Contacts",
+    "toast": {
+      "addFailed": "Impossible d'ajouter le contact",
+      "added": "Contact ajouté",
+      "deleteFailed": "Suppression impossible",
+      "deleted_one": "Contact supprimé",
+      "deleted_other": "{{count}} contacts supprimés",
+      "updateFailed": "Impossible de mettre à jour le contact",
+      "updated": "Contact mis à jour"
+    },
+    "view": {
+      "companies": "Entreprises",
+      "people": "Personnes"
+    }
+  },
+  "documents": {
+    "a11y": {
+      "back": "Retour",
+      "backToDocuments": "Retour aux documents",
+      "breadcrumb": "Fil d'Ariane",
+      "collapseFolder": "Réduire {{name}}",
+      "expandFolder": "Développer {{name}}",
+      "fieldFor": "{{type}} pour {{name}}",
+      "folderActions": "Actions pour {{name}}",
+      "moreActions": "Plus d'actions",
+      "removeEmail": "Retirer {{email}}",
+      "rowActions": "Actions pour {{name}}",
+      "selectAllOnPage": "Tout sélectionner sur cette page",
+      "selectRow": "Sélectionner {{name}}"
+    },
+    "actions": {
+      "changeOrder": "Modifier l'ordre",
+      "completionCertificate": "Certificat de finalisation",
+      "continueInEditor": "Continuer dans l'éditeur",
+      "copyShareLink": "Copier le lien de partage",
+      "currentPdf": "PDF actuel",
+      "downloadCertificate": "Télécharger le certificat",
+      "downloadCompletionCertificate": "Télécharger le certificat de finalisation",
+      "downloadCurrent": "Télécharger le PDF actuel",
+      "downloadOriginal": "Télécharger l'original",
+      "downloadSigned": "Télécharger le PDF signé",
+      "editRecipients": "Modifier les destinataires",
+      "exportCsv": "Exporter en CSV",
+      "exportCsvShort": "CSV",
+      "exportPdf": "Exporter en PDF",
+      "forward": "Transférer",
+      "forwardCopy": "Transférer une copie",
+      "move": "Déplacer",
+      "moveToFolder": "Déplacer vers un dossier",
+      "original": "Original",
+      "remindOthers": "Relancer les autres",
+      "resendLink": "Renvoyer le lien",
+      "reviewAndSign": "Relire et signer",
+      "saveAsTemplate": "Enregistrer comme modèle",
+      "signedPdf": "PDF signé",
+      "uploadDocument": "Importer un document",
+      "verifyCopy": "Vérifier une copie",
+      "void": "Invalider"
+    },
+    "audit": {
+      "other": "{{activity}}.",
+      "signed": "a signé le document.",
+      "viewed": "a ouvert le document."
+    },
+    "card": {
+      "expires": "expire {{when}}",
+      "noRecipients": "Aucun destinataire",
+      "updated": "Mis à jour {{when}}"
+    },
+    "columns": {
+      "description": "Choisissez ce que ce tableau affiche. Votre choix est mémorisé sur cet appareil.",
+      "labelFixed": "{{label}} (toujours affiché)",
+      "title": "Colonnes"
+    },
+    "commands": {
+      "needsYou": "Documents qui vous attendent"
+    },
+    "count": {
+      "subfolder_one": "{{count}} sous-dossier",
+      "subfolder_other": "{{count}} sous-dossiers"
+    },
+    "csv": {
+      "created": "Créé le",
+      "documentId": "ID du document",
+      "expires": "Expire le",
+      "folder": "Dossier",
+      "name": "Nom",
+      "owner": "Propriétaire",
+      "recipients": "Destinataires",
+      "sent": "Envoyé le",
+      "signed": "Signé le",
+      "status": "Statut",
+      "template": "Modèle",
+      "updated": "Mis à jour le"
+    },
+    "detail": {
+      "auditEmpty": "Rien n'est encore enregistré. Les événements apparaissent à mesure que les destinataires ouvrent et signent.",
+      "by": "par {{name}}",
+      "certPending": "Appliqué à la finalisation",
+      "chainFailed": "Le document de suivi « {{name}} » n’a pas pu être envoyé : {{error}}",
+      "chainPending": "Quand tout le monde aura signé, « {{name}} » sera envoyé automatiquement aux signataires.",
+      "chainSent": "Le document de suivi a été envoyé automatiquement : <docLink>l’ouvrir</docLink>.",
+      "chainTitle": "Suivi",
+      "chainedFrom": "Ce document a été envoyé automatiquement après la finalisation d’<docLink>un document précédent</docLink>.",
+      "changeOrderLocked": "L'ordre est verrouillé dès que le document est envoyé",
+      "completedOn": "Complété le {{date}}",
+      "created": "créé le {{date}}",
+      "createdBy": "créé le {{date}} par {{name}}",
+      "declined": "Refusé : {{reason}}",
+      "declinedNoCert": "Refusé, aucun certificat",
+      "declinedWithReason": "a refusé : {{reason}}",
+      "documentId": "ID du document",
+      "editRecipientsLocked": "Les destinataires ne peuvent être modifiés que tant que le document est un brouillon",
+      "errorBody": "Il a peut-être été supprimé, ou vous n'y avez pas accès.",
+      "errorTitle": "Impossible d'ouvrir ce document",
+      "expires": "expire le {{date}}",
+      "finalHash": "Empreinte finale",
+      "fromTemplate": "d'après le modèle « {{name}} »",
+      "hashPending": "Inscrite quand tous les destinataires ont signé",
+      "noFieldsBody": "Ouvrez ce document dans l'éditeur pour placer des champs de signature et de texte.",
+      "noFieldsTitle": "Aucun champ placé",
+      "noFileBody": "Ce document n'a aucun PDF associé.",
+      "noFileTitle": "Aucun fichier pour l'instant",
+      "noRecipients": "Aucun destinataire pour l'instant. Ce document est un brouillon.",
+      "notCompleted": "Pas encore complété",
+      "openedTimes_one": "Ouvert une fois, {{when}}",
+      "openedTimes_other": "Ouvert {{count}} fois, la dernière {{when}}",
+      "opensCount_one": "{{count}} ouverture",
+      "opensCount_other": "{{count}} ouvertures",
+      "opensEmpty": "Personne n'a encore ouvert ce document.",
+      "opensFirst": "première {{when}}",
+      "opensHint": "Chaque ouverture du lien de signature compte, même après la signature. Les ouvertures d'e-mail ne sont pas suivies.",
+      "opensLast": "dernière {{when}}",
+      "opensTitle": "Ouvertures",
+      "pkcs7": "Signature PKCS#7 intégrée",
+      "recipientsInOrder": "Destinataires, dans l'ordre",
+      "signedAt": "a signé {{when}}",
+      "signingCertificate": "Certificat de signature",
+      "statusLabel": "Statut"
+    },
+    "dialog": {
+      "delete": {
+        "andMore_one": "et {{count}} autre",
+        "andMore_other": "et {{count}} autres",
+        "description": "Il est archivé et disparaît de toutes les listes. Les copies signées déjà envoyées par e-mail aux destinataires ne sont pas affectées.",
+        "title_one": "Supprimer ce document ?",
+        "title_other": "Supprimer {{count}} documents ?"
+      },
+      "deleteFolder": {
+        "body": "Il contient {{documents}}. Tout ce qu'il contient remonte d'abord dans {{target}}, puis le dossier lui-même est archivé. Aucun document n'est supprimé.",
+        "bodyWithSubfolders": "Il contient {{documents}} et {{subfolders}}. Tout ce qu'il contient remonte d'abord dans {{target}}, puis le dossier lui-même est archivé. Aucun document n'est supprimé.",
+        "checking": "Vérification du contenu",
+        "confirm": "Supprimer le dossier",
+        "emptyBody": "Le dossier est vide. Il est archivé et disparaît donc du drive. Rien d'autre ne change.",
+        "title": "Supprimer ce dossier ?"
+      },
+      "move": {
+        "description_one": "{{count}} document sera déplacé.",
+        "description_other": "{{count}} documents seront déplacés.",
+        "hint": "Les dossiers proviennent de votre drive. Choisissez la racine pour les sortir d'un dossier.",
+        "loadingFolders": "Chargement des dossiers",
+        "rootOption": "Racine du drive (aucun dossier)"
+      },
+      "moveFolder": {
+        "description": "Choisissez où placer « {{name}} » et tout ce qu'il contient.",
+        "title": "Déplacer le dossier"
+      },
+      "otp": {
+        "description": "Les destinataires qui ont déjà un lien devront saisir un code reçu par e-mail avant de pouvoir voir le document.",
+        "title": "Exiger une connexion pour ouvrir ?"
+      },
+      "share": {
+        "description": "Chaque destinataire reçoit son propre lien. Toute personne disposant d'un lien peut ouvrir le document et signer à la place de ce destinataire.",
+        "noRecipients": "Ce document n'a pas encore de destinataire.",
+        "title": "Lien de partage"
+      },
+      "void": {
+        "confirm_one": "Invalider le document",
+        "confirm_other": "Invalider {{count}} documents",
+        "defaultReason": "Invalidé par l'expéditeur",
+        "description": "Les destinataires ne peuvent plus le signer. Cette action est irréversible et tout le monde sur le document reçoit un e-mail.",
+        "reasonHint": "Affiché aux destinataires dans l'e-mail de notification.",
+        "reasonPlaceholder": "Les conditions ont changé, une nouvelle version arrive.",
+        "title": "Invalider ce document ?"
+      }
+    },
+    "empty": {
+      "body": "Importez un PDF, placez les champs et envoyez-le pour signature.",
+      "clearSearch": "Effacer la recherche",
+      "errorTitle": "Impossible de charger les documents",
+      "folderTitle": "Ce dossier est vide",
+      "noMatchBody": "Essayez un autre nom, ou effacez la recherche.",
+      "noMatchTitle": "Rien ne correspond à « {{query}} »",
+      "title": "Aucun document ici pour l'instant"
+    },
+    "errors": {
+      "fileServer": "Le serveur de fichiers a renvoyé {{status}}",
+      "folderExists": "Un dossier nommé « {{name}} » existe déjà ici.",
+      "folderNameRequired": "Donnez un nom au dossier.",
+      "folderNameTooLong": "Les noms de dossier sont limités à 250 caractères.",
+      "noCertificate": "Aucun certificat de finalisation pour l'instant",
+      "noFile": "Aucun fichier sur ce document",
+      "noTemplateReturned": "Le serveur n'a pas renvoyé de modèle.",
+      "serverSilent": "Le serveur n'a pas répondu."
+    },
+    "fallback": {
+      "activity": "Activité",
+      "someone": "Quelqu'un",
+      "unassigned": "Non attribué",
+      "untitledDocument": "Sans titre",
+      "untitledFolder": "Dossier sans titre",
+      "untitledTemplate": "Modèle sans titre"
+    },
+    "fieldType": {
+      "cells": "Cases",
+      "checkbox": "Case à cocher",
+      "choice": "Choix",
+      "company": "Entreprise",
+      "date": "Date",
+      "draw": "Dessin",
+      "dropdown": "Liste déroulante",
+      "email": "E-mail",
+      "image": "Image",
+      "initials": "Initiales",
+      "jobTitle": "Fonction",
+      "name": "Nom",
+      "signature": "Signature",
+      "stamp": "Tampon",
+      "text": "Texte"
+    },
+    "fields": {
+      "expiresOn": "Expire le",
+      "folder": "Dossier",
+      "notFilled": "Non rempli",
+      "optional": "Facultatif",
+      "reason": "Motif",
+      "required": "Obligatoire",
+      "templateName": "Nom du modèle"
+    },
+    "fileName": {
+      "certificate": "{{base}} - Certificat.pdf",
+      "signed": "{{base}} - Signé.pdf"
+    },
+    "filters": {
+      "all": "Tous",
+      "anyDate": "Toute date",
+      "anyTemplate": "Tout modèle",
+      "anyone": "Tout le monde",
+      "drafts": "Brouillons",
+      "expiringThisWeek": "Expire cette semaine",
+      "last30": "30 derniers jours",
+      "last7": "7 derniers jours",
+      "last90": "90 derniers jours",
+      "me": "Moi",
+      "needsYou": "Action requise",
+      "ownerAnyone": "Propriétaire : tous",
+      "ownerMe": "Propriétaire : moi",
+      "sentByMe": "Envoyés par moi",
+      "template": "Modèle",
+      "waitingOnMe": "En attente de moi"
+    },
+    "folders": {
+      "allDocuments": "Tous les documents",
+      "allDocumentsTopLevel": "Tous les documents (premier niveau)",
+      "driveRoot": "Racine du drive",
+      "empty": "Aucun dossier pour l'instant. Créez-en un pour regrouper les documents par client ou par mois.",
+      "loadError": "Impossible de charger vos dossiers.",
+      "moveTo": "Déplacer vers",
+      "namePlaceholder": "Nom du dossier",
+      "new": "Nouveau dossier",
+      "newInside": "Nouveau dossier à l'intérieur",
+      "parentAbove": "le dossier parent",
+      "sheetDescription": "Choisissez un dossier à parcourir, ou gérez le drive depuis le menu de chacun.",
+      "title": "Dossiers"
+    },
+    "forward": {
+      "description": "« {{name}} » est envoyé par e-mail en pièce jointe PDF. Les destinataires ne peuvent pas le signer, ils reçoivent seulement la copie.",
+      "emailPlaceholder": "name@company.com",
+      "hint_one": "Saisissez un e-mail et appuyez sur Entrée. Jusqu'à {{count}} à la fois.",
+      "hint_other": "Saisissez un e-mail et appuyez sur Entrée. Jusqu'à {{count}} à la fois.",
+      "invalidEmail": "« {{email}} » n'est pas une adresse e-mail.",
+      "limit_one": "Le transfert est limité à {{count}} destinataire à la fois.",
+      "limit_other": "Le transfert est limité à {{count}} destinataires à la fois.",
+      "needOne": "Ajoutez au moins une adresse e-mail.",
+      "noMatches": "Aucun contact ne correspond. Appuyez sur Entrée pour utiliser l'adresse telle quelle.",
+      "recipientsLabel": "Destinataires",
+      "searching": "Recherche dans vos contacts",
+      "send": "Envoyer la copie"
+    },
+    "hints": {
+      "backToDocuments": "retour aux documents",
+      "drag": "faites glisser sur un dossier pour déplacer",
+      "range": "plage",
+      "remind": "relancer",
+      "toClear": "pour effacer"
+    },
+    "list": {
+      "allDocuments": "tous les documents",
+      "summary_one": "{{count}} dans {{folder}}",
+      "summary_other": "{{count}} dans {{folder}}",
+      "thisFolder": "ce dossier"
+    },
+    "nav": {
+      "inbox": "Boîte de réception"
+    },
+    "pager": {
+      "prev": "Préc.",
+      "range": "{{from}}-{{to}} sur {{total}}"
+    },
+    "rail": {
+      "hide": "Masquer les dossiers",
+      "show": "Afficher les dossiers"
+    },
+    "recipientState": {
+      "declined": "refusé",
+      "signed": "signé",
+      "turn": "à son tour",
+      "viewed": "consulté",
+      "waiting": "en attente"
+    },
+    "search": {
+      "placeholder": "Rechercher par nom"
+    },
+    "settings": {
+      "allowMods": "Autoriser les destinataires à ajouter des champs",
+      "allowModsHint": "Les signataires peuvent déplacer ou ajouter leurs propres éléments.",
+      "allowModsToggle": "Autoriser les modifications",
+      "automaticReminders": "Rappels automatiques",
+      "automaticRemindersHint": "Remarque : cette version enregistre la planification mais ne l'envoie jamais. Utilisez Relancer les autres pour solliciter les destinataires.",
+      "expiryHint": "Les destinataires ne peuvent plus signer après cette date. La prolonger rouvre le document.",
+      "notify": "Me notifier à chaque signature",
+      "notifyHint": "Vous recevez un e-mail chaque fois que quelqu'un signe.",
+      "notifyToggle": "Notifier à chaque signature",
+      "orderParallel": "Tout le monde en même temps",
+      "orderSequential": "Séquentiel",
+      "orderStrict": "Séquentiel, imposé",
+      "otp": "Exiger une connexion (OTP)",
+      "otpHint": "Les destinataires doivent vérifier un code à usage unique reçu par e-mail avant de pouvoir l'ouvrir.",
+      "otpToggle": "Exiger une connexion",
+      "readOnly": "Ce document est {{status}} : ses paramètres sont donc en lecture seule.",
+      "remindEvery": "Relancer tous les",
+      "remindEveryHint": "Nombre de jours entre les rappels.",
+      "signingOrder": "Ordre de signature",
+      "signingOrderHint": "Défini au moment de l'envoi du document, puis verrouillé."
+    },
+    "statusLower": {
+      "completed": "complété",
+      "declined": "refusé",
+      "draft": "brouillon",
+      "expired": "expiré",
+      "in_progress": "en cours"
+    },
+    "table": {
+      "assignedTo": "Attribué à",
+      "created": "Créé le",
+      "document": "Document",
+      "expires": "Expire le",
+      "folder": "Dossier",
+      "owner": "Propriétaire",
+      "page": "Page",
+      "recipients": "Destinataires",
+      "required": "Obligatoire",
+      "signedRatio": "{{signed}}/{{total}}",
+      "status": "Statut",
+      "template": "Modèle",
+      "type": "Type",
+      "updated": "Mis à jour",
+      "value": "Valeur"
+    },
+    "tabs": {
+      "audit": "Piste d'audit",
+      "fields": "Champs",
+      "overview": "Vue d'ensemble",
+      "settings": "Paramètres"
+    },
+    "template": {
+      "description": "La mise en page et le placement des champs sont copiés. Les valeurs signées, les valeurs préremplies et les destinataires eux-mêmes ne le sont pas.",
+      "keepRoles": "Conserver les noms des signataires comme rôles",
+      "keepRolesHint": "Les rôles sont remplis lorsque vous utilisez le modèle. Personne n'y reste rattaché.",
+      "keepRolesHintWithRoles": "Rôles sur ce document : {{roles}}. Personne n'y reste rattaché dans un cas comme dans l'autre, les rôles sont remplis lorsque vous utilisez le modèle.",
+      "nameHint": "Jusqu'à 250 caractères.",
+      "noRoles": "aucun rôle pour l'instant",
+      "open": "Ouvrir le modèle",
+      "roleNumber": "Rôle {{index}}",
+      "roles": "rôles : {{roles}}",
+      "save": "Enregistrer le modèle",
+      "saved": "Modèle enregistré",
+      "savedDescription": "Il est prêt à l'emploi. Ouvrez-le pour nommer les rôles et ajuster les champs."
+    },
+    "title": "Documents",
+    "toast": {
+      "clipboardBlocked": "L'accès au presse-papiers a été bloqué.",
+      "copyLinkFailed": "Impossible de copier le lien",
+      "csvExported": "CSV exporté",
+      "csvRows_one": "{{count}} ligne sur cette page.",
+      "csvRows_other": "{{count}} lignes sur cette page.",
+      "deleteFailed": "Suppression impossible",
+      "deleted_one": "Document supprimé",
+      "deleted_other": "{{count}} documents supprimés",
+      "downloadFailed": "Impossible de télécharger ce document",
+      "downloadStarted": "Téléchargement lancé",
+      "duplicateFailed": "Impossible de dupliquer ce document",
+      "duplicated": "Dupliqué",
+      "duplicatedBody": "Une copie de « {{name}} » a été créée.",
+      "folderCreateFailed": "Impossible de créer le dossier",
+      "folderCreated": "Dossier créé",
+      "folderDeleteFailed": "Impossible de supprimer le dossier",
+      "folderDeleted": "Dossier supprimé",
+      "folderDeletedBody": "Son contenu a été déplacé vers {{target}}.",
+      "folderMoveFailed": "Impossible de déplacer le dossier",
+      "folderMoved": "Dossier déplacé",
+      "folderRenameFailed": "Impossible de renommer le dossier",
+      "folderRenamed": "Dossier renommé",
+      "forwardFailed": "Impossible de transférer ce document",
+      "forwardedBody": "« {{name}} » a été envoyé par e-mail en pièce jointe.",
+      "forwardedPartial": "Transféré à {{sent}} destinataires sur {{total}}",
+      "forwardedPartialBody": "Nous n'avons pas pu envoyer l'e-mail à {{emails}}.",
+      "forwarded_one": "Document transféré",
+      "forwarded_other": "Transféré à {{count}} personnes",
+      "moveFailed": "Déplacement impossible",
+      "movedOutOfFolders": "Sortis de tous les dossiers.",
+      "movedToRoot": "Déplacés à la racine du drive.",
+      "moved_one": "Document déplacé",
+      "moved_other": "{{count}} documents déplacés",
+      "nothingToExport": "Rien à exporter",
+      "nothingToExportBody": "Cette vue ne contient aucun document.",
+      "settingsFailed": "Impossible d'enregistrer les paramètres",
+      "settingsSaved": "Paramètres enregistrés",
+      "templateSaveFailed": "Impossible d'enregistrer ceci comme modèle",
+      "tooManyDownloads": "Trop de documents à la fois",
+      "tooManyDownloadsBody": "Le téléchargement est limité à 5 documents à la fois.",
+      "voidFailed": "Invalidation impossible",
+      "voided_one": "Document invalidé",
+      "voided_other": "{{count}} documents invalidés"
+    },
+    "viewer": {
+      "fieldsToggle": "Champs : <1>{{state}}</1>",
+      "fit": "Ajuster",
+      "off": "désactivés",
+      "on": "activés",
+      "openInSignerView": "Ouvrir dans la vue signataire",
+      "page": "Page {{current}} / {{total}}"
+    }
+  },
+  "editor": {
+    "actions": {
+      "saveTemplate": "Enregistrer le modèle"
+    },
+    "autoDetect": {
+      "fallbackLabel": "Champ"
+    },
+    "banner": {
+      "completed": "Ce document est complété : ses champs ne peuvent plus être modifiés.",
+      "declined": "Ce document est refusé : ses champs ne peuvent plus être modifiés.",
+      "sent": "Ce document a déjà été envoyé. Les modifications concernent les signataires qui n'ont pas encore signé."
+    },
+    "errors": {
+      "couldNotLoadDocument": "Ce document n'a pas pu être chargé.",
+      "pdfLinkExpired": "Le lien du PDF a expiré et n'a pas pu être actualisé."
+    },
+    "field": {
+      "label": "{{type}} · {{owner}}",
+      "owner": {
+        "prefill": "prérempli",
+        "unassigned": "non attribué"
+      },
+      "required": "Obligatoire",
+      "selectPlaceholder": "Sélectionner…"
+    },
+    "load": {
+      "errorBody": "Le fichier a peut-être été supprimé ou le lien a expiré.",
+      "errorTitle": "Ce document n'a pas pu être ouvert",
+      "goBack": "Retour",
+      "untitled": "Sans titre"
+    },
+    "palette": {
+      "editRoles": "Modifier les rôles",
+      "groups": {
+        "autofill": "Rempli automatiquement",
+        "input": "Saisie",
+        "signature": "Signature"
+      },
+      "hint": {
+        "date": "date",
+        "intro": "Faites glisser sur la page, ou appuyez sur une touche pour placer au curseur :",
+        "signature": "signature",
+        "text": "texte"
+      },
+      "noMatches": "Aucun type de champ ne correspond.",
+      "placeFieldsFor": "Placer des champs pour {{name}}",
+      "placingFor": "Placement des champs pour",
+      "searchPlaceholder": "Trouver un type de champ",
+      "signerSelect": "Signataire qui recevra les nouveaux champs",
+      "tileTitle": "Faites glisser {{label}} sur la page"
+    },
+    "properties": {
+      "addOption": "Ajouter une option",
+      "assignedTo": "Attribué à",
+      "cellCount": "Nombre de cases",
+      "cells": "Cases",
+      "copyToEveryPage": "Copier sur toutes les pages",
+      "dataMapping": "Mappage des données",
+      "dataMappingHelp": "La clé utilisée par l'API et par les colonnes du CSV d'envoi groupé. Elle doit être unique pour tous les signataires.",
+      "dateFormat": "Format de date",
+      "defaultValue": "Valeur par défaut",
+      "defaultValuePlaceholder": "Laissez vide pour que le signataire remplisse",
+      "deleteField": "Supprimer le champ",
+      "fieldPosition": "Champ {{index}} sur {{total}}",
+      "fontColour": "Couleur du texte",
+      "fontColours": {
+        "black": "Noir",
+        "blue": "Bleu",
+        "red": "Rouge",
+        "yellow": "Jaune"
+      },
+      "fontSize": "Taille du texte",
+      "fontSizeOption": "{{size}} pt",
+      "howManyPicked": "Nombre de choix possibles",
+      "layout": {
+        "sideBySide": "Côte à côte",
+        "stacked": "Empilé"
+      },
+      "max": "Max",
+      "measuredFrom": "Mesuré depuis le coin supérieur gauche de la page {{page}}, en points PDF.",
+      "min": "Min",
+      "optionLayout": "Disposition des options",
+      "options": "Options",
+      "readOnly": "Lecture seule",
+      "readOnlyHelp": "Affiche la valeur mais empêche le signataire de la modifier.",
+      "removeOption": "Supprimer l'option {{index}}",
+      "required": "Obligatoire",
+      "rotation": "Rotation",
+      "signatureAlwaysRequired": "Les signatures sont toujours obligatoires.",
+      "signerLabel": "Libellé affiché au signataire",
+      "size": {
+        "height": "H (pt)",
+        "width": "L (pt)",
+        "x": "X (pt)",
+        "y": "Y (pt)"
+      },
+      "sizeAndPosition": "Taille et position",
+      "textStyle": "Style de texte",
+      "unassigned": "Non attribué",
+      "validation": "Validation",
+      "validationTypes": {
+        "email": "E-mail",
+        "letters": "Lettres uniquement",
+        "none": "Aucune",
+        "number": "Nombre",
+        "regex": "Regex personnalisée",
+        "ssn": "SSN"
+      }
+    },
+    "roles": {
+      "add": "Ajouter un rôle",
+      "defaultName": "Rôle {{index}}",
+      "description": "Les rôles sont associés à de vrais destinataires lorsqu'un document est créé à partir de ce modèle.",
+      "nameLabel": "Nom du rôle {{index}}",
+      "prefill": "Prérempli par le propriétaire",
+      "remove": "Supprimer {{role}}",
+      "removeBlocked": "Supprimez d'abord les champs de ce rôle",
+      "removeTitle": "Supprimer le rôle",
+      "save": "Enregistrer les rôles",
+      "title": "Rôles"
+    },
+    "selection": {
+      "many_one": "{{count}} champ sélectionné. Faites-le glisser pour le déplacer, ou appuyez sur {{key}} pour le supprimer.",
+      "many_other": "{{count}} champs sélectionnés. Faites-les glisser pour les déplacer ensemble, ou appuyez sur {{key}} pour les supprimer.",
+      "none": "Sélectionnez un champ pour modifier ses propriétés, ou faites-en glisser un depuis la palette sur la page."
+    },
+    "thumbnails": {
+      "pageLabel_one": "Page {{page}}, {{count}} champ",
+      "pageLabel_other": "Page {{page}}, {{count}} champs",
+      "title": "Pages"
+    },
+    "toast": {
+      "autoDetectFailed": "Échec de la détection automatique",
+      "copiedToPages_one": "Copié sur {{count}} page",
+      "copiedToPages_other": "Copié sur {{count}} pages",
+      "fieldsAddedBody": "Vérifiez chacun d'eux avant l'envoi.",
+      "fieldsAdded_one": "{{count}} champ ajouté",
+      "fieldsAdded_other": "{{count}} champs ajoutés",
+      "noFieldsDetected": {
+        "body": "Ce PDF ne contient aucune suite de soulignements reconnue par l'analyseur.",
+        "title": "Aucun champ détecté"
+      },
+      "noSignatureField": "Aucun champ de signature pour {{names}}",
+      "noSignatureFieldBody": "Ils n'auront rien à signer. Cliquez à nouveau pour continuer quand même.",
+      "onlyOnePage": {
+        "body": "Il n'y a aucune autre page où copier ce champ.",
+        "title": "Une seule page"
+      },
+      "saveFailed": "Impossible d'enregistrer les champs",
+      "stillUnassignedBody": "Attribuez un signataire à chaque champ avant de continuer.",
+      "stillUnassigned_one": "{{count}} champ encore non attribué",
+      "stillUnassigned_other": "{{count}} champs encore non attribués",
+      "templateSaved": "Modèle enregistré"
+    },
+    "topBar": {
+      "autoDetect": "Détecter les champs",
+      "autoDetectTitle": "Analyser le texte de la page à la recherche de soulignements et proposer des champs",
+      "previewAsSigner": "Aperçu signataire",
+      "redo": "Rétablir",
+      "snapOff": "Aimantation : désactivée",
+      "snapOn": "Aimantation : activée",
+      "status": {
+        "dirty": "Modifications non enregistrées",
+        "error": "Échec de l'enregistrement",
+        "saved": "Enregistré",
+        "saving": "Enregistrement…"
+      },
+      "template": "modèle",
+      "unassigned_one": "{{count}} champ non attribué",
+      "unassigned_other": "{{count}} champs non attribués",
+      "undo": "Annuler",
+      "zoom": {
+        "fitWidth": "Ajuster à la largeur"
+      }
+    },
+    "widgets": {
+      "cells": {
+        "keywords": "ssn cases caractères",
+        "label": "Cases"
+      },
+      "checkbox": {
+        "label": "Case à cocher"
+      },
+      "company": {
+        "label": "Entreprise"
+      },
+      "date": {
+        "keywords": "date signature aujourd'hui",
+        "label": "Date de signature"
+      },
+      "draw": {
+        "keywords": "main levée gribouillage",
+        "label": "Dessiner"
+      },
+      "dropdown": {
+        "keywords": "sélection liste",
+        "label": "Liste déroulante"
+      },
+      "email": {
+        "label": "E-mail"
+      },
+      "image": {
+        "keywords": "image photo importer",
+        "label": "Image"
+      },
+      "initials": {
+        "label": "Initiales"
+      },
+      "jobTitle": {
+        "label": "Fonction"
+      },
+      "name": {
+        "label": "Nom complet"
+      },
+      "radioButton": {
+        "keywords": "radio option choix",
+        "label": "Radio"
+      },
+      "signature": {
+        "label": "Signature"
+      },
+      "stamp": {
+        "label": "Tampon"
+      },
+      "text": {
+        "keywords": "libellé expéditeur",
+        "label": "Texte statique"
+      },
+      "textInput": {
+        "keywords": "zone de texte saisie champ",
+        "label": "Texte"
+      }
+    }
+  },
+  "inbox": {
+    "a11y": {
+      "nextPage": "Page suivante",
+      "previousPage": "Page précédente",
+      "selectDocument": "Sélectionner {{name}}"
+    },
+    "actions": {
+      "downloadSignedPdf": "Télécharger le PDF signé",
+      "extend_one": "Prolonger de {{count}} jour",
+      "extend_other": "Prolonger de {{count}} jours",
+      "newRequest": "Nouvelle demande",
+      "openDocument": "Ouvrir le document",
+      "recreate": "Recréer",
+      "remindOthers": "Relancer les autres",
+      "remindPerson": "Relancer {{name}}",
+      "reviewAndSign": "Relire et signer"
+    },
+    "activity": {
+      "line": "{{what}} par {{who}}",
+      "someone": "Quelqu'un",
+      "updated": "Mis à jour"
+    },
+    "ago": {
+      "days_one": "il y a {{count}} j",
+      "days_other": "il y a {{count}} j",
+      "hours_one": "il y a {{count}} h",
+      "hours_other": "il y a {{count}} h",
+      "justNow": "à l'instant",
+      "minutes_one": "il y a {{count}} min",
+      "minutes_other": "il y a {{count}} min"
+    },
+    "commands": {
+      "group": "Boîte de réception",
+      "open": "Ouvrir « {{name}} »",
+      "refresh": "Actualiser la boîte de réception",
+      "remind": "Relancer sur « {{name}} »"
+    },
+    "duration": {
+      "days_one": "{{count}} j",
+      "days_other": "{{count}} j",
+      "hours_one": "{{count}} h",
+      "hours_other": "{{count}} h",
+      "minutes_one": "{{count}} min",
+      "minutes_other": "{{count}} min"
+    },
+    "empty": {
+      "clearBody": "Envoyez un document et il apparaîtra ici avec tout ce que vous attendez.",
+      "clearTitle": "Votre boîte de réception est vide",
+      "filteredBody": "Essayez un autre onglet ou effacez les filtres ci-dessus.",
+      "filteredTitle": "Rien dans cette vue",
+      "noRecipients": "Aucun destinataire pour l'instant",
+      "noRecipientsSentence": "Aucun destinataire pour l'instant."
+    },
+    "errors": {
+      "detailFailed": "Impossible de charger le document complet.",
+      "documentUnavailable": "Ce document n'est pas disponible.",
+      "loadFailed": "La boîte de réception n'a pas pu se charger",
+      "noFile": "Ce document n'a pas encore de fichier.",
+      "recreateFailed": "Le document n'a pas pu être recréé."
+    },
+    "expires": {
+      "expired": "a expiré",
+      "inDays_one": "dans {{count}} jour",
+      "inDays_other": "dans {{count}} jours",
+      "inHours_one": "dans {{count}} heure",
+      "inHours_other": "dans {{count}} heures",
+      "tomorrow": "demain"
+    },
+    "filters": {
+      "last30Days": "30 derniers jours",
+      "ownerAnyone": "Propriétaire : tous",
+      "ownerMe": "Propriétaire : moi"
+    },
+    "greeting": {
+      "afternoon": "Bon après-midi.",
+      "afternoonNamed": "Bon après-midi, {{name}}.",
+      "counting": "Nous comptons ce qui vous attend.",
+      "evening": "Bonsoir.",
+      "eveningNamed": "Bonsoir, {{name}}.",
+      "expires": "{{name}} expire {{phrase}}",
+      "join": "<1/> et <2/>.",
+      "morning": "Bonjour.",
+      "morningNamed": "Bonjour, {{name}}.",
+      "needsSignature_one": "<1>{{words}}</1> document nécessite votre signature",
+      "needsSignature_other": "<1>{{words}}</1> documents nécessitent votre signature",
+      "nothing": "Rien ne vous attend.",
+      "single": "<1/>."
+    },
+    "hints": {
+      "allShortcuts": "tous les raccourcis",
+      "remind": "relancer"
+    },
+    "inspector": {
+      "activity": "Activité",
+      "noActivity": "Il ne s'est encore rien passé.",
+      "notOpened": "Pas encore ouvert",
+      "openFullView": "Ouvrir la vue complète",
+      "openedAt": "Ouvert {{when}}",
+      "openedTimes_one": "Ouvert une fois, {{when}}",
+      "openedTimes_other": "Ouvert {{count}} fois, la dernière {{when}}",
+      "reminded": "Relancé {{ago}}",
+      "selected": "Sélectionné",
+      "signNowHint": "Signez maintenant et ce document peut être finalisé aujourd'hui.",
+      "signedAt": "Signé {{when}}",
+      "signingOrder": "Ordre de signature",
+      "theirTurn": "Son tour",
+      "typicalHint": "{{name}} signe généralement dans les {{duration}} après réception.",
+      "yourTurn": "Votre tour"
+    },
+    "kpi": {
+      "awaiting": "En attente de vous",
+      "completedDelta": "{{delta}} vs 30 jours précédents",
+      "completedLabel": "Complétés, 30 jours",
+      "expiringThisWeek_one": "{{count}} expire cette semaine",
+      "expiringThisWeek_other": "{{count}} expirent cette semaine",
+      "fastestThisMonth": "le plus rapide ce mois-ci : {{duration}}",
+      "medianSign": "Délai médian de signature",
+      "oldest": "le plus ancien : {{age}}",
+      "waiting": "En attente des autres"
+    },
+    "meta": {
+      "onlyYouSign": "vous seul signez",
+      "reminded": "relancé {{ago}}",
+      "sequential": "séquentiel",
+      "sequentialYouAreNext": "séquentiel, vous êtes le prochain"
+    },
+    "nudge": {
+      "expiring": "<1>{{name}}</1> expire {{phrase}}.",
+      "notOpened": "{{name}} ne l'a pas encore ouvert.",
+      "openedNotSigned": "{{name}} l'a ouvert {{ago}} mais n'a pas signé."
+    },
+    "numberWord": {
+      "0": "zéro",
+      "1": "un",
+      "2": "deux",
+      "3": "trois",
+      "4": "quatre",
+      "5": "cinq",
+      "6": "six",
+      "7": "sept",
+      "8": "huit",
+      "9": "neuf"
+    },
+    "pagination": {
+      "range": "{{from}}-{{to}} sur {{total}}"
+    },
+    "shortcuts": {
+      "commandPalette": "Palette de commandes",
+      "moveDown": "Descendre",
+      "moveUp": "Monter",
+      "newRequest": "Nouvelle demande de signature",
+      "openDocument": "Ouvrir le document",
+      "remind": "Relancer le signataire en attente",
+      "signYourself": "Signer un document vous-même",
+      "thisList": "Cette liste",
+      "title": "Raccourcis clavier",
+      "toggleRow": "Sélectionner ou désélectionner la ligne"
+    },
+    "status": {
+      "declinedWithReason": "Refusé : « {{reason}} »",
+      "needsYourSignature": "Nécessite votre signature",
+      "signedOf": "{{signed}} sur {{total}} ont signé",
+      "waitingOn": "En attente de {{name}}"
+    },
+    "table": {
+      "action": "Action",
+      "document": "Document",
+      "progress": "Progression",
+      "recipients": "Destinataires",
+      "rowsSelected_one": "{{count}} ligne sélectionnée",
+      "rowsSelected_other": "{{count}} lignes sélectionnées",
+      "updated": "Mis à jour"
+    },
+    "tabs": {
+      "all": "Tous",
+      "drafts": "Brouillons"
+    },
+    "toast": {
+      "actionFailed": "Cela n'a pas fonctionné",
+      "expiryFailed": "Impossible de décaler la date d'expiration",
+      "expiryMoved": "Expiration décalée",
+      "expiryMovedBody": "Nouvelle échéance : {{date}}.",
+      "recreated": "Document recréé",
+      "recreatedBody": "Envoyez-le à nouveau quand vous serez prêt."
+    },
+    "untitled": "Document sans titre",
+    "you": "Vous"
+  },
+  "misc": {
+    "comingSoon": {
+      "body": "Cet écran arrive bientôt.",
+      "title": "Bientôt disponible"
+    },
+    "legal": {
+      "privacy": {
+        "body": "[Votre politique de confidentialité va ici. Remplacez ce texte dans src/features/misc/LegalPage.tsx ou faites pointer la route /privacy vers votre document hébergé.]",
+        "title": "Politique de confidentialité"
+      },
+      "status": {
+        "body": "[Reliez cette route à votre page de statut, ou supprimez le lien du pied de page sur l'écran de connexion.]",
+        "title": "Statut"
+      },
+      "terms": {
+        "body": "[Vos conditions d'utilisation vont ici. Remplacez ce texte dans src/features/misc/LegalPage.tsx ou faites pointer la route /terms vers votre document hébergé.]",
+        "title": "Conditions d'utilisation"
+      }
+    },
+    "notFound": {
+      "action": "Aller à la boîte de réception",
+      "body": "Le lien est peut-être ancien, ou le document a été supprimé.",
+      "title": "Cette page n'existe pas"
+    }
+  },
+  "reports": {
+    "actions": {
+      "chartView": "Vue graphique",
+      "csv": "CSV",
+      "exportCsv": "Exporter en CSV",
+      "fullReport": "Rapport complet",
+      "newRequest": "Nouvelle demande",
+      "remind": "Relancer",
+      "tableView": "Vue tableau"
+    },
+    "buckets": {
+      "d1to3": {
+        "label": "1-3 j",
+        "phrase": "en moins de trois jours"
+      },
+      "d3to7": {
+        "label": "3-7 j",
+        "phrase": "en moins d'une semaine"
+      },
+      "d7plus": {
+        "label": "7 j+",
+        "phrase": "après plus d'une semaine"
+      },
+      "h1to6": {
+        "label": "1-6 h",
+        "phrase": "en moins de six heures"
+      },
+      "h6to24": {
+        "label": "6-24 h",
+        "phrase": "en moins d'une journée"
+      },
+      "lt1h": {
+        "label": "< 1 h",
+        "phrase": "en moins d'une heure"
+      }
+    },
+    "charts": {
+      "byTemplate": {
+        "title": "Par modèle"
+      },
+      "funnel": {
+        "caption": "Entonnoir de signature",
+        "title": "Où les documents bloquent",
+        "tooltip": "{{stage}} : {{value}} sur {{total}} documents ({{pct}})",
+        "unit": "Étape"
+      },
+      "templatesInRange": {
+        "title": "Modèles sur cette période"
+      },
+      "timeToSign": {
+        "caption": "Répartition des délais de signature",
+        "title": "Délai de signature",
+        "tooltip": "{{value}} signés en {{bucket}}",
+        "unit": "Tranche"
+      },
+      "valueHeader": "Documents",
+      "weekly": {
+        "title": "Documents complétés par semaine",
+        "tooltip": "Semaine du {{week}} : {{value}} complétés",
+        "unit": "Semaine du"
+      }
+    },
+    "count": {
+      "sender_one": "{{count, number}} expéditeur",
+      "sender_other": "{{count, number}} expéditeurs"
+    },
+    "customRange": {
+      "apply": "Appliquer la période",
+      "from": "Du",
+      "to": "Au"
+    },
+    "duration": {
+      "days": "{{value}} j",
+      "daysHours": "{{days}} j {{hours}} h",
+      "hours": "{{value}} h",
+      "hoursMinutes": "{{hours}} h {{minutes}} min",
+      "minutes": "{{value}} min"
+    },
+    "empty": {
+      "noRecipients": {
+        "body": "Envoyez votre premier document pour voir des rapports.",
+        "title": "Aucun destinataire sur cette période"
+      },
+      "noReports": {
+        "body": "Envoyez votre premier document pour voir des rapports.",
+        "title": "Aucun rapport pour l'instant"
+      },
+      "noStalled": {
+        "body": "Chaque destinataire ayant ouvert un document sur cette période l'a signé.",
+        "title": "Personne ne traîne"
+      },
+      "noTemplates": {
+        "body": "Choisissez une période plus longue, ou envoyez votre premier document pour voir des rapports.",
+        "title": "Aucun document sur cette période"
+      },
+      "oneMember": {
+        "body": "Ce serveur limite la lecture des documents au propriétaire et aux personnes qui les signent : une répartition par membre nécessite donc des documents provenant de plusieurs expéditeurs. Invitez vos collègues et leurs documents envoyés apparaîtront ici.",
+        "title": "Seuls vos propres documents sont visibles"
+      }
+    },
+    "errors": {
+      "loadFailed": "Impossible de charger les rapports",
+      "unknown": "Erreur inconnue"
+    },
+    "exports": {
+      "documents": {
+        "body": "Une ligne par document envoyé sur cette période, avec le statut, le propriétaire, le modèle, les destinataires et le délai de signature.",
+        "title": "Documents"
+      },
+      "intro": "Les fichiers sont générés dans votre navigateur à partir des données affichées : ils suivent donc la période en cours ({{range}}) et les filtres appliqués.",
+      "members": {
+        "body": "Envois, taux de finalisation et délai médian de signature par expéditeur.",
+        "title": "Par membre de l'équipe"
+      },
+      "recipients": {
+        "body": "Documents reçus, signatures, délai médian de signature, dernière activité et refus par destinataire.",
+        "title": "Comportement des destinataires"
+      },
+      "stalled": {
+        "body": "Une ligne par destinataire ayant ouvert un document encore en attente, avec son nombre d'ouvertures et la dernière.",
+        "title": "Ouvert, non signé"
+      },
+      "templates": {
+        "body": "Envois, taux de finalisation, délai médian de signature et refus par modèle.",
+        "title": "Par modèle"
+      }
+    },
+    "filters": {
+      "allTemplates": "Tous les modèles",
+      "everyone": "Tout le monde",
+      "noTemplate": "Aucun modèle"
+    },
+    "funnelStages": {
+      "lower": {
+        "opened": "ouverts",
+        "sent": "envoyés",
+        "signed": "toutes les parties ont signé",
+        "started": "signature commencée"
+      },
+      "opened": "Ouverts",
+      "sent": "Envoyés",
+      "signed": "Toutes les parties ont signé",
+      "started": "Signature commencée"
+    },
+    "insight": {
+      "allSigned": "Tous les documents envoyés sur cette période ont été signés par toutes les parties.",
+      "biggestDrop": "La plus forte baisse se situe entre {{from}} et {{to}} : {{drop}} documents sur {{total}} ({{pct}}) s'y arrêtent.",
+      "mostSigned": "La plupart des documents sont signés {{phrase}}.",
+      "mostSignedWithSlow": "La plupart des documents sont signés {{phrase}}. {{slow}} sur {{total}} ont pris plus d'une semaine.",
+      "mostSignedWithTail": "La plupart des documents sont signés {{phrase}}. La traîne 7 j+ vient surtout de {{name}}.",
+      "noCompletions": "Aucun document n'a encore été complété sur cette période.",
+      "noTemplateDocuments": "documents envoyés sans modèle",
+      "nothingSent": "Rien n'a été envoyé sur cette période."
+    },
+    "legend": {
+      "bestPerformer": "Meilleur résultat",
+      "bestValue": "{{name}} ({{rate}})",
+      "completion": "Finalisation",
+      "notEnoughData": "données insuffisantes",
+      "sent": "Envoyés",
+      "templatesUsed": "Modèles utilisés"
+    },
+    "nav": {
+      "sections": "Sections du rapport"
+    },
+    "notes": {
+      "overview": "Les documents auto-signés et les dossiers sont exclus. Les délais sont mesurés à partir du moment où un document a été envoyé.",
+      "recipients": "Les destinataires sont regroupés par adresse e-mail. Le délai de signature est mesuré à partir de l'envoi de chaque document.",
+      "stalled": "Documents encore en attente où un destinataire a ouvert le lien de signature sans signer. Seules les ouvertures de la page de signature sont comptées, et chacune compte."
+    },
+    "ranges": {
+      "custom": "Personnalisé",
+      "days30": "30 jours",
+      "days7": "7 jours",
+      "days90": "90 jours",
+      "months12": "12 mois",
+      "previous": {
+        "custom": "la période précédente",
+        "days30": "les 30 jours précédents",
+        "days7": "les 7 jours précédents",
+        "days90": "les 90 jours précédents",
+        "months12": "les 12 mois précédents"
+      },
+      "span": "du {{from}} au {{to}}",
+      "withoutTemplate": "{{range}}, documents sans modèle"
+    },
+    "sections": {
+      "byMember": "Par membre de l'équipe",
+      "byTemplate": "Par modèle",
+      "exports": "Exports",
+      "overview": "Vue d'ensemble",
+      "recipients": "Comportement des destinataires",
+      "stalled": "Ouvert, non signé"
+    },
+    "stats": {
+      "completed": {
+        "label": "Complétés",
+        "note": "taux de finalisation de {{rate}}"
+      },
+      "declinedExpired": {
+        "label": "Refusés ou expirés",
+        "note": "{{declined}} refusés, {{expired}} expirés"
+      },
+      "median": {
+        "label": "Délai médian de signature",
+        "noComparison": "aucune comparaison pour {{range}}",
+        "noCompletions": "aucune finalisation pour l'instant",
+        "wasPrevious": "était de {{duration}} sur {{range}}"
+      },
+      "sent": {
+        "label": "Envoyés",
+        "note": "pour signature sur cette période"
+      },
+      "waiting": {
+        "due_one": "{{count, number}} à échéance sous 3 jours",
+        "due_other": "{{count, number}} à échéance sous 3 jours",
+        "label": "En attente des autres",
+        "noneDue": "aucune échéance sous 3 jours"
+      }
+    },
+    "table": {
+      "completed": "Complétés",
+      "completion": "Finalisation",
+      "completionTitle": "{{completed}} complétés sur {{sent}}",
+      "declines": "Refus",
+      "document": "Document",
+      "documents": "Documents",
+      "expires": "Expire",
+      "firstOpened": "Première ouverture",
+      "lastActivity": "Dernière activité",
+      "lastOpened": "Dernière ouverture",
+      "median": "Médiane",
+      "medianTimeToSign": "Délai médian de signature",
+      "noActivity": "aucune activité",
+      "opens": "Ouvertures",
+      "recipient": "Destinataire",
+      "sent": "Envoyés",
+      "signed": "Signés",
+      "teamMember": "Membre de l'équipe",
+      "template": "Modèle",
+      "weekOf": "Semaine du"
+    },
+    "title": "Rapports",
+    "toast": {
+      "nothingToExport": "Rien à exporter",
+      "nothingToExportBody": "Aucun document n'a été envoyé sur cette période."
+    },
+    "truncated": "Affichage des {{limit}} documents les plus récemment mis à jour sur cette période. Réduisez la période pour obtenir des totaux exacts.",
+    "untitledDocument": "Document sans titre"
+  },
+  "send": {
+    "a11y": {
+      "bccEmail": "Adresse e-mail en copie cachée",
+      "progress": "Progression",
+      "recipientEmail": "E-mail du destinataire",
+      "recipientName": "Nom du destinataire",
+      "recipientOptions": "Options du destinataire",
+      "removeEmail": "Retirer {{email}}",
+      "removeRow": "Supprimer la ligne",
+      "role": "Rôle"
+    },
+    "actions": {
+      "addCc": "Ajouter en copie",
+      "addMe": "M'ajouter",
+      "addRecipient": "Ajouter un destinataire",
+      "addRow": "Ajouter une ligne",
+      "backToDocuments": "Retour aux documents",
+      "backToList": "Retour à la liste",
+      "change": "Modifier",
+      "discardAndClose": "Abandonner et fermer",
+      "fix": "Corriger",
+      "fromContacts": "Depuis les contacts",
+      "keepEditing": "Continuer à modifier",
+      "replace": "Remplacer",
+      "saveAndClose": "Enregistrer et fermer",
+      "use": "Utiliser"
+    },
+    "api": {
+      "documentNotCreated": "Le document n'a pas été créé.",
+      "untitledTemplate": "Modèle sans titre"
+    },
+    "bulk": {
+      "columns": "Colonnes : nom, e-mail, téléphone (téléphone facultatif)",
+      "dropCsv": "Déposez un CSV, ou cliquez pour en choisir un",
+      "multiRole_one": "Ce modèle comporte {{count}} rôle. L'envoi groupé remplit un seul rôle par document : utilisez-le avec un modèle à un seul signataire et envoyez les documents multipartites individuellement.",
+      "multiRole_other": "Ce modèle comporte {{count}} rôles. L'envoi groupé remplit un seul rôle par document : utilisez-le avec un modèle à un seul signataire et envoyez les documents multipartites individuellement.",
+      "noRows": "Aucune ligne trouvée. Le fichier doit contenir un nom et un e-mail par ligne.",
+      "ready": "{{valid}} sur {{total}} prêtes",
+      "subtitle": "Un document par ligne, tous issus de {{template}}. Importez un CSV ou choisissez dans vos contacts.",
+      "theTemplate": "le modèle",
+      "title": "Qui reçoit une copie à signer ?"
+    },
+    "bulkReview": {
+      "body": "Chaque ligne reçoit sa propre copie de {{template}}, envoyée immédiatement.",
+      "each_one": "{{count}} demande, un document chacune",
+      "each_other": "{{count}} demandes, un document chacune",
+      "emailAndReason": "E-mail et motif",
+      "expires": "Expire le {{date}}",
+      "retryBody_one": "{{count}} demande est partie. Les lignes ci-dessous non, avec le motif pour chacune.",
+      "retryBody_other": "{{count}} demandes sont parties. Les lignes ci-dessous non, avec le motif pour chacune.",
+      "subject": "Objet : {{subject}}",
+      "toRetry_one": "{{count}} demande à réessayer",
+      "toRetry_other": "{{count}} demandes à réessayer"
+    },
+    "contacts": {
+      "addCount_one": "Ajouter {{count}} destinataire",
+      "addCount_other": "Ajouter {{count}} destinataires",
+      "added": "Ajouté",
+      "description": "Toutes les personnes à qui vous avez déjà envoyé une demande.",
+      "emptyBody": "Ajoutez un destinataire par e-mail et il est enregistré ici.",
+      "emptySearch": "Rien ne correspond à cette recherche.",
+      "emptyTitle": "Aucun contact",
+      "loadError": "Impossible de charger les contacts.",
+      "searchPlaceholder": "Rechercher par nom ou e-mail",
+      "title": "Depuis les contacts"
+    },
+    "dialog": {
+      "leaveDescription": "Vos dernières modifications n'ont pas encore été enregistrées dans le brouillon.",
+      "leaveTitle": "Quitter sans enregistrer ?"
+    },
+    "documents": {
+      "ai": {
+        "body": "Déposez le document, dites qui signe, et le modèle place chaque champ pour vous.",
+        "cta": "Préparer avec l'IA",
+        "title": "Laissez l'IA tout préparer"
+      },
+      "dropFile": "Déposez un fichier ici, ou cliquez pour en choisir un",
+      "fileLimit": "PDF, DOCX ou DOC, jusqu'à {{size}} Mo",
+      "keepTabOpen": "Gardez cet onglet ouvert",
+      "nameHint": "C'est ce que les destinataires voient dans l'objet et dans la piste d'audit.",
+      "nameLabel": "Nom du document",
+      "namePlaceholder": "Document sans titre",
+      "noteHint": "Facultatif. Affiché dans l'e-mail de demande, jusqu'à {{max}} caractères.",
+      "noteLabel": "Note pour les destinataires",
+      "notePlaceholder": "Ce qu'ils doivent savoir avant de signer",
+      "ready": "Prêt",
+      "savingInto": "Enregistrement dans {{folder}}",
+      "stage": {
+        "converting": "Conversion du fichier Word",
+        "decrypting": "Déverrouillage du PDF",
+        "reading": "Lecture du fichier",
+        "uploading": "Envoi {{percent}} %"
+      },
+      "subtitle": "PDF ou Word. Les PDF protégés par mot de passe sont déverrouillés pour vous.",
+      "templates": {
+        "empty": "Vous n'avez pas encore de modèle. Tout ce que vous envoyez pourra en devenir un plus tard.",
+        "error": "Impossible de charger les modèles.",
+        "heading": "Partir d'un modèle",
+        "loading": "Chargement des modèles",
+        "noRoles": "Aucun rôle pour l'instant"
+      },
+      "title": "Que faut-il faire signer ?",
+      "titleSelf": "Que signez-vous ?"
+    },
+    "errors": {
+      "aRecipient": "Un destinataire",
+      "aSigner": "Un signataire",
+      "invalidEmail": "{{name}} a besoin d'une adresse e-mail valide.",
+      "noDocument": "Aucun document importé pour l'instant.",
+      "noFields": "{{name}} n'a aucun champ à remplir.",
+      "noSigner": "Ajoutez au moins un signataire.",
+      "noSubject": "L'e-mail a besoin d'un objet.",
+      "redirectUrl": "L'URL de redirection doit commencer par http:// ou https://.",
+      "rowNotCreated": "La demande n'a pas été créée.",
+      "rowNotReported": "Le serveur n'a rien renvoyé pour cette ligne.",
+      "templateNoDocument": "Ce modèle n'a aucun document associé."
+    },
+    "fields": {
+      "email": "E-mail",
+      "name": "Nom",
+      "phone": "Téléphone"
+    },
+    "header": {
+      "draftSaved": "Brouillon enregistré {{when}}",
+      "stepOf": "Étape {{index}} sur {{total}}"
+    },
+    "mail": {
+      "aColleague": "Un collègue",
+      "bodyDefault": "Bonjour {{receiver_name}},\n\n{{senderName}} vous a envoyé {{document_title}} à signer.\n\nUtilisez le bouton ci-dessous pour le relire et le signer. Cela prend une minute, et vous en recevrez une copie une fois que tout le monde aura signé.",
+      "subjectDefault": "À signer : {{name}}",
+      "subjectDefaultUnnamed": "À signer : un document"
+    },
+    "message": {
+      "body": "Corps du message",
+      "bodyHint": "Vous pouvez utiliser {{receiver_name}}, {{sender_name}}, {{document_title}} et {{expiry_date}}.",
+      "bodyPlaceholder": "Une courte note expliquant de quoi il s'agit",
+      "heading": "Message",
+      "subject": "Objet",
+      "subjectPlaceholder": "Merci de signer ce document"
+    },
+    "more": {
+      "allowModifications": "Laisser les signataires ajouter leurs propres champs",
+      "allowModificationsHint": "Les signataires peuvent placer des signatures, initiales, tampons et textes supplémentaires sur le document. Vos propres champs restent où vous les avez placés.",
+      "bccHint": "Copies cachées du document finalisé. Ces personnes ne sont pas invitées à signer et les autres destinataires ne les voient pas.",
+      "bccInvalid": "{{email}} n'est pas une adresse e-mail valide.",
+      "bccLabel": "Copie cachée",
+      "bccPlaceholder": "finance@company.com, puis Entrée",
+      "chainHint": "Quand tout le monde a signé, un nouveau document est créé à partir de ce modèle et envoyé automatiquement aux mêmes signataires.",
+      "chainLabel": "Une fois terminé, envoyer un document de suivi",
+      "chainNone": "Aucun suivi",
+      "chainTitleLabel": "Titre du document de suivi",
+      "chainTitlePlaceholder": "Par défaut : le nom du modèle",
+      "redirectError": "Saisissez une URL complète commençant par http:// ou https://.",
+      "redirectHint": "Où arrive un signataire une fois qu'il a terminé. Laissez vide pour le garder sur la page de confirmation.",
+      "redirectLabel": "Redirection après signature",
+      "setCount_one": "({{count}} défini)",
+      "setCount_other": "({{count}} définis)",
+      "toggle": "Plus d'options"
+    },
+    "nav": {
+      "continueToDocuments": "Continuer vers les documents",
+      "continueToFields": "Continuer vers les champs",
+      "continueToRecipients": "Continuer vers les destinataires",
+      "continueToReview": "Continuer vers la vérification et l'envoi",
+      "sendNow": "Envoyer maintenant",
+      "sendRequests_one": "Envoyer {{count}} demande",
+      "sendRequests_other": "Envoyer {{count}} demandes"
+    },
+    "password": {
+      "description": "Saisissez le mot de passe de {{fileName}}. Nous le retirons avant l'envoi, les signataires n'en ont donc pas besoin.",
+      "label": "Mot de passe",
+      "placeholder": "Mot de passe du document",
+      "title": "Ce PDF est verrouillé",
+      "unlock": "Déverrouiller",
+      "wrong": "Ce mot de passe n'a pas ouvert le fichier."
+    },
+    "placeholders": {
+      "email": "name@company.com",
+      "fullName": "Nom complet",
+      "optional": "Facultatif"
+    },
+    "preview": {
+      "addedTimes_one": "ajouté {{count}} fois",
+      "addedTimes_other": "ajouté {{count}} fois",
+      "convertedFromWord": "converti depuis Word",
+      "emptyHint": "Votre document apparaît ici une fois importé.",
+      "from_one": "D'après {{count}} demande passée impliquant {{domain}}.",
+      "from_other": "D'après {{count}} demandes passées impliquant {{domain}}.",
+      "heading": "Documents",
+      "pageOf": "1 / {{total}}",
+      "passwordRemoved": "mot de passe retiré",
+      "reading": "Lecture du document",
+      "suggestedHeading": "Suggéré d'après votre historique",
+      "usualExpiry_one": "Vous accordez habituellement {{count}} jour.",
+      "usualExpiry_other": "Vous accordez habituellement {{count}} jours."
+    },
+    "progress": {
+      "preparing": "Préparation de {{index}} sur {{total}}",
+      "sending_one": "Envoi de {{count}} demande",
+      "sending_other": "Envoi de {{count}} demandes"
+    },
+    "recipients": {
+      "empty": "Aucun destinataire pour l'instant. Ajoutez la première personne qui doit signer.",
+      "invalidEmail": "Vérifiez cette adresse e-mail.",
+      "moveDown": "Descendre",
+      "moveUp": "Monter",
+      "notifyToggle": "Me notifier à chaque signature",
+      "reminderNote": "Les rappels sont enregistrés sur le document. Ce serveur calcule la date du prochain rappel mais ne les envoie pas encore de lui-même : considérez-les comme une intention consignée.",
+      "roleCc": "Copie",
+      "roleSigner": "Signataire",
+      "sendInOrder": "Signer dans l'ordre",
+      "sendInOrderOff": "Tout le monde reçoit l'e-mail en même temps et peut signer dans n'importe quel ordre.",
+      "sendInOrderOn": "Seul le premier signataire reçoit l'e-mail maintenant. Chaque personne suivante est invitée dès que la précédente a signé.",
+      "strictOrder": "Imposer l'ordre",
+      "strictOrderHint": "Refuser une signature tant que toutes les personnes qui précèdent n'ont pas signé, même si elles ont le lien.",
+      "subtitle": "Chacun reçoit son propre lien. Ajoutez en copie les personnes qui ont seulement besoin d'un exemplaire.",
+      "title": "Qui doit signer ?"
+    },
+    "review": {
+      "addSigner": "Ajoutez au moins un signataire avant d'envoyer.",
+      "allGood": "Tout est en ordre.",
+      "ccNote": "Les destinataires en copie ne signent pas. Ils reçoivent le document finalisé une fois que tout le monde a signé.",
+      "documentHeading": "Document",
+      "messageHeading": "Message",
+      "noBody": "Aucun corps de message.",
+      "noEmail": "Aucun e-mail",
+      "noName": "Aucun nom",
+      "noRecipients": "Aucun destinataire pour l'instant.",
+      "noSubject": "Aucun objet",
+      "note": "Note : {{note}}",
+      "problems_one": "{{count}} point à corriger",
+      "problems_other": "{{count}} points à corriger",
+      "recipientsHeading": "Destinataires",
+      "settingsHeading": "Paramètres",
+      "signersInOrder_one": "{{count}} personne sera invitée à signer, l'une après l'autre.",
+      "signersInOrder_other": "{{count}} personnes seront invitées à signer, l'une après l'autre.",
+      "signers_one": "{{count}} personne sera invitée à signer.",
+      "signers_other": "{{count}} personnes seront invitées à signer.",
+      "title": "Prêt à envoyer"
+    },
+    "settings": {
+      "afterSigning": "Après signature",
+      "anyOrder": "Ordre libre",
+      "bcc": "Copie cachée",
+      "emailCode": "Code par e-mail",
+      "emailLink": "Lien par e-mail",
+      "everyDays_one": "Tous les {{count}} jour",
+      "everyDays_other": "Tous les {{count}} jours",
+      "expires": "Expire",
+      "heading": "Paramètres",
+      "inOrder": "Dans l'ordre",
+      "inOrderEnforced": "Dans l'ordre, imposé",
+      "nobody": "Personne",
+      "notifyMe": "Me notifier",
+      "off": "Désactivé",
+      "onEachSignature": "À chaque signature",
+      "onlyYourFields": "Uniquement les champs que vous avez placés",
+      "order": "Ordre",
+      "reminders": "Rappels",
+      "signerCheck": "Vérification du signataire",
+      "signerFields": "Champs des signataires",
+      "signersMayAdd": "Les signataires peuvent en ajouter",
+      "staysOnConfirmation": "Reste sur la page de confirmation"
+    },
+    "state": {
+      "draftError": "Ce brouillon n'a pas pu être ouvert",
+      "loadingDraft": "Chargement de votre brouillon"
+    },
+    "steps": {
+      "documents": "Documents",
+      "fields": "Champs",
+      "recipients": "Destinataires",
+      "review": "Vérifier et envoyer"
+    },
+    "title": {
+      "bulk": "Envoi groupé",
+      "request": "Nouvelle demande",
+      "self": "Signez vous-même"
+    },
+    "toast": {
+      "alreadySentBody": "Ouvrez-le depuis Documents pour suivre son avancement.",
+      "alreadySentTitle": "Ce document a déjà été envoyé",
+      "bulkBlockedBody": "Il n'a ni document ni rôle de signataire.",
+      "bulkBlockedTitle": "Ce modèle ne peut pas faire l'objet d'un envoi groupé",
+      "couldNotSaveDraft": "Impossible d'enregistrer le brouillon",
+      "couldNotSend": "Envoi impossible",
+      "draftNotSaved": "Brouillon non enregistré",
+      "emailsFailedBody": "Le document est envoyé. Relancez l'envoi depuis la page du document.",
+      "emailsFailed_one": "{{count}} e-mail n'est pas parti",
+      "emailsFailed_other": "{{count}} e-mails ne sont pas partis",
+      "profileLoadingBody": "Réessayez dans un instant.",
+      "profileLoadingTitle": "Votre profil est encore en cours de chargement",
+      "replaceFileBody": "Un document conserve le fichier avec lequel il a été créé.",
+      "replaceFileTitle": "Créez une nouvelle demande pour changer de fichier",
+      "rowsFailedBody": "Elles restent listées ci-dessous avec le motif.",
+      "rowsFailed_one": "{{count}} ligne n'est pas partie",
+      "rowsFailed_other": "{{count}} lignes ne sont pas parties",
+      "sentRequests_one": "{{count}} demande envoyée",
+      "sentRequests_other": "{{count}} demandes envoyées",
+      "sentToPeople_one": "Envoyé à {{count}} personne",
+      "sentToPeople_other": "Envoyé à {{count}} personnes",
+      "templateFailed": "Impossible d'utiliser ce modèle",
+      "uploadFailed": "Échec de l'envoi"
+    },
+    "units": {
+      "bytes": "{{value}} o",
+      "kilobytes": "{{value}} Ko",
+      "megabytes": "{{value}} Mo"
+    },
+    "upload": {
+      "conversionFailed": "La conversion Word a échoué. Essayez plutôt d'importer un PDF.",
+      "convertedDownloadFailed": "Le fichier converti n'a pas pu être téléchargé.",
+      "passwordProtected": "Ce PDF est protégé par un mot de passe.",
+      "tooLarge": "Ce fichier dépasse {{size}} Mo.",
+      "unlockFailed": "Ce PDF n'a pas pu être déverrouillé.",
+      "unsupportedType": "Importez un PDF ou un document Word (.pdf, .docx, .doc).",
+      "untitledDocument": "Document sans titre",
+      "uploadFailed": "Le fichier n'a pas été importé.",
+      "wrongPassword": "Ce mot de passe n'a pas ouvert le fichier."
+    }
+  },
+  "settings": {
+    "apiWebhooks": {
+      "mcp": {
+        "claudeCode": "Claude Code",
+        "claudeDesktop": "Claude Desktop / autres clients (via mcp-remote)",
+        "endpoint": "Point de terminaison",
+        "note": "Streamable HTTP sans état. Chaque requête porte votre jeton, aucune connexion requise.",
+        "title": "Serveur MCP",
+        "tools": "Outils"
+      },
+      "rest": {
+        "example": "quick-send téléverse le PDF, laisse l'IA placer les champs et envoie l'e-mail aux signataires en un seul appel. Autres routes : POST /files, POST /documents/analyze, POST /documents, GET /documents, GET /documents/:id, POST /documents/:id/send, POST /documents/:id/remind, GET /documents/:id/signing-links, GET|POST /contacts, GET /templates, POST /templates/:id/documents. Édition des brouillons et historique : PATCH /documents/:id, GET /documents/:id/draft, GET /documents/:id/review, PUT|POST|DELETE /documents/:id/fields, PATCH /documents/:id/fields/:key, POST /documents/:id/ai-layout, GET|POST /documents/:id/versions, POST /documents/:id/versions/:v/restore, POST /documents/:id/undo, POST /documents/:id/duplicate, DELETE /documents/:id, POST /documents/:id/restore.",
+        "note": "Les mêmes opérations que les outils MCP, en JSON sur HTTPS.",
+        "title": "API REST"
+      },
+      "token": {
+        "copy": "Copier le jeton",
+        "created": "Créé",
+        "failed": "Échec de la modification du jeton",
+        "generate": "Générer un jeton",
+        "generated": "Jeton généré",
+        "lastUsed": "Dernière utilisation",
+        "never": "Jamais",
+        "none": "Pas encore de jeton. Générez-en un pour utiliser le point de terminaison MCP ou l'API REST.",
+        "note": "Un jeton par compte. Il agit en votre nom : tout ce que vous pouvez faire ici, il peut le faire.",
+        "prefix": "Jeton",
+        "revoke": "Révoquer",
+        "revokeConfirm": "Les scripts et agents qui utilisent ce jeton cesseront de fonctionner immédiatement.",
+        "revoked": "Jeton révoqué",
+        "rotate": "Renouveler le jeton",
+        "shownOnce": "Copiez-le maintenant. Il ne sera plus affiché.",
+        "title": "Jeton d'API personnel"
+      },
+      "webhooks": {
+        "body": "Les webhooks sortants ne sont pas disponibles dans cette version. Interrogez GET /documents/:id ou l'outil list_documents pour suivre les changements d'état.",
+        "title": "Webhooks"
+      }
+    },
+    "audit": {
+      "csv": {
+        "created": "Créé le",
+        "declineReason": "Motif du refus",
+        "documentId": "ID du document",
+        "expires": "Expire le",
+        "lastUpdated": "Dernière mise à jour",
+        "name": "Nom",
+        "owner": "Propriétaire",
+        "ownerEmail": "E-mail du propriétaire",
+        "sent": "Envoyé le",
+        "signers": "Signataires",
+        "status": "Statut"
+      },
+      "data": {
+        "checking": "Vérification",
+        "documents": "Documents que vous avez créés",
+        "endpoint": "Point de terminaison de l'API",
+        "notTracked": "Non suivi sur ce serveur",
+        "note": "Communiqué par ce serveur.",
+        "storage": "Stockage utilisé",
+        "templates": "Modèles que vous avez créés",
+        "title": "Où vivent vos données",
+        "workspace": "Espace de travail"
+      },
+      "export": {
+        "body": "Comprend le nom, le statut, les signataires, les dates et les motifs de refus. Les brouillons et les documents en cours, complétés, refusés et expirés sont couverts. Les fichiers eux-mêmes ne sont pas inclus.",
+        "button": "Exporter en CSV",
+        "note": "Un CSV des documents dont vous êtes propriétaire, établi à partir des rapports de ce serveur.",
+        "title": "Export"
+      },
+      "toast": {
+        "failed": "Export impossible",
+        "nothing": "Rien à exporter",
+        "nothingBody": "Vous n'êtes propriétaire d'aucun document pour l'instant.",
+        "ready": "Export prêt",
+        "readyBody_one": "{{count}} document écrit dans le CSV.",
+        "readyBody_other": "{{count}} documents écrits dans le CSV."
+      },
+      "trails": {
+        "body": "Chaque document conserve sa propre piste d'audit : qui l'a consulté, qui a signé, quand et depuis quelle adresse IP. Ouvrez un document et téléchargez son certificat de finalisation pour obtenir l'enregistrement signé. Il n'existe pas de journal d'audit global à l'espace de travail sur ce serveur.",
+        "title": "Pistes d'audit"
+      }
+    },
+    "billing": {
+      "body": "Cette version n'a ni abonnements, ni offres, ni factures. Elle est auto-hébergée : l'usage n'est limité que par la machine sur laquelle elle tourne.",
+      "title": "La facturation n'est pas configurée sur ce serveur"
+    },
+    "branding": {
+      "identity": {
+        "accent": "Couleur d'accentuation",
+        "accentNote": "Ce serveur n'a pas de champ de couleur de thème : la couleur d'accentuation de l'application est donc utilisée partout.",
+        "contrastAA": "Contraste sur blanc {{ratio}}:1 (AA)",
+        "contrastBelowAA": "Contraste sur blanc {{ratio}}:1 (sous le seuil AA)",
+        "logo": "Logo de l'espace de travail",
+        "logoHint": "PNG, SVG ou JPG, jusqu'à 1 Mo. Affiché dans l'application, sur la page de signature et dans les e-mails.",
+        "memberNote": "Seul un administrateur de l'espace de travail peut modifier le logo et le nom.",
+        "noLogo": "Aucun logo importé",
+        "note": "L'apparence de votre espace de travail pour les signataires.",
+        "remove": "Supprimer",
+        "replace": "Remplacer",
+        "title": "Identité",
+        "tooLarge": "Le logo doit faire 1 Mo au maximum.",
+        "upload": "Importer un logo",
+        "uploadFailed": "Impossible d'importer le logo",
+        "uploading": "Import en cours",
+        "workspaceName": "Nom de l'espace de travail",
+        "workspaceNameHint": "Les signataires voient ce nom dans les e-mails et sur la page de signature.",
+        "wrongType": "Utilisez un fichier PNG, SVG ou JPG."
+      },
+      "preview": {
+        "certificate": "Certificat de finalisation",
+        "email": "E-mail",
+        "emailBody": "Votre signature est nécessaire pour finaliser cet accord. Le lien ouvre le document, aucun compte n'est requis.",
+        "emailCta": "Relire et signer",
+        "emailFooter": "Envoyé par {{workspace}}. Si vous ne vous attendiez pas à cet e-mail, vous pouvez l'ignorer.",
+        "emailHeading": "{{sender}} vous a demandé de signer {{document}}",
+        "emailSubject": "{{sender}} vous demande de signer {{document}}",
+        "finish": "Terminer",
+        "issuedBy": "Émis par {{workspace}}",
+        "note": "L'aperçu utilise un document d'exemple et les vraies valeurs de votre espace de travail.",
+        "pdf": "PDF complété",
+        "pdfSender": "Expéditeur {{sender}}",
+        "pdfTimestamps": "horodatages dans votre fuseau horaire",
+        "poweredBy": "Si vous jugez cet e-mail inapproprié ou indésirable, vous pouvez déposer une réclamation ici.",
+        "requestedBy": "Demandé par {{sender}}",
+        "sampleDoc": "Contrat-cadre de services",
+        "signHere": "Signez ici",
+        "signing": "Page de signature",
+        "title": "Aperçu en direct",
+        "to": "à {{recipient}}"
+      },
+      "sender": {
+        "domain": "Domaine de la page de signature",
+        "footerHint": "Texte brut, 500 caractères maximum. Ajouté au bas de chaque e-mail sortant.",
+        "footerPlaceholder": "Acme Inc, 1 Main Street, Oslo",
+        "footerText": "Texte de pied de page personnalisé",
+        "hidePoweredBy": "Masquer le pied de page « Powered by »",
+        "hidePoweredByHint": "Supprime la ligne d’attribution de la plateforme et le lien de signalement de spam au bas de vos e-mails.",
+        "hidePoweredByToggle": "Masquer le « Powered by »",
+        "memberNote": "Seul un administrateur de l'espace de travail peut modifier l'expéditeur des e-mails.",
+        "note": "S'applique aux demandes que vous envoyez.",
+        "replyTo": "Adresse de réponse",
+        "replyToPlaceholder": "name@company.com",
+        "senderName": "Nom de l'expéditeur",
+        "senderNameHint": "Le nom affiché dans le champ De de chaque e-mail envoyé par cet espace de travail. L'adresse reste celle configurée sur ce serveur.",
+        "title": "Expéditeur des e-mails"
+      },
+      "toast": {
+        "saveFailed": "Impossible d'enregistrer l'identité visuelle",
+        "saved": "Identité visuelle enregistrée"
+      }
+    },
+    "emailTemplates": {
+      "adminNote": "Enregistré sur l'espace de travail : tout le monde ici envoie donc le même e-mail.",
+      "body": "Corps du message",
+      "bodyHint": "HTML. Laissez les deux champs vides pour revenir à l'e-mail intégré du serveur.",
+      "completionTitle": "E-mail de finalisation",
+      "defaults": {
+        "completionBody": "<p>Bonjour {{sender_name}},</p>\n<p>Toutes les parties ont signé {{document_title}}. La copie signée est jointe.</p>\n<p>Merci</p>",
+        "completionSubject": "Le document {{document_title}} a été signé par toutes les parties",
+        "requestBody": "<p>Bonjour {{receiver_name}},</p>\n<p>{{sender_name}} vous demande de relire et de signer {{document_title}}.</p>\n<p><a href='{{signing_url}}'>Signez ici</a></p>\n<p>Merci</p>",
+        "requestSubject": "{{sender_name}} vous demande de signer {{document_title}}"
+      },
+      "noTenant": "Ce serveur n'a renvoyé aucune fiche d'espace de travail : les modèles ne peuvent donc pas être modifiés.",
+      "preview": {
+        "custom": "Personnalisé",
+        "note": "Les scripts et les gestionnaires en ligne sont retirés de cet aperçu. Le serveur ajoute son propre pied de page de signalement de spam à chaque e-mail.",
+        "serverDefault": "Valeur par défaut du serveur",
+        "title": "Aperçu"
+      },
+      "requestTitle": "E-mail de demande de signature",
+      "sample": {
+        "documentTitle": "Contrat-cadre de services",
+        "expiryDate": "dans 15 jours",
+        "note": "Merci de signer avant vendredi.",
+        "senderName": "Vous"
+      },
+      "startFromDefault": "Partir du modèle par défaut",
+      "subject": "Objet",
+      "tabs": {
+        "completion": "Finalisation",
+        "request": "Demande"
+      },
+      "toast": {
+        "cleared": "Effacé",
+        "clearedBody": "Enregistrez pour revenir à l'e-mail intégré.",
+        "copyFailed": "Copie impossible",
+        "noTenant": "Aucune fiche d'espace de travail sur laquelle enregistrer.",
+        "saveFailed": "Impossible d'enregistrer les modèles",
+        "saved": "Modèles d'e-mail enregistrés"
+      },
+      "userNote": "Défini par l'administrateur de l'espace de travail et utilisé par toutes les demandes envoyées d'ici. Demandez à un administrateur de le modifier.",
+      "variables": {
+        "expiryNote": "{{expiry_date}} n'est renseigné que dans les e-mails de demande. Les variables inconnues sont laissées telles quelles.",
+        "note": "Cliquez pour copier. Le serveur les remplace au moment de l'envoi.",
+        "title": "Variables"
+      }
+    },
+    "errors": {
+      "canvasUnavailable": "Le canevas n'est pas disponible",
+      "couldNotReadFile": "Impossible de lire le fichier",
+      "deleteFailed": "Échec de la suppression : HTTP {{status}}",
+      "notSignedIn": "Non connecté",
+      "uploadNoUrl": "L'envoi n'a pas renvoyé d'URL"
+    },
+    "form": {
+      "saveFailed": "Enregistrement impossible",
+      "saved": "Enregistré"
+    },
+    "general": {
+      "install": {
+        "apiUrl": "URL de l'API",
+        "appUrl": "URL de l'application",
+        "created": "Créé le",
+        "note": "Où l'application et son API s'exécutent.",
+        "title": "Cette installation",
+        "workspaceId": "ID de l'espace de travail"
+      },
+      "workspace": {
+        "active": "Actif",
+        "address": "Adresse",
+        "adminNote": "Ce serveur conserve la fiche d'espace de travail derrière la clé maîtresse, et son point de terminaison de mise à jour n'accepte que les modèles d'e-mail. Modifiez ces valeurs sur le serveur ou dans la base de données, et elles apparaîtront ici.",
+        "contactEmail": "E-mail de contact",
+        "contactNumber": "Numéro de contact",
+        "domain": "Domaine",
+        "domainPlaceholder": "Non défini",
+        "inactive": "Inactif",
+        "memberNote": "Seul un administrateur peut modifier les informations de l'espace de travail, et sur ce serveur elles se modifient en dehors de l'application.",
+        "missing": "Ce serveur n'a renvoyé aucune fiche d'espace de travail pour votre compte. Demandez à un administrateur de vérifier votre profil.",
+        "name": "Nom de l'espace de travail",
+        "note": "Ces informations proviennent de la fiche d'espace de travail créée lors de l'installation de ce serveur.",
+        "title": "Espace de travail"
+      }
+    },
+    "integrations": {
+      "body": "Cette version n'a ni webhooks sortants, ni application Zapier, ni connecteurs Google Drive, Dropbox ou Box. Les documents sont importés et téléchargés depuis l'application elle-même.",
+      "seeApi": "Voir API et webhooks",
+      "title": "Aucune intégration sur ce serveur"
+    },
+    "nav": {
+      "backToInbox": "Retour à la boîte de réception",
+      "workspace": "Espace de travail",
+      "you": "Vous"
+    },
+    "notifications": {
+      "always": {
+        "completed": "<1>Documents complétés.</1> Chaque signataire et l'expéditeur reçoivent le PDF signé et son certificat. Cela peut être désactivé demande par demande au moment de l'envoi.",
+        "declined": "<1>Documents refusés.</1> L'expéditeur reçoit un e-mail avec le motif.",
+        "note": "Les rappels automatiques ne sont pas implémentés sur ce serveur. Les rappels ne partent que lorsque vous en envoyez un depuis un document.",
+        "requests": "<1>Demandes de signature.</1> Envoyées par cette application lorsque vous envoyez un document, et non selon une planification.",
+        "title": "Toujours envoyés"
+      },
+      "emailMeAbout": {
+        "eachSignature": "Chaque fois que quelqu'un signe",
+        "eachSignatureHint": "Envoyé tant qu'une demande attend encore d'autres personnes. La dernière signature est couverte par l'e-mail de finalisation.",
+        "note": "C'est la seule préférence de notification que ce serveur enregistre.",
+        "title": "M'envoyer un e-mail pour",
+        "toggleLabel": "Notifier à chaque signature"
+      },
+      "toast": {
+        "saveFailed": "Impossible d'enregistrer vos préférences",
+        "saved": "Préférences de notification enregistrées"
+      }
+    },
+    "parts": {
+      "loadError": "Impossible de charger cette section.",
+      "notAvailable": "Non disponible sur ce serveur"
+    },
+    "profile": {
+      "appearance": {
+        "note": "S'applique uniquement à cet appareil, y compris aux pages de signature.",
+        "theme": "Thème",
+        "themeHint": "Système suit le réglage de votre système d'exploitation et change avec lui."
+      },
+      "delete": {
+        "admin": "Nous vous envoyons un lien de confirmation par e-mail. Vous saisissez ensuite un code à usage unique pour finaliser la suppression.",
+        "button": "Supprimer mon compte",
+        "confirmLabel": "Saisissez {{word}} pour continuer",
+        "dialogDescription": "Ceci supprime votre compte, votre signature et les documents dont vous êtes propriétaire.",
+        "emailLink": "M'envoyer le lien de confirmation par e-mail",
+        "intro": "La suppression est confirmée par e-mail : nous envoyons un lien à <1>{{email}}</1>, et cette page demande un code à usage unique avant que quoi que ce soit ne soit supprimé.",
+        "nonAdmin": "Seul l'administrateur de l'espace de travail peut supprimer un compte depuis ici. Demandez à un administrateur de vous retirer.",
+        "note": "Supprime votre compte et les documents dont vous êtes propriétaire. Cette action est irréversible.",
+        "sent": "Nous avons envoyé un lien à <1>{{email}}</1>. Ouvrez-le, demandez un code à usage unique et saisissez-le pour finaliser la suppression. Ce lien est le seul moyen de terminer : rien n'a encore été supprimé.",
+        "title": "Supprimer mon compte",
+        "toastFailed": "Impossible de lancer la suppression",
+        "toastSent": "E-mail de confirmation envoyé",
+        "toastSentBody": "Consultez {{email}} pour terminer la suppression de votre compte."
+      },
+      "details": {
+        "company": "Entreprise",
+        "fullName": "Nom complet",
+        "jobTitle": "Fonction",
+        "note": "Affichées aux signataires sur les demandes que vous envoyez.",
+        "phone": "Téléphone",
+        "pictureHint": "PNG ou JPG, redimensionnée à 240 px.",
+        "signInEmail": "E-mail de connexion",
+        "signInEmailHint": "Ce serveur ne permet pas de changer votre e-mail de connexion depuis l'application.",
+        "title": "Vos informations",
+        "uploadPicture": "Importer une photo"
+      },
+      "language": {
+        "hint": "Change aussi la langue de cette application."
+      },
+      "regional": {
+        "dateFormat": "Format de date",
+        "note": "Utilisés pour les horodatages des certificats et les dates apposées sur les signatures.",
+        "offset": "{{zone}} est à {{offset}}",
+        "offsetUnknown": "inconnu",
+        "timezone": "Fuseau horaire",
+        "title": "Paramètres régionaux"
+      },
+      "toast": {
+        "missingRow": "Votre fiche de profil est absente de ce serveur.",
+        "pictureReady": "Photo prête",
+        "pictureReadyBody": "Enregistrez les modifications pour l'appliquer.",
+        "saveFailed": "Impossible d'enregistrer votre profil",
+        "saved": "Profil enregistré",
+        "unsupportedImage": "Image non prise en charge",
+        "unsupportedImageBody": "Utilisez un fichier PNG, JPG ou WebP.",
+        "uploadFailed": "Échec de l'envoi"
+      }
+    },
+    "sections": {
+      "api": {
+        "description": "Jeton personnel, point de terminaison MCP et API REST pour scripts et agents IA.",
+        "label": "API et MCP",
+        "title": "API et MCP"
+      },
+      "audit": {
+        "description": "Où vivent vos documents et comment exporter leurs métadonnées.",
+        "label": "Audit et conformité",
+        "title": "Audit et conformité"
+      },
+      "billing": {
+        "description": "Offre et factures de cet espace de travail.",
+        "label": "Facturation",
+        "title": "Facturation"
+      },
+      "branding": {
+        "description": "L'apparence de votre espace de travail dans les e-mails et sur la page de signature.",
+        "label": "Identité visuelle",
+        "title": "Identité visuelle"
+      },
+      "email": {
+        "description": "Les e-mails de demande et de finalisation envoyés aux signataires.",
+        "label": "Modèles d'e-mail",
+        "title": "Modèles d'e-mail"
+      },
+      "general": {
+        "description": "Nom, domaine et coordonnées de cet espace de travail.",
+        "label": "Général",
+        "title": "Espace de travail"
+      },
+      "integrations": {
+        "description": "Connexions à d'autres outils.",
+        "label": "Intégrations",
+        "title": "Intégrations"
+      },
+      "notifications": {
+        "description": "Les e-mails que ce serveur vous envoie au sujet de vos documents.",
+        "label": "Notifications",
+        "title": "Notifications"
+      },
+      "profile": {
+        "description": "Votre nom, vos coordonnées et la façon dont les dates vous sont affichées.",
+        "label": "Profil",
+        "title": "Profil"
+      },
+      "security": {
+        "description": "Changez votre mot de passe et vérifiez où vous êtes connecté.",
+        "label": "Sécurité et sessions",
+        "title": "Sécurité et sessions"
+      },
+      "signature": {
+        "description": "La signature appliquée lorsque vous signez un document.",
+        "label": "Ma signature et mes initiales",
+        "title": "Ma signature et mes initiales"
+      },
+      "signing": {
+        "description": "Valeurs appliquées à chaque nouvelle demande de signature que vous créez.",
+        "label": "Valeurs par défaut de signature",
+        "title": "Valeurs par défaut de signature"
+      },
+      "team": {
+        "description": "Les personnes qui peuvent se connecter à cet espace de travail.",
+        "label": "Équipe",
+        "title": "Équipe"
+      }
+    },
+    "security": {
+      "password": {
+        "confirm": "Confirmer le nouveau mot de passe",
+        "current": "Mot de passe actuel",
+        "mismatch": "Les deux mots de passe ne correspondent pas.",
+        "new": "Nouveau mot de passe",
+        "note": "Votre mot de passe actuel est nécessaire. Les autres sessions sont terminées par le serveur.",
+        "rules": {
+          "case": "Majuscules et minuscules, plus un chiffre",
+          "length": "Au moins 8 caractères",
+          "special": "Un caractère spécial"
+        },
+        "submit": "Mettre à jour le mot de passe",
+        "title": "Changer de mot de passe",
+        "toast": {
+          "cannotChange": "Impossible de changer le mot de passe",
+          "cannotChangeBody": "Votre compte n'a pas d'adresse e-mail.",
+          "failed": "Impossible de changer votre mot de passe",
+          "updated": "Mot de passe mis à jour",
+          "updatedBody": "Les autres appareils devront peut-être se reconnecter."
+        }
+      },
+      "sessions": {
+        "end": "Terminer",
+        "expires": "expire {{when}}",
+        "note": "Sessions actives sur ce serveur.",
+        "signOutOthers": "Déconnecter les autres appareils",
+        "started": "Démarrée {{when}}",
+        "thisDevice": "Cet appareil",
+        "title": "Où vous êtes connecté",
+        "toast": {
+          "endOneFailed": "Impossible de terminer cette session",
+          "endOthersFailed": "Impossible de terminer les autres sessions",
+          "signedOutOthers": "Déconnecté partout ailleurs",
+          "signedOutOthersBody_one": "{{count}} session terminée.",
+          "signedOutOthersBody_other": "{{count}} sessions terminées."
+        }
+      },
+      "signOut": {
+        "listUnavailable": "Ce serveur ne permet pas à l'application de lister vos sessions : seul cet appareil peut être déconnecté depuis ici.",
+        "thisDevice": "Termine la session sur cet appareil.",
+        "title": "Se déconnecter"
+      }
+    },
+    "signature": {
+      "change": "Modifier",
+      "initials": {
+        "add": "Ajouter des initiales",
+        "empty": "Aucune initiale enregistrée pour l'instant.",
+        "note": "Utilisées par les champs d'initiales et sur les validations multipages.",
+        "title": "Initiales"
+      },
+      "note": "Les images sont stockées sur ce serveur et re-signées à chaque lecture : les liens d'aperçu expirent donc après quelques minutes. Rechargez la page si une image ne s'affiche plus.",
+      "signature": {
+        "add": "Ajouter une signature",
+        "empty": "Aucune signature enregistrée pour l'instant.",
+        "note": "Appliquée lorsque vous signez un document ou signez vous-même.",
+        "title": "Signature"
+      },
+      "toast": {
+        "initialsSaved": "Initiales enregistrées",
+        "signatureSaved": "Signature enregistrée"
+      }
+    },
+    "signatureDialog": {
+      "chooseImage": "Choisir une image",
+      "description": "Dessinée, saisie ou importée. Elle est stockée une fois et réutilisée sur chaque document que vous signez.",
+      "errors": {
+        "chooseFirst": "Choisissez d'abord une image.",
+        "couldNotRead": "Impossible de lire cette image",
+        "drawFirst": "Dessinez d'abord quelque chose.",
+        "saveFailed": "Enregistrement impossible",
+        "unsupportedImage": "Image non prise en charge",
+        "unsupportedImageBody": "Utilisez un fichier PNG ou JPG."
+      },
+      "fields": {
+        "initials": "Vos initiales",
+        "name": "Votre nom"
+      },
+      "ink": {
+        "blue": "Bleu",
+        "ink": "Encre",
+        "label": "Encre"
+      },
+      "saveInitials": "Enregistrer les initiales",
+      "saveSignature": "Enregistrer la signature",
+      "tabs": {
+        "draw": "Dessiner",
+        "type": "Saisir",
+        "upload": "Importer"
+      },
+      "titleInitials": "Vos initiales",
+      "titleSignature": "Votre signature",
+      "trimNote": "Les bords sont rognés automatiquement.",
+      "uploadHint": "PNG ou JPG. Les fonds transparents ou blancs donnent le meilleur résultat."
+    },
+    "signing": {
+      "dateFields": {
+        "note": "Comportement des champs de date que vous placez sur un document.",
+        "readOnly": "Lecture seule",
+        "readOnlyHint": "Les signataires ne peuvent pas modifier la date que vous avez définie.",
+        "readOnlyToggle": "Date en lecture seule",
+        "sourceToast": "Définissez une source pour la date",
+        "sourceToastBody": "Activez la date de signature, ou choisissez une date sur le document.",
+        "title": "Champs de date",
+        "useSigningDate": "Remplir avec la date de signature",
+        "useSigningDateHint": "Le champ est complété automatiquement au moment où la personne signe.",
+        "useSigningDateToggle": "Utiliser la date de signature"
+      },
+      "dates": {
+        "clock": "Horloge",
+        "clock12": "12 heures",
+        "clock24": "24 heures",
+        "dateFormat": "Format de date",
+        "filename": "Nom du fichier téléchargé",
+        "note": "Utilisés pour les dates de signature, les certificats et les téléchargements.",
+        "timezone": "Fuseau horaire",
+        "timezoneHint": "Apposé sur les signatures et les certificats.",
+        "title": "Dates et fichiers"
+      },
+      "errors": {
+        "noTypes": "Activez au moins un type de signature.",
+        "onlyDefault": "Réutiliser une signature enregistrée ne peut pas être la seule option."
+      },
+      "filenameFormats": {
+        "DOCNAME": "Nom du document",
+        "DOCNAME_EMAIL": "Nom du document + e-mail du signataire",
+        "DOCNAME_EMAIL_DATE": "Nom du document + e-mail + date",
+        "DOCNAME_SIGNED": "Nom du document + signé"
+      },
+      "perRequest": {
+        "body": "L'expiration en jours, la fréquence des rappels, la vérification par code à usage unique et la possibilité pour les signataires de modifier leurs réponses sont enregistrées sur chaque document, et non comme valeurs par défaut de l'espace de travail. Choisissez-les dans le parcours d'envoi lorsque vous créez une demande.",
+        "title": "Défini par demande"
+      },
+      "sending": {
+        "inOrder": "Signer dans l'ordre",
+        "inOrderHint": "Chaque signataire reçoit l'e-mail seulement après que la personne précédente a signé.",
+        "ltv": "Validation à long terme (LTV)",
+        "ltvHint": "Intègre les données de révocation dans le PDF signé pour qu'il reste vérifiable des années plus tard.",
+        "note": "Valeurs par défaut copiées sur chaque nouveau document.",
+        "notify": "Me notifier à chaque signature",
+        "notifyHint": "Également modifiable depuis la section notifications.",
+        "notifyToggle": "Notifier à chaque signature",
+        "title": "Envoi",
+        "tour": "Afficher la visite guidée",
+        "tourHint": "Guide les nouveaux signataires sur la page de signature.",
+        "tourToggle": "Visite guidée"
+      },
+      "toast": {
+        "saveFailed": "Impossible d'enregistrer les valeurs par défaut de signature",
+        "saved": "Valeurs par défaut de signature enregistrées"
+      },
+      "types": {
+        "labels": {
+          "default": "Réutiliser ma signature enregistrée",
+          "draw": "Dessiner",
+          "typed": "Saisir",
+          "upload": "Importer une image"
+        },
+        "note": "Appliqué à chaque demande que vous créez.",
+        "title": "Comment les personnes peuvent signer",
+        "workspaceNote": "Votre espace de travail décide des options qui peuvent apparaître ici."
+      }
+    },
+    "team": {
+      "actions": {
+        "label": "Actions pour {{name}}",
+        "makeEditor": "Nommer éditeur",
+        "makeOrgAdmin": "Nommer administrateur de l'organisation",
+        "makeUser": "Nommer utilisateur",
+        "memberFallback": "membre",
+        "remove": "Retirer de l'espace de travail",
+        "resetPassword": "Réinitialiser le mot de passe",
+        "restoreAccess": "Rétablir l'accès",
+        "suspendAccess": "Suspendre l'accès"
+      },
+      "countLine_one": "{{count}} personne dans cet espace de travail.",
+      "countLine_other": "{{count}} personnes dans cet espace de travail.",
+      "invite": {
+        "button": "Inviter un collègue",
+        "created": "Le compte est prêt. Transmettez-lui ce mot de passe par un canal de confiance ; il ne sera plus affiché.",
+        "description": "Ce serveur crée le compte immédiatement. Transmettez-lui le mot de passe vous-même.",
+        "email": "E-mail",
+        "fullName": "Nom complet",
+        "newPassword": "Nouveau",
+        "password": "Mot de passe temporaire",
+        "passwordHint": "Généré pour vous. La personne pourra le changer depuis ses propres paramètres.",
+        "phone": "Téléphone (facultatif)",
+        "role": "Rôle",
+        "submit": "Ajouter le collègue",
+        "team": "Équipe",
+        "teamLoading": "Chargement des équipes",
+        "title": "Inviter un collègue",
+        "toast": {
+          "added": "Collègue ajouté",
+          "failed": "Impossible d'ajouter cette personne"
+        }
+      },
+      "noOrg": "Votre compte n'est lié à aucune organisation sur ce serveur : la liste de l'équipe ne peut donc pas être chargée.",
+      "note": "L'administrateur de l'espace de travail ne peut être ni modifié ni supprimé depuis ici, et vous ne pouvez pas agir sur votre propre ligne. Les nouvelles personnes sont créées avec un mot de passe que vous leur transmettez ; ce serveur n'envoie pas d'e-mail d'invitation.",
+      "remove": {
+        "confirm": "Cette action est irréversible. Saisissez <1>{{email}}</1> pour confirmer.",
+        "description": "Son compte et les documents dont elle est propriétaire sont supprimés sur ce serveur.",
+        "emailLabel": "E-mail",
+        "title": "Retirer de l'espace de travail",
+        "toast": {
+          "cannot": "Retrait impossible",
+          "cannotBody": "Cette personne n'a aucun compte de connexion associé.",
+          "done": "Retiré de l'espace de travail",
+          "failed": "Impossible de retirer cette personne"
+        }
+      },
+      "reset": {
+        "description": "Un nouveau mot de passe pour {{name}}.",
+        "done": "Transmettez-lui ce mot de passe. Il ne sera plus affiché.",
+        "generate": "Nouveau",
+        "newPassword": "Nouveau mot de passe",
+        "newPasswordHint": "Au moins 8 caractères avec majuscule, minuscule, chiffre et symbole.",
+        "submit": "Réinitialiser le mot de passe",
+        "title": "Réinitialiser le mot de passe",
+        "toast": {
+          "cannot": "Réinitialisation impossible",
+          "cannotBody": "Cette personne n'a aucun compte de connexion associé.",
+          "done": "Mot de passe réinitialisé",
+          "failed": "Impossible de réinitialiser ce mot de passe"
+        }
+      },
+      "roles": {
+        "admin": "Administrateur",
+        "editor": "Éditeur",
+        "orgAdmin": "Administrateur de l'organisation",
+        "user": "Utilisateur"
+      },
+      "self": {
+        "body": "Demandez à un administrateur de changer votre rôle, de réinitialiser votre mot de passe ou de supprimer votre compte. Vous pouvez mettre à jour votre profil et votre signature depuis les sections ci-dessus.",
+        "note": "Seuls les administrateurs peuvent voir et gérer l'équipe complète.",
+        "title": "Votre accès"
+      },
+      "table": {
+        "active": "Actif",
+        "added": "Ajouté le",
+        "email": "E-mail",
+        "name": "Nom",
+        "role": "Rôle",
+        "status": "Statut",
+        "suspended": "Suspendu",
+        "teams": "Équipes",
+        "unnamed": "Sans nom"
+      },
+      "toast": {
+        "accessRestored": "Accès rétabli",
+        "accessSuspended": "Accès suspendu",
+        "copyFailed": "Copie impossible",
+        "copyFailedBody": "Copiez-le manuellement.",
+        "removedFallback": "Utilisateur supprimé",
+        "roleFailed": "Impossible de changer ce rôle",
+        "roleUpdated": "Rôle mis à jour",
+        "roleUpdatedBody": "{{name}} est maintenant {{role}}.",
+        "updateFailed": "Impossible de mettre à jour cette personne"
+      }
+    },
+    "title": "Paramètres",
+    "workspaceFallback": "Espace de travail"
+  },
+  "signer": {
+    "a11y": {
+      "character": "Caractère {{position}}",
+      "goToPage": "Aller à la page {{page}}",
+      "moreActions": "Plus d'actions",
+      "moveField": "Déplacer le champ {{label}}",
+      "nextField": "Champ suivant",
+      "previousField": "Champ précédent",
+      "removeField": "Supprimer le champ {{label}}",
+      "signatureAdopted": "Signature adoptée pour {{name}}",
+      "widgetField": "Champ {{label}}"
+    },
+    "about": {
+      "expires": "Expire le {{date}}",
+      "lastSigner": "Vous êtes le dernier signataire. Dès que vous aurez terminé, tout le monde recevra le PDF complété et le certificat.",
+      "nextSigner": "Après vous, {{name}} signe, puis tout le monde reçoit le PDF complété et le certificat.",
+      "prevSigned": "{{name}} a signé.",
+      "prevSignedOn": "{{name}} a signé le {{date}}.",
+      "title": "À propos de cette demande"
+    },
+    "actions": {
+      "addField": "Ajouter un champ",
+      "askQuestion": "Poser une question",
+      "downloadOriginal": "Télécharger l'original",
+      "finish": "Terminer",
+      "finishLater": "Terminer plus tard",
+      "nextField": "Champ suivant",
+      "signHere": "Signez ici"
+    },
+    "addField": {
+      "paletteHint": "Place le champ au milieu de la page {{page}}. Faites glisser la poignée d'angle pour le déplacer ou le redimensionner.",
+      "sheetHint": "Il se place au milieu de la page {{page}}.",
+      "title": "Ajouter un champ"
+    },
+    "adopt": {
+      "adoptAndSign": "Adopter et signer",
+      "chooseAnother": "En choisir une autre",
+      "chooseImage": "Choisir une image",
+      "colors": {
+        "black": "noir",
+        "blue": "bleu",
+        "red": "rouge"
+      },
+      "consent": "J'accepte que ceci soit l'équivalent électronique de ma signature manuscrite et que son utilisation m'engage juridiquement.",
+      "description": "Confirmez votre nom, puis dessinez, saisissez ou importez la marque que vous souhaitez utiliser. Nous la réutiliserons pour le reste de ce document.",
+      "fields": {
+        "fullName": "Nom complet",
+        "initials": "Initiales"
+      },
+      "hint": {
+        "draw": "Dessinez avec la souris, le pavé tactile ou votre doigt",
+        "saved": "Enregistrée sur votre compte",
+        "type": "Rendu en {{font}}",
+        "upload": "Une photo d'une signature sur papier blanc fonctionne bien"
+      },
+      "methods": {
+        "draw": "Dessiner",
+        "saved": "Enregistrée",
+        "type": "Saisir",
+        "upload": "Importer"
+      },
+      "penColor": "Stylo {{color}}",
+      "preview": {
+        "saved": "Votre signature enregistrée",
+        "typed": "Aperçu de la signature saisie",
+        "uploaded": "Signature importée"
+      },
+      "titleInitials": "Adoptez vos initiales",
+      "titleSignature": "Adoptez votre signature",
+      "uploadHint": "PNG ou JPEG. Nous détourons le fond pour vous."
+    },
+    "decline": {
+      "confirm": "Refuser le document",
+      "description": "{{sender}} sera informé que vous avez refusé « {{document}} ». Vous ne pourrez plus le signer ensuite.",
+      "keepReviewing": "Continuer la lecture",
+      "reasonHint": "Facultatif, mais cela évite un e-mail de relance à l'expéditeur.",
+      "reasonLabel": "Motif",
+      "reasonPlaceholder": "Dites-lui pourquoi, par exemple : les conditions de paiement doivent d'abord être modifiées.",
+      "title": "Refuser de signer"
+    },
+    "disclosure": {
+      "agreeLink": "En signant, vous acceptez la notice sur les enregistrements et signatures électroniques.",
+      "closing": "En adoptant une signature et en continuant, vous confirmez comprendre et accepter cette notice, et vous consentez à signer électroniquement les documents de l'expéditeur.",
+      "intro": "Cette notice est un accord entre la personne qui a envoyé ce document (l'expéditeur) et vous (le signataire). En signant électroniquement, vous acceptez les conditions ci-dessous. Merci de les lire avant de continuer.",
+      "questions": "Les questions relatives à cette notice sont à adresser à l'expéditeur.",
+      "questionsWithEmail": "Les questions relatives à cette notice sont à adresser à l'expéditeur à l'adresse",
+      "sections": {
+        "acknowledgment": {
+          "heading": "6. Reconnaissance et acceptation",
+          "intro": "En continuant, vous :",
+          "points": [
+            "Confirmez que vous pouvez consulter et examiner des documents électroniques comme décrit ici.",
+            "Acceptez d'utiliser des enregistrements et des signatures électroniques pour cette transaction.",
+            "Comprenez que cette plateforme facilite la transaction et n'est pas partie à l'accord."
+          ]
+        },
+        "consent": {
+          "heading": "2. Consentement à l'utilisation d'enregistrements et de signatures électroniques",
+          "intro": "En acceptant cette notice :",
+          "points": [
+            "Vous consentez à traiter électroniquement avec l'expéditeur, et comprenez que ce consentement est valable jusqu'à ce que vous le retiriez.",
+            "Vous acceptez de consulter, signer et renvoyer des documents par voie électronique.",
+            "Ce consentement s'applique uniquement aux documents fournis par l'expéditeur."
+          ]
+        },
+        "legal": {
+          "heading": "7. Effet juridique",
+          "intro": "Votre signature électronique :",
+          "points": [
+            "Est conforme au droit applicable en matière de signature électronique, notamment l'E-SIGN Act aux États-Unis, le règlement européen eIDAS et l'Information Technology Act indien.",
+            "Vous engage juridiquement, ainsi que l'expéditeur, pour les documents que vous signez."
+          ]
+        },
+        "platform": {
+          "heading": "8. Rôle de la plateforme et limitation de responsabilité",
+          "intro": "Cette plateforme facilite les transactions électroniques. Elle n'est pas responsable du contenu, de la validité ou du caractère exécutoire des documents envoyés par l'expéditeur. Tout litige relatif à un document ou à sa signature relève de vous et de l'expéditeur."
+        },
+        "purpose": {
+          "heading": "1. Objet et champ d'application",
+          "intro": "Cette notice régit l'utilisation d'enregistrements et de signatures électroniques pour les documents qui vous sont envoyés via cette plateforme. En l'acceptant, vous reconnaissez que :",
+          "points": [
+            "Vous recevrez et signerez des documents par voie électronique.",
+            "Votre signature électronique vous engage juridiquement et équivaut à une signature manuscrite."
+          ]
+        },
+        "requirements": {
+          "heading": "4. Configuration matérielle et logicielle requise",
+          "intro": "Pour signer des documents ici, vous avez besoin :",
+          "points": [
+            "D'un appareil disposant d'un accès à Internet.",
+            "D'un navigateur web à jour avec JavaScript activé.",
+            "D'une messagerie pour recevoir les notifications et le document signé."
+          ]
+        },
+        "retention": {
+          "heading": "5. Conservation des enregistrements et copies papier",
+          "intro": "Il vous appartient de vous assurer que vous pouvez consulter et conserver les documents signés. Vous pouvez télécharger ou imprimer le document signé dès que la signature est terminée. Si vous préférez une copie papier, demandez-la à l'expéditeur. Celui-ci peut facturer des frais raisonnables, sauf disposition légale contraire."
+        },
+        "termination": {
+          "heading": "9. Résiliation",
+          "intro": "Votre consentement s'applique à la transaction en cours, sauf indication contraire de l'expéditeur. L'accès peut être résilié en cas de violation des conditions d'utilisation."
+        },
+        "withdraw": {
+          "heading": "3. Droit de retirer votre consentement",
+          "intro": "Vous pouvez retirer votre consentement à l'utilisation d'enregistrements et de signatures électroniques en :",
+          "points": [
+            "Contactant directement l'expéditeur à l'aide des coordonnées figurant dans son message.",
+            "Informant l'expéditeur avant de terminer le processus de signature."
+          ]
+        }
+      },
+      "title": "Notice sur les enregistrements et signatures électroniques"
+    },
+    "doc": {
+      "theSender": "l'expéditeur",
+      "untitled": "Document sans titre"
+    },
+    "done": {
+      "accountBody": "Un compte gratuit réunit au même endroit vos copies signées, votre signature adoptée et votre piste d'audit.",
+      "accountCta": "Créer un compte gratuit",
+      "accountTitle": "Gardez au même endroit tous les documents que vous signez.",
+      "continueTo": "Continuer vers {{target}}",
+      "disclosure": "Notice",
+      "downloadCopy": "Télécharger ma copie signée",
+      "emailSender": "Écrire à {{name}}",
+      "nextSignerNotNotified": "Nous n'avons pas pu envoyer la demande à {{name}}. Votre signature est enregistrée et l'expéditeur peut la renvoyer.",
+      "nextUp": "Ce qui se passe ensuite",
+      "recorded": "Votre signature sur <1>{{document}}</1> a été enregistrée à {{time}} le {{date}}.",
+      "redirect": "Retour vers {{target}} dans {{seconds}} s.",
+      "sealing": "Votre copie signée est en cours de scellement. Nous vous l'enverrons par e-mail dès qu'elle sera prête.",
+      "senderSite": "le site de l'expéditeur",
+      "title": "Signé. C'est terminé.",
+      "verifyLink": "Vérifier ce document",
+      "waitingOnEveryone": "Tout le monde a signé. Le PDF complété et le certificat de finalisation sont en route par e-mail vers chaque signataire.",
+      "waitingOnNext": "Dès que {{name}} aura approuvé, tout le monde recevra le PDF final et le certificat de finalisation par e-mail.",
+      "waitingOnSomeone": "le signataire restant",
+      "yourDocument": "votre document"
+    },
+    "email": {
+      "aboutSubject": "À propos de {{document}}",
+      "cta": "Relire et signer le document",
+      "greeting": "Bonjour {{name}},",
+      "line": "{{signer}} a signé <strong>{{document}}</strong>. C'est maintenant à votre tour.",
+      "questionSubject": "Question à propos de {{document}}",
+      "subject": "{{sender}} a besoin de votre signature sur {{document}}"
+    },
+    "errors": {
+      "couldNotFetch": "Impossible de récupérer {{url}}",
+      "couldNotOpen": "Nous n'avons pas pu ouvrir ce document.",
+      "couldNotReadFile": "Impossible de lire ce fichier.",
+      "couldNotReadImage": "Impossible de lire cette image.",
+      "emailNotMatched": "Nous n'avons pas pu associer votre adresse e-mail à ce document.",
+      "expiredLink": "Nous n'avons pas pu ouvrir ce document. Le lien a peut-être expiré.",
+      "invalidLink": "Ce lien de signature n'est pas valide, ou le document a été supprimé.",
+      "missingDocId": "Il manque un identifiant de document dans ce lien de signature.",
+      "noAccessAfterOtp": "Votre code a été accepté, mais ce document n'a pas été partagé avec {{email}}. Demandez à l'expéditeur de le renvoyer ou vérifiez que vous avez ouvert le lien qui vous était adressé.",
+      "pdfLibMissing": "La bibliothèque de signature PDF n'est pas disponible dans cette version. Demandez à votre administrateur d'installer pdf-lib."
+    },
+    "field": {
+      "badge": {
+        "fill": "Remplir",
+        "sign": "Signer"
+      },
+      "dateSigned": "Date de signature",
+      "dragToMove": "Faites glisser pour déplacer",
+      "dragToResize": "Faites glisser pour redimensionner",
+      "dropdown": "Liste déroulante",
+      "removeThisField": "Supprimer ce champ"
+    },
+    "header": {
+      "from": "De {{name}}",
+      "pageOfShort": "p. {{current}}/{{total}}",
+      "progressDesktop": "{{done}} champs obligatoires sur {{total}} remplis",
+      "progressMobile": "{{done}} champs sur {{total}} remplis",
+      "sentBy": "Envoyé par {{name}}",
+      "sentByWithEmail": "Envoyé par {{name}} ({{email}})",
+      "signerPosition": "vous êtes le signataire {{position}} sur {{count}}"
+    },
+    "hints": {
+      "enterMovesNext": "passe au champ suivant"
+    },
+    "loading": "Ouverture du document",
+    "menu": {
+      "language": "Langue"
+    },
+    "otp": {
+      "codeLabel": "Code de vérification",
+      "codesNote": "Les codes n'expirent pas, mais seul le plus récent fonctionne.",
+      "errors": {
+        "enterCode": "Saisissez le code reçu par e-mail.",
+        "noAccount": "Nous n'avons aucun compte pour cette adresse e-mail.",
+        "notVerified": "Nous n'avons pas pu vérifier ce code. Demandez-en un nouveau.",
+        "sendFailed": "Nous n'avons pas pu envoyer le code. Réessayez dans un instant.",
+        "unknownEmail": "Nous ne savons pas à quelle adresse e-mail ce lien correspond. Ouvrez le lien depuis votre e-mail d'invitation.",
+        "verifyFailed": "Ce code n'a pas fonctionné.",
+        "wrongCode": "Ce code n'est pas correct. Vérifiez l'e-mail et réessayez."
+      },
+      "intro": "Ce document est protégé. Nous enverrons un code par e-mail à <1>{{email}}</1> pour confirmer votre identité.",
+      "openDocument": "Ouvrir le document",
+      "resendIn": "Renvoyer dans {{seconds}} s",
+      "sendCode": "Envoyez-moi un code par e-mail",
+      "sendNewCode": "Envoyer un nouveau code",
+      "sentBody": "Nous avons envoyé un code à <1>{{email}}</1>. Saisissez-le pour ouvrir le document.",
+      "title": "Vérifiez votre identité",
+      "toast": {
+        "sentBody": "Consultez {{email}}.",
+        "sentTitle": "Code envoyé"
+      },
+      "yourAddress": "votre adresse"
+    },
+    "party": {
+      "numbered": "Signataire {{position}}",
+      "roleNumbered": "Rôle {{position}}",
+      "you": "Vous"
+    },
+    "rail": {
+      "empty": "Aucun champ à remplir.",
+      "emptyCanAdd": "Rien n'est encore placé. Ajoutez un champ ci-dessous.",
+      "optionalField": "{{label}} (facultatif)",
+      "pageShort": "p.{{page}}",
+      "yourFields": "Vos champs"
+    },
+    "sealing": {
+      "body": "Cela prend quelques secondes. Merci de garder cet onglet ouvert.",
+      "title": "Application de votre signature et scellement du document"
+    },
+    "status": {
+      "alreadySigned": {
+        "body": "Votre signature est enregistrée. Quand tous les autres auront signé, {{sender}} et chaque signataire recevront le PDF final et le certificat de finalisation par e-mail.",
+        "title": "Vous avez déjà signé ce document"
+      },
+      "completed": {
+        "body": "Ce document est complet. Téléchargez la copie signée ci-dessous, ou retrouvez-la dans l'e-mail que nous vous avons envoyé.",
+        "title": "Tout le monde a signé"
+      },
+      "declined": {
+        "byPerson": "{{name}} a refusé de signer. Plus personne ne peut le signer maintenant.",
+        "byUnknown": "Le document a été refusé. Plus personne ne peut le signer maintenant.",
+        "reasonQuote": "« {{reason}} »",
+        "title": "Ce document a été refusé"
+      },
+      "downloadSigned": "Télécharger la copie signée",
+      "expired": {
+        "body": "La période de signature est close. Demandez à {{sender}} de le renvoyer.",
+        "bodyWithDate": "La période de signature s'est close le {{date}}. Demandez à {{sender}} de le renvoyer.",
+        "title": "Ce document a expiré"
+      },
+      "fromSender": "de {{name}}",
+      "mailSubjectFallback": "Document",
+      "noFields": {
+        "body": "{{sender}} n'a placé aucun champ pour vous sur ce document. Contactez-le si vous pensez qu'il s'agit d'une erreur.",
+        "title": "Il n'y a rien à signer pour vous ici"
+      },
+      "notFound": {
+        "body": "Le document a peut-être été supprimé, ou le lien a été copié de façon incomplète. Demandez un nouveau lien à l'expéditeur.",
+        "title": "Ce lien n'est pas valide"
+      },
+      "pill": {
+        "notAvailable": "Non disponible",
+        "nothingToSign": "Rien à signer",
+        "waiting": "En attente"
+      },
+      "verifyLink": "Vérifier un document signé",
+      "waitingTurn": {
+        "body": "En attente que {{name}} signe d'abord. Nous vous préviendrons par e-mail dès que ce sera votre tour.",
+        "someone": "un signataire précédent",
+        "title": "Ce n'est pas encore votre tour"
+      }
+    },
+    "toast": {
+      "adoptFailed": "Impossible d'adopter cette signature",
+      "couldNotOpenDocument": "Impossible d'ouvrir le document",
+      "declineFailed": "Refus impossible",
+      "declined": {
+        "body": "{{name}} en a été informé.",
+        "title": "Document refusé"
+      },
+      "downloadFailed": "Impossible de préparer le téléchargement",
+      "fieldsOutstanding_one": "{{count}} champ vous attend encore",
+      "fieldsOutstanding_other": "{{count}} champs vous attendent encore",
+      "imageTooLarge": {
+        "body": "Choisissez un fichier de moins de 8 Mo.",
+        "title": "Cette image est trop volumineuse"
+      },
+      "imageUnreadable": "Impossible de lire cette image",
+      "needSignature": {
+        "body": "Utilisez Ajouter un champ pour placer votre signature, puis signez-la.",
+        "title": "Ajoutez d'abord une signature"
+      },
+      "nextSignerNotNotified": {
+        "body": "Votre signature est enregistrée. L'expéditeur peut renvoyer la demande.",
+        "title": "Impossible d'envoyer l'e-mail à {{name}}"
+      },
+      "noIdentity": {
+        "body": "Ouvrez ce document depuis votre e-mail d'invitation et réessayez.",
+        "title": "Nous n'avons pas pu vous identifier"
+      },
+      "noPdfLib": {
+        "body": "La dépendance pdf-lib est manquante. Prévenez votre administrateur.",
+        "title": "La signature n'est pas disponible dans cette version"
+      },
+      "renderFailed": "Impossible d'afficher ce PDF",
+      "signFailed": "Nous n'avons pas pu finaliser la signature",
+      "stillLoading": "Attendez la fin du chargement du document"
+    },
+    "validation": {
+      "cellsTooLong": "Utilisez au maximum {{count}} caractères.",
+      "email": "Saisissez une adresse e-mail valide.",
+      "format": "Utilisez le format {{hint}}.",
+      "notExpectedFormat": "Cette valeur n'est pas au format attendu.",
+      "number": "Saisissez un nombre.",
+      "required": "Ce champ est obligatoire.",
+      "selectAtLeast_one": "Sélectionnez au moins {{count}} option.",
+      "selectAtLeast_other": "Sélectionnez au moins {{count}} options.",
+      "selectAtMost_one": "Sélectionnez au maximum {{count}} option.",
+      "selectAtMost_other": "Sélectionnez au maximum {{count}} options.",
+      "ssn": "Utilisez le format xxx-xx-xxxx."
+    },
+    "verify": {
+      "backHome": "Retour à Sign",
+      "cert": {
+        "range": "du {{from}} au {{to}}",
+        "rangeExpired": "du {{from}} au {{to}} (expiré)"
+      },
+      "checking": "Vérification de la signature",
+      "choosePdf": "Choisir un PDF",
+      "contentMatches": "Correspond à l'empreinte signée",
+      "contentMismatch": "Ne correspond pas",
+      "coverPartial": "Partielle : du contenu a été ajouté après la signature",
+      "coverWhole": "Fichier entier",
+      "detail": {
+        "altered": "Le document a été modifié depuis sa signature : le contenu ne correspond plus à l'empreinte signée.",
+        "intact": "La signature est intacte et couvre l'intégralité du fichier.",
+        "intactAppended": "La signature est intacte, mais du contenu a été ajouté après son application. Examinez la révision la plus récente.",
+        "keyUnchecked": "Le contenu du document correspond à l'empreinte signée, mais nous n'avons pas pu vérifier la clé de signature dans ce navigateur (elle utilise peut-être un algorithme que WebCrypto n'expose pas).",
+        "notDecoded": "Le bloc de signature est présent mais n'a pas pu être décodé.",
+        "notRead": "La signature n'a pas pu être lue.",
+        "unchecked": "La signature n'a pas pu être vérifiée dans ce navigateur."
+      },
+      "dropHere": "Déposez ici un PDF signé",
+      "footnote": "Un résultat valide signifie que les octets couverts par la signature sont inchangés et que la signature correspond au certificat intégré. Cela ne vérifie pas que le certificat remonte à une autorité de confiance, ce qui nécessite un magasin de certificats que le navigateur n'expose pas.",
+      "intro": "Déposez ci-dessous un PDF signé pour vérifier que sa signature numérique est intacte et que personne n'a modifié le contenu ensuite. Le fichier reste sur votre appareil : rien n'est envoyé.",
+      "keyUnverified": "Non vérifiée",
+      "keyVerified": "Signature vérifiée",
+      "kilobytes": "{{size}} Ko",
+      "orPickOne": "ou choisissez-en un sur votre appareil",
+      "rows": {
+        "certificate": "Certificat",
+        "contentCheck": "Vérification du contenu",
+        "coverage": "Couverture",
+        "digest": "Empreinte",
+        "documentDigest": "Empreinte du document",
+        "email": "E-mail",
+        "issuedBy": "Émis par",
+        "keyCheck": "Vérification de la clé",
+        "organization": "Organisation",
+        "serial": "Numéro de série",
+        "signedAt": "Signé le",
+        "signer": "Signataire"
+      },
+      "signatureIndex": "Signature {{position}}",
+      "signatureStatus": {
+        "altered": "Altérée",
+        "intact": "Intacte",
+        "unverified": "Non vérifiée"
+      },
+      "status": {
+        "inconclusive": "Non concluant",
+        "invalid": "Invalide",
+        "unsigned": "Non signé",
+        "valid": "Valide"
+      },
+      "summary": {
+        "invalid": "Au moins une signature ne correspond pas au document. Considérez ce fichier comme altéré.",
+        "unknown": "Nous avons lu la signature mais n'avons pas pu la vérifier entièrement dans le navigateur. Les détails ci-dessous indiquent jusqu'où nous sommes allés.",
+        "unsigned": "Ce PDF ne comporte aucune signature numérique. Il peut toujours afficher des images de signature sur la page, mais rien ne le scelle cryptographiquement.",
+        "valid_one": "Vérifié. {{count}} signature intacte et contenu inchangé depuis la signature.",
+        "valid_other": "Vérifié. {{count}} signatures intactes et contenu inchangé depuis la signature."
+      },
+      "summaryLabels": {
+        "sha256": "SHA-256",
+        "signatures": "Signatures",
+        "size": "Taille"
+      },
+      "title": "Vérifier un document signé",
+      "toast": {
+        "notPdfBody": "Choisissez le PDF signé que vous voulez vérifier.",
+        "notPdfTitle": "Ce n'est pas un PDF",
+        "unreadable": "Impossible de lire ce fichier"
+      }
+    },
+    "widget": {
+      "cells": "Cases",
+      "checkbox": "Case à cocher",
+      "company": "Entreprise",
+      "date": "Date de signature",
+      "draw": "Dessin",
+      "dropdown": "Liste déroulante",
+      "email": "E-mail",
+      "image": "Image",
+      "initials": "Initiales",
+      "jobTitle": "Fonction",
+      "name": "Nom complet",
+      "radioButton": "Choix",
+      "signature": "Signature",
+      "stamp": "Tampon",
+      "text": "Texte",
+      "textInput": "Texte"
+    }
+  },
+  "templates": {
+    "a11y": {
+      "moreActions": "Plus d'actions",
+      "use": "Utiliser {{name}}"
+    },
+    "actions": {
+      "bulkSend": "Envoi groupé",
+      "import": "Importer depuis un PDF ou un DOCX",
+      "new": "Nouveau modèle",
+      "shareWithTeam": "Partager avec l'équipe",
+      "use": "Utiliser"
+    },
+    "badge": {
+      "bulkReady": "Prêt pour l'envoi groupé",
+      "publicForm": "Formulaire public"
+    },
+    "card": {
+      "by": "par {{name}}",
+      "moreRoles": "+{{value}}",
+      "noFolder": "Aucun dossier",
+      "noRoles": "Aucun rôle pour l'instant",
+      "untitled": "Modèle sans titre",
+      "updated": "mis à jour {{when}}",
+      "uses": "utilisé {{value}} ×"
+    },
+    "defaults": {
+      "note": "Merci de relire et de signer ce document"
+    },
+    "dialog": {
+      "delete": {
+        "confirm": "Supprimer le modèle",
+        "description": "{{name}} sera retiré de la galerie. Les documents déjà envoyés à partir de ce modèle ne sont pas affectés.",
+        "title": "Supprimer ce modèle ?"
+      },
+      "password": {
+        "confirm": "Déverrouiller et continuer",
+        "description": "Saisissez le mot de passe pour que le fichier puisse être déverrouillé une fois et enregistré comme modèle.",
+        "title": "Ce PDF est protégé par un mot de passe"
+      },
+      "share": {
+        "confirm": "Enregistrer le partage",
+        "description": "Toutes les personnes d'une équipe sélectionnée peuvent trouver et utiliser ce modèle.",
+        "error": "Impossible de charger les équipes. {{message}}",
+        "loading": "Chargement des équipes",
+        "noTeams": "Cet espace de travail n'a pas encore d'équipe. Créez-en une dans les paramètres pour partager des modèles.",
+        "title": "Partager avec l'équipe"
+      }
+    },
+    "empty": {
+      "body": "Un modèle est un document dont les champs sont déjà placés : le prochain envoi prend quelques secondes au lieu de quelques minutes.",
+      "noMatch": "Aucun modèle ne correspond à ce filtre. Effacez la recherche ou revenez à Mes modèles et équipe.",
+      "title": "Aucun modèle pour l'instant"
+    },
+    "errors": {
+      "convertDocx": "Impossible de convertir ce fichier DOCX.",
+      "createFailed": "Le modèle n'a pas été créé.",
+      "downloadConverted": "Le PDF converti n'a pas pu être téléchargé.",
+      "listFailed": "Impossible de charger les modèles. {{message}}",
+      "notReadablePdf": "Ce fichier n'est pas un PDF lisible.",
+      "pdfLocked": "Ce PDF est protégé par un mot de passe.",
+      "pdfUnreadable": "Ce PDF n'a pas pu être ouvert.",
+      "profileLoading": "Votre profil est encore en cours de chargement. Réessayez dans un instant.",
+      "signedOut": "Vous êtes déconnecté.",
+      "tooLarge": "Les fichiers doivent faire moins de {{size}} Mo.",
+      "unsupportedFile": "Seuls les fichiers PDF et DOCX peuvent devenir des modèles.",
+      "uploadNoUrl": "L'envoi n'a pas renvoyé d'URL."
+    },
+    "fields": {
+      "name": "Nom du modèle",
+      "password": "Mot de passe"
+    },
+    "hints": {
+      "edit": "modifier",
+      "new": "nouveau modèle",
+      "use": "utiliser"
+    },
+    "meta": {
+      "sendsThisQuarter_one": "{{count}} envoi ce trimestre",
+      "sendsThisQuarter_other": "{{count}} envois ce trimestre"
+    },
+    "new": {
+      "hint": "Déposez un PDF ou un DOCX ici. Les champs sont détectés automatiquement à partir des soulignements et des libellés.",
+      "preparing": "Préparation de votre modèle"
+    },
+    "roles": {
+      "fallback": "Rôle {{index}}",
+      "prefill": "Prérempli par moi"
+    },
+    "scopes": {
+      "all": "Mes modèles et équipe",
+      "mine": "Les miens",
+      "shared": "Partagés avec moi"
+    },
+    "search": {
+      "label": "Rechercher des modèles",
+      "placeholder": "Rechercher des modèles"
+    },
+    "share": {
+      "unnamedTeam": "Équipe"
+    },
+    "sort": {
+      "label": "Trier : {{sort}}",
+      "name": "nom",
+      "updated": "récemment mis à jour",
+      "used": "les plus utilisés"
+    },
+    "title": "Modèles",
+    "toast": {
+      "createFailed": "Impossible de créer le modèle",
+      "deleteFailed": "Suppression impossible",
+      "deleted": {
+        "body": "{{name}} a été retiré de la galerie.",
+        "title": "Modèle supprimé"
+      },
+      "duplicateFailed": "Duplication impossible",
+      "duplicated": {
+        "body": "Une copie de {{name}} se trouve dans votre galerie.",
+        "title": "Modèle dupliqué"
+      },
+      "profileNotReady": {
+        "body": "Le profil de votre espace de travail est encore en cours de chargement.",
+        "title": "Profil non prêt"
+      },
+      "renameFailed": "Renommage impossible",
+      "shareFailed": "Partage impossible",
+      "shared": {
+        "body": "{{name}} est partagé avec vos équipes.",
+        "title": "Partage mis à jour"
+      }
+    }
+  }
+}

@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0F6E56" />
+    <meta name="description" content="Send documents for signature, sign them, and know exactly where they stand. Full audit trail and a verifiable completion certificate." />
+    <meta name="robots" content="noindex" />
+    <title>DocuStamp</title>
+    <script>
+      // Stamp the saved theme before first paint so a dark session never
+      // flashes the light palette. useTheme() in src/lib/theme.ts owns it after.
+      try {
+        var t = localStorage.getItem("theme");
+        if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t);
+        var dark = t === "dark" || (t !== "light" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+        document.querySelector('meta[name="theme-color"]').setAttribute("content", dark ? "#121210" : "#0F6E56");
+      } catch (e) {}
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
