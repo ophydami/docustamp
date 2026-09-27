@@ -117,7 +117,7 @@ export default function SignupPage() {
   return (
     <AuthLayout>
       <div className="flex items-baseline justify-between gap-3 mb-7">
-        <h1 className="font-serif text-[30px] leading-tight tracking-[-.015em]">
+        <h1 className="font-semibold text-[24px] leading-tight tracking-[-.015em]">
           {t("auth.signUp.title")}
         </h1>
         <span className="text-[12px] text-muted whitespace-nowrap">
@@ -191,12 +191,12 @@ export default function SignupPage() {
             return (
               <li
                 key={rule.id}
-                className={cn("flex items-center gap-2 text-[11px]", ok ? "text-accent" : "text-muted-2")}
+                className={cn("flex items-center gap-2 text-[11px]", ok ? "text-success-ink" : "text-muted-2")}
               >
                 <span
                   className={cn(
                     "grid place-items-center size-3.5 rounded-full border",
-                    ok ? "border-accent bg-accent text-on-accent" : "border-faint"
+                    ok ? "border-success bg-success text-on-accent" : "border-faint"
                   )}
                 >
                   {ok ? <Check className="size-2.5" strokeWidth={2.4} /> : null}

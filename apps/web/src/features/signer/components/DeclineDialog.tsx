@@ -25,7 +25,7 @@ export function DeclineDialog({
       open={open}
       onClose={onClose}
       width={480}
-      title={<span className="font-serif text-[22px] leading-tight">{t("signer.decline.title")}</span>}
+      title={<span className="font-semibold text-[18px] leading-tight tracking-[-.015em]">{t("signer.decline.title")}</span>}
       description={t("signer.decline.description", { sender: senderName, document: docName })}
       footer={
         <div className="flex items-center justify-end gap-2">

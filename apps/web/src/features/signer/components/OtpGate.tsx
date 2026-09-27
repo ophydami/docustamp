@@ -83,7 +83,7 @@ export function OtpGate({
         <span className="inline-flex items-center justify-center size-9 rounded-lg bg-accent-soft text-accent">
           <Mail className="size-4.5" strokeWidth={1.6} />
         </span>
-        <h1 className="mt-3.5 font-serif text-[26px] leading-tight text-ink">{t("signer.otp.title")}</h1>
+        <h1 className="mt-3.5 font-semibold text-[22px] leading-tight text-ink tracking-[-.015em]">{t("signer.otp.title")}</h1>
         <p className="mt-1.5 text-[13px] text-muted leading-relaxed">
           <Trans
             i18nKey={sent ? "signer.otp.sentBody" : "signer.otp.intro"}

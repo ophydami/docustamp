@@ -74,7 +74,7 @@ export function PreviewAside({
 
         {src ? (
           <>
-            <div className="flex items-start gap-3 border border-line rounded-lg px-3.5 py-3">
+            <div className="flex items-start gap-3 border border-line rounded-xl px-3.5 py-3">
               <span className="mt-0.5 flex size-8 items-center justify-center rounded-md bg-accent-soft text-accent shrink-0">
                 <FileText className="size-4" strokeWidth={1.6} />
               </span>
@@ -118,7 +118,7 @@ export function PreviewAside({
         )}
 
         {suggestion ? (
-          <div className="bg-ground border border-line rounded-lg px-4 py-3.5 flex flex-col gap-3">
+          <div className="bg-ground border border-line rounded-xl px-4 py-3.5 flex flex-col gap-3">
             <span className="flex items-center gap-2">
               <Sparkles className="size-3.5 text-muted-2" strokeWidth={1.6} />
               <Cap>{t("send.preview.suggestedHeading")}</Cap>

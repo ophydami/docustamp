@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "@tanstack/react-query";
 import { AlertTriangle, FileText, Loader2, Plus, Sparkles, Trash2, UploadCloud } from "lucide-react";
-import { Button, Card, Cap, Field, Input, PageTitle, Pill, Textarea, toast } from "@/components/ui";
+import { Button, Card, Cap, Field, Input, Pill, Textarea, toast } from "@/components/ui";
 import { PdfViewer, type PdfPageInfo } from "@/components/pdf/PdfViewer";
 import { cn } from "@/lib/cn";
 import { useExtUser } from "@/lib/extUser";
@@ -194,12 +194,8 @@ export default function AiPage() {
 
   return (
     <div className="flex-1 min-h-0 flex">
-      <div className="flex-1 min-w-0 flex flex-col overflow-auto scroll-thin px-4 py-4 lg:px-6 lg:py-[22px] gap-4">
+      <div className="flex-1 min-w-0 flex flex-col overflow-auto scroll-thin px-4 py-4 lg:px-6 lg:py-5 gap-4 [&>*]:shrink-0">
         <header className="flex flex-col gap-1">
-          <div className="flex items-center gap-2">
-            <Sparkles className="size-[18px] text-accent" strokeWidth={1.6} />
-            <PageTitle>{t("ai.title")}</PageTitle>
-          </div>
           <p className="text-[13px] text-muted max-w-2xl">{t("ai.subtitle")}</p>
           {status.data ? (
             <p className="text-[11px] text-muted-2 font-mono">

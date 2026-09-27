@@ -259,7 +259,7 @@ export default function LoginPage() {
   return (
     <AuthLayout>
       <div className="flex items-baseline justify-between gap-3 mb-7">
-        <h1 className="font-serif text-[30px] leading-tight tracking-[-.015em]">
+        <h1 className="font-semibold text-[24px] leading-tight tracking-[-.015em]">
           {t("auth.signIn.title")}
         </h1>
         <span className="text-[12px] text-muted whitespace-nowrap">

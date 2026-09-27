@@ -35,7 +35,7 @@ export function StepReview(props: StepReviewProps) {
   return (
     <div className="flex flex-col gap-7">
       <div className="flex flex-col gap-1.5">
-        <h1 className="font-serif text-[28px] font-medium leading-tight">{t("send.review.title")}</h1>
+        <h1 className="font-semibold text-[22px] leading-tight tracking-[-.015em]">{t("send.review.title")}</h1>
         <p className="text-[13px] text-muted">
           {signers.length
             ? t(props.settings.sendInOrder ? "send.review.signersInOrder" : "send.review.signers", {

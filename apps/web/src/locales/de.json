@@ -92,6 +92,10 @@
       "settings": "Einstellungen",
       "templates": "Vorlagen"
     },
+    "navGroups": {
+      "insight": "Einblicke",
+      "signing": "Signieren"
+    },
     "palette": {
       "groupActions": "Aktionen",
       "groupGoTo": "Gehe zu",

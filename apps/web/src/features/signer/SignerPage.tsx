@@ -389,7 +389,7 @@ export default function SignerPage({ mode }: { mode?: "recipient" | "self" }) {
         party: {
           name: identity.name,
           email: identity.email,
-          color: doc.signers.find((s) => s.order === identity.placeholderIndex)?.color ?? "#0f6e56"
+          color: doc.signers.find((s) => s.order === identity.placeholderIndex)?.color ?? "#1447e6"
         },
         placeholderIndex: identity.placeholderIndex < 0 ? 0 : identity.placeholderIndex
       });
@@ -962,9 +962,9 @@ export default function SignerPage({ mode }: { mode?: "recipient" | "self" }) {
                   className={cn(
                     "h-8 shrink-0 px-2.5 rounded-full border text-[12px] font-medium whitespace-nowrap transition-colors",
                     f.key === activeKey
-                      ? "bg-accent border-accent text-on-accent"
+                      ? "bg-accent-soft border-accent text-accent"
                       : ok
-                        ? "bg-accent-soft border-accent-line text-accent"
+                        ? "bg-success-soft border-transparent text-success-ink"
                         : "bg-surface border-line text-ink-2"
                   )}
                 >
@@ -994,7 +994,7 @@ export default function SignerPage({ mode }: { mode?: "recipient" | "self" }) {
             <button
               type="button"
               onClick={() => (allDone ? void finish() : activeField ? openActive(activeField, setAdoptFor, nextField) : nextField())}
-              className="flex-1 h-[46px] rounded-md bg-accent text-on-accent text-[14px] font-semibold"
+              className="flex-1 h-[46px] rounded-md bg-ink text-ground hover:bg-ink/85 text-[14px] font-semibold"
             >
               {allDone
                 ? t("signer.actions.finish")
@@ -1126,7 +1126,7 @@ function SealingOverlay() {
   return (
     <div className="fixed inset-0 z-[60] flex flex-col items-center justify-center gap-4 bg-ground/96">
       <Loader2 className="size-6 animate-spin text-accent" />
-      <p className="font-serif text-[22px] text-ink">{t("signer.sealing.title")}</p>
+      <p className="font-semibold text-[18px] text-ink tracking-[-.015em]">{t("signer.sealing.title")}</p>
       <p className="text-[12px] text-muted">{t("signer.sealing.body")}</p>
     </div>
   );

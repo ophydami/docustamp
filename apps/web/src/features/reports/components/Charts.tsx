@@ -32,7 +32,7 @@ export function ChartCard({
   className?: string;
 }) {
   return (
-    <section className={cn("bg-surface border border-line rounded-lg px-4 pt-3.5 pb-4 flex flex-col gap-3", className)}>
+    <section className={cn("bg-surface border border-line rounded-xl px-4 pt-3.5 pb-4 flex flex-col gap-3", className)}>
       <header className="flex items-center gap-3 min-h-7">
         <h2 className="text-[13px] font-semibold text-ink">{title}</h2>
         {right ? <div className="ml-auto flex items-center gap-1.5">{right}</div> : null}
@@ -101,21 +101,21 @@ export function BarChart({
       <div className="relative pt-5">
         <div className="relative" style={{ height }}>
           <Gridlines />
-          <div className="absolute inset-0 flex items-end gap-[2px]">
+          <div className="absolute inset-0 flex items-end gap-1.5">
             {data.map((d, i) => {
               const h = d.value === 0 ? 0 : Math.max(3, (d.value / max) * 100);
               const on = hover === d.key;
               return (
                 <div
                   key={d.key}
-                  className="flex-1 min-w-0 h-full flex items-end"
+                  className="flex-1 min-w-0 h-full flex items-end justify-center"
                   onMouseEnter={() => setHover(d.key)}
                   onMouseLeave={() => setHover((k) => (k === d.key ? null : k))}
                 >
                   <div
                     title={d.tooltip}
                     className={cn(
-                      "relative w-full rounded-t-[4px] transition-colors",
+                      "relative w-full max-w-14 rounded-t-[4px] transition-colors",
                       d.value === 0 ? "h-px bg-line-strong" : on ? "bg-accent-deep" : "bg-accent"
                     )}
                     style={d.value === 0 ? undefined : { height: `${h}%` }}
@@ -137,9 +137,9 @@ export function BarChart({
           </div>
         </div>
       </div>
-      <div aria-hidden className="flex gap-[2px]">
+      <div aria-hidden className="flex gap-1.5">
         {data.map((d, i) => (
-          <span key={d.key} className="flex-1 min-w-0 text-[10px] text-muted-2 text-center truncate">
+          <span key={d.key} className="num flex-1 min-w-0 text-[10px] text-muted text-center truncate">
             {i % step === 0 ? d.label : ""}
           </span>
         ))}
@@ -165,9 +165,9 @@ export function FunnelChart({ stages, caption }: { stages: Datum[]; caption: str
             onMouseLeave={() => setHover((k) => (k === s.key ? null : k))}
           >
             <span className="w-[92px] sm:w-[120px] shrink-0 text-[12px] text-ink-2">{s.label}</span>
-            <div className="flex-1 h-6 bg-line-soft rounded-md overflow-hidden" title={s.tooltip}>
+            <div className="flex-1 h-2 bg-surface-3 rounded-full overflow-hidden" title={s.tooltip}>
               <div
-                className={cn("h-full rounded-md transition-colors", on ? "bg-accent-deep" : "bg-accent")}
+                className={cn("h-full rounded-full transition-colors", on ? "bg-accent-deep" : "bg-accent")}
                 style={{ width: `${Math.max(1, (s.value / max) * 100)}%` }}
               />
             </div>
@@ -187,7 +187,7 @@ export function FunnelChart({ stages, caption }: { stages: Datum[]; caption: str
 export function MiniBar({ value, title }: { value: number; title: string }) {
   return (
     <span className="inline-flex items-center gap-2 w-full" title={title}>
-      <span className="flex-1 h-1.5 rounded-full bg-line-soft overflow-hidden">
+      <span className="flex-1 h-1.5 rounded-full bg-surface-3 overflow-hidden">
         <span className="block h-full rounded-full bg-accent" style={{ width: `${Math.min(100, Math.max(0, value))}%` }} />
       </span>
       <span className="num text-[12px] text-ink w-8 text-right">{percent(value)}</span>

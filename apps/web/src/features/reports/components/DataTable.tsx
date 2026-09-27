@@ -48,7 +48,7 @@ export function DataTable<T>({
   }, [rows, sort, columns]);
 
   return (
-    <div className={cn("border border-line rounded-lg overflow-hidden bg-surface", className)}>
+    <div className={cn("border border-line rounded-xl overflow-hidden bg-surface", className)}>
       <div className="overflow-x-auto scroll-thin">
       <div style={{ minWidth }}>
       <div

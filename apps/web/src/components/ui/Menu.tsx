@@ -102,7 +102,7 @@ export function Menu({ trigger, items, align = "right", className }: MenuProps) 
               ref={panelRef}
               role="menu"
               style={style ?? { top: 0, left: 0, visibility: "hidden" }}
-              className="fixed z-[55] min-w-44 bg-surface border border-line rounded-lg shadow-[var(--shadow-pop)] py-1"
+              className="fixed z-[55] min-w-44 bg-surface border border-line rounded-xl shadow-[var(--shadow-pop)] py-1"
             >
               {items.map((it, i) =>
                 it === "separator" ? (

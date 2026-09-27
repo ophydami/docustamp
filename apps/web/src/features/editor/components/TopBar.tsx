@@ -71,7 +71,7 @@ export function TopBar(props: TopBarProps) {
       </IconButton>
 
       <div className="min-w-0 flex items-baseline gap-1.5 mr-1">
-        <span className="font-serif text-[17px] truncate max-w-[280px]">{props.name}</span>
+        <span className="font-semibold text-[15px] truncate max-w-[280px] tracking-[-.015em]">{props.name}</span>
         {props.isTemplate ? <span className="text-[12px] text-muted-2">· {t("editor.topBar.template")}</span> : null}
       </div>
 

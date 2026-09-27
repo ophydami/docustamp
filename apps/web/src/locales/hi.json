@@ -92,6 +92,10 @@
       "settings": "सेटिंग्स",
       "templates": "टेम्पलेट्स"
     },
+    "navGroups": {
+      "insight": "जानकारी",
+      "signing": "हस्ताक्षर"
+    },
     "palette": {
       "groupActions": "क्रियाएँ",
       "groupGoTo": "यहाँ जाएँ",

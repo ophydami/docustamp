@@ -151,7 +151,7 @@ export default function TeamSection() {
         </Button>
       </div>
 
-      <div className="bg-surface border border-line rounded-lg overflow-hidden shadow-[var(--shadow-card)]">
+      <div className="bg-surface border border-line rounded-xl overflow-hidden shadow-[var(--shadow-card)]">
         <div className="overflow-x-auto scroll-thin">
         {/* Floor stays at every width: at lg the settings nav and sidebar leave ~520px, which crushed the fr columns. */}
         <div className="min-w-[720px]">

@@ -92,6 +92,10 @@
       "settings": "Ajustes",
       "templates": "Plantillas"
     },
+    "navGroups": {
+      "insight": "Análisis",
+      "signing": "Firma"
+    },
     "palette": {
       "groupActions": "Acciones",
       "groupGoTo": "Ir a",

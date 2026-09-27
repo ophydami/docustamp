@@ -69,7 +69,7 @@ export function StepDocuments(props: StepDocumentsProps) {
   return (
     <div className="flex flex-col gap-7">
       <div className="flex flex-col gap-1.5">
-        <h1 className="font-serif text-[28px] font-medium leading-tight">
+        <h1 className="font-semibold text-[22px] leading-tight tracking-[-.015em]">
           {props.selfSign ? t("send.documents.titleSelf") : t("send.documents.title")}
         </h1>
         <p className="text-[13px] text-muted">{t("send.documents.subtitle")}</p>
@@ -83,7 +83,7 @@ export function StepDocuments(props: StepDocumentsProps) {
 
       {props.hasDocument ? (
         <div className="flex flex-col gap-5">
-          <div className="flex items-start gap-3 border border-line rounded-lg bg-surface px-4 py-3.5">
+          <div className="flex items-start gap-3 border border-line rounded-xl bg-surface px-4 py-3.5">
             <span className="mt-0.5 flex size-9 items-center justify-center rounded-md bg-accent-soft text-accent shrink-0">
               <FileText className="size-4" strokeWidth={1.6} />
             </span>
@@ -211,7 +211,7 @@ export function StepDocuments(props: StepDocumentsProps) {
             ) : props.templates.length === 0 ? (
               <p className="text-[12px] text-muted-2">{t("send.documents.templates.empty")}</p>
             ) : (
-              <ul className="flex flex-col divide-y divide-line-soft border border-line rounded-lg bg-surface">
+              <ul className="flex flex-col divide-y divide-line-soft border border-line rounded-xl bg-surface">
                 {props.templates.slice(0, 5).map((tpl) => (
                   <li key={tpl.objectId} className="flex items-center gap-3 px-4 h-[52px]">
                     <FileText className="size-4 text-muted-2 shrink-0" strokeWidth={1.6} />

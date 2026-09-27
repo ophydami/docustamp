@@ -30,7 +30,7 @@ export function DisclosureDialog({
       open={open}
       onClose={onClose}
       width={640}
-      title={<span className="font-serif text-[22px] leading-tight">{t("signer.disclosure.title")}</span>}
+      title={<span className="font-semibold text-[18px] leading-tight tracking-[-.015em]">{t("signer.disclosure.title")}</span>}
       footer={
         <div className="flex justify-end">
           <Button variant="primary" onClick={onClose}>

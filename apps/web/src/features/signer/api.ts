@@ -49,7 +49,7 @@ function pointerId(v: unknown): string | undefined {
   return typeof o.objectId === "string" ? o.objectId : undefined;
 }
 
-const PLACEHOLDER_COLORS = ["#0f6e56", "#6b5bd6", "#b07a12", "#b5412e", "#2f6f9f", "#8a5e0a"];
+const PLACEHOLDER_COLORS = ["#1447e6", "#6b5bd6", "#e17100", "#c8000a", "#009966", "#9a4a00"];
 
 /** The OTP gate is identified by its message: the code it throws is generic. */
 export function isOtpGate(err: unknown): boolean {

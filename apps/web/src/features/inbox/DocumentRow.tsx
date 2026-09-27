@@ -50,7 +50,7 @@ export function statusPill(doc: DocumentRecord, t: TFunction): { text: string; t
     case "needsYou":
       return { text: t("inbox.status.needsYourSignature"), tone: "accent" };
     case "completed":
-      return { text: t("common.status.completed"), tone: "ink" };
+      return { text: t("common.status.completed"), tone: "success" };
     case "declined":
       return {
         text: doc.declineReason
@@ -85,7 +85,7 @@ export function firstName(name: string) {
 const barTone: Record<DocumentRecord["status"], string> = {
   needsYou: "bg-accent",
   waiting: "bg-warn",
-  completed: "bg-ink",
+  completed: "bg-success",
   declined: "bg-danger",
   expired: "bg-danger",
   draft: "bg-line-strong"
@@ -93,7 +93,7 @@ const barTone: Record<DocumentRecord["status"], string> = {
 
 function avatarTone(signed: boolean, isMe: boolean): AvatarTone {
   if (isMe) return "ink";
-  return signed ? "accent" : "neutral";
+  return signed ? "success" : "neutral";
 }
 
 /** "aB3dEf91 · 4 pages · sequential, you are next · reminded 2h ago" */
@@ -143,7 +143,7 @@ export function DocumentRow({
 
   const actionButton = (
     <Button
-      size="sm"
+      size="xs"
       variant={action.primary ? "primary" : "default"}
       loading={busy}
       onClick={(e) => {
@@ -157,7 +157,7 @@ export function DocumentRow({
   );
 
   const progressBar = (
-    <div className="h-1 rounded-full bg-line-soft overflow-hidden">
+    <div className="h-1.5 rounded-full bg-surface-3 overflow-hidden">
       <div
         className={cn("h-full rounded-full", barTone[doc.status])}
         style={{ width: `${Math.round(progress * 100)}%` }}
@@ -176,7 +176,7 @@ export function DocumentRow({
       }))}
     />
   ) : (
-    <span className="text-[12px] text-muted-2">{t("inbox.empty.noRecipients")}</span>
+    <span className="text-[12px] text-muted">{t("inbox.empty.noRecipients")}</span>
   );
 
   return (
@@ -185,14 +185,14 @@ export function DocumentRow({
       role="row"
       onClick={onOpen}
       className={cn(
-        "md:hidden border-b border-line-soft px-4 py-3 flex flex-col gap-2.5 text-[13px]",
+        "md:hidden border-b border-line px-4 py-3 flex flex-col gap-2.5 text-[13px]",
         selected ? "bg-accent-tint" : ""
       )}
     >
       <div className="min-w-0">
         <button type="button" onClick={onOpen} className="block w-full text-left min-w-0">
-          <span className="block font-semibold text-ink truncate">{doc.name}</span>
-          <span className="block text-[11px] text-muted-2 truncate">
+          <span className="block font-medium text-ink truncate">{doc.name}</span>
+          <span className="block text-[11.5px] text-muted truncate">
             <span className="font-mono">{doc.id.slice(0, 8)}</span>
             {metaLine(doc, t).map((b) => (
               <span key={b}> · {b}</span>
@@ -222,7 +222,7 @@ export function DocumentRow({
       onClick={onSelect}
       onDoubleClick={onOpen}
       className={cn(
-        "h-[54px] border-b border-line-soft cursor-default text-[13px]",
+        "h-[52px] border-b border-line last:border-b-0 cursor-default text-[13px]",
         GRID,
         selected ? "bg-accent-tint shadow-[inset_2px_0_0_var(--color-accent)]" : "hover:bg-surface-2"
       )}
@@ -234,8 +234,8 @@ export function DocumentRow({
       />
 
       <div className="min-w-0">
-        <div className="font-semibold text-ink truncate">{doc.name}</div>
-        <div className="text-[11px] text-muted-2 truncate flex gap-1.5">
+        <div className="font-medium text-ink truncate">{doc.name}</div>
+        <div className="text-[11.5px] text-muted truncate flex gap-1.5">
           <span className="font-mono">{doc.id.slice(0, 8)}</span>
           {metaLine(doc, t).map((b) => (
             <span key={b}>· {b}</span>
@@ -247,7 +247,7 @@ export function DocumentRow({
 
       <div className="flex flex-col gap-1.5 min-w-0">
         {progressBar}
-        <Pill tone={pill.tone} className="max-w-full truncate">
+        <Pill tone={pill.tone} className="self-start max-w-full truncate">
           <span className="truncate">{pill.text}</span>
         </Pill>
       </div>

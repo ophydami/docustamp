@@ -29,7 +29,7 @@ function Wordmark() {
     <div className="flex items-center gap-2.5">
       <span
         aria-hidden
-        className="grid place-items-center size-[22px] rounded-[6px] bg-white/95 font-serif text-[14px] leading-none text-brand-panel"
+        className="grid place-items-center size-[22px] rounded-[6px] bg-white/95 font-bold text-[14px] leading-none text-brand-panel"
       >
         {name.trim().charAt(0).toUpperCase()}
       </span>
@@ -57,7 +57,7 @@ export function AuthLayout({ children }: { children: ReactNode }) {
         <Wordmark />
 
         <div className="hidden min-[900px]:block max-w-[460px] py-10">
-          <h2 className="font-serif text-[46px] leading-[1.08] tracking-[-.015em]">
+          <h2 className="font-semibold text-[34px] leading-[1.08] tracking-[-.015em]">
             {t("auth.marketing.headline")}
           </h2>
           <p className="mt-5 text-[15px] leading-[1.6] text-white/70">{t("auth.marketing.body")}</p>
@@ -99,7 +99,7 @@ export function AuthLayout({ children }: { children: ReactNode }) {
 export function AuthHeading({ title, children }: { title: string; children?: ReactNode }) {
   return (
     <header className="mb-7">
-      <h1 className="font-serif text-[30px] leading-tight tracking-[-.015em]">{title}</h1>
+      <h1 className="font-semibold text-[24px] leading-tight tracking-[-.015em]">{title}</h1>
       {children ? <p className="mt-1.5 text-[13px] text-muted">{children}</p> : null}
     </header>
   );

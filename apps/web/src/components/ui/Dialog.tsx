@@ -49,7 +49,7 @@ export function Dialog({ open, onClose, title, description, children, footer, wi
         {(title || description) && (
           <div className="flex items-start justify-between gap-4 px-7 pt-6">
             <div className="flex flex-col gap-1">
-              {title ? <h2 className="font-serif text-[24px] font-medium leading-tight">{title}</h2> : null}
+              {title ? <h2 className="font-semibold text-[20px] leading-tight tracking-[-.015em]">{title}</h2> : null}
               {description ? <p className="text-[13px] text-muted">{description}</p> : null}
             </div>
             <button

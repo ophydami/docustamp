@@ -1,7 +1,6 @@
 import { useEffect, type ReactElement } from "react";
-import { NavLink, Navigate, useNavigate, useParams } from "react-router-dom";
+import { NavLink, Navigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { Button, Cap } from "@/components/ui";
 import { useHotkeys } from "@/lib/hotkeys";
@@ -54,20 +53,19 @@ function NavItem({ item, count }: { item: SectionMeta; count?: number }) {
       to={`/settings/${item.id}`}
       className={({ isActive }) =>
         cn(
-          "flex items-center gap-2 h-[30px] px-2.5 rounded-md text-[13px] text-ink-2 hover:text-ink",
-          isActive && "bg-surface text-ink font-medium shadow-[var(--shadow-raise)]"
+          "flex items-center gap-2 h-[30px] px-2 rounded-md text-[13px] text-ink-2 transition-colors",
+          isActive ? "bg-surface-3 text-ink font-semibold" : "hover:bg-surface-3/70 hover:text-ink"
         )
       }
     >
       <span className="truncate">{sectionLabel(t, item.id)}</span>
-      {count !== undefined ? <span className="num ml-auto text-[11px] text-muted-2">{count}</span> : null}
+      {count !== undefined ? <span className="num ml-auto text-[11px] text-muted">{count}</span> : null}
     </NavLink>
   );
 }
 
 export default function SettingsPage() {
   const { section } = useParams<{ section: string }>();
-  const navigate = useNavigate();
   const { t } = useTranslation();
   const { data: extUser } = useExtUser();
   const admin = isAdminRole(extUser?.UserRole);
@@ -106,7 +104,7 @@ export default function SettingsPage() {
 
   return (
     <div className="flex-1 min-h-0 flex flex-col md:flex-row">
-      <div className="md:hidden shrink-0 border-b border-line bg-ground overflow-x-auto scroll-thin">
+      <div className="md:hidden shrink-0 border-b border-line bg-surface overflow-x-auto scroll-thin">
         <div className="flex items-center gap-1.5 px-4 py-2.5 w-max">
           {allSections.map((s) => (
             <NavLink
@@ -116,8 +114,8 @@ export default function SettingsPage() {
                 cn(
                   "inline-flex items-center h-7 px-2.5 rounded-md text-[12px] font-medium border whitespace-nowrap",
                   isActive
-                    ? "bg-ink text-ground border-ink"
-                    : "bg-surface text-ink-2 border-line hover:border-line-strong"
+                    ? "bg-surface-3 text-ink border-line-strong"
+                    : "bg-surface text-muted border-line hover:text-ink hover:border-line-strong"
                 )
               }
             >
@@ -127,26 +125,14 @@ export default function SettingsPage() {
         </div>
       </div>
 
-      <nav className="w-[228px] shrink-0 border-r border-line bg-ground hidden md:flex flex-col min-h-0">
-        <div className="flex items-center gap-2 px-3 h-[52px] shrink-0">
-          <button
-            type="button"
-            aria-label={t("settings.nav.backToInbox")}
-            onClick={() => navigate("/inbox")}
-            className="size-6 -ml-0.5 inline-flex items-center justify-center rounded-md text-muted hover:text-ink hover:bg-line-soft"
-          >
-            <ArrowLeft className="size-4" strokeWidth={1.6} />
-          </button>
-          <span className="text-[15px] font-semibold tracking-[-0.01em]">{t("settings.title")}</span>
-        </div>
-
-        <div className="flex-1 min-h-0 overflow-auto scroll-thin px-3 pb-5 flex flex-col gap-1">
-          <Cap className="px-2.5 pt-1 pb-1.5">{t("settings.nav.you")}</Cap>
+      <nav aria-label={t("settings.title")} className="w-[220px] shrink-0 border-r border-line bg-surface hidden md:flex flex-col min-h-0">
+        <div className="flex-1 min-h-0 overflow-auto scroll-thin px-2.5 pt-1 pb-5 flex flex-col gap-px">
+          <Cap className="block px-2 pt-4 pb-1.5">{t("settings.nav.you")}</Cap>
           {YOU_SECTIONS.map((s) => (
             <NavItem key={s.id} item={s} />
           ))}
 
-          <Cap className="px-2.5 pt-4 pb-1.5 truncate" title={tenantName}>
+          <Cap className="block px-2 pt-4 pb-1.5 truncate" title={tenantName}>
             {t("settings.nav.workspace")} · {tenantName}
           </Cap>
           {WORKSPACE_SECTIONS.map((s) => (

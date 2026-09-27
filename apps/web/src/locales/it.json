@@ -92,6 +92,10 @@
       "settings": "Impostazioni",
       "templates": "Modelli"
     },
+    "navGroups": {
+      "insight": "Analisi",
+      "signing": "Firma"
+    },
     "palette": {
       "groupActions": "Azioni",
       "groupGoTo": "Vai a",

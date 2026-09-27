@@ -48,7 +48,7 @@ export default function VerifyPage() {
       </div>
 
       <div className="mx-auto w-full max-w-[680px] px-5 py-8 sm:py-12">
-        <h1 className="font-serif text-[32px] leading-[1.1] text-ink">{t("signer.verify.title")}</h1>
+        <h1 className="font-semibold text-[26px] leading-[1.1] text-ink tracking-[-.015em]">{t("signer.verify.title")}</h1>
         <p className="mt-2.5 text-[14px] leading-relaxed text-muted">{t("signer.verify.intro")}</p>
 
         <div
@@ -126,7 +126,7 @@ function Verdict({ result }: { result: VerifyResult }) {
           </span>
           <Pill tone={tone.pill}>{t(`signer.verify.status.${tone.label}`)}</Pill>
         </div>
-        <h2 className="mt-4 font-serif text-[24px] leading-tight text-ink break-words">{result.fileName}</h2>
+        <h2 className="mt-4 font-semibold text-[20px] leading-tight text-ink break-words tracking-[-.015em]">{result.fileName}</h2>
         <p className="mt-2 text-[13px] leading-relaxed text-muted">{result.summary}</p>
 
         <dl className="mt-4 pt-4 border-t border-line grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-[12px]">

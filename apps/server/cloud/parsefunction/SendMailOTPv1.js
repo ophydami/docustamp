@@ -90,7 +90,7 @@ async function sendMailOTPv1(request) {
         preheader: `${code} is your ${AppName} verification code`,
         paragraphs: [
           `Use this code to continue with ${escapeHtml(AppName)}:`,
-          `<span style="display:inline-block;font-family:Consolas,'Courier New',monospace;font-size:32px;letter-spacing:8px;font-weight:700;color:${mailThemeColor};padding:10px 16px;background:#f4f1ea;border-radius:8px">${escapeHtml(code)}</span>`,
+          `<span style="display:inline-block;font-family:Consolas,'Courier New',monospace;font-size:32px;letter-spacing:8px;font-weight:700;color:${mailThemeColor};padding:10px 16px;background:#f4f4f5;border-radius:8px">${escapeHtml(code)}</span>`,
           'It expires in 10 minutes and can only be used once. If you did not request it, you can ignore this email.',
         ],
       }),

@@ -3,7 +3,8 @@ import { cn } from "@/lib/cn";
 
 const base =
   "w-full bg-surface border border-line rounded-md text-[13px] text-ink placeholder:text-muted-2 " +
-  "focus:outline-none focus:border-accent focus:shadow-[var(--shadow-focus)] disabled:bg-ground disabled:text-muted";
+  "hover:border-line-strong focus:outline-none focus:border-muted-2 focus:shadow-[var(--shadow-focus)] " +
+  "disabled:bg-surface-2 disabled:text-muted";
 
 export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   left?: ReactNode;
@@ -19,37 +20,37 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
     return (
       <input
         ref={ref}
-        className={cn(base, "h-9 px-3", invalid && "border-danger focus:border-danger", className)}
+        className={cn(base, "h-[34px] px-2.5", invalid && "border-danger focus:border-danger", className)}
         {...rest}
       />
     );
   }
   return (
     <div className={cn("relative flex items-center", className)}>
-      {left ? <span className="absolute left-3 text-muted-2 pointer-events-none">{left}</span> : null}
+      {left ? <span className="absolute left-2.5 text-muted pointer-events-none">{left}</span> : null}
       <input
         ref={ref}
-        className={cn(base, "h-9 px-3", left && "pl-9", right && "pr-9", invalid && "border-danger")}
+        className={cn(base, "h-[34px] px-2.5", left && "pl-8", right && "pr-8", invalid && "border-danger")}
         {...rest}
       />
-      {right ? <span className="absolute right-3 text-muted-2">{right}</span> : null}
+      {right ? <span className="absolute right-2.5 text-muted">{right}</span> : null}
     </div>
   );
 });
 
 export const Textarea = forwardRef<HTMLTextAreaElement, TextareaHTMLAttributes<HTMLTextAreaElement>>(
   function Textarea({ className, ...rest }, ref) {
-    return <textarea ref={ref} className={cn(base, "px-3 py-2 leading-relaxed min-h-20", className)} {...rest} />;
+    return <textarea ref={ref} className={cn(base, "px-2.5 py-2 leading-relaxed min-h-20", className)} {...rest} />;
   }
 );
 
 export const Select = forwardRef<HTMLSelectElement, SelectHTMLAttributes<HTMLSelectElement>>(
   function Select({ className, children, ...rest }, ref) {
     return (
-      <select ref={ref} className={cn(base, "h-9 px-3 pr-8 appearance-none bg-no-repeat", className)}
+      <select ref={ref} className={cn(base, "h-[34px] px-2.5 pr-8 appearance-none bg-no-repeat", className)}
         style={{
           backgroundImage:
-            "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 16 16' fill='none' stroke='%238A857B' stroke-width='1.6'%3E%3Cpath d='M4 6l4 4 4-4'/%3E%3C/svg%3E\")",
+            "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 16 16' fill='none' stroke='%2371717B' stroke-width='1.6'%3E%3Cpath d='M4 6l4 4 4-4'/%3E%3C/svg%3E\")",
           backgroundPosition: "right 10px center"
         }}
         {...rest}
@@ -78,7 +79,7 @@ export function Field({
   return (
     <label className={cn("flex flex-col gap-1.5", className)}>
       {label || right ? (
-        <span className="flex items-center justify-between text-[12px] font-semibold text-ink-2">
+        <span className="flex items-center justify-between text-[12px] font-medium text-ink-2">
           <span>{label}</span>
           {right}
         </span>

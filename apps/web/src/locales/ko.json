@@ -92,6 +92,10 @@
       "settings": "설정",
       "templates": "템플릿"
     },
+    "navGroups": {
+      "insight": "인사이트",
+      "signing": "서명"
+    },
     "palette": {
       "groupActions": "작업",
       "groupGoTo": "이동",

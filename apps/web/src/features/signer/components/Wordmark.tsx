@@ -15,10 +15,10 @@ export function Wordmark({ className, asLink }: { className?: string; asLink?: b
         <img src={logoUrl} alt={name} className="max-h-7 max-w-[160px] object-contain" />
       ) : (
         <>
-          <span className="inline-flex items-center justify-center size-5 rounded-[5px] bg-accent text-on-accent font-serif text-[13px] leading-none pt-px">
+          <span className="inline-flex items-center justify-center size-5 rounded-[6px] bg-ink text-ground font-bold text-[12px] leading-none">
             {name.slice(0, 1).toUpperCase()}
           </span>
-          <span className="font-serif text-[16px] text-ink leading-none">{name}</span>
+          <span className="font-semibold text-[14px] text-ink leading-none">{name}</span>
         </>
       )}
     </span>

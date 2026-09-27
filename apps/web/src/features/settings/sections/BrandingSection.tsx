@@ -126,7 +126,7 @@ export default function BrandingSection() {
               {v.Logo ? (
                 <img src={v.Logo} alt="" className="max-h-10 max-w-12 object-contain" />
               ) : (
-                <span className="size-5 rounded-[5px] bg-accent" />
+                <span className="size-5 rounded-[5px] bg-ink" />
               )}
             </div>
             <div className="flex flex-col gap-1.5 min-w-0">
@@ -314,7 +314,7 @@ export default function BrandingSection() {
  * them in dark would be a lie.
  */
 function PreviewFrame({ children, light }: { children: ReactNode; light?: boolean }) {
-  return <div className={cn("bg-sand border border-line rounded-lg p-4", light && "theme-light")}>{children}</div>;
+  return <div className={cn("bg-sand border border-line rounded-xl p-4", light && "theme-light")}>{children}</div>;
 }
 
 function EmailPreview({
@@ -354,15 +354,15 @@ function EmailPreview({
             {logo ? (
               <img src={logo} alt="" className="h-6 max-w-24 object-contain" />
             ) : (
-              <span className="size-5 rounded-[5px] bg-accent" />
+              <span className="size-5 rounded-[5px] bg-ink" />
             )}
             <span className="text-[13px] font-semibold">{workspace}</span>
           </div>
-          <h3 className="font-serif text-[18px] leading-snug">
+          <h3 className="font-semibold text-[15px] leading-snug tracking-[-.015em]">
             {t("settings.branding.preview.emailHeading", { sender: senderName, document: doc })}
           </h3>
           <p className="text-[12px] text-muted leading-relaxed">{t("settings.branding.preview.emailBody")}</p>
-          <span className="inline-flex items-center justify-center h-8 px-3.5 rounded-md bg-accent text-on-accent text-[12px] font-semibold w-max">
+          <span className="inline-flex items-center justify-center h-8 px-3.5 rounded-md bg-ink text-ground text-[12px] font-semibold w-max">
             {t("settings.branding.preview.emailCta")}
           </span>
           <div className="pt-3 mt-1 border-t border-line-soft text-[11px] text-muted-2 leading-relaxed flex flex-col gap-1.5">
@@ -386,11 +386,11 @@ function SigningPreview({ logo, workspace, senderName }: { logo?: string; worksp
           {logo ? (
             <img src={logo} alt="" className="h-5 max-w-20 object-contain" />
           ) : (
-            <span className="size-4 rounded-[4px] bg-accent" />
+            <span className="size-4 rounded-[4px] bg-ink" />
           )}
           <span className="text-[12px] font-semibold">{workspace}</span>
           <span className="text-[11px] text-muted-2 truncate">· {doc}</span>
-          <span className="ml-auto inline-flex items-center h-6 px-2.5 rounded-md bg-accent text-on-accent text-[11px] font-semibold">
+          <span className="ml-auto inline-flex items-center h-6 px-2.5 rounded-md bg-ink text-ground text-[11px] font-semibold">
             {t("settings.branding.preview.finish")}
           </span>
         </div>
@@ -418,7 +418,7 @@ function PdfPreview({ workspace, senderName }: { workspace: string; senderName: 
     <PreviewFrame light>
       <div className="bg-surface rounded-md border border-line p-5 flex flex-col gap-3">
         <div className="flex items-baseline justify-between">
-          <span className="font-serif text-[16px]">{t("settings.branding.preview.sampleDoc")}</span>
+          <span className="font-semibold text-[14px]">{t("settings.branding.preview.sampleDoc")}</span>
           <span className="text-[11px] text-accent font-semibold">{t("common.status.completed")}</span>
         </div>
         <div className="flex flex-col gap-1.5">

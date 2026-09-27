@@ -201,7 +201,6 @@ export default function ReportsPage() {
   return (
     <div className="flex-1 min-h-0 flex flex-col">
       <header className="shrink-0 flex flex-wrap items-center gap-2 px-4 py-2.5 lg:flex-nowrap lg:h-[52px] lg:py-0 lg:px-6 bg-surface border-b border-line">
-        <h1 className="font-serif text-[18px] font-medium mr-2">{t("reports.title")}</h1>
         {RANGES.map((r) => (
           <Chip key={r} active={rangeId === r} onClick={() => setRangeId(r)}>
             {t(RANGE_KEYS[r])}

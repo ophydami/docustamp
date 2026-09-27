@@ -26,7 +26,6 @@ import {
   Input,
   Kbd,
   Menu,
-  PageTitle,
   Pill,
   toast
 } from "@/components/ui";
@@ -116,7 +115,7 @@ const FILTERS: Array<{ id: DocFilter; labelKey: string; dot?: string }> = [
   { id: "all", labelKey: "documents.filters.all" },
   { id: "needs_you", labelKey: "documents.filters.needsYou", dot: "var(--color-accent)" },
   { id: "in_progress", labelKey: "common.status.inProgress", dot: "var(--color-warn)" },
-  { id: "completed", labelKey: "common.status.completed", dot: "var(--color-ink)" },
+  { id: "completed", labelKey: "common.status.completed", dot: "var(--color-success)" },
   { id: "declined", labelKey: "common.status.declined", dot: "var(--color-danger)" },
   { id: "expired", labelKey: "common.status.expired", dot: "var(--color-danger-2)" },
   { id: "draft", labelKey: "documents.filters.drafts", dot: "var(--color-faint)" }
@@ -156,7 +155,7 @@ function readRailOpen(): boolean {
 }
 
 function statusPill(doc: Document) {
-  if (doc.status === "completed") return { tone: "ink" as const, labelKey: "common.status.completed" };
+  if (doc.status === "completed") return { tone: "success" as const, labelKey: "common.status.completed" };
   if (doc.status === "declined") return { tone: "danger" as const, labelKey: "common.status.declined" };
   if (doc.status === "expired") return { tone: "danger" as const, labelKey: "common.status.expired" };
   if (doc.status === "draft") return { tone: "neutral" as const, labelKey: "common.status.draft" };
@@ -443,8 +442,7 @@ export default function DocumentsPage() {
       <div className="flex-1 min-w-0 min-h-0 flex flex-col">
       <div className="px-4 md:px-6 pt-5 pb-3 flex items-start gap-3 flex-wrap">
         <div className="min-w-0">
-          <PageTitle>{t("documents.title")}</PageTitle>
-          <p className="text-[13px] text-muted mt-1">
+          <p className="text-[13px] text-muted pt-1.5">
             {list.isLoading
               ? t("common.state.loading")
               : t("documents.list.summary", { count: total, folder: folderName })}
@@ -517,7 +515,7 @@ export default function DocumentsPage() {
             onClick={() => setParam({ status: f.id === "all" ? undefined : f.id, view: undefined })}
           >
             {t(f.labelKey)}
-            <span className={cn("num ml-1", filter === f.id ? "text-ground/70" : "text-muted-2")}>
+            <span className={cn("num ml-1", filter === f.id ? "text-ink-2" : "text-muted")}>
               {counts.data ? num(counts.data[f.id]) : "-"}
             </span>
           </Chip>

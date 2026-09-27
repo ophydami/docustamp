@@ -13,7 +13,6 @@ import {
   Input,
   Kbd,
   Menu,
-  PageTitle,
   toast
 } from "@/components/ui";
 import type { AvatarTone } from "@/components/ui";
@@ -278,10 +277,9 @@ export default function ContactsPage() {
 
   return (
     <div className="flex-1 min-h-0 flex">
-      <div className="flex-1 min-w-0 flex flex-col overflow-auto scroll-thin px-4 py-4 lg:px-6 lg:py-[22px] gap-4">
+      <div className="flex-1 min-w-0 flex flex-col overflow-auto scroll-thin px-4 py-4 lg:px-6 lg:py-5 gap-4 [&>*]:shrink-0">
         <header className="flex flex-col gap-3 sm:flex-row sm:items-start sm:gap-4">
-          <div className="flex flex-col gap-1">
-            <PageTitle>{t("contacts.title")}</PageTitle>
+          <div className="flex flex-col gap-1 pt-1.5">
             <p className="text-[13px] text-muted">
               {t("common.count.person", { count: contacts.length })} ·{" "}
               {t("common.count.company", { count: companyCount })}

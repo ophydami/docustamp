@@ -88,6 +88,14 @@ export function weekdayMonthDay(d: Date | string | undefined | null): string {
     : "";
 }
 
+/** Short weekday, month and day for the top bar: "Sat, Sep 26". */
+export function weekdayShort(d: Date | string | undefined | null): string {
+  const date = toDate(d);
+  return date
+    ? new Intl.DateTimeFormat(activeLocale(), { weekday: "short", month: "short", day: "numeric" }).format(date)
+    : "";
+}
+
 /** Date and time in UTC, labelled as such: "Sep 26, 2026, 7:05 PM UTC". */
 export function dateTimeUtc(d: Date | string | undefined | null): string {
   const date = toDate(d);

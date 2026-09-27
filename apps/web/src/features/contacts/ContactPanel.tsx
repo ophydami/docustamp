@@ -13,7 +13,7 @@ import type { Contact, ContactStats, DocStatus } from "./types";
 const TONES: Record<DocStatus, PillTone> = {
   draft: "neutral",
   waiting: "warn",
-  completed: "ink",
+  completed: "success",
   declined: "danger",
   expired: "danger"
 };
@@ -97,7 +97,7 @@ export function ContactPanel({
       <div className="flex items-start gap-3 px-5 pt-5 pb-4">
         <Avatar name={contact.name} email={contact.email} size={44} />
         <div className="flex-1 min-w-0">
-          <h2 className="font-serif text-[20px] leading-tight truncate">{contact.name || contact.email}</h2>
+          <h2 className="font-semibold text-[16px] leading-tight truncate tracking-[-.015em]">{contact.name || contact.email}</h2>
           <p className="text-[12px] text-muted truncate">
             {[contact.jobTitle, contact.company].filter(Boolean).join(" · ") ||
               t("contacts.panel.noCompanyOnFile")}
