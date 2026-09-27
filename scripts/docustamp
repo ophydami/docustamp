@@ -119,7 +119,7 @@ case "$cmd" in
 
   restore)
     file=${1:-}
-    [ -n "$file" ] && [ -f "$file" ] || die "Usage: docustamp restore <backup file>"
+    if [ -z "$file" ] || [ ! -f "$file" ]; then die "Usage: docustamp restore <backup file>"; fi
     if [ "${DOCUSTAMP_YES:-}" != "1" ]; then
       read -r -p "This replaces the current database, documents and settings. Type 'restore' to go on: " answer </dev/tty
       [ "$answer" = "restore" ] || die "Nothing changed."
