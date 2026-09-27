@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
-import { LanguageMini } from "@/components/ui";
+import { LanguageMini, LogoMark } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import { useBrand } from "@/lib/brand";
 import { SOURCE_URL } from "@/lib/source";
@@ -27,12 +27,7 @@ function Wordmark() {
 
   return (
     <div className="flex items-center gap-2.5">
-      <span
-        aria-hidden
-        className="grid place-items-center size-[22px] rounded-[6px] bg-white/95 font-bold text-[14px] leading-none text-brand-panel"
-      >
-        {name.trim().charAt(0).toUpperCase()}
-      </span>
+      <LogoMark size={24} className="text-white" />
       <span className="text-[15px] font-semibold tracking-[-.01em] text-white">{name}</span>
     </div>
   );

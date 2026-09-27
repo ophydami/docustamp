@@ -2,9 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#0F6E56" />
+    <meta name="theme-color" content="#FFFFFF" />
     <meta name="description" content="Send documents for signature, sign them, and know exactly where they stand. Full audit trail and a verifiable completion certificate." />
     <meta name="robots" content="noindex" />
     <title>DocuStamp</title>
@@ -15,7 +17,7 @@
         var t = localStorage.getItem("theme");
         if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t);
         var dark = t === "dark" || (t !== "light" && window.matchMedia("(prefers-color-scheme: dark)").matches);
-        document.querySelector('meta[name="theme-color"]').setAttribute("content", dark ? "#121210" : "#0F6E56");
+        document.querySelector('meta[name="theme-color"]').setAttribute("content", dark ? "#09090B" : "#FFFFFF");
       } catch (e) {}
     </script>
   </head>

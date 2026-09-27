@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/cn";
 import { useBrand } from "@/lib/brand";
+import { LogoMark } from "@/components/ui";
 
 /**
  * The workspace wordmark used across the public signer surfaces: the tenant's
@@ -15,9 +16,7 @@ export function Wordmark({ className, asLink }: { className?: string; asLink?: b
         <img src={logoUrl} alt={name} className="max-h-7 max-w-[160px] object-contain" />
       ) : (
         <>
-          <span className="inline-flex items-center justify-center size-5 rounded-[6px] bg-ink text-ground font-bold text-[12px] leading-none">
-            {name.slice(0, 1).toUpperCase()}
-          </span>
+          <LogoMark size={20} className="text-ink" />
           <span className="font-semibold text-[14px] text-ink leading-none">{name}</span>
         </>
       )}

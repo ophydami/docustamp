@@ -3,7 +3,7 @@ import { NavLink, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Inbox, FileText, LayoutTemplate, Users, BarChart3, Workflow, Settings as SettingsIcon, Sparkles, X } from "lucide-react";
 import { cn } from "@/lib/cn";
-import { Cap, Kbd, Avatar, ThemeToggleButton } from "@/components/ui";
+import { Cap, Kbd, Avatar, LogoMark, ThemeToggleButton } from "@/components/ui";
 import { useBrand } from "@/lib/brand";
 import { SOURCE_URL } from "@/lib/source";
 import { useBadges, useNavDrawer } from "@/lib/store";
@@ -77,9 +77,7 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
           <img src={brand.logoUrl} alt={brand.name} className="max-h-6 max-w-[150px] object-contain" />
         ) : (
           <>
-            <span className="size-6 rounded-[7px] bg-ink text-ground inline-flex items-center justify-center text-[12px] font-bold shrink-0">
-              {brand.name.charAt(0).toUpperCase()}
-            </span>
+            <LogoMark size={22} className="text-ink" />
             <span className="text-[14px] font-semibold tracking-[-0.01em] truncate">{brand.name}</span>
           </>
         )}

@@ -1,4 +1,9 @@
-# DocuStamp
+<h1>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="brand/docustamp-logo-on-dark.svg">
+    <img alt="DocuStamp" src="brand/docustamp-logo.svg" height="44">
+  </picture>
+</h1>
 
 Open source e-signature app you can run on your own server.
 
