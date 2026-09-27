@@ -26,7 +26,17 @@ interface LogoByDomain {
   favicon?: string;
   appname?: string;
   tenantName?: string;
+  /** The server-wide name (APP_NAME), whatever the tenant is called. */
+  platformName?: string;
+  /** A workspace claimed this exact host as its `Domain`. */
+  hostMatch?: boolean;
   user?: "exist" | "not_exist";
+}
+
+/** The by-host answer, plus what the sign-in pages need from it. */
+interface DomainBrand extends Brand {
+  hostBound: boolean;
+  platformName: string;
 }
 
 /**
@@ -42,7 +52,7 @@ function brandName(appname?: string): string {
 /** Prefix key: invalidating it drops both the by-domain and the signed-in brand. */
 export const brandKey = ["brand"] as const;
 
-async function fetchDomainBrand(): Promise<Brand> {
+async function fetchDomainBrand(): Promise<DomainBrand> {
   try {
     const r = await cloud<LogoByDomain | null>("getlogobydomain", {
       domain: window.location.host
@@ -51,12 +61,14 @@ async function fetchDomainBrand(): Promise<Brand> {
     return {
       name: brandName(r?.appname),
       tenantName: tenantName || null,
-      logoUrl: r?.logo?.trim() || null
+      logoUrl: r?.logo?.trim() || null,
+      hostBound: r?.hostMatch === true,
+      platformName: r?.platformName?.trim() || FALLBACK_BRAND.name
     };
   } catch {
     // Branding is decoration: an unreachable or unconfigured server just means
     // the default wordmark, never an error on the sign-in screen.
-    return FALLBACK_BRAND;
+    return { ...FALLBACK_BRAND, hostBound: false, platformName: FALLBACK_BRAND.name };
   }
 }
 
@@ -94,16 +106,18 @@ async function fetchTenantBrand(userId: string): Promise<Brand | null> {
  * workspace wins over the host lookup; `useInvalidateTenant` in the settings
  * feature drops both after a Branding save.
  */
+const domainBrandQuery = {
+  queryKey: [...brandKey, "domain", window.location.host],
+  queryFn: fetchDomainBrand,
+  staleTime: ONE_HOUR,
+  gcTime: ONE_HOUR,
+  retry: false,
+  refetchOnWindowFocus: false
+};
+
 export function useBrand(): Brand {
   const userId = Parse.User.current()?.id;
-  const domain = useQuery({
-    queryKey: [...brandKey, "domain", window.location.host],
-    queryFn: fetchDomainBrand,
-    staleTime: ONE_HOUR,
-    gcTime: ONE_HOUR,
-    retry: false,
-    refetchOnWindowFocus: false
-  });
+  const domain = useQuery(domainBrandQuery);
   const tenant = useQuery({
     queryKey: [...brandKey, "tenant", userId],
     queryFn: () => fetchTenantBrand(userId as string),
@@ -114,4 +128,17 @@ export function useBrand(): Brand {
     refetchOnWindowFocus: false
   });
   return tenant.data ?? domain.data ?? FALLBACK_BRAND;
+}
+
+/**
+ * Branding for the sign-in, sign-up and password pages. They belong to the
+ * whole server, so they show the product (APP_NAME and its mark) unless a
+ * workspace has claimed this exact address as its domain, the white-label case.
+ * A server with a single workspace still brands the app and the signing pages
+ * with that workspace (useBrand); only these pages stay with the product.
+ */
+export function useSignInBrand(): Brand {
+  const domain = useQuery(domainBrandQuery).data;
+  if (domain?.hostBound) return domain;
+  return { name: domain?.platformName ?? FALLBACK_BRAND.name, tenantName: null, logoUrl: null };
 }
