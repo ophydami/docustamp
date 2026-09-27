@@ -23,7 +23,7 @@ This applies in every project space: issues, pull requests, discussions, and any
 
 ## Reporting
 
-If you experience or witness unacceptable behavior, report it privately to the maintainer: open the repository's **Security** tab, choose **Report a vulnerability**, and start the title with "Conduct:". Reports are kept confidential.
+If you experience or witness unacceptable behavior, report it privately by email to **conduct@docustamp.dev**. Reports are kept confidential.
 
 ## Enforcement
 

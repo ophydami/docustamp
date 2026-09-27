@@ -2,4 +2,4 @@ blank_issues_enabled: false
 contact_links:
   - name: Report a security problem
     url: https://github.com/ophydami/docustamp/security/advisories/new
-    about: Please report vulnerabilities privately, never in a public issue.
+    about: Please report vulnerabilities privately (or email security@docustamp.dev), never in a public issue.
