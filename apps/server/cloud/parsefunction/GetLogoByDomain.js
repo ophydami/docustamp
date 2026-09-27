@@ -4,13 +4,17 @@ import { brandingFromTenant } from './tenantBranding.js';
 
 /**
  * Shape the unauthenticated branding answer. `appname` is the tenant's own name
- * when it has one, so a workspace that renamed itself is branded on the sign-in
- * and guest-signing screens too; otherwise the server-wide constant.
+ * when it has one, so a workspace that renamed itself is branded on the
+ * guest-signing screens too; otherwise the server-wide constant.
+ * `hostMatch` says whether the tenant claimed this exact host (its `Domain`):
+ * only then do the sign-in pages, which belong to the whole server, carry the
+ * workspace's brand instead of `platformName` (APP_NAME).
  * @param {Object|null} tenant a `partners_Tenant` object, or null.
  * @param {string} user "exist" | "not_exist".
+ * @param {boolean} [hostMatch] the tenant was found by its `Domain`.
  * @returns {Object} the branding payload.
  */
-function payload(tenant, user) {
+function payload(tenant, user, hostMatch = false) {
   const branding = brandingFromTenant(tenant);
   const json = tenant ? JSON.parse(JSON.stringify(tenant)) : {};
   return {
@@ -18,6 +22,8 @@ function payload(tenant, user) {
     favicon: json?.Favicon || branding.logo || '',
     appname: branding.tenantName || appName,
     tenantName: branding.tenantName || '',
+    platformName: appName,
+    hostMatch,
     hidePoweredBy: branding.hidePoweredBy,
     footer: branding.footer,
     user,
@@ -35,7 +41,7 @@ export default async function GetLogoByDomain(request) {
       tenantCreditsQuery.equalTo('Domain', domain);
       const res = await tenantCreditsQuery.first({ useMasterKey: true });
       if (res) {
-        return payload(res, 'exist');
+        return payload(res, 'exist', true);
       }
     }
     // No `Domain` match. On a single-tenant server that one workspace is

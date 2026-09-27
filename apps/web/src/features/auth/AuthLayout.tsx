@@ -2,16 +2,16 @@ import { useState, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { LanguageMini, LogoMark } from "@/components/ui";
 import { cn } from "@/lib/cn";
-import { useBrand } from "@/lib/brand";
+import { useSignInBrand } from "@/lib/brand";
 import { SOURCE_URL } from "@/lib/source";
 
 /**
- * Tenant branding for this host (`useBrand`), falling back to the plain "DocuStamp"
- * wordmark when the host has no tenant logo, the call fails, or the image will
- * not load.
+ * The product's mark and name, or a workspace's own logo when that workspace has
+ * claimed this address (`useSignInBrand`). Falls back to the mark when the call
+ * fails or the image will not load.
  */
 function Wordmark() {
-  const { name, logoUrl } = useBrand();
+  const { name, logoUrl } = useSignInBrand();
   const [logoBroken, setLogoBroken] = useState(false);
 
   if (logoUrl && !logoBroken) {

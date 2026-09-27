@@ -259,6 +259,17 @@ describe('tenant branding', () => {
       expect(res.hidePoweredBy).toBe(true);
       expect(res.footer).toBe('Acme Inc.');
       expect(res.user).toBe('exist');
+      expect(res.hostMatch).toBe(true);
+      expect(res.platformName).toBe('DocuStamp');
+    });
+
+    it('does not claim a host that no tenant has set as its domain', async () => {
+      const owner = await makeUser('brandnodomain');
+      await makeTenant(owner, { TenantName: 'Unclaimed' });
+
+      const res = await Parse.Cloud.run('getlogobydomain', { domain: `${unique('nohost')}.example.test` });
+      expect(res.hostMatch).toBe(false);
+      expect(res.platformName).toBe('DocuStamp');
     });
   });
 
