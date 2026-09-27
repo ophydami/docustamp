@@ -16,7 +16,7 @@ export default function LegalPage({ kind }: { kind: LegalKind }) {
           ← {t("common.actions.back")}
         </Link>
         <Cap>{name}</Cap>
-        <h1 className="font-serif text-[30px] font-medium">{t(`misc.legal.${kind}.title`)}</h1>
+        <h1 className="font-semibold text-[24px] tracking-[-.015em]">{t(`misc.legal.${kind}.title`)}</h1>
         <p className="text-[14px] text-ink-2 leading-relaxed">{t(`misc.legal.${kind}.body`)}</p>
       </div>
     </div>

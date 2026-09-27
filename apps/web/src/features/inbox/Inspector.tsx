@@ -97,7 +97,7 @@ export function Inspector({
         </div>
 
         <div className="flex flex-col gap-1">
-          <h2 className="font-serif text-[20px] leading-snug">{full.name}</h2>
+          <h2 className="font-semibold text-[16px] leading-snug tracking-[-.015em]">{full.name}</h2>
           <p className="text-[11px] text-muted-2 flex gap-1.5">
             <span className="font-mono">{full.id.slice(0, 8)}</span>
             {full.pageCount ? <span>· {t("common.count.page", { count: full.pageCount })}</span> : null}
@@ -150,7 +150,7 @@ export function Inspector({
                   name={r.name}
                   email={r.email}
                   size={22}
-                  tone={r.isMe ? "ink" : r.signedAt ? "accent" : "neutral"}
+                  tone={r.isMe ? "ink" : r.signedAt ? "success" : "neutral"}
                 />
                 <span className="flex-1 min-w-0">
                   <span className="block text-[13px] truncate">

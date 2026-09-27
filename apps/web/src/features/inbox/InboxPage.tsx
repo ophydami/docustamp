@@ -4,11 +4,11 @@ import { Trans, useTranslation } from "react-i18next";
 import { ChevronLeft, ChevronRight, Loader2, RefreshCw } from "lucide-react";
 import {
   Button,
-  Cap,
   Card,
   Chip,
   EmptyState,
   Kbd,
+  KpiStrip,
   Stat,
   Tabs,
   toast,
@@ -17,7 +17,7 @@ import {
 import { useAuth } from "@/app/auth";
 import { useExtUser } from "@/lib/extUser";
 import { cn } from "@/lib/cn";
-import { monthDay, num, weekdayMonthDay } from "@/lib/format";
+import { monthDay, num } from "@/lib/format";
 import { useHotkeys } from "@/lib/hotkeys";
 import { errorMessage, remindError, remindSummary, totalsOf } from "@/lib/reminder";
 import { useBadges, useCommands } from "@/lib/store";
@@ -269,12 +269,13 @@ export default function InboxPage() {
 
   return (
     <div className="flex-1 min-h-0 flex">
-      <div className="flex-1 min-w-0 overflow-y-auto scroll-thin px-4 py-4 lg:px-6 lg:py-[22px] flex flex-col gap-5">
+      <div className="flex-1 min-w-0 overflow-y-auto scroll-thin px-4 py-4 lg:px-6 lg:py-5 flex flex-col gap-4 [&>*]:shrink-0">
         <Greeting docs={docs} needsYou={kpis.awaiting} loading={inbox.isLoading} />
 
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <KpiStrip className="grid-cols-2 lg:grid-cols-4">
           <Stat
             tone="accent"
+            dot="bg-accent"
             label={t("inbox.kpi.awaiting")}
             value={inbox.isLoading ? "–" : num(kpis.awaiting)}
             note={
@@ -282,6 +283,7 @@ export default function InboxPage() {
             }
           />
           <Stat
+            dot="bg-warn"
             label={t("inbox.kpi.waiting")}
             value={inbox.isLoading ? "–" : num(kpis.waiting)}
             note={
@@ -291,6 +293,7 @@ export default function InboxPage() {
             }
           />
           <Stat
+            dot="bg-success"
             label={t("inbox.kpi.completedLabel")}
             value={inbox.isLoading ? "–" : num(kpis.completed30)}
             note={
@@ -302,6 +305,7 @@ export default function InboxPage() {
             }
           />
           <Stat
+            dot="bg-faint"
             label={t("inbox.kpi.medianSign")}
             value={kpis.medianSignMs === undefined ? "–" : shortDuration(kpis.medianSignMs)}
             note={
@@ -310,7 +314,7 @@ export default function InboxPage() {
                 : t("inbox.kpi.fastestThisMonth", { duration: shortDuration(kpis.fastestSignMs) })
             }
           />
-        </div>
+        </KpiStrip>
 
         {nudge ? (
           <NudgeBanner
@@ -370,7 +374,7 @@ export default function InboxPage() {
           <div
             role="row"
             className={cn(
-              "h-[34px] bg-surface-2 border-b border-line text-[11px] uppercase tracking-[.08em] text-muted-2 font-medium",
+              "h-[34px] border-b border-line font-mono text-[10px] uppercase tracking-[.06em] text-muted",
               GRID
             )}
           >
@@ -430,7 +434,7 @@ export default function InboxPage() {
           )}
         </Card>
 
-        <div className="flex items-center gap-x-3 gap-y-2 flex-wrap text-[11px] text-muted-2 pb-1">
+        <div className="flex items-center gap-x-3 gap-y-2 flex-wrap text-[11px] text-muted pb-1">
           <span className="num">
             {t("inbox.pagination.range", {
               from: num(from),
@@ -575,12 +579,11 @@ function Greeting({
   const greeting = GREETING_KEYS[timeOfDay()];
 
   return (
-    <div className="flex flex-col gap-1.5">
-      <Cap>{weekdayMonthDay(new Date())}</Cap>
-      <h1 className="font-serif text-[22px] md:text-[28px] leading-tight font-medium max-w-3xl">
+    <div className="flex flex-col">
+      <h1 className="font-medium text-[15px] md:text-[16px] leading-snug max-w-3xl tracking-[-.01em] text-ink-2">
         {name ? t(greeting.named, { name }) : t(greeting.plain)}{" "}
         {loading ? (
-          <span className="text-muted-2">{t("inbox.greeting.counting")}</span>
+          <span className="text-muted">{t("inbox.greeting.counting")}</span>
         ) : clauses.length === 0 ? (
           t("inbox.greeting.nothing")
         ) : clauses.length === 1 ? (

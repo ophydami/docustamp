@@ -926,7 +926,7 @@ export default function SendPage() {
                     className={cn(
                       "inline-flex items-center justify-center size-5 rounded-full text-[10px] font-semibold",
                       done
-                        ? "bg-accent text-on-accent"
+                        ? "bg-success text-on-accent"
                         : current
                           ? "bg-ground/15 text-ground"
                           : "border border-line-strong text-muted-2"
@@ -976,7 +976,7 @@ export default function SendPage() {
               </div>
             ) : draftQuery.error ? (
               <div className="py-20 flex flex-col gap-3">
-                <h1 className="font-serif text-[22px]">{t("send.state.draftError")}</h1>
+                <h1 className="font-semibold text-[18px] tracking-[-.015em]">{t("send.state.draftError")}</h1>
                 <p className="text-[13px] text-muted">{(draftQuery.error as Error).message}</p>
                 <div>
                   <Button onClick={() => navigate("/documents")}>{t("send.actions.backToDocuments")}</Button>
@@ -1147,7 +1147,7 @@ function BulkReview({
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-1.5">
-        <h1 className="font-serif text-[28px] font-medium leading-tight">
+        <h1 className="font-semibold text-[22px] leading-tight tracking-[-.015em]">
           {retry
             ? t("send.bulkReview.toRetry", { count: rows.length })
             : t("send.bulkReview.each", { count: rows.length })}
@@ -1158,7 +1158,7 @@ function BulkReview({
             : t("send.bulkReview.body", { template: documentName || t("send.bulk.theTemplate") })}
         </p>
       </div>
-      <div className="border border-line rounded-lg bg-surface overflow-hidden">
+      <div className="border border-line rounded-xl bg-surface overflow-hidden">
         <div className="grid grid-cols-[32px_1fr_1fr] items-center h-[34px] px-3 bg-surface-2 border-b border-line text-[11px] uppercase tracking-[.08em] text-muted-2">
           <span>#</span>
           <span>{t("send.fields.name")}</span>

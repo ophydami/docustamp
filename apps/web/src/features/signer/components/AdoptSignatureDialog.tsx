@@ -247,7 +247,7 @@ export function AdoptSignatureDialog({
     >
       <div className="w-full sm:w-[560px] max-h-[92vh] overflow-y-auto scroll-thin bg-surface rounded-t-xl sm:rounded-xl border border-line shadow-[var(--shadow-pop)]">
         <div className="px-5 pt-5 pb-4 sm:px-6 sm:pt-6">
-          <h2 className="font-serif text-[24px] leading-tight text-ink">{heading}</h2>
+          <h2 className="font-semibold text-[20px] leading-tight text-ink tracking-[-.015em]">{heading}</h2>
           <p className="mt-1 text-[13px] text-muted">{t("signer.adopt.description")}</p>
 
           <div className="mt-4 grid grid-cols-[1fr_120px] gap-3">
@@ -303,7 +303,7 @@ export function AdoptSignatureDialog({
           </div>
 
           {/* the pad */}
-          <div className="theme-light mt-3 relative rounded-lg border border-line-strong bg-surface-2 overflow-hidden">
+          <div className="theme-light mt-3 relative rounded-xl border border-line-strong bg-surface-2 overflow-hidden">
             {method === "draw" ? (
               <div className="p-2">
                 <canvas ref={canvasRef} className="block touch-none rounded-md paper-white w-full" />

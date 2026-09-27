@@ -12,7 +12,6 @@ import {
   Field,
   Input,
   Menu,
-  PageTitle,
   toast
 } from "@/components/ui";
 import { useHotkeys } from "@/lib/hotkeys";
@@ -197,11 +196,10 @@ export default function TemplatesPage() {
     .join(" · ");
 
   return (
-    <div className="flex-1 min-h-0 overflow-auto scroll-thin px-4 py-4 lg:px-6 lg:py-[22px] flex flex-col gap-4">
+    <div className="flex-1 min-h-0 overflow-auto scroll-thin px-4 py-4 lg:px-6 lg:py-5 flex flex-col gap-4 [&>*]:shrink-0">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
-        <div className="flex flex-col gap-1">
-          <PageTitle>{t("templates.title")}</PageTitle>
-          <span className="text-[12px] text-muted">
+        <div className="flex flex-col gap-1 pt-1.5">
+          <span className="text-[13px] text-muted">
             {list.isLoading ? t("common.state.loading") : subtitle}
           </span>
         </div>

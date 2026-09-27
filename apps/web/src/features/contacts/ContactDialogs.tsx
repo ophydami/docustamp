@@ -355,7 +355,7 @@ export function ImportDialog({
             </span>
           </div>
 
-          <div className="border border-line rounded-lg overflow-hidden">
+          <div className="border border-line rounded-xl overflow-hidden">
             <div className="grid grid-cols-[1fr_1.2fr_1fr_100px] h-[30px] items-center px-3 gap-3 bg-surface-2 border-b border-line text-[11px] tracking-[.08em] uppercase text-muted-2 font-medium">
               <span>{t("contacts.fields.name")}</span>
               <span>{t("contacts.fields.email")}</span>

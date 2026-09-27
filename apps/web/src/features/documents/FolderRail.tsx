@@ -195,7 +195,7 @@ export function FolderRail({ folderId, onSelect, onDropDocuments, draggingIds = 
           }}
           className={cn(
             "group h-7 rounded-md flex items-center gap-1 pr-1 text-[13px]",
-            folderId === node.objectId ? "bg-ink text-ground" : "text-ink-2 hover:bg-line-soft",
+            folderId === node.objectId ? "bg-surface-3 text-ink font-semibold" : "text-ink-2 hover:bg-surface-3/70",
             dropTarget === node.objectId && "ring-1 ring-accent bg-accent-tint text-ink"
           )}
           style={{ paddingLeft: 4 + node.depth * 12 }}
@@ -236,7 +236,7 @@ export function FolderRail({ folderId, onSelect, onDropDocuments, draggingIds = 
                 )}
                 <span className="truncate">{node.name}</span>
               </button>
-              <span className={cn("num text-[11px] shrink-0", folderId === node.objectId ? "text-ground/60" : "text-muted-2")}>
+              <span className={cn("num text-[11px] shrink-0", folderId === node.objectId ? "text-ink-2" : "text-muted")}>
                 {node.count}
               </span>
               <Menu
@@ -313,7 +313,7 @@ export function FolderRail({ folderId, onSelect, onDropDocuments, draggingIds = 
           }}
           className={cn(
             "h-7 rounded-md flex items-center gap-1.5 px-2 text-[13px]",
-            !folderId ? "bg-ink text-ground" : "text-ink-2 hover:bg-line-soft",
+            !folderId ? "bg-surface-3 text-ink font-semibold" : "text-ink-2 hover:bg-surface-3/70",
             dropTarget === null && "ring-1 ring-accent bg-accent-tint text-ink"
           )}
         >
@@ -321,7 +321,7 @@ export function FolderRail({ folderId, onSelect, onDropDocuments, draggingIds = 
             <Inbox className="size-3.5 shrink-0" strokeWidth={1.6} />
             <span className="truncate">{t("documents.folders.allDocuments")}</span>
           </button>
-          <span className={cn("num text-[11px]", !folderId ? "text-ground/60" : "text-muted-2")}>
+          <span className={cn("num text-[11px]", !folderId ? "text-ink-2" : "text-muted")}>
             {drive.data ? drive.data.total : "-"}
           </span>
         </div>
@@ -443,7 +443,7 @@ function MoveFolderDialog({
         style={{ paddingLeft: 8 + node.depth * 14 }}
         className={cn(
           "w-full h-8 pr-2 rounded-md flex items-center gap-1.5 text-left text-[13px]",
-          target === node.objectId ? "bg-ink text-ground" : "hover:bg-line-soft text-ink-2"
+          target === node.objectId ? "bg-surface-3 text-ink font-semibold" : "hover:bg-surface-3/70 text-ink-2"
         )}
       >
         <FolderIcon className="size-3.5 shrink-0" strokeWidth={1.6} />
@@ -493,7 +493,7 @@ function MoveFolderDialog({
             onClick={() => setTarget(null)}
             className={cn(
               "w-full h-8 px-2 rounded-md flex items-center gap-1.5 text-left text-[13px]",
-              target === null ? "bg-ink text-ground" : "hover:bg-line-soft text-ink-2"
+              target === null ? "bg-surface-3 text-ink font-semibold" : "hover:bg-surface-3/70 text-ink-2"
             )}
           >
             <Inbox className="size-3.5 shrink-0" strokeWidth={1.6} />

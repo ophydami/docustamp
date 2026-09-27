@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { ArrowRight } from "lucide-react";
-import { Button, Cap, Stat } from "@/components/ui";
+import { Button, Cap, KpiStrip, Stat } from "@/components/ui";
 import { num, percent } from "@/lib/format";
 import { formatDuration, funnel, histogram, byTemplate, weeklySeries, PREV_RANGE_KEYS } from "../compute";
 import type { ReportView } from "../view";
@@ -116,16 +116,17 @@ export function Overview({ view }: { view: ReportView }) {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
-        <Stat label={t("reports.stats.sent.label")} value={num(summary.sent)} note={t("reports.stats.sent.note")} />
+      <KpiStrip className="grid-cols-2 lg:grid-cols-5">
+        <Stat label={t("reports.stats.sent.label")} value={num(summary.sent)} note={t("reports.stats.sent.note")} dot="bg-faint" />
         <Stat
           label={t("reports.stats.completed.label")}
           value={num(summary.completed)}
           note={t("reports.stats.completed.note", { rate: percent(summary.completionRate) })}
-          tone="accent"
+          dot="bg-success"
         />
         <Stat label={t("reports.stats.median.label")} value={formatDuration(summary.medianMs)} note={medianNote} />
         <Stat
+          dot="bg-danger-2"
           label={t("reports.stats.declinedExpired.label")}
           value={num(summary.declined + summary.expired)}
           note={t("reports.stats.declinedExpired.note", {
@@ -134,6 +135,8 @@ export function Overview({ view }: { view: ReportView }) {
           })}
         />
         <Stat
+          className="col-span-2 lg:col-span-1"
+          dot="bg-warn"
           label={t("reports.stats.waiting.label")}
           value={num(summary.waiting)}
           note={
@@ -142,7 +145,7 @@ export function Overview({ view }: { view: ReportView }) {
               : t("reports.stats.waiting.noneDue")
           }
         />
-      </div>
+      </KpiStrip>
 
       <ChartCard
         title={t("reports.charts.weekly.title")}

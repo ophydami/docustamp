@@ -91,6 +91,10 @@
       "settings": "Settings",
       "templates": "Templates"
     },
+    "navGroups": {
+      "insight": "Insight",
+      "signing": "Signing"
+    },
     "palette": {
       "groupActions": "Actions",
       "groupGoTo": "Go to",

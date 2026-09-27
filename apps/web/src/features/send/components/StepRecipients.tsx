@@ -38,7 +38,7 @@ export function StepRecipients(props: StepRecipientsProps) {
   return (
     <div className="flex flex-col gap-7">
       <div className="flex flex-col gap-1.5">
-        <h1 className="font-serif text-[28px] font-medium leading-tight">{t("send.recipients.title")}</h1>
+        <h1 className="font-semibold text-[22px] leading-tight tracking-[-.015em]">{t("send.recipients.title")}</h1>
         <p className="text-[13px] text-muted">{t("send.recipients.subtitle")}</p>
       </div>
 
@@ -229,7 +229,7 @@ function RecipientCard({
   return (
     <div
       className={cn(
-        "swatch relative bg-surface border border-line rounded-lg pl-4 pr-3 py-3 items-start gap-x-3 gap-y-2 grid",
+        "swatch relative bg-surface border border-line rounded-xl pl-4 pr-3 py-3 items-start gap-x-3 gap-y-2 grid",
         // Under 768 the inputs stack: number and menu keep the top row, the fields
         // run down the middle column.
         "grid-cols-[28px_minmax(0,1fr)_28px]",
@@ -261,7 +261,7 @@ function RecipientCard({
           aria-label={t("send.a11y.recipientEmail")}
         />
         {focused && suggestions.length ? (
-          <ul className="absolute z-30 mt-1 w-full bg-surface border border-line rounded-lg shadow-[var(--shadow-pop)] py-1 max-h-56 overflow-y-auto scroll-thin">
+          <ul className="absolute z-30 mt-1 w-full bg-surface border border-line rounded-xl shadow-[var(--shadow-pop)] py-1 max-h-56 overflow-y-auto scroll-thin">
             {suggestions.map((c) => (
               <li key={c.objectId}>
                 <button

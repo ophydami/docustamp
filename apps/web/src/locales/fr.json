@@ -92,6 +92,10 @@
       "settings": "Paramètres",
       "templates": "Modèles"
     },
+    "navGroups": {
+      "insight": "Analyse",
+      "signing": "Signature"
+    },
     "palette": {
       "groupActions": "Actions",
       "groupGoTo": "Aller à",

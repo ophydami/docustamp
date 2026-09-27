@@ -57,7 +57,7 @@ export function StepBulk(props: StepBulkProps) {
   return (
     <div className="flex flex-col gap-7">
       <div className="flex flex-col gap-1.5">
-        <h1 className="font-serif text-[28px] font-medium leading-tight">{t("send.bulk.title")}</h1>
+        <h1 className="font-semibold text-[22px] leading-tight tracking-[-.015em]">{t("send.bulk.title")}</h1>
         <p className="text-[13px] text-muted">
           {t("send.bulk.subtitle", { template: props.templateName || t("send.bulk.theTemplate") })}
         </p>
@@ -125,7 +125,7 @@ export function StepBulk(props: StepBulkProps) {
       </div>
 
       {props.rows.length ? (
-        <div className="border border-line rounded-lg overflow-hidden bg-surface">
+        <div className="border border-line rounded-xl overflow-hidden bg-surface">
           <div className="grid grid-cols-[32px_1fr_1fr_160px_36px] items-center h-[34px] px-3 bg-surface-2 border-b border-line">
             <Cap>#</Cap>
             <Cap>{t("send.fields.name")}</Cap>

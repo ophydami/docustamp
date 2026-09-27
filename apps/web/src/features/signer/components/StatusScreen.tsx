@@ -100,7 +100,7 @@ export function StatusScreen(props: Props) {
             </span>
             <Pill tone={pill}>{t(label)}</Pill>
           </div>
-          <h1 className="mt-4 font-serif text-[28px] leading-[1.15] text-ink">{title}</h1>
+          <h1 className="mt-4 font-semibold text-[22px] leading-[1.15] text-ink tracking-[-.015em]">{title}</h1>
           {props.docName ? (
             <p className="mt-2 text-[13px] text-ink-2">
               <span className="font-medium">{props.docName}</span>

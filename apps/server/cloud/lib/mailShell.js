@@ -24,12 +24,12 @@ import { appName, escapeHtml, mailLogoHtml, mailThemeColor, senderLineHtml } fro
  */
 
 const FONT = "-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif";
-const INK = '#1c1b18';
-const INK_2 = '#3a3834';
-const MUTED = '#6e6a62';
-const FAINT = '#8a867e';
-const LINE = '#e8e4dc';
-const PAGE = '#f4f1ea';
+const INK = '#09090b';
+const INK_2 = '#3f3f46';
+const MUTED = '#71717b';
+const FAINT = '#8b8b94';
+const LINE = '#e4e4e7';
+const PAGE = '#f4f4f5';
 const CARD_WIDTH = 560;
 
 /** Escaped text in bold, for the document title or a person's name inside a paragraph. */

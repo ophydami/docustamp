@@ -114,7 +114,7 @@ export default function SignerDonePage() {
         <div className="mt-8 flex items-center justify-center size-14 rounded-full bg-accent-soft text-accent">
           <Check className="size-7" strokeWidth={2} />
         </div>
-        <h1 className="mt-5 font-serif text-[32px] leading-[1.1] text-ink">{t("signer.done.title")}</h1>
+        <h1 className="mt-5 font-semibold text-[26px] leading-[1.1] text-ink tracking-[-.015em]">{t("signer.done.title")}</h1>
         <p className="mt-2.5 text-[14px] leading-relaxed text-muted">
           <Trans
             i18nKey="signer.done.recorded"
@@ -204,7 +204,7 @@ export default function SignerDonePage() {
 
         {!user ? (
           <Card className="mt-8 p-5 bg-accent-tint border-accent-line">
-            <h2 className="font-serif text-[20px] leading-tight text-ink">{t("signer.done.accountTitle")}</h2>
+            <h2 className="font-semibold text-[16px] leading-tight text-ink tracking-[-.015em]">{t("signer.done.accountTitle")}</h2>
             <p className="mt-1.5 text-[13px] leading-relaxed text-muted">{t("signer.done.accountBody")}</p>
             <Link to="/signup" className="no-underline">
               <Button variant="primary" className="mt-3.5 min-h-11 sm:min-h-0" iconRight={<ExternalLink className="size-3.5" strokeWidth={1.6} />}>

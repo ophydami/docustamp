@@ -30,13 +30,13 @@ export function Tabs<T extends string>({ items, value, onChange, right, classNam
             type="button"
             onClick={() => onChange(t.value)}
             className={cn(
-              "text-[13px] pb-2.5 -mb-px border-b-2 whitespace-nowrap shrink-0",
-              on ? "text-ink border-ink font-medium" : "text-muted border-transparent hover:text-ink"
+              "text-[13px] font-medium pb-2.5 -mb-px border-b-2 whitespace-nowrap shrink-0 inline-flex items-center gap-1.5",
+              on ? "text-ink border-ink" : "text-muted border-transparent hover:text-ink"
             )}
           >
             {t.label}
             {t.count !== undefined ? (
-              <span className={cn("num ml-1", t.countTone === "accent" ? "text-accent" : "text-muted-2")}>{t.count}</span>
+              <span className={cn("num text-[10.5px]", t.countTone === "accent" ? "text-accent" : "text-muted")}>{t.count}</span>
             ) : null}
           </button>
         );
@@ -55,7 +55,7 @@ export interface ChipProps {
   className?: string;
 }
 
-/** Filter chip: 28px, hairline; active = ink. */
+/** Filter chip: 28px, hairline; active = zinc fill with an ink label. */
 export function Chip({ active, onClick, children, dot, className }: ChipProps) {
   return (
     <button
@@ -63,7 +63,7 @@ export function Chip({ active, onClick, children, dot, className }: ChipProps) {
       onClick={onClick}
       className={cn(
         "inline-flex items-center gap-1.5 h-7 px-2.5 rounded-md text-[12px] font-medium border whitespace-nowrap",
-        active ? "bg-ink text-ground border-ink" : "bg-surface text-ink-2 border-line hover:border-line-strong",
+        active ? "bg-surface-3 text-ink border-line-strong" : "bg-surface text-muted border-line hover:text-ink hover:border-line-strong",
         className
       )}
     >

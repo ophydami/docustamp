@@ -83,7 +83,7 @@ export function FieldBox(props: FieldBoxProps) {
       className={cn(
         "absolute rounded-[3px] transition-all",
         active
-          ? "border-2 border-accent bg-accent-soft/70 shadow-[var(--shadow-focus)] z-20"
+          ? "border-2 border-accent bg-accent-soft/70 shadow-[0_0_0_3px_rgb(20_71_230/0.14)] z-20"
           : filled
             ? "border border-accent-line bg-accent-tint/60 z-10"
             : "border border-accent bg-accent-soft/45 z-10",
@@ -267,7 +267,7 @@ function FieldControl({
           <label key={`${label}-${i}`} className="flex items-center gap-1 cursor-pointer min-w-0" style={{ fontSize: fontPx }}>
             <input
               type="checkbox"
-              className="accent-[#0f6e56] shrink-0"
+              className="accent-[#1447e6] shrink-0"
               style={{ width: fontPx, height: fontPx }}
               disabled={f.readOnly}
               checked={chosen.has(i)}
@@ -297,7 +297,7 @@ function FieldControl({
             <input
               type="radio"
               name={`radio-${f.key}`}
-              className="accent-[#0f6e56] shrink-0"
+              className="accent-[#1447e6] shrink-0"
               style={{ width: fontPx, height: fontPx }}
               disabled={f.readOnly}
               checked={value === label}

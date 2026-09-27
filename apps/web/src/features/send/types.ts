@@ -192,7 +192,7 @@ export interface BulkRow {
   error?: string;
 }
 
-export const SIGNER_COLORS = ["#0f6e56", "#b07a12", "#6b5bd6", "#2563a8", "#b5412e", "#0e7490"] as const;
+export const SIGNER_COLORS = ["#1447e6", "#e17100", "#6b5bd6", "#009966", "#c8000a", "#0e7490"] as const;
 
 export function signerColor(index: number): string {
   return SIGNER_COLORS[index % SIGNER_COLORS.length];

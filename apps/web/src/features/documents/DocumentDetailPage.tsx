@@ -30,7 +30,8 @@ import {
   Select,
   Tabs,
   Toggle,
-  toast
+  toast,
+  type PillTone
 } from "@/components/ui";
 import { PdfViewer, useVisiblePage, type PdfPageInfo } from "@/components/pdf/PdfViewer";
 import { cn } from "@/lib/cn";
@@ -47,8 +48,8 @@ type Tab = "overview" | "audit" | "fields" | "settings";
 const NARROW_WIDTH = 440;
 const FIT_WIDTH = 516;
 
-function statusPill(doc: Document): { tone: "accent" | "warn" | "danger" | "neutral" | "ink"; labelKey: string } {
-  if (doc.status === "completed") return { tone: "ink", labelKey: "common.status.completed" };
+function statusPill(doc: Document): { tone: PillTone; labelKey: string } {
+  if (doc.status === "completed") return { tone: "success", labelKey: "common.status.completed" };
   if (doc.status === "declined") return { tone: "danger", labelKey: "common.status.declined" };
   if (doc.status === "expired") return { tone: "danger", labelKey: "common.status.expired" };
   if (doc.status === "draft") return { tone: "neutral", labelKey: "common.status.draft" };
@@ -347,7 +348,7 @@ export default function DocumentDetailPage() {
         <div className="flex-1 min-w-0 lg:overflow-auto scroll-thin">
           <div className="px-4 md:px-6 pt-5 pb-3">
             <div className="flex items-start gap-3">
-              <h1 className="font-serif text-[26px] font-medium leading-tight min-w-0 flex-1">{doc.name}</h1>
+              <h1 className="font-semibold text-[22px] leading-tight min-w-0 flex-1 tracking-[-.015em]">{doc.name}</h1>
               <Pill tone={pill.tone} dot className="mt-1.5">
                 {t(pill.labelKey)}
               </Pill>
@@ -681,8 +682,8 @@ function MetaRow({ label, value }: { label: string; value: React.ReactNode }) {
   );
 }
 
-const STATE_LABEL: Record<Recipient["state"], { tone: "accent" | "warn" | "danger" | "neutral" | "ink"; key: string }> = {
-  signed: { tone: "ink", key: "documents.recipientState.signed" },
+const STATE_LABEL: Record<Recipient["state"], { tone: PillTone; key: string }> = {
+  signed: { tone: "success", key: "documents.recipientState.signed" },
   turn: { tone: "accent", key: "documents.recipientState.turn" },
   viewed: { tone: "warn", key: "documents.recipientState.viewed" },
   waiting: { tone: "neutral", key: "documents.recipientState.waiting" },
@@ -745,7 +746,7 @@ function AuditList({ events, full }: { events: AuditEvent[]; full?: boolean }) {
     return <p className="text-[13px] text-muted">{t("documents.detail.auditEmpty")}</p>;
   }
   return (
-    <ol className={cn("flex flex-col", full && "bg-surface border border-line rounded-lg px-4")}>
+    <ol className={cn("flex flex-col", full && "bg-surface border border-line rounded-xl px-4")}>
       {events.map((e) => (
         <li key={e.id} className="flex items-start gap-3 py-2.5 border-b border-line-soft last:border-0">
           <span className="font-mono text-[11px] text-muted-2 w-[92px] shrink-0 pt-0.5">{stamp(e.at) || "-"}</span>
@@ -791,7 +792,7 @@ function OpensPanel({ doc }: { doc: Document }) {
       {total === 0 ? (
         <p className="text-[13px] text-muted">{t("documents.detail.opensEmpty")}</p>
       ) : (
-        <div className="bg-surface border border-line rounded-lg px-4">
+        <div className="bg-surface border border-line rounded-xl px-4">
           {opened.map((r) => (
             <div key={r.objectId || r.email} className="flex items-center gap-3 py-2.5 border-b border-line-soft last:border-0">
               <Avatar name={r.name} email={r.email} size={22} />
@@ -811,7 +812,7 @@ function OpensPanel({ doc }: { doc: Document }) {
       {opens.isLoading ? (
         <Loader2 className="size-4 animate-spin text-muted-2" />
       ) : opens.data?.opens.length ? (
-        <ol className="bg-surface border border-line rounded-lg px-4 flex flex-col">
+        <ol className="bg-surface border border-line rounded-xl px-4 flex flex-col">
           {opens.data.opens.map((o) => (
             <li key={o.id} className="flex items-start gap-3 py-2 border-b border-line-soft last:border-0 text-[12px]">
               <span className="font-mono text-[11px] text-muted-2 w-[92px] shrink-0 pt-0.5">{stamp(o.at) || "-"}</span>

@@ -80,7 +80,7 @@ function toPlaceholder(raw: Raw): PlaceholderEntry {
   return {
     Id: num(raw.Id, Math.floor(Math.random() * 1e8)),
     Role: str(raw.Role) || "Role 1",
-    blockColor: str(raw.blockColor) || "#0f6e56",
+    blockColor: str(raw.blockColor) || "#1447e6",
     signerObjId,
     signerPtr: signerObjId ? pointer("contracts_Contactbook", signerObjId) : {},
     email: str(raw.email),

@@ -244,7 +244,7 @@ export default function EmailTemplatesSection() {
             <Pill tone="accent">{t("settings.emailTemplates.preview.custom")}</Pill>
           )}
         </div>
-        <div className="bg-sand border border-line rounded-lg p-4">
+        <div className="bg-sand border border-line rounded-xl p-4">
           <div className="bg-surface border border-line rounded-md overflow-hidden">
             <div className="px-4 py-3 border-b border-line-soft">
               <span className="text-[12px] text-ink-2">

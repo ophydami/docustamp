@@ -109,20 +109,20 @@ function requestContent(body: string, vars: MailVariables): string {
     .map((p) => `<p style="margin:0 0 14px;line-height:1.6">${escapeHtml(p).replace(/\n/g, "<br/>")}</p>`)
     .join("");
   const note = vars.note
-    ? `<p style="margin:0 0 18px;padding:12px 14px;background:#f4f1ea;border-radius:8px;line-height:1.6">${escapeHtml(
+    ? `<p style="margin:0 0 18px;padding:12px 14px;background:#f4f4f5;border-radius:8px;line-height:1.6">${escapeHtml(
         vars.note
       )}</p>`
     : "";
   return [
-    '<div style="padding:24px;background:#faf8f4;font-family:Helvetica,Arial,sans-serif;color:#1c1b18;font-size:15px">',
-    '<div style="max-width:560px;margin:0 auto;background:#ffffff;border:1px solid #e8e4dc;border-radius:10px;padding:28px 30px">',
+    '<div style="padding:24px;background:#fafafa;font-family:Helvetica,Arial,sans-serif;color:#09090b;font-size:15px">',
+    '<div style="max-width:560px;margin:0 auto;background:#ffffff;border:1px solid #e4e4e7;border-radius:14px;padding:28px 30px">',
     paragraphs,
     note,
-    `<p style="margin:22px 0"><a href="${vars.signing_url}" style="display:inline-block;background:#0f6e56;color:#ffffff;text-decoration:none;font-weight:600;padding:12px 20px;border-radius:8px">Review and sign</a></p>`,
-    `<p style="margin:0 0 6px;font-size:13px;color:#6e6a62">This request expires on ${escapeHtml(vars.expiry_date)}.</p>`,
+    `<p style="margin:22px 0"><a href="${vars.signing_url}" style="display:inline-block;background:#09090b;color:#ffffff;text-decoration:none;font-weight:600;padding:12px 20px;border-radius:8px">Review and sign</a></p>`,
+    `<p style="margin:0 0 6px;font-size:13px;color:#71717b">This request expires on ${escapeHtml(vars.expiry_date)}.</p>`,
     // The sender's address sits behind their name as a mailto link rather than
     // being printed: a mail that leads with a bare gmail address reads like spam.
-    `<p style="margin:0;font-size:13px;color:#6e6a62">Sent by ${senderLink(vars)}${
+    `<p style="margin:0;font-size:13px;color:#71717b">Sent by ${senderLink(vars)}${
       vars.company_name ? `, ${escapeHtml(vars.company_name)}` : ""
     }.</p>`,
     "</div></div>"
@@ -132,7 +132,7 @@ function requestContent(body: string, vars: MailVariables): string {
 function senderLink(vars: MailVariables): string {
   const name = vars.sender_name.trim() || vars.company_name.trim() || vars.sender_mail;
   if (!vars.sender_mail) return escapeHtml(name);
-  return `<a href="mailto:${escapeHtml(vars.sender_mail)}" style="color:#6e6a62">${escapeHtml(name)}</a>`;
+  return `<a href="mailto:${escapeHtml(vars.sender_mail)}" style="color:#71717b">${escapeHtml(name)}</a>`;
 }
 
 export function formatExpiry(date: Date): string {

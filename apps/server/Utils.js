@@ -27,7 +27,7 @@ export const serverAppId = process.env.APP_ID || 'docustamp';
  *   APP_NAME             display name (default "DocuStamp")
  *   APP_LOGO_URL         public image url for the mail header; empty or "none" =
  *                        no image, the name is shown as a text wordmark instead
- *   APP_MAIL_COLOR       header bar colour, e.g. #0f6e56
+ *   APP_MAIL_COLOR       header bar colour, e.g. #09090b
  *   APP_COMPLAINTS_EMAIL address behind the "file a complaint" link in the
  *                        Powered-by footer; empty = a plain "Sent via <name>" line
  *   APP_SUPPORT_EMAIL    contact written into PDF signatures and shown in error
@@ -42,7 +42,7 @@ export const appLogoUrl = (() => {
   const value = envText('APP_LOGO_URL', '');
   return /^(none|off|false|-)$/i.test(value) ? '' : value;
 })();
-export const mailThemeColor = envText('APP_MAIL_COLOR', '#0f6e56');
+export const mailThemeColor = envText('APP_MAIL_COLOR', '#09090b');
 export const complaintsEmail = envText('APP_COMPLAINTS_EMAIL', '');
 export const supportEmail = envText('APP_SUPPORT_EMAIL', '');
 
