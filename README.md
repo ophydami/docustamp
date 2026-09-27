@@ -18,7 +18,30 @@ Send PDFs for signature, collect signatures from one or many people, and get bac
 
 ## Run it on your own server
 
-You need a Linux server or VM with [Docker](https://docs.docker.com/engine/install/) (4 GB of memory is comfortable), a domain name pointed at the server, and an email-sending service (SMTP such as Amazon SES, Postmark or Mailgun). Most VPS providers block sending email directly from the server, so the email service is not optional.
+You need a Linux server (Ubuntu or Debian, amd64 or ARM, 2 GB of memory or more), a domain or subdomain pointed at it, and an email-sending service (Amazon SES, Postmark, Mailgun or any SMTP service). Most VPS providers block sending email directly from the server, so the email service is not optional. Then run:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/ophydami/docustamp/main/install.sh | sudo bash
+```
+
+The installer sets up Docker if it is missing, asks for your domain and email settings, creates the secrets and starts three containers in `/opt/docustamp`: DocuStamp (the web app and the server in one image), MongoDB, and Caddy, which gets HTTPS certificates for your domain automatically (ports 80 and 443 must be reachable). Open your domain and create the first account: it becomes the workspace admin.
+
+It also adds a `docustamp` command:
+
+| Command | What it does |
+|---|---|
+| `sudo docustamp status` | Shows the containers and whether the app is healthy |
+| `sudo docustamp logs` | Follows the app's logs (`logs mongo` or `logs caddy` for the others) |
+| `sudo docustamp restart` | Restarts after you change `/opt/docustamp/.env.prod` |
+| `sudo docustamp update` | Moves to the latest release |
+| `sudo docustamp backup` | Saves the database, the documents and the settings in one file under `/opt/docustamp/backups` |
+| `sudo docustamp restore <file>` | Puts a backup back, on this server or a new one |
+
+Running the installer again is safe: it keeps your settings and secrets.
+
+### Manual setup with Docker Compose
+
+The same three containers, set up by hand from a checkout:
 
 ```bash
 git clone https://github.com/ophydami/docustamp.git
@@ -35,9 +58,7 @@ echo "HOST_URL=https://sign.example.com" > .env
 docker compose up -d
 ```
 
-Open your domain in a browser and create the first account. HTTPS certificates are issued automatically by Caddy, so ports 80 and 443 must be reachable.
-
-This runs three containers: DocuStamp itself (the web app and the server in one image), MongoDB, and Caddy for HTTPS. The DocuStamp image is published for both regular (amd64) and ARM servers at `ghcr.io/ophydami/docustamp`. A one-command installer and one-click setups for Railway, Render and Fly.io are on the way.
+The DocuStamp image is published for both regular (amd64) and ARM servers at `ghcr.io/ophydami/docustamp`. To update: `git pull && docker compose pull && docker compose up -d`. To stay on a specific release, put `DOCUSTAMP_VERSION=0.1.0` in `.env`.
 
 ### On Railway
 
@@ -61,7 +82,6 @@ Put HTTPS in front of it (a reverse proxy or your platform's), and keep `TRUST_P
 
 `docker compose -f docker-compose.yml -f docker-compose.build.yml up -d --build` builds the image from your checkout (the root `Dockerfile`) instead of downloading it. You need your own build to change `APP_ID`, to turn on "Sign in with Google" (`GOOGLE_CLIENT_ID` in `.env`), or to point the app's "Source" links at your fork (`SOURCE_URL`), because those are baked into the web app.
 
-**Updating:** `git pull && docker compose pull && docker compose up -d`. To stay on a specific release, put `DOCUSTAMP_VERSION=0.1.0` in `.env`.
 
 **Backups:** back up the `data-volume` (the database) and `docustamp-files` (uploaded documents) Docker volumes, or use S3-compatible storage for documents (see `.env.example`).
 

@@ -1,0 +1,151 @@
+#!/usr/bin/env bash
+# docustamp: manage a DocuStamp install made by install.sh.
+#
+#   docustamp status            containers and health
+#   docustamp logs [service]    follow the logs (app, mongo or caddy)
+#   docustamp restart           restart after changing .env.prod
+#   docustamp update [version]  move to the latest release (or the one given)
+#   docustamp backup            database, documents and settings in one file
+#   docustamp restore <file>    put a backup back (replaces the current data)
+#   docustamp version           the installed release
+set -euo pipefail
+
+DIR="${DOCUSTAMP_DIR:-/opt/docustamp}"
+REPO="ophydami/docustamp"
+FILES=/usr/src/app/files/files
+
+say() { printf '\033[1m==>\033[0m %s\n' "$*"; }
+die() {
+  printf '\033[31mError:\033[0m %s\n' "$*" >&2
+  exit 1
+}
+
+[ -f "$DIR/docker-compose.yml" ] || die "No DocuStamp install in $DIR. Set DOCUSTAMP_DIR if it lives elsewhere."
+cd "$DIR"
+[ "$(id -u)" -eq 0 ] || die "Run it as root, e.g. sudo docustamp $*"
+
+dc() { docker compose "$@"; }
+
+setting() { # setting <KEY> <file>: a value as written by install.sh
+  sed -n "s/^$1=['\"]\{0,1\}\([^'\"]*\).*/\1/p" "$2" | head -n1
+}
+
+wait_healthy() {
+  for _ in $(seq 1 90); do
+    if curl -fsS --max-time 3 http://127.0.0.1:8080/api/app/health >/dev/null 2>&1; then
+      say "DocuStamp is running."
+      return 0
+    fi
+    sleep 2
+  done
+  dc logs --tail=80 app >&2 || true
+  die "DocuStamp did not become ready in 3 minutes."
+}
+
+database() { # the database name from MONGODB_URI
+  local uri
+  uri=$(setting MONGODB_URI .env.prod)
+  uri=${uri%%\?*}
+  echo "${uri##*/}"
+}
+
+cmd=${1:-status}
+shift || true
+
+case "$cmd" in
+  status)
+    dc ps
+    if curl -fsS --max-time 3 http://127.0.0.1:8080/api/app/health >/dev/null 2>&1; then
+      say "Healthy: $(setting HOST_URL .env) (release $(setting DOCUSTAMP_VERSION .env))"
+    else
+      say "Not answering yet. See: docustamp logs"
+    fi
+    ;;
+
+  logs)
+    dc logs -f --tail=100 "${1:-app}"
+    ;;
+
+  restart)
+    dc up -d --force-recreate app
+    wait_healthy
+    ;;
+
+  version)
+    setting DOCUSTAMP_VERSION .env
+    ;;
+
+  update)
+    version=${1:-}
+    if [ -z "$version" ]; then
+      version=$(curl -fsSL "https://api.github.com/repos/$REPO/releases/latest" |
+        sed -n 's/.*"tag_name": *"v\{0,1\}\([^"]*\)".*/\1/p' | head -n1)
+      [ -n "$version" ] || die "Could not look up the latest release."
+    fi
+    version=${version#v}
+    if [ "$version" = "main" ]; then ref=main; else ref="v$version"; fi
+    say "Updating to DocuStamp $version"
+    for f in docker-compose.yml Caddyfile; do
+      curl -fsSL "https://raw.githubusercontent.com/$REPO/$ref/$f" -o "$f.new"
+      mv "$f.new" "$f"
+    done
+    sed -i "s/^DOCUSTAMP_VERSION=.*/DOCUSTAMP_VERSION='$version'/" .env
+    dc pull --quiet
+    dc up -d --remove-orphans
+    wait_healthy
+    # Last, because this replaces the running script.
+    if curl -fsSL "https://raw.githubusercontent.com/$REPO/$ref/scripts/docustamp" -o "$0.new"; then
+      sed -i "s|^DIR=\"\${DOCUSTAMP_DIR:-/opt/docustamp}\"|DIR=\"\${DOCUSTAMP_DIR:-$DIR}\"|" "$0.new"
+      chmod 755 "$0.new"
+      mv "$0.new" "$0"
+    fi
+    ;;
+
+  backup)
+    mkdir -p backups
+    stamp=$(date -u +%Y%m%d-%H%M%S)
+    work=$(mktemp -d)
+    trap 'rm -rf "$work"' EXIT
+    db=$(database)
+    say "Backing up the database ($db)"
+    dc exec -T mongo mongodump --quiet --archive --gzip --db "$db" >"$work/database.archive.gz"
+    say "Backing up the documents"
+    dc exec -T app tar -czf - -C "$FILES" . >"$work/files.tar.gz"
+    cp .env .env.prod "$work/"
+    out="$DIR/backups/docustamp-$stamp.tar.gz"
+    (umask 077 && tar -czf "$out" -C "$work" .)
+    say "Saved $out ($(du -h "$out" | cut -f1)). It holds your secrets too: keep it private."
+    ;;
+
+  restore)
+    file=${1:-}
+    [ -n "$file" ] && [ -f "$file" ] || die "Usage: docustamp restore <backup file>"
+    if [ "${DOCUSTAMP_YES:-}" != "1" ]; then
+      read -r -p "This replaces the current database, documents and settings. Type 'restore' to go on: " answer </dev/tty
+      [ "$answer" = "restore" ] || die "Nothing changed."
+    fi
+    work=$(mktemp -d)
+    trap 'rm -rf "$work"' EXIT
+    tar -xzf "$file" -C "$work"
+    [ -f "$work/database.archive.gz" ] || die "$file is not a DocuStamp backup."
+    if [ -f "$work/.env.prod" ]; then
+      cp .env.prod ".env.prod.before-restore"
+      cp "$work/.env.prod" .env.prod
+      chmod 600 .env.prod
+    fi
+    db=$(database)
+    say "Stopping the app"
+    dc stop app
+    say "Restoring the database ($db)"
+    dc exec -T mongo mongorestore --quiet --archive --gzip --drop --nsInclude "$db.*" <"$work/database.archive.gz"
+    say "Restoring the documents"
+    dc run --rm --no-deps -T --entrypoint sh app -c "rm -rf $FILES/* && tar -xzf - -C $FILES" <"$work/files.tar.gz"
+    dc up -d app
+    wait_healthy
+    ;;
+
+  *)
+    sed -n '2,11p' "$0" | sed 's/^# \{0,1\}//'
+    exit 1
+    ;;
+esac

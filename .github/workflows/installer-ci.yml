@@ -1,0 +1,109 @@
+# Run install.sh the way a new server would, on amd64 and arm64: unattended,
+# plain http on localhost, with the files from this checkout and the image
+# published from main. Then exercise the docustamp command: status, a backup,
+# a restore after losing the database, and a second install that must keep the
+# secrets.
+name: installer-ci
+
+on:
+  push:
+    branches:
+      - main
+      - staging
+  pull_request:
+    branches:
+      - '**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  shellcheck:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Shellcheck
+        run: shellcheck -S style install.sh scripts/docustamp
+
+  install:
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-24.04, ubuntu-24.04-arm]
+    runs-on: ${{ matrix.runner }}
+    env:
+      BASE: http://localhost
+      APP_ID: docustamp
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Install
+        run: >-
+          sudo env DOCUSTAMP_YES=1 DOCUSTAMP_DOMAIN=localhost DOCUSTAMP_TLS=off
+          DOCUSTAMP_EMAIL=none DOCUSTAMP_VERSION=main
+          DOCUSTAMP_FILES_DIR="$GITHUB_WORKSPACE"
+          bash install.sh
+
+      - name: The site answers through Caddy
+        run: |
+          set -e
+          curl -fsS "$BASE/" | grep -q '<div id="root">'
+          curl -fsS "$BASE/api/app/health" | grep -q '"ok"'
+          sudo docustamp status
+          test "$(sudo docustamp version)" = main
+
+      - name: Sign up and upload a document
+        run: |
+          set -e
+          signup=$(curl -fsS -X POST "$BASE/api/app/users" \
+            -H "X-Parse-Application-Id: $APP_ID" -H 'Content-Type: application/json' \
+            -d '{"username":"ci@example.com","email":"ci@example.com","password":"Correct-Horse-9!"}')
+          token=$(echo "$signup" | jq -r .sessionToken)
+          test -n "$token" && test "$token" != null
+          printf '%%PDF-1.4\n%%%%EOF\n' > ci.pdf
+          curl -fsS -X POST "$BASE/api/app/files/ci.pdf" \
+            -H "X-Parse-Application-Id: $APP_ID" -H "X-Parse-Session-Token: $token" \
+            -H 'Content-Type: application/pdf' --data-binary @ci.pdf | jq -e .url
+
+      - name: Back up
+        run: |
+          set -e
+          sudo docustamp backup
+          ls -l /opt/docustamp/backups
+          test "$(sudo find /opt/docustamp/backups -name 'docustamp-*.tar.gz' | wc -l)" = 1
+
+      - name: Lose the data, then restore it
+        run: |
+          set -e
+          cd /opt/docustamp
+          login() {
+            curl -s -o /dev/null -w '%{http_code}' -X POST "$BASE/api/app/login" \
+              -H "X-Parse-Application-Id: $APP_ID" -H 'Content-Type: application/json' \
+              -d '{"username":"ci@example.com","password":"Correct-Horse-9!"}'
+          }
+          test "$(login)" = 200
+          sudo docker compose exec -T mongo mongosh docustamp --quiet --eval 'db.dropDatabase()'
+          sudo docker compose exec -T app sh -c 'rm -rf /usr/src/app/files/files/*'
+          sudo docker compose restart app
+          sleep 5
+          backup=$(sudo find /opt/docustamp/backups -name 'docustamp-*.tar.gz' | head -n1)
+          sudo env DOCUSTAMP_YES=1 docustamp restore "$backup"
+          test "$(login)" = 200
+          sudo docker compose exec -T app find /usr/src/app/files/files -name '*ci.pdf' | grep -q ci.pdf
+
+      - name: Installing again keeps the settings and secrets
+        run: |
+          set -e
+          before=$(sudo sha256sum /opt/docustamp/.env.prod)
+          sudo env DOCUSTAMP_YES=1 DOCUSTAMP_VERSION=main DOCUSTAMP_FILES_DIR="$GITHUB_WORKSPACE" bash install.sh
+          after=$(sudo sha256sum /opt/docustamp/.env.prod)
+          test "$before" = "$after"
+          curl -fsS "$BASE/api/app/health" | grep -q '"ok"'
+
+      - name: Logs
+        if: always()
+        run: sudo docker compose -f /opt/docustamp/docker-compose.yml logs --tail=150 2>&1 || true
