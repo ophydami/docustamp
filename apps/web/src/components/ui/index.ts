@@ -11,3 +11,4 @@ export * from "./Menu";
 export * from "./Toast";
 export * from "./ThemeControl";
 export * from "./LanguageControl";
+export * from "./LogoMark";

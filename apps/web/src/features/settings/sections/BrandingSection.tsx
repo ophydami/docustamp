@@ -1,7 +1,7 @@
 import { useRef, useState, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { Upload } from "lucide-react";
-import { Button, Field, Input, Textarea, Toggle, toast } from "@/components/ui";
+import { Button, Field, Input, LogoMark, Textarea, Toggle, toast } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import { isAdminRole, useExtUser } from "@/lib/extUser";
 import { updateTenantBranding, uploadImage, useInvalidateTenant, useTenant, type TenantBranding } from "../api";
@@ -126,7 +126,7 @@ export default function BrandingSection() {
               {v.Logo ? (
                 <img src={v.Logo} alt="" className="max-h-10 max-w-12 object-contain" />
               ) : (
-                <span className="size-5 rounded-[5px] bg-ink" />
+                <LogoMark size={22} className="text-ink" />
               )}
             </div>
             <div className="flex flex-col gap-1.5 min-w-0">
@@ -354,7 +354,7 @@ function EmailPreview({
             {logo ? (
               <img src={logo} alt="" className="h-6 max-w-24 object-contain" />
             ) : (
-              <span className="size-5 rounded-[5px] bg-ink" />
+              <LogoMark size={22} className="text-ink" />
             )}
             <span className="text-[13px] font-semibold">{workspace}</span>
           </div>
@@ -386,7 +386,7 @@ function SigningPreview({ logo, workspace, senderName }: { logo?: string; worksp
           {logo ? (
             <img src={logo} alt="" className="h-5 max-w-20 object-contain" />
           ) : (
-            <span className="size-4 rounded-[4px] bg-ink" />
+            <LogoMark size={18} className="text-ink" />
           )}
           <span className="text-[12px] font-semibold">{workspace}</span>
           <span className="text-[11px] text-muted-2 truncate">· {doc}</span>
