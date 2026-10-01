@@ -457,16 +457,31 @@ export function documentContactIds(docJson) {
   return ids;
 }
 
-/** The contact (from the document's Signers) a logged-in participant corresponds to, if any. */
-function contactIdForUser(docJson, user) {
-  if (!user) return '';
+/**
+ * Every contact (from the document's Signers) a logged-in user corresponds to:
+ * the contact's `UserId` is that account, or its address is the account's.
+ * Usually one; an account that was added twice gets both seats.
+ *
+ * @param {Object} docJson contracts_Document JSON with `Signers` included.
+ * @param {Parse.User|null} user
+ * @returns {string[]} contactIds, in Signers order.
+ */
+export function contactIdsForUser(docJson, user) {
+  if (!user) return [];
   const email = normaliseEmail(user.get?.('email') || user.get?.('username'));
+  const ids = [];
   for (const s of docJson?.Signers || []) {
     if (!s?.objectId) continue;
-    if (s?.UserId?.objectId && s.UserId.objectId === user.id) return s.objectId;
-    if (email && normaliseEmail(s?.Email) === email) return s.objectId;
+    const byAccount = !!s?.UserId?.objectId && s.UserId.objectId === user.id;
+    const byAddress = !!email && normaliseEmail(s?.Email) === email;
+    if ((byAccount || byAddress) && !ids.includes(s.objectId)) ids.push(s.objectId);
   }
-  return '';
+  return ids;
+}
+
+/** True when the account's address has been proven (emailed code, Google, or verifyemail). */
+function hasVerifiedEmail(user) {
+  return user?.get?.('emailVerified') === true;
 }
 
 /**
@@ -477,19 +492,33 @@ function contactIdForUser(docJson, user) {
  * Resolution order:
  *  1. master key                                   -> { kind: 'master' }
  *  2. session user who owns the document           -> { kind: 'owner', user }
- *  3. session user who is a signer (email/UserId)  -> { kind: 'signer', user, contactId }
+ *  3. session user who is a signer (email/UserId) with a verified email
+ *                                                  -> { kind: 'signer', user, contactId }
  *  4. valid signing-link token for this document   -> { kind: 'signer', contactId }
  *  5. legacy link (doc older than the cutover) with a contactId that is a signer
  *                                                  -> { kind: 'signer', contactId, legacy: true }
  *  otherwise throws OPERATION_FORBIDDEN.
+ *
+ * A session only stands for a signer (case 3) when it matches one of the
+ * document's contacts AND its address is verified. Signup never proves the
+ * mailbox, and a contact binds to whichever `_User` already holds its address
+ * (`shadowUserFor`), so an account opened in someone else's name would
+ * otherwise read and sign what is sent to them, skipping the emailed code even
+ * on OTP documents. An unverified match is not refused outright: it falls
+ * through to the link checks, so the emailed link still works for someone who
+ * happens to be signed in, and with no usable link it gets OTP_GATE_MESSAGE,
+ * whose code (AuthLoginAsMail) verifies the address. A session that matches no
+ * contact never gets a seat from it, whatever contactId it claims.
  *
  * OTP documents (IsEnableOTP) additionally require a session that proves the
  * signer's identity (cases 2/3). A token alone on an OTP document throws the
  * OTP_GATE_MESSAGE so the signer page shows the code prompt.
  *
  * When `opts.contactId` is given (the signer the caller claims to be) it must
- * agree with the resolved contact, except for the owner, who may act for any
- * contact of their own document when `opts.ownerMayActForContact` is true.
+ * agree with the resolved contact. The owner may act for any contact of their
+ * own document only when `opts.ownerMayActForContact` is true (reads, decline,
+ * placeholder edits); without it (signPdf, triggerevent, sendmailv3) the owner
+ * may only claim their own seat, so they cannot sign for a co-signer.
  *
  * @param {Parse.Cloud.FunctionRequest|{user?: any, master?: boolean, params?: any, headers?: any}} request
  * @param {Parse.Object|Object} docObject contracts_Document (object or JSON) with Signers/Placeholders loaded
@@ -506,24 +535,39 @@ export async function resolveDocumentActor(request, docObject, opts = {}) {
 
   const user = await resolveCaller(request);
   if (user && isDocumentOwner(docJson, user.id)) {
-    if (claimed && !opts.ownerMayActForContact && !contactIds.has(claimed)) {
-      throw new Parse.Error(
-        Parse.Error.OPERATION_FORBIDDEN,
-        'That signer is not on this document.'
-      );
+    if (claimed && !opts.ownerMayActForContact) {
+      if (!contactIds.has(claimed)) {
+        throw new Parse.Error(
+          Parse.Error.OPERATION_FORBIDDEN,
+          'That signer is not on this document.'
+        );
+      }
+      if (!contactIdsForUser(docJson, user).includes(claimed)) {
+        throw new Parse.Error(
+          Parse.Error.OPERATION_FORBIDDEN,
+          'You can only sign as yourself. Each signer signs from their own link.'
+        );
+      }
     }
     return { kind: 'owner', user, contactId: claimed };
   }
-  if (user && isDocumentParticipant(docObject, user)) {
-    const mine = contactIdForUser(docJson, user);
-    if (claimed && mine && claimed !== mine) {
-      throw new Parse.Error(
-        Parse.Error.OPERATION_FORBIDDEN,
-        'You can only act as yourself on this document.'
-      );
-    }
-    return { kind: 'signer', user, contactId: mine || claimed };
+
+  // The seats this session would hold, if it is on the document at all.
+  const mine =
+    user && isDocumentParticipant(docObject, user) ? contactIdsForUser(docJson, user) : [];
+  const verifiedSession = mine.length > 0 && hasVerifiedEmail(user);
+  if (verifiedSession && (!claimed || mine.includes(claimed))) {
+    return { kind: 'signer', user, contactId: claimed || mine[0] };
   }
+  // A signed-in signer whose address is not verified yet: the emailed code
+  // proves it, so that is what they are shown when no link gets them in.
+  const unverifiedSession = mine.length > 0 && !verifiedSession;
+  const refuse = message => {
+    throw new Parse.Error(
+      Parse.Error.OPERATION_FORBIDDEN,
+      unverifiedSession ? OTP_GATE_MESSAGE : message
+    );
+  };
 
   const token =
     typeof opts.signingToken === 'string' && opts.signingToken
@@ -531,23 +575,12 @@ export async function resolveDocumentActor(request, docObject, opts = {}) {
       : signingTokenFromRequest(request);
   if (token) {
     const verified = verifySigningToken(token, { docId });
-    if (!verified) {
-      throw new Parse.Error(
-        Parse.Error.OPERATION_FORBIDDEN,
-        'This signing link is invalid or has expired.'
-      );
-    }
+    if (!verified) refuse('This signing link is invalid or has expired.');
     if (!contactIds.has(verified.contactId)) {
-      throw new Parse.Error(
-        Parse.Error.OPERATION_FORBIDDEN,
-        'This signing link does not belong to this document.'
-      );
+      refuse('This signing link does not belong to this document.');
     }
     if (claimed && claimed !== verified.contactId) {
-      throw new Parse.Error(
-        Parse.Error.OPERATION_FORBIDDEN,
-        'You can only act as yourself on this document.'
-      );
+      refuse('You can only act as yourself on this document.');
     }
     if (docJson?.IsEnableOTP === true) {
       // The link is genuine but this document wants the signer to prove their
@@ -567,8 +600,15 @@ export async function resolveDocumentActor(request, docObject, opts = {}) {
     return { kind: 'signer', user: null, contactId: claimed, legacy: true };
   }
 
-  if (docJson?.IsEnableOTP === true) {
+  if (unverifiedSession || docJson?.IsEnableOTP === true) {
     throw new Parse.Error(Parse.Error.OPERATION_FORBIDDEN, OTP_GATE_MESSAGE);
+  }
+  if (verifiedSession) {
+    // A verified signer claiming somebody else's seat, with no link for it.
+    throw new Parse.Error(
+      Parse.Error.OPERATION_FORBIDDEN,
+      'You can only act as yourself on this document.'
+    );
   }
   throw new Parse.Error(
     Parse.Error.OPERATION_FORBIDDEN,

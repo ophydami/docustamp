@@ -1,6 +1,6 @@
 {
   "name": "docustamp-server",
-  "version": "0.4.2",
+  "version": "0.5.0",
   "description": "DocuStamp server (Parse Server + Express)",
   "homepage": "https://docustamp.dev",
   "repository": {
@@ -27,6 +27,7 @@
     "@aws-sdk/s3-request-presigner": "^3.1138.0",
     "@modelcontextprotocol/ext-apps": "^1.7.5",
     "@modelcontextprotocol/sdk": "^1.30.1",
+    "@napi-rs/canvas": "^1.0.7",
     "@parse/fs-files-adapter": "^3.0.0",
     "@parse/push-adapter": "^8.5.5",
     "@parse/s3-files-adapter": "^5.3.1",

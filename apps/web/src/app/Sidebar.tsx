@@ -1,15 +1,16 @@
 import { useEffect, type ComponentType } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Inbox, FileText, LayoutTemplate, Users, BarChart3, Workflow, Settings as SettingsIcon, Sparkles, X } from "lucide-react";
+import { Inbox, FileText, LayoutTemplate, Users, BarChart3, Workflow, Settings as SettingsIcon, Sparkles, X, BadgeCheck } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { Cap, Kbd, Avatar, LogoMark, ThemeToggleButton } from "@/components/ui";
 import { useBrand } from "@/lib/brand";
 import { SOURCE_URL } from "@/lib/source";
 import { useBadges, useNavDrawer } from "@/lib/store";
+import { useApprovalsBadge } from "@/features/approvals/api";
 import { useAuth } from "./auth";
 
-type Badge = "inbox" | "expiring";
+type Badge = "inbox" | "expiring" | "approvals";
 
 interface NavItem {
   to: string;
@@ -23,6 +24,7 @@ const groups: Array<{ titleKey: string; items: NavItem[] }> = [
     titleKey: "app.navGroups.signing",
     items: [
       { to: "/inbox", labelKey: "app.nav.inbox", icon: Inbox, badge: "inbox" },
+      { to: "/approvals", labelKey: "app.nav.approvals", icon: BadgeCheck, badge: "approvals" },
       { to: "/documents", labelKey: "app.nav.documents", icon: FileText },
       { to: "/templates", labelKey: "app.nav.templates", icon: LayoutTemplate },
       { to: "/contacts", labelKey: "app.nav.contacts", icon: Users }
@@ -167,8 +169,12 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
   );
 }
 
-/** Permanent sidebar column. Hidden below 1024px, where the drawer takes over. */
+/**
+ * Permanent sidebar column. Hidden below 1024px, where the drawer takes over.
+ * It is always mounted in the app shell, so it also keeps the Approvals count fresh.
+ */
 export function Sidebar() {
+  useApprovalsBadge();
   return (
     <aside className="w-[236px] shrink-0 border-r border-line hidden lg:flex flex-col px-2.5 py-3 bg-surface-2 overflow-y-auto scroll-thin">
       <SidebarContent />

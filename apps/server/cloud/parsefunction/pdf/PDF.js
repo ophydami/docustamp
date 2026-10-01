@@ -189,8 +189,77 @@ function isRefusal(err) {
     code === Parse.Error.OPERATION_FORBIDDEN ||
     code === Parse.Error.INVALID_SESSION_TOKEN ||
     code === Parse.Error.OBJECT_NOT_FOUND ||
-    code === (Parse.Error.REQUEST_LIMIT_EXCEEDED || 155)
+    code === (Parse.Error.REQUEST_LIMIT_EXCEEDED || 155) ||
+    isBaseChangedError(err)
   );
+}
+
+/* ------------------------------------------------------- agent signatures */
+
+/** Marks the error `signPdf` throws when the stamped base is no longer current. */
+const BASE_CHANGED = 'base_changed';
+
+/**
+ * The pdf a server-side signer stamped (`baseUrl`) is no longer the document's
+ * current one: another signature landed in between, and writing this one would
+ * drop that signer's stamps. The caller re-stamps from the new file and retries.
+ */
+function baseChangedError() {
+  const err = new Parse.Error(
+    Parse.Error.OTHER_CAUSE,
+    'The document changed while it was being signed. Please sign it again.'
+  );
+  err.reason = BASE_CHANGED;
+  return err;
+}
+
+/** True for the retryable "base changed" refusal (lib/agentSign.js catches it). */
+export function isBaseChangedError(err) {
+  return err?.reason === BASE_CHANGED;
+}
+
+/** Same stored file? Compared without the query, which carries a read token. */
+function sameFile(a, b) {
+  const bare = value => String(value || '').split('?')[0];
+  return Boolean(a) && bare(a) === bare(b);
+}
+
+/**
+ * The audit-trail fields of a signature made by an AI agent for its user (see
+ * lib/agentSign.js). Rebuilt key by key so nothing but these lands on the trail.
+ *
+ * @param {Object} agent `{Method, Agent, OnBehalfOf, AllowedBy}`.
+ * @returns {Object}
+ */
+function agentAuditFields(agent) {
+  const text = (value, max = 200) => String(value ?? '').slice(0, max);
+  const date = value => {
+    if (!value) return null;
+    const d = value instanceof Date ? value : new Date(value?.iso || value);
+    return Number.isNaN(d.getTime()) ? null : d;
+  };
+  const a = agent?.Agent || {};
+  const who = agent?.OnBehalfOf || {};
+  const allowed = agent?.AllowedBy || {};
+  const allowedBy = {
+    via: text(allowed.via, 20),
+    name: text(allowed.name),
+    email: text(allowed.email, 254),
+    at: date(allowed.at) || new Date(),
+    signingEnabledAt: date(allowed.signingEnabledAt),
+  };
+  if (allowed.approvalId) allowedBy.approvalId = text(allowed.approvalId, 64);
+  return {
+    Method: 'agent',
+    Agent: {
+      kind: text(a.kind, 20),
+      clientId: text(a.clientId, 128),
+      name: text(a.name),
+      host: text(a.host, 253),
+    },
+    OnBehalfOf: { name: text(who.name), email: text(who.email, 254), userId: text(who.userId, 64) },
+    AllowedBy: allowedBy,
+  };
 }
 
 /**
@@ -210,6 +279,11 @@ function isRefusal(err) {
  * win. A loser retries with fresh data; a signature that arrives after the
  * document was declined is refused instead of resurrecting it.
  *
+ * An agent signature (lib/agentSign.js) also passes `agent`, recorded on the
+ * entry, and `baseUrl`, the file it stamped: when the document's current file
+ * is a different one by now, the write is refused with `baseChangedError` so
+ * the caller can re-stamp instead of overwriting a co-signer's stamps.
+ *
  * @returns {Promise<Object>} {isCompleted, wonCompletion, AuditTrail, DocumentHash}
  */
 async function persistSignature({
@@ -220,6 +294,8 @@ async function persistSignature({
   ipAddress,
   sign,
   documentHash,
+  agent,
+  baseUrl,
 }) {
   // `sign` arrives as a base64 image. It used to be written into the audit entry
   // verbatim, so every read of the document (the inbox, the reports export, a
@@ -235,6 +311,7 @@ async function persistSignature({
     ipAddress: ipAddress,
     SignedOn: new Date(),
     Signature: signatureUrl,
+    ...(agent ? agentAuditFields(agent) : {}),
   };
 
   for (let attempt = 0; attempt < MAX_WRITE_ATTEMPTS; attempt++) {
@@ -265,6 +342,7 @@ async function persistSignature({
         'This document is already completed and can no longer be signed.'
       );
     }
+    if (baseUrl && !sameFile(fresh.SignedUrl || fresh.URL, baseUrl)) throw baseChangedError();
 
     // One entry per contact, and never downgrade a contact that is already
     // Signed/Approved/Declined (see cloud/lib/auditTrail.js). Recomputed on the
@@ -561,7 +639,7 @@ async function processPdf(PdfBuffer, reason) {
  * @param {string} contactId the contact being signed for ('' for an owner self-sign)
  * @param {{kind: string}} actor resolved by resolveDocumentActor
  */
-function assertSignable(docJson, contactId, actor) {
+export function assertSignable(docJson, contactId, actor) {
   if (docJson?.IsCompleted === true) {
     throw new Parse.Error(
       Parse.Error.OPERATION_FORBIDDEN,
@@ -611,6 +689,11 @@ async function PDF(req) {
     const sign = req.params.signature || '';
     const auditActivity = 'Signed';
     const publicUrl = req.headers.public_url;
+    // An AI agent signing for its user (lib/agentSign.js) is a master call that
+    // says so for the audit trail and names the file it stamped. A client can
+    // send neither: both are ignored unless the caller holds the master key.
+    const agent = req.master && req.params.agent ? req.params.agent : undefined;
+    const baseUrl = req.master && typeof req.params.baseUrl === 'string' ? req.params.baseUrl : '';
     // below bode is used to get info of docId
     const docQuery = new Parse.Query('contracts_Document');
     docQuery.include('ExtUserPtr,Signers,ExtUserPtr.TenantId,Bcc,Cc,CreatedBy');
@@ -652,6 +735,12 @@ async function PDF(req) {
 
     const _resDoc = resDoc?.toJSON();
     assertSignable(_resDoc, reqUserId, actor);
+    if (baseUrl) {
+      // Checked against the stored row, not the query above: its afterFind
+      // trigger presigns the urls. persistSignature checks again at the write.
+      const stored = await readFresh('contracts_Document', docId, ['SignedUrl', 'URL']);
+      if (!sameFile(stored?.SignedUrl || stored?.URL, baseUrl)) throw baseChangedError();
+    }
     let signUser;
     let className;
     // `reqUserId` is send throught pdfrequest signing flow
@@ -760,6 +849,8 @@ async function PDF(req) {
           ipAddress: userIP,
           sign: sign,
           documentHash: isCompleted ? documentHash : undefined,
+          agent,
+          baseUrl,
         });
         // From here on the signature is persisted. Everything that follows is
         // notification work: it is awaited (an unawaited rejection kills the
@@ -772,7 +863,12 @@ async function PDF(req) {
           emitInBackground('signed', fresh, { signer });
           if (updatedDoc.wonCompletion) emitInBackground('completed', { ...fresh, DocumentHash: documentHash || updatedDoc?.DocumentHash }, {});
         }
-        await sendNotifyMail(_resDoc, signUser, publicUrl);
+        // An agent signing its own user's part mails that user its own "signed
+        // for you" notice (lib/agentSign.js); the generic "X has signed" mail to
+        // the same person would only repeat it.
+        if (agent?.AllowedBy?.via !== 'own_document') {
+          await sendNotifyMail(_resDoc, signUser, publicUrl);
+        }
         saveFileUsage(pdfSize, data.imageUrl, _resDoc?.CreatedBy?.objectId);
         const handoff = updatedDoc.isCompleted
           ? null
@@ -820,7 +916,8 @@ async function PDF(req) {
       throw error;
     }
   } catch (err) {
-    console.error('Err in signpdf', err?.message, err?.stack);
+    // A stale base is routine for an agent signature (it re-stamps and retries).
+    if (!isBaseChangedError(err)) console.error('Err in signpdf', err?.message, err?.stack);
     // A refusal is not a document problem: do not let a stream of rejected
     // guests rewrite DebugginLog on someone else's document.
     if (!isRefusal(err)) {

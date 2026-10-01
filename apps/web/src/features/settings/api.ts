@@ -483,6 +483,13 @@ export interface OAuthGrantInfo {
   scopes: string[];
   createdAt: string | null;
   lastUsedAt: string | null;
+  /**
+   * "Can sign for me" is on for this app. Missing on a server without agent
+   * signing, which is how the card knows to leave the switch out.
+   */
+  canSign?: boolean;
+  /** When signing was last turned on, as an ISO string. */
+  signingEnabledAt?: string | null;
 }
 
 export const oauthGrantsKey = ["settings", "oauthGrants"] as const;
@@ -501,5 +508,71 @@ export function useRevokeOAuthGrant() {
   return useMutation({
     mutationFn: (grantId: string) => cloud<{ revoked: boolean }>("revokeoauthgrant", { grantId }),
     onSuccess: () => void qc.invalidateQueries({ queryKey: oauthGrantsKey })
+  });
+}
+
+/**
+ * `setoauthgrantsigning { id, enabled }` turns "Can sign for me" on or off for
+ * one connected app. Turning it on needs a verified email; the server refuses
+ * otherwise and says how to verify.
+ */
+export function useSetOAuthGrantSigning() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (input: { id: string; enabled: boolean }) =>
+      cloud<{ id: string; canSign: boolean; signingEnabledAt: string | null }>("setoauthgrantsigning", input),
+    onSuccess: () => void qc.invalidateQueries({ queryKey: oauthGrantsKey })
+  });
+}
+
+/* ------------------------------------------------------- email verification */
+
+/** `getemailverification` -> whether the account's email address is proven to be its own. */
+export interface EmailVerification {
+  email: string;
+  verified: boolean;
+}
+
+export const emailVerificationKey = ["settings", "emailVerification"] as const;
+
+/**
+ * An app can only sign for someone whose email is verified (a one-time
+ * 6-digit code). `retry: false` so a server without the function answers
+ * quickly with an error, which callers read as "not available here".
+ */
+export function useEmailVerification(enabled = true) {
+  return useQuery({
+    queryKey: emailVerificationKey,
+    queryFn: () => cloud<EmailVerification>("getemailverification"),
+    enabled,
+    retry: false,
+    staleTime: 60_000
+  });
+}
+
+/**
+ * Emails a 6-digit code to the account's address. The server rate limits it,
+ * and answers `{ sent: false, verified: true }` when the address is already
+ * verified (another tab, or an emailed-code sign-in), which refreshes the state.
+ */
+export function useSendEmailVerification() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: () => cloud<{ sent: boolean; email: string; verified?: boolean }>("sendemailverification"),
+    onSuccess: (res) => {
+      if (res?.verified) void qc.invalidateQueries({ queryKey: emailVerificationKey });
+    }
+  });
+}
+
+/** Checks the code. On success the verified state and the connected apps refresh. */
+export function useVerifyEmail() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (otp: string) => cloud<{ verified: boolean }>("verifyemail", { otp }),
+    onSuccess: async () => {
+      await qc.invalidateQueries({ queryKey: emailVerificationKey });
+      await qc.invalidateQueries({ queryKey: oauthGrantsKey });
+    }
   });
 }

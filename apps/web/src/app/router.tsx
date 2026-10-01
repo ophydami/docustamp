@@ -13,6 +13,8 @@ const GuestLoginPage = lazy(() => import("@/features/auth/GuestLoginPage"));
 const ConnectPage = lazy(() => import("@/features/auth/ConnectPage"));
 
 const InboxPage = lazy(() => import("@/features/inbox/InboxPage"));
+const ApprovalsPage = lazy(() => import("@/features/approvals/ApprovalsPage"));
+const ApprovalDetailPage = lazy(() => import("@/features/approvals/ApprovalDetailPage"));
 const DocumentsPage = lazy(() => import("@/features/documents/DocumentsPage"));
 const DocumentDetailPage = lazy(() => import("@/features/documents/DocumentDetailPage"));
 const SendPage = lazy(() => import("@/features/send/SendPage"));
@@ -103,6 +105,9 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <Navigate to="/inbox" replace /> },
       { path: "/inbox", element: <S><InboxPage /></S> },
+      // Sign approvals: the approval email links to /approvals/:id.
+      { path: "/approvals", element: <S><ApprovalsPage /></S> },
+      { path: "/approvals/:id", element: <S><ApprovalDetailPage /></S> },
       { path: "/documents", element: <S><DocumentsPage /></S> },
       { path: "/documents/:docId", element: <S><DocumentDetailPage /></S> },
       { path: "/templates", element: <S><TemplatesPage /></S> },

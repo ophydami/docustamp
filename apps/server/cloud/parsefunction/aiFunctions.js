@@ -2,7 +2,7 @@ import { analyzePdf } from '../ai/analyze.js';
 import { describeAi, isAiEnabled } from '../ai/client.js';
 import { loadCaller } from '../lib/context.js';
 import { bytesFromInput, isStoredFileUrl, uploadPdfBytesDetailed } from '../lib/files.js';
-import { createDocument } from '../lib/documents.js';
+import { createDocument, resolveMeRecipients } from '../lib/documents.js';
 import { checkRateLimit, extUserForUser, resolveCaller } from './authGuard.js';
 
 /**
@@ -43,10 +43,11 @@ function requireUser(request) {
  * Caller-supplied recipients, keeping every slot: an entry without an email
  * becomes null instead of disappearing, because the list is matched to the
  * proposal's roles by position and a filtered list would shift every entry
- * after it onto the wrong role.
+ * after it onto the wrong role. An entry marked `me: true` is the caller
+ * (lib/documents.js resolveMeRecipients).
  */
-function parseRecipients(list) {
-  return (Array.isArray(list) ? list : []).map(r => {
+function parseRecipients(list, caller) {
+  return (Array.isArray(list) ? resolveMeRecipients(list, caller) : []).map(r => {
     const email = String(r?.email || '')
       .trim()
       .toLowerCase();
@@ -59,8 +60,18 @@ function parseRecipients(list) {
   });
 }
 
-export function cleanRecipients(list) {
-  return parseRecipients(list).filter(Boolean);
+export function cleanRecipients(list, caller) {
+  return parseRecipients(list, caller).filter(Boolean);
+}
+
+/**
+ * Who is sending, for the model: it decides whether one of the document's
+ * parties is the sender (`is_sender`), and that party is the only one the
+ * caller is bound to without being named.
+ */
+function senderOf(caller) {
+  if (!caller?.email) return undefined;
+  return { name: caller.name || '', email: caller.email, company: caller.company || '' };
 }
 
 /**
@@ -101,7 +112,8 @@ export async function analyzeDocumentFlow(caller, input = {}, opts = {}) {
   const proposal = await analyzePdf({
     bytes,
     instructions: String(input.instructions || ''),
-    recipients: cleanRecipients(input.recipients),
+    recipients: cleanRecipients(input.recipients, caller),
+    sender: senderOf(caller),
   });
   const { missing } = recipientsFromProposal(proposal, input.recipients, caller, {
     acceptExtracted: input.acceptExtractedRecipients === true,
@@ -128,13 +140,13 @@ export async function aiAnalyzeDocument(request) {
  *
  * @param {Object} proposal
  * @param {Array|undefined} provided caller-supplied recipients, positional
- * @param {Object} caller
+ * @param {Object} caller also what an entry marked `me: true` resolves to.
  * @param {{strict?: boolean, acceptExtracted?: boolean}} [opts] `strict` refuses
  *   more recipients than the proposal has roles instead of ignoring the tail.
  */
 export function recipientsFromProposal(proposal, provided, caller, opts = {}) {
   const roles = proposal.roles || [];
-  const given = parseRecipients(provided);
+  const given = parseRecipients(provided, caller);
   if (opts.strict && given.length > roles.length) {
     throw new Parse.Error(
       Parse.Error.VALIDATION_ERROR,
@@ -228,7 +240,8 @@ export async function prepareDocumentFlow(caller, input = {}, opts = {}) {
     proposal = await analyzePdf({
       bytes,
       instructions: String(input.instructions || ''),
-      recipients: cleanRecipients(input.recipients),
+      recipients: cleanRecipients(input.recipients, caller),
+      sender: senderOf(caller),
     });
   }
   // The raw list, not the cleaned one: roles bind by position, and dropping an
@@ -274,6 +287,9 @@ export async function prepareDocumentFlow(caller, input = {}, opts = {}) {
     // one instead of creating a second signable copy (findByIdempotencyKey).
     idempotencyKey: input.idempotencyKey,
     send,
+    // The caller's agent signs the caller's own seat as it goes out
+    // (lib/documents.js sendDocument). Only on a send.
+    signForMe: send && input.signForMe === true,
     origin,
   });
   return { document, proposal, needsRecipients: [], warnings };

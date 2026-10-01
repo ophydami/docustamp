@@ -2,6 +2,7 @@ import { isParticipantBasic } from '../../utils/workflowUtils.js';
 import { pageBoxFromViewport } from './pageBox.js';
 import { loadOwnedDocument, recipientsFromGroups, cleanGroup } from './drafts.js';
 import { fetchPdfBytes } from './files.js';
+import { loadParticipantDocument } from './inbox.js';
 import { PREFILL_ROLE } from './widgets.js';
 
 /**
@@ -16,6 +17,11 @@ import { PREFILL_ROLE } from './widgets.js';
  *    with their ticks, dropdown defaults, and every still-empty field as a
  *    light dashed box in its owner's colour (no captions). The prefill layer is
  *    what the stamped PDF will carry.
+ *
+ * The owner previews any page in either mode (`renderPagePreview`). Someone the
+ * document was sent to gets `renderParticipantPreview`: always `signer` mode,
+ * on the current PDF, with only the prefill layer and their own fields drawn,
+ * so nothing about the other signers' fields (where, what, whose colour) shows.
  *
  * The page is rendered with pdf.js onto an @napi-rs/canvas surface, and the
  * overlays use the same top-left PDF-point system the widgets are stored in
@@ -71,6 +77,7 @@ export function widgetsOnPage(d, pageNumber) {
             : {
                 kind: 'signer',
                 index: idx,
+                contactId: g.signerObjId || '',
                 label: recipient?.role || `Role ${idx + 1}`,
                 name: recipient?.name || '',
                 color: g.blockColor || recipient?.color || '#3b82f6',
@@ -229,11 +236,44 @@ export async function renderPagePreview(caller, docId, opts = {}) {
   return out;
 }
 
-/** The render itself, on PDF bytes and a plain document JSON (no loading, no auth). */
+/**
+ * The same page for someone the document was sent to, not its owner.
+ *
+ * Allowed for a participant only (lib/inbox.js `loadParticipantDocument`; any
+ * other caller gets "Document not found."). It renders the current PDF (the
+ * copy with every signature so far), always in `signer` mode, and draws only
+ * the prefill layer and the caller's own fields: once they have signed, their
+ * values are in the PDF itself, so their boxes are no longer drawn either. The
+ * field list names the caller's own fields only.
+ *
+ * @param {import('./context.js').Caller} caller
+ * @param {string} docId
+ * @param {{page?: number, scale?: number}} [opts]
+ * @returns {Promise<{png: Buffer, page: number, pageCount: number, width: number, height: number, scale: number, mode: 'signer', source: string, fields: Array<Object>}>}
+ */
+export async function renderParticipantPreview(caller, docId, opts = {}) {
+  const { d, seat } = await loadParticipantDocument(caller, docId);
+  const source = d.SignedUrl || d.URL;
+  const bytes = await fetchPdfBytes(source);
+  const out = await renderPreviewFromBytes(bytes, d, {
+    page: opts.page,
+    scale: opts.scale,
+    mode: 'signer',
+    participant: { contactId: seat.contactId, signed: seat.signed },
+  });
+  out.source = source === d.SignedUrl && source !== d.URL ? 'signed' : 'original';
+  return out;
+}
+
+/**
+ * The render itself, on PDF bytes and a plain document JSON (no loading, no auth).
+ * `opts.participant` ({contactId, signed}) limits it to what that signer sees.
+ */
 export async function renderPreviewFromBytes(bytes, d, opts = {}) {
   const pageNumber = Math.max(1, Number(opts.page) || 1);
   const scale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, Number(opts.scale) || 1.5));
-  const mode = opts.mode === 'signer' ? 'signer' : 'overlay';
+  const participant = opts.participant?.contactId ? opts.participant : null;
+  const mode = participant || opts.mode === 'signer' ? 'signer' : 'overlay';
 
   const lib = await pdfjs();
   const { createCanvas } = await canvas();
@@ -260,8 +300,13 @@ export async function renderPreviewFromBytes(bytes, d, opts = {}) {
     ctx.fillRect(0, 0, surface.width, surface.height);
     await page.render({ canvasContext: ctx, viewport }).promise;
 
-    const widgets = widgetsOnPage(d, pageNumber);
-    for (const w of widgets) {
+    const all = widgetsOnPage(d, pageNumber);
+    const isMine = w => w.owner.kind === 'signer' && w.owner.contactId === participant?.contactId;
+    const drawn = participant
+      ? all.filter(w => w.owner.kind === 'prefill' || (isMine(w) && !participant.signed))
+      : all;
+    const widgets = participant ? all.filter(isMine) : all;
+    for (const w of drawn) {
       if (mode === 'overlay') drawOverlay(ctx, w, s);
       else drawSignerView(ctx, w, s);
     }

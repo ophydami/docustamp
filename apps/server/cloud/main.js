@@ -64,11 +64,24 @@ import {
   oauthDecide,
   oauthRequest,
   revokeOAuthGrantFn,
+  setOAuthGrantSigningFn,
 } from './parsefunction/oauthFunctions.js';
 import getSigningLinks from './parsefunction/getSigningLinks.js';
 import savePlaceholders from './parsefunction/savePlaceholders.js';
 import updateProfile from './parsefunction/updateProfile.js';
 import updateTeamMember from './parsefunction/updateTeamMember.js';
+import {
+  getEmailVerification,
+  sendEmailVerification,
+  userBeforeSave,
+  verifyEmail,
+} from './parsefunction/emailVerification.js';
+import {
+  decideSignApproval,
+  getSignApproval,
+  getSignApprovalPage,
+  listSignApprovals,
+} from './parsefunction/approvalFunctions.js';
 
 // This afterSave function triggers after an object is added or updated in the specified class, allowing for post-processing logic.
 Parse.Cloud.afterSave('contracts_Document', DocumentAftersave);
@@ -79,6 +92,8 @@ Parse.Cloud.afterSave('contracts_Teams', TeamsAftersave);
 // This beforeSave function triggers before an object is added or updated in the specified class, allowing for validation or modification.
 Parse.Cloud.beforeSave('contracts_Document', DocumentBeforesave);
 Parse.Cloud.beforeSave('contracts_Template', TemplateBeforeSave);
+// Freezes a user's email, username and emailVerified for every non-master write.
+Parse.Cloud.beforeSave(Parse.User, userBeforeSave);
 
 // This afterFind function triggers after a query retrieves objects from the specified class, allowing for post-processing of the results.
 Parse.Cloud.afterFind(Parse.User, UserAfterFind);
@@ -144,12 +159,22 @@ Parse.Cloud.define('oauthrequest', oauthRequest);
 Parse.Cloud.define('oauthdecide', oauthDecide);
 Parse.Cloud.define('listoauthgrants', listOAuthGrantsFn);
 Parse.Cloud.define('revokeoauthgrant', revokeOAuthGrantFn);
+Parse.Cloud.define('setoauthgrantsigning', setOAuthGrantSigningFn);
 // Access hardening: tokenised signing links, signer-side placeholder save,
 // and the contracts_Users writes the web app used to do over the open REST class.
 Parse.Cloud.define('getsigninglinks', getSigningLinks);
 Parse.Cloud.define('saveplaceholders', savePlaceholders);
 Parse.Cloud.define('updateprofile', updateProfile);
 Parse.Cloud.define('updateteammember', updateTeamMember);
+// Proving the account's own email address with an emailed code.
+Parse.Cloud.define('getemailverification', getEmailVerification);
+Parse.Cloud.define('sendemailverification', sendEmailVerification);
+Parse.Cloud.define('verifyemail', verifyEmail);
+// Approving a signature an AI agent asked to make on a document sent to the user.
+Parse.Cloud.define('listsignapprovals', listSignApprovals);
+Parse.Cloud.define('getsignapproval', getSignApproval);
+Parse.Cloud.define('getsignapprovalpage', getSignApprovalPage);
+Parse.Cloud.define('decidesignapproval', decideSignApproval);
 
 // Background jobs.
 Parse.Cloud.job('autoReminders', autoRemindersJob);

@@ -1,6 +1,7 @@
+import { isDocumentOwner } from '../lib/acl.js';
 import { sendMail } from '../lib/mailTransport.js';
-import { buildRequestMail, requestRecipientFor } from '../lib/requestMail.js';
-import { mintSigningToken, signingTokenExpiry } from '../lib/signingToken.js';
+import { announceReceived, buildRequestMail, requestRecipientFor } from '../lib/requestMail.js';
+import { mintSigningToken, signingTokenExpiry, verifySigningToken } from '../lib/signingToken.js';
 import { buildSigningUrl, resolveAppOrigin } from './sendReminder.js';
 import { withTenantBranding } from './tenantBranding.js';
 import {
@@ -306,6 +307,70 @@ async function extUserIdFor(caller) {
   return extUser?.id || '';
 }
 
+/** A `/login/<base64>` signing link (requestMail.js `buildSigningUrl`). */
+const SIGNING_LINK = /\/login\/([A-Za-z0-9+/]+={0,2})/g;
+/** Links read out of one body; a request mail carries one, twice at most. */
+const MAX_LINKS_READ = 5;
+
+/**
+ * The document a free-form mail asks `email` to sign, or '' when it is not a
+ * signing request this caller may announce.
+ *
+ * The web app composes its first request mail in the browser and posts it here
+ * without a docId, so the signing link in the body is the only trace of which
+ * document it is about. A link counts only when its token verifies for its own
+ * document and contact, it is addressed to this recipient, and the caller owns
+ * that document: nobody can point a `received` event at a document by pasting a
+ * made-up link.
+ *
+ * @param {Parse.User} caller the authenticated sender.
+ * @param {string} html the mail body as posted.
+ * @param {string} email the one recipient, normalised.
+ */
+async function linkedRequestDocument(caller, html, email) {
+  const seen = new Set();
+  for (const match of String(html || '').matchAll(SIGNING_LINK)) {
+    if (seen.has(match[1])) continue;
+    seen.add(match[1]);
+    if (seen.size > MAX_LINKS_READ) break;
+    // docId/email/contactId/token; the address is the middle, whatever it holds.
+    const parts = Buffer.from(match[1], 'base64').toString('utf8').split('/');
+    if (parts.length < 4) continue;
+    const docId = parts[0];
+    const token = parts[parts.length - 1];
+    const contactId = parts[parts.length - 2];
+    if (normaliseEmail(parts.slice(1, -2).join('/')) !== email) continue;
+    if (verifySigningToken(token, { docId })?.contactId !== contactId) continue;
+    const query = new Parse.Query('contracts_Document');
+    query.include('ExtUserPtr');
+    const doc = await query.get(docId, { useMasterKey: true }).catch(() => null);
+    if (doc && isDocumentOwner(doc.toJSON(), caller.id)) return docId;
+  }
+  return '';
+}
+
+/**
+ * A request mail just went out: let the recipient's own webhooks know the
+ * document waits on them (`received`, see requestMail.js `announceReceived`,
+ * which also checks that it really is their turn). The next-signer mail names
+ * its document; a free-form mail from its owner is matched by its signing link
+ * (`linkedRequestDocument`). Master calls (reminders and the like) and anything
+ * else are not announced. Runs in the background and never fails the send.
+ */
+function announceRequest(req, caller, plan, recipients) {
+  if (req.master) return;
+  if (plan.mode === 'template') {
+    announceReceived(req.params?.docId || req.params?.documentId || '', recipients);
+    return;
+  }
+  const params = req.params || {};
+  if (!caller || recipients.length !== 1 || params.cc || params.bcc) return;
+  Promise.resolve()
+    .then(() => linkedRequestDocument(caller, params.html, recipients[0]))
+    .then(docId => announceReceived(docId, recipients))
+    .catch(err => console.log('sendmailv3: could not announce the request', err?.message || err));
+}
+
 /**
  * `sendmailv3`: the mail endpoint the web app calls.
  *
@@ -343,6 +408,7 @@ async function sendmailv3(req) {
       `Mail could not be sent: ${res?.reason || 'the mail provider did not accept the message.'}`
     );
   }
+  announceRequest(req, caller, plan, recipients);
   return { status: 'success' };
 }
 

@@ -84,6 +84,7 @@
     },
     "nav": {
       "ai": "KI fragen",
+      "approvals": "Freigaben",
       "automations": "Automatisierungen",
       "contacts": "Kontakte",
       "documents": "Dokumente",
@@ -115,6 +116,115 @@
       "searchPlaceholder": "Suchen oder Befehl eingeben",
       "searchPlaceholderLong": "Dokumente, Personen oder Vorlagen suchen oder Befehl eingeben"
     }
+  },
+  "approvals": {
+    "actions": {
+      "approve": "Freigeben und unterschreiben",
+      "backToList": "Zurück zu den Freigaben",
+      "decline": "Ablehnen",
+      "openDocument": "Dokument öffnen",
+      "review": "Prüfen"
+    },
+    "confirm": {
+      "approveBody": "{{agent}} unterschreibt „{{title}}“ für Sie mit den angezeigten Angaben.",
+      "approveNote": "Die Unterschrift wird als Unterschrift eines KI-Agenten für Sie mit Ihrer Freigabe festgehalten. Nach dem Unterschreiben lässt sie sich nicht rückgängig machen.",
+      "approveTitle": "Freigeben und unterschreiben?",
+      "declineBody": "Es wird nichts unterschrieben, und {{agent}} erfährt, dass Sie abgelehnt haben. Sie können das Dokument später trotzdem selbst unterschreiben.",
+      "declineTitle": "Diese Anfrage ablehnen?"
+    },
+    "detail": {
+      "agentAsked": "<0>{{agent}}</0> hat angefragt, dieses Dokument für Sie zu unterschreiben.",
+      "agentAsks": "<0>{{agent}}</0> möchte dieses Dokument für Sie unterschreiben. Es wird nichts unterschrieben, bevor Sie freigeben.",
+      "footerHint": "Lesen Sie die Seite und die Prüfung, bevor Sie entscheiden.",
+      "requested": "Angefragt <0>{{when}}</0>"
+    },
+    "empty": {
+      "allTitle": "Noch keine Freigaben",
+      "body": "Wenn eine verbundene App ein Dokument unterschreiben möchte, das Ihnen jemand geschickt hat, fragt sie zuerst hier.",
+      "manageApps": "Verbundene Apps verwalten",
+      "pendingTitle": "Nichts freizugeben"
+    },
+    "errors": {
+      "loadFailed": "Freigaben konnten nicht geladen werden",
+      "notFoundBody": "Sie gehört vielleicht zu einem anderen Konto, oder der Link ist falsch.",
+      "notFoundTitle": "Diese Anfrage wurde nicht gefunden"
+    },
+    "intro": "Wenn eine verbundene App ein Dokument unterschreiben möchte, das Ihnen jemand anderes geschickt hat, fragt sie zuerst hier. Dokumente, die Sie selbst erstellen, werden sofort unterschrieben.",
+    "outcome": {
+      "declinedBody": "Es wurde nichts unterschrieben. Sie können das Dokument trotzdem selbst unterschreiben.",
+      "declinedTitle": "Sie haben abgelehnt",
+      "expiredBody": "Das Dokument wurde geändert oder kann nicht mehr unterschrieben werden, daher wurde nichts unterschrieben. Fragen Sie Ihren Agenten erneut, wenn es noch unterschrieben werden soll.",
+      "expiredTitle": "Diese Anfrage ist abgelaufen",
+      "failedBody": "Es wurde nichts unterschrieben. Öffnen Sie das Dokument, um selbst zu unterschreiben, oder bitten Sie Ihren Agenten, es noch einmal zu versuchen.",
+      "failedTitle": "Das Unterschreiben hat nicht geklappt",
+      "signedBodyChat": "Sie haben das im Chat freigegeben, und {{agent}} hat es für Sie unterschrieben.",
+      "signedBodyWeb": "Sie haben das in {{product}} freigegeben, und {{agent}} hat es für Sie unterschrieben.",
+      "signedTitle": "Für Sie unterschrieben"
+    },
+    "preview": {
+      "alt": "Seite {{page}} des Dokuments",
+      "failedBody": "Versuchen Sie es erneut oder öffnen Sie das Dokument, um es zu lesen.",
+      "failedTitle": "Diese Seite konnte nicht geladen werden",
+      "goToPage": "Seite {{page}} anzeigen",
+      "next": "Nächste Seite",
+      "page": "Seite {{current}} von {{total}}",
+      "pageShort": "S. {{page}}",
+      "previous": "Vorherige Seite"
+    },
+    "review": {
+      "aimedAtAi": "Dieses Dokument enthält Text, der KI-Assistenten Anweisungen geben soll. Lesen Sie es selbst, bevor Sie freigeben.",
+      "disclaimer": "Dies ist keine Rechtsberatung.",
+      "flags": "Worauf Sie achten sollten",
+      "keyTerms": "Wichtige Bedingungen",
+      "none": "Für diese Anfrage gibt es keine KI-Prüfung.",
+      "noneHint": "Lesen Sie das Dokument selbst, bevor Sie freigeben.",
+      "overall": {
+        "concerning": "Bedenklich",
+        "review": "Genauer ansehen",
+        "standard": "Sieht üblich aus"
+      },
+      "parties": "Parteien",
+      "section": "KI-Prüfung",
+      "severity": {
+        "caution": "Vorsicht",
+        "info": "Hinweis",
+        "warning": "Warnung"
+      },
+      "title": "Was die KI gefunden hat"
+    },
+    "row": {
+      "from": "Von {{sender}}"
+    },
+    "status": {
+      "failed": "Fehlgeschlagen"
+    },
+    "table": {
+      "action": "Aktion",
+      "app": "App",
+      "document": "Dokument",
+      "requested": "Angefragt",
+      "status": "Status"
+    },
+    "tabs": {
+      "all": "Alle",
+      "pending": "Offen"
+    },
+    "toast": {
+      "declined": "Anfrage abgelehnt",
+      "failed": "Unterschreiben nicht möglich",
+      "signed": "Unterschrieben",
+      "signedBody": "{{agent}} hat es für Sie unterschrieben."
+    },
+    "values": {
+      "checked": "Angekreuzt",
+      "empty": "Leer gelassen",
+      "none": "Nur Ihre Unterschrift. Sonst wird nichts ausgefüllt.",
+      "notChecked": "Nicht angekreuzt",
+      "title": "Was Ihr Agent ausfüllt",
+      "titleNotSigned": "Was Ihr Agent ausgefüllt hätte",
+      "titleSigned": "Was Ihr Agent ausgefüllt hat"
+    },
+    "verifyReason": "Sie brauchen eine bestätigte E-Mail-Adresse, bevor eine App für Sie unterschreiben kann."
   },
   "auth": {
     "a11y": {
@@ -149,6 +259,8 @@
     },
     "connect": {
       "allow": "Zulassen",
+      "allowSigning": "{{app}} darf Dokumente für mich unterschreiben",
+      "allowSigningHint": "Unterschreibt Dokumente, die Sie selbst erstellen, sofort. Fragt Sie vorher bei Dokumenten, die andere Ihnen senden. Sie können das jederzeit in den Einstellungen ausschalten.",
       "backToApp": "Zu {{product}}",
       "deny": "Ablehnen",
       "expiredBody": "Gehen Sie zurück zu der App, die Sie verbinden wollten, und starten Sie erneut.",
@@ -157,11 +269,13 @@
       "redirectNote": "Nach Ihrer Auswahl kehren Sie zu <0>{{host}}</0> zurück.",
       "scopeRead": "Ihre Dokumente, Vorlagen und Kontakte sehen und wer unterschrieben hat",
       "scopeWrite": "Dokumente erstellen, bearbeiten und zur Unterschrift senden, wobei Ihre Unterzeichner E-Mails erhalten",
+      "signRequested": "{{app}} möchte für Sie unterschreiben dürfen. Das geht nur, wenn Sie es hier erlauben.",
       "signedInAs": "Angemeldet als {{email}}",
       "subtitle": "{{app}} möchte Ihr {{product}}-Konto verwenden.",
       "switchAccount": "Anderes Konto verwenden",
       "title": "{{app}} verbinden",
       "unnamedApp": "Eine App",
+      "verifyReason": "Damit {{app}} für Sie unterschreiben kann, bestätigen Sie zuerst Ihre E-Mail-Adresse. Sie können auch ohne Unterschreiben verbinden und es später in den Einstellungen einschalten.",
       "wants": "{{app}} kann dann:",
       "warning": "Lassen Sie dies nur zu, wenn Sie die Verbindung selbst in {{app}} gestartet haben. Sie können die Verbindung jederzeit in den Einstellungen trennen."
     },
@@ -2043,6 +2157,14 @@
   "settings": {
     "apiWebhooks": {
       "apps": {
+        "canSign": "Darf für mich unterschreiben",
+        "canSignFor": "{{app}} darf für mich unterschreiben",
+        "canSignHint": "Unterschreibt Dokumente, die Sie selbst erstellen, sofort. Fragt Sie vorher bei Dokumenten, die andere Ihnen senden.",
+        "confirmOff": "Sie können das hier jederzeit wieder ausschalten.",
+        "confirmOthers": "Bei Dokumenten, die andere Ihnen senden, fragt die App Sie vorher, unter Freigaben oder im Chat.",
+        "confirmOwn": "{{app}} unterschreibt Dokumente, die Sie selbst erstellen, sofort und schickt Ihnen jedes Mal eine E-Mail.",
+        "confirmTitle": "{{app}} für Sie unterschreiben lassen?",
+        "confirmTurnOn": "Unterschreiben einschalten",
         "connected": "Verbunden",
         "disconnect": "Trennen",
         "disconnectConfirm": "{{app}} verliert sofort den Zugriff auf Ihr Konto. Sie können die App später erneut verbinden.",
@@ -2051,9 +2173,15 @@
         "none": "Noch keine Apps verbunden. Um ChatGPT, Claude oder eine andere MCP-App zu verbinden, fügen Sie dort den MCP-Endpunkt unten hinzu und melden Sie sich an, wenn Sie gefragt werden.",
         "note": "Apps, die Sie durch Anmelden verbunden haben, zum Beispiel ChatGPT. Jede hat nur den Zugriff, den Sie erlaubt haben.",
         "readOnly": "Nur lesen",
+        "readSendSign": "Lesen, senden und unterschreiben",
         "readWrite": "Lesen und senden",
+        "signingFailed": "Unterschreiben konnte nicht geändert werden",
+        "signingOffToast": "{{app}} kann nicht mehr für Sie unterschreiben",
+        "signingOnToast": "{{app}} kann jetzt für Sie unterschreiben",
+        "signingSince": "Unterschreiben an seit <0>{{date}}</0>",
         "title": "Verbundene Apps",
-        "unnamed": "Unbenannte App"
+        "unnamed": "Unbenannte App",
+        "verifyFirst": "Bestätigen Sie oben Ihre E-Mail-Adresse, um das einzuschalten."
       },
       "mcp": {
         "claudeCode": "Claude Code",
@@ -2704,6 +2832,23 @@
       }
     },
     "title": "Einstellungen",
+    "verifyEmail": {
+      "codeLabel": "Bestätigungscode",
+      "done": "E-Mail-Adresse bestätigt",
+      "note": "Eine einmalige Prüfung, dass diese Adresse Ihnen gehört.",
+      "reason": "Bevor eine App für Sie unterschreiben kann, bestätigen Sie, dass diese E-Mail-Adresse Ihnen gehört.",
+      "resend": "Neuen Code senden",
+      "resendIn": "Neuen Code senden in <0>{{seconds}} s</0>",
+      "send": "Code senden",
+      "sendFailed": "Der Code konnte nicht gesendet werden. Bitte versuchen Sie es erneut.",
+      "sent": "Wir haben einen 6-stelligen Code an <0>{{email}}</0> gesendet. Geben Sie ihn unten ein.",
+      "title": "E-Mail-Adresse bestätigen",
+      "verified": "Bestätigt",
+      "verifiedLine": "<0>{{email}}</0> ist bestätigt.",
+      "verify": "Bestätigen",
+      "willSend": "Wir senden einen 6-stelligen Code an <0>{{email}}</0>.",
+      "wrongCode": "Dieser Code hat nicht funktioniert. Prüfen Sie ihn und versuchen Sie es erneut."
+    },
     "workspaceFallback": "Arbeitsbereich"
   },
   "signer": {

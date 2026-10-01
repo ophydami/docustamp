@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Command } from "cmdk";
-import { Search, Plus, PenLine, LayoutTemplate, Inbox, FileText, Users, BarChart3, Settings, Menu as MenuIcon, Layers, Moon, Sun } from "lucide-react";
+import { Search, Plus, PenLine, LayoutTemplate, Inbox, FileText, Users, BarChart3, Settings, Menu as MenuIcon, Layers, Moon, Sun, BadgeCheck } from "lucide-react";
 import { Button, Kbd, Menu } from "@/components/ui";
 import { useCommands, useNavDrawer, usePalette } from "@/lib/store";
 import { useTheme } from "@/lib/theme";
@@ -12,6 +12,7 @@ import { weekdayShort } from "@/lib/format";
 /** Section title for the top bar, from the first path segment. */
 const TITLES: Record<string, string> = {
   inbox: "app.nav.inbox",
+  approvals: "app.nav.approvals",
   ai: "app.nav.ai",
   documents: "app.nav.documents",
   templates: "app.nav.templates",
@@ -132,6 +133,7 @@ export function CommandPalette() {
   const nav = useMemo(
     () => [
       { id: "inbox", label: t("app.nav.inbox"), icon: <Inbox className="size-4" />, run: () => go("/inbox") },
+      { id: "approvals", label: t("app.nav.approvals"), icon: <BadgeCheck className="size-4" />, run: () => go("/approvals") },
       { id: "documents", label: t("app.nav.documents"), icon: <FileText className="size-4" />, run: () => go("/documents") },
       { id: "templates", label: t("app.nav.templates"), icon: <LayoutTemplate className="size-4" />, run: () => go("/templates") },
       { id: "contacts", label: t("app.nav.contacts"), icon: <Users className="size-4" />, run: () => go("/contacts") },

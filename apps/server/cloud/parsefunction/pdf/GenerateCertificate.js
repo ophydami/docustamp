@@ -1,9 +1,11 @@
 import { PDFDocument, rgb } from 'pdf-lib';
 import fs from 'node:fs';
 import fontkit from '@pdf-lib/fontkit';
-import { formatDateTime } from '../../../Utils.js';
+import { format, toZonedTime } from 'date-fns-tz';
+import { appName, formatDateTime, selectFormat } from '../../../Utils.js';
 import { COMPLETION_ACTIVITIES } from '../../../utils/workflowUtils.js';
 import { fetchStoredImage, isJpegBytes } from '../../lib/upload.js';
+import { agentLabel } from '../../lib/agentIdentity.js';
 
 /**
  * Audit activities that put a block on the certificate. `COMPLETION_ACTIVITIES`
@@ -84,8 +86,149 @@ export const formatDateStr = (value, DateFormat, timezone, Is12Hr) => {
   return date ? formatDateTime(date, DateFormat, timezone, Is12Hr) : '';
 };
 
+/** The date alone (no time) in the document's format and zone, '' when there is none. */
+export const formatDateOnlyStr = (value, DateFormat, timezone) => {
+  const date = toDate(value);
+  if (!date) return '';
+  return format(toZonedTime(date, timezone), selectFormat(DateFormat || 'MM/DD/YYYY'), {
+    timeZone: timezone,
+  });
+};
+
 function toTs(v) {
   return toDate(v)?.getTime() || 0;
+}
+
+/** One line of plain text: newlines and runs of spaces in stored values would break the layout. */
+function oneLine(value) {
+  return String(value ?? '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+/** `value` cut to `max` characters, ending in "..." when it was longer. */
+function clip(value, max) {
+  return value.length > max ? `${value.slice(0, max - 3).trimEnd()}...` : value;
+}
+
+/**
+ * The agent behind an audit entry, normalised, or null when a person signed.
+ *
+ * lib/agentSign.js records `Method: 'agent'` with `Agent`, `OnBehalfOf` and
+ * `AllowedBy` on the entry. The dates in `AllowedBy` arrive as a JS Date on the
+ * request that wrote them and as the Parse encoding `{__type: 'Date', iso}`
+ * after a round trip through the database, so both become ISO strings here.
+ * The OAuth client id and the user id stay out: neither belongs on a
+ * certificate a counterparty reads.
+ *
+ * @param {Object} entry an AuditTrail entry (or a certificate block)
+ * @returns {{Method: 'agent', Agent: {kind: string, name: string, host: string},
+ *   OnBehalfOf: {name: string, email: string},
+ *   AllowedBy: {via: string, name: string, email: string, at: string,
+ *   signingEnabledAt: string|null, approvalId?: string}}|null}
+ */
+export function agentRecord(entry) {
+  if (entry?.Method !== 'agent') return null;
+  const agent = entry.Agent || {};
+  const behalf = entry.OnBehalfOf || {};
+  const allowed = entry.AllowedBy || {};
+  return {
+    Method: 'agent',
+    Agent: { kind: oneLine(agent.kind), name: oneLine(agent.name), host: oneLine(agent.host) },
+    OnBehalfOf: { name: oneLine(behalf.name), email: oneLine(behalf.email).toLowerCase() },
+    AllowedBy: {
+      via: oneLine(allowed.via),
+      name: oneLine(allowed.name),
+      email: oneLine(allowed.email).toLowerCase(),
+      at: toDate(allowed.at)?.toISOString() || '',
+      signingEnabledAt: toDate(allowed.signingEnabledAt)?.toISOString() || null,
+      ...(allowed.approvalId ? { approvalId: String(allowed.approvalId) } : {}),
+    },
+  };
+}
+
+/**
+ * The rows an agent's signature adds to its signer block, in print order.
+ *
+ * "Signed by" says which app signed and for whom. The second row says who let
+ * it: on the person's own document they did so by turning agent signing on for
+ * that app ("Allowed by"); on a document someone else sent they approved this
+ * signature, in the web app or in the chat ("Approved by"). Dates use the
+ * document's format and zone, as every other date on the certificate does.
+ *
+ * @param {Object} block from certificateBlocks
+ * @param {{DateFormat?: string, timezone?: string, Is12Hr?: boolean}} [opts]
+ * @returns {Array<{label: string, value: string}>} [] for a person's signature
+ */
+export function agentCertificateRows(block, { DateFormat, timezone = '', Is12Hr = true } = {}) {
+  const record = agentRecord(block);
+  if (!record) return [];
+  const { Agent: agent, OnBehalfOf: behalf, AllowedBy: allowed } = record;
+  // The app names itself when it registers, so its name can be any length;
+  // it is shortened so the person it signed for always stays on the row.
+  const name = clip(agent.name, 40);
+  const host = clip(agent.host, 60);
+  const forWhom = behalf.name || behalf.email || oneLine(block?.Name) || 'the signer';
+  const by =
+    agent.kind === 'api_token' && !host
+      ? 'using an API key'
+      : agentLabel({ name: name || host || 'app', host: name ? host : '' });
+  const rows = [{ label: 'Signed by', value: `AI agent ${by} for ${forWhom}` }];
+
+  const who = allowed.name || allowed.email || forWhom;
+  if (allowed.via === 'own_document') {
+    const since = formatDateOnlyStr(allowed.signingEnabledAt, DateFormat, timezone);
+    rows.push({
+      label: 'Allowed by',
+      value: `${who}, own document${since ? ` (agent signing on since ${since})` : ''}`,
+    });
+  } else if (allowed.via === 'web' || allowed.via === 'chat') {
+    const where =
+      allowed.via === 'web' ? appName : (agent.kind !== 'api_token' && name) || 'the AI app';
+    const at = formatDateStr(allowed.at, DateFormat, timezone, Is12Hr);
+    rows.push({ label: 'Approved by', value: `${who} in ${where}${at ? `, ${at}` : ''}` });
+  }
+  return rows;
+}
+
+/**
+ * `value` broken into lines no wider than `maxWidth`, at most `maxLines` of
+ * them; the last one ends in "..." when the text did not fit. A single word
+ * wider than the column (a long host or address) is cut by character.
+ *
+ * @param {string} value
+ * @param {import('pdf-lib').PDFFont} font
+ * @param {number} size
+ * @param {number} maxWidth
+ * @param {number} [maxLines]
+ * @returns {string[]}
+ */
+export function wrapText(value, font, size, maxWidth, maxLines = 2) {
+  const fits = s => font.widthOfTextAtSize(s, size) <= maxWidth;
+  const lines = [];
+  let line = '';
+  for (const word of oneLine(value).split(' ').filter(Boolean)) {
+    const next = line ? `${line} ${word}` : word;
+    if (fits(next)) {
+      line = next;
+      continue;
+    }
+    if (line) lines.push(line);
+    line = word;
+    while (line.length > 1 && !fits(line)) {
+      let cut = line.length - 1;
+      while (cut > 1 && !fits(line.slice(0, cut))) cut--;
+      lines.push(line.slice(0, cut));
+      line = line.slice(cut);
+    }
+  }
+  if (line) lines.push(line);
+  if (lines.length <= maxLines) return lines;
+  const kept = lines.slice(0, maxLines);
+  let last = kept[maxLines - 1];
+  while (last && !fits(`${last}...`)) last = last.slice(0, -1);
+  kept[maxLines - 1] = `${last.trimEnd()}...`;
+  return kept;
 }
 
 /**
@@ -106,7 +249,8 @@ function toTs(v) {
  * @returns {Array<Object>} one block per signatory: identity plus role,
  *   ipAddress, SignedOn ('' when unknown), ViewedOn, OpenCount (how many times
  *   they opened their signing link, from `OpenStats`; 0 when never counted)
- *   and Signature.
+ *   and Signature; plus, when an AI agent signed, the `agentRecord` keys
+ *   (Method, Agent, OnBehalfOf, AllowedBy). A person's block has none of them.
  */
 export function certificateBlocks(docDetails) {
   const placeholders = Array.isArray(docDetails?.Placeholders) ? docDetails.Placeholders : [];
@@ -179,6 +323,8 @@ export function certificateBlocks(docDetails) {
     OpenCount: openCountFor(entry?.UserPtr?.objectId),
     Signature: entry?.Signature || '',
     _signedOnTs: toTs(entry?.SignedOn),
+    // Method, Agent, OnBehalfOf and AllowedBy, only when an AI agent signed.
+    ...agentRecord(entry),
   });
 
   // Self-sign (no Signers): the single block is the owner's, built from
@@ -210,7 +356,7 @@ export default async function GenerateCertificate(docDetails) {
   // The Buffers themselves, not `.buffer`: a Buffer's ArrayBuffer can be a
   // larger shared slab (Node 22+ reads small files into a pool), and handing
   // that to pdf-lib made it read another file's bytes as the PNG.
-  const pngUrl = fs.readFileSync('./images/logo.png');
+  const pngUrl = fs.readFileSync('./images/docustamp-logo.png');
   const naSignUrl = fs.readFileSync('./images/na_sign.png');
   const nasign = await pdfDoc.embedPng(naSignUrl);
   const pngImage = await pdfDoc.embedPng(pngUrl);
@@ -262,11 +408,14 @@ export default async function GenerateCertificate(docDetails) {
     borderColor: borderColor,
     borderWidth: 1,
   });
+  // The DocuStamp wordmark (brand/png/docustamp-logo-1200.png), drawn at its own
+  // aspect ratio and centred on the band the old 100 x 25 logo used.
+  const logo = pngImage.scale(110 / pngImage.width);
   page.drawImage(pngImage, {
     x: 30,
-    y: 790,
-    width: 100,
-    height: 25,
+    y: 802.5 - logo.height / 2,
+    width: logo.width,
+    height: logo.height,
   });
 
   page.drawText(generatedOn, {
@@ -490,8 +639,14 @@ export default async function GenerateCertificate(docDetails) {
   // bottom edge sits at yPosition7 - 30 and must remain inside the page
   // border (whose bottom edge is at startY). Use the lowest of those two
   // values when deciding whether the next block fits on the current page.
+  // `extra` is the height an agent's rows add above the signature.
   const minY = startY + 5;
-  const blockBottom = () => Math.min(yPosition7 - 30, yPosition8);
+  const blockBottom = (extra = 0) => Math.min(yPosition7 - 30, yPosition8) - extra;
+  // An agent row sits one row step below the last; a wrapped value continues
+  // a little tighter, so it reads as the same row.
+  const rowStep = 20;
+  const wrapStep = 15;
+  const rightEdge = width - 30;
 
   // Helper that resets the y-positions to the top of a freshly added page so
   // the next block starts cleanly under the border.
@@ -519,10 +674,26 @@ export default async function GenerateCertificate(docDetails) {
   let currentPage = page;
   for (let i = 0; i < auditTrail.length; i++) {
     const x = auditTrail[i];
+    // An AI agent's signature adds its rows ("Signed by", then "Allowed by" or
+    // "Approved by") between the IP address and the signature, which moves
+    // the signature and the separator down by their height. A person's block
+    // has no rows and keeps its layout exactly.
+    const agentRows = agentCertificateRows(x, { DateFormat, timezone, Is12Hr }).map(row => {
+      const label = `${row.label} :`;
+      const valueX = 30 + timesRomanFont.widthOfTextAtSize(label, signertext) + 5;
+      const lines = wrapText(row.value, timesRomanFont, signertext, rightEdge - valueX, 3);
+      return { label, valueX, lines };
+    });
+    const extra = agentRows.reduce(
+      (sum, row) => sum + rowStep + (row.lines.length - 1) * wrapStep,
+      0
+    );
     // If the next block would overflow the bottom border, move to a new page.
-    if (blockBottom() < minY) {
+    if (blockBottom(extra) < minY) {
       currentPage = startNewPage();
     }
+    yPosition7 -= extra;
+    yPosition8 -= extra;
     const embedPng = await embedSignatureImage(pdfDoc, x.Signature, nasign);
     const headerLabel = `${i + 1}. ${x?.role || 'Signer'}`;
     const signedOnLabel = 'Signed on :';
@@ -557,7 +728,14 @@ export default async function GenerateCertificate(docDetails) {
         font: timesRomanFont,
         color: textKeyColor,
       });
-      currentPage.drawText('Email, OTP Auth', {
+      // An agent never types the emailed code: it signs through the app its
+      // person connected (OAuth) or an API key, on a verified address.
+      const security = !agentRows.length
+        ? 'Email, OTP Auth'
+        : x?.Agent?.kind === 'api_token'
+          ? 'Email, API key'
+          : 'Email, OAuth';
+      currentPage.drawText(security, {
         x: half + 190,
         y: yPosition2,
         size: timeText,
@@ -647,6 +825,27 @@ export default async function GenerateCertificate(docDetails) {
       font: timesRomanFont,
       color: textValueColor,
     });
+
+    let rowY = yPosition6 - rowStep;
+    for (const row of agentRows) {
+      currentPage.drawText(row.label, {
+        x: 30,
+        y: rowY,
+        size: signertext,
+        font: timesRomanFont,
+        color: textKeyColor,
+      });
+      row.lines.forEach((line, n) => {
+        currentPage.drawText(line, {
+          x: row.valueX,
+          y: rowY - n * wrapStep,
+          size: signertext,
+          font: timesRomanFont,
+          color: textValueColor,
+        });
+      });
+      rowY -= rowStep + (row.lines.length - 1) * wrapStep;
+    }
 
     currentPage.drawText('Signature :', {
       x: 30,

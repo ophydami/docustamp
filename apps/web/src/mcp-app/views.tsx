@@ -1,14 +1,16 @@
 import { useState, type ReactNode } from "react";
 import type { App } from "@modelcontextprotocol/ext-apps";
 import type { OpenAIExtensions } from "@openai/mcp-extensions/app";
-import { ArrowUpRight, ChevronLeft, Plus, RotateCw, Send } from "lucide-react";
+import { ArrowUpRight, Check, ChevronLeft, Plus, RotateCw, Send } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Cap, Card, EmptyState } from "@/components/ui/Card";
+import { Pill } from "@/components/ui/Pill";
 import { Tabs } from "@/components/ui/Tabs";
 import { cn } from "@/lib/cn";
 import { askAssistant, callTool, openUrl, tellModel } from "./bridge";
 import { Banner, DocRowItem, DocSubline, N, PagePreview, RecipientRow, Skel, RowsSkeleton, StatusPill } from "./ui";
-import { shortDate, signedCount } from "./format";
+import { agentName, myStatusOf, shortDate, signedCount } from "./format";
+import { normalizeView } from "./normalize";
 import type { DocRow, DocumentData, HomeData, ListData } from "./types";
 
 export interface ViewContext {
@@ -44,9 +46,11 @@ function useDocumentActions(ctx: ViewContext, data: DocumentData, onChanged: (ne
     try {
       const done = await work();
       onChanged(
-        await callTool<DocumentData>(app, "app_document", {
-          documentId: doc.objectId
-        })
+        normalizeView(
+          await callTool<DocumentData>(app, "app_document", {
+            documentId: doc.objectId
+          })
+        )
       );
       setResult({ tone: "success", text: done });
       await tellModel(
@@ -94,12 +98,64 @@ function useDocumentActions(ctx: ViewContext, data: DocumentData, onChanged: (ne
         app,
         ext,
         `Fix what stops the draft "${doc.name}" (document id ${doc.objectId}) from being sent, then show it to me again.`
-      )
+      ),
+    askToSign: () => askAssistant(app, ext, `Please review and sign "${doc.name}" for me.`)
   };
 }
 
+/* ------------------------------------------------------------------ received documents */
+
+/** Who sent a document to the user: "Jane Doe, Acme". */
+function senderOf(doc: DocumentData["document"]): string {
+  const who = doc.sender?.name || doc.sender?.email || "";
+  const company = doc.sender?.company || "";
+  return company && company !== who ? (who ? `${who}, ${company}` : company) : who;
+}
+
+/** Where the user stands on a document someone else sent them, as a tinted pill. Blue when it needs them. */
+function MyStatusPill({ status, className }: { status?: string; className?: string }) {
+  const s = myStatusOf(status);
+  return (
+    <Pill tone={s.tone} dot className={className}>
+      {s.label}
+    </Pill>
+  );
+}
+
+/** One plain sentence on what the user can do with a document sent to them. The card names the sender above it. */
+function receivedLine(doc: DocumentData["document"], withSender = true): string {
+  const from = senderOf(doc);
+  if (doc.myStatus === "needs_you")
+    return withSender
+      ? `${from || "The sender"} sent this for you to sign. Your assistant can review the terms and sign once you approve.`
+      : "Your assistant can review the terms and sign once you approve.";
+  if (doc.myStatus === "waiting") return "Others sign before you. You'll be asked when it is your turn.";
+  if (doc.myStatus === "signed") return "You have signed your part.";
+  if (doc.myStatus === "declined") return "You declined to sign this.";
+  return from ? `Sent to you by ${from}.` : "Sent to you.";
+}
+
+/** "Signed for you by ChatGPT": the slim note sign_document puts on the document it just signed. */
+function SignedForYou({ data, className }: { data: DocumentData; className?: string }) {
+  if (data.banner?.kind !== "signed_for_you") return null;
+  const agent = data.banner.agent;
+  const host = agent?.host && agent.host !== agent.name ? agent.host : "";
+  return (
+    <div
+      role="status"
+      className={cn("flex items-center gap-2 bg-success-soft px-3 py-1.5 text-[12px] text-success-ink", className)}
+    >
+      <Check className="size-3.5 shrink-0" strokeWidth={1.8} />
+      <span className="min-w-0 truncate">
+        Signed for you by {agent?.name || agentName(agent)}
+        {host ? <span className="ml-1.5 font-mono text-[11px] opacity-80">{host}</span> : null}
+      </span>
+    </div>
+  );
+}
+
 /** Re-read now. The full-screen views also refresh on their own every few seconds while on screen. */
-function RefreshButton({ onRefresh, refreshing }: { onRefresh?: () => void; refreshing?: boolean }) {
+export function RefreshButton({ onRefresh, refreshing }: { onRefresh?: () => void; refreshing?: boolean }) {
   if (!onRefresh) return null;
   return (
     <Button
@@ -138,6 +194,8 @@ export function DocumentView({
   const live = doc.status === "in_progress";
   const ready = Boolean(data.review?.readyToSend);
   const { signed, total } = signedCount(doc.signers);
+  // Someone else sent it to the user: none of the sender's actions apply.
+  const received = doc.role === "signer";
 
   return (
     <div className="mx-auto flex max-w-[1200px] flex-col gap-5 px-4 py-5 md:px-6">
@@ -155,9 +213,14 @@ export function DocumentView({
       <header>
         <div className="flex items-start gap-3">
           <h1 className="min-w-0 flex-1 text-[22px] font-semibold leading-tight tracking-[-.015em]">{doc.name}</h1>
-          <StatusPill status={doc.status} className="mt-1.5" />
+          {received ? (
+            <MyStatusPill status={doc.myStatus} className="mt-1.5" />
+          ) : (
+            <StatusPill status={doc.status} className="mt-1.5" />
+          )}
         </div>
         <p className="mt-2 text-[12px] leading-relaxed text-muted">
+          {received && senderOf(doc) ? `From ${senderOf(doc)} · ` : null}
           <span className="font-mono text-[11px]">{doc.objectId}</span>
           {doc.sentAt ? (
             <>
@@ -182,13 +245,14 @@ export function DocumentView({
               {" · "}
               <N>{doc.fieldCount ?? 0}</N> fields
             </>
-          ) : (
+          ) : total ? (
             <>
               {" · "}
               <N>{signed}</N> of <N>{total}</N> signed
             </>
-          )}
+          ) : null}
         </p>
+        <SignedForYou data={data} className="mt-3 rounded-md" />
         {doc.status === "declined" ? (
           <p className="mt-3 rounded-md bg-danger-soft px-3 py-2 text-[13px] text-danger">
             Declined{doc.declineReason ? `: ${doc.declineReason}` : "."}
@@ -209,141 +273,234 @@ export function DocumentView({
           </div>
         </div>
 
-        <div className="flex flex-col gap-4">
-          {isDraft && data.review ? (
-            ready ? (
-              <Banner tone="success">Ready to send. Check the pages, then send it.</Banner>
-            ) : (
-              <Card className="p-4">
-                <div className="flex items-baseline gap-2">
-                  <Cap>Before it can be sent</Cap>
-                  <span className="num text-[11px] text-muted-2">{data.review.errors.length}</span>
-                </div>
-                <ul className="mt-2.5 flex flex-col gap-1.5 text-[12.5px] text-danger">
-                  {data.review.errors.map((e, i) => (
-                    <li key={i} className="flex gap-2">
-                      <span className="mt-[7px] size-1.5 shrink-0 rounded-full bg-danger" />
-                      <span>{e.message}</span>
-                    </li>
-                  ))}
-                </ul>
-              </Card>
-            )
-          ) : null}
-          {isDraft && data.review?.warnings.length ? (
-            <Banner tone="warn">{data.review.warnings.map((w) => w.message).join(" ")}</Banner>
-          ) : null}
-
-          <Card className="p-4">
-            <div className="flex items-baseline gap-2">
-              <Cap>{isDraft ? "Recipients" : "Signers"}</Cap>
-              <span className="num text-[11px] text-muted-2">{total}</span>
-            </div>
-            <div className="mt-2 flex flex-col">
-              {total ? (
-                doc.signers.map((s, i) => (
-                  <RecipientRow key={`${s.email}-${i}`} signer={s} draft={isDraft} locale={locale} />
-                ))
-              ) : (
-                <p className="py-2 text-[13px] text-muted">No recipients yet.</p>
-              )}
-            </div>
-          </Card>
-
-          {a.result ? <Banner tone={a.result.tone}>{a.result.text}</Banner> : null}
-
-          <div className="flex flex-col gap-2">
-            {isDraft && data.canWrite ? (
+        {received ? (
+          <ReceivedPanel ctx={ctx} data={data} onAskToSign={() => void a.askToSign()} />
+        ) : (
+          <div className="flex flex-col gap-4">
+            {isDraft && data.review ? (
               ready ? (
-                <Button
-                  variant="primary"
-                  block
-                  icon={icon(Send)}
-                  loading={a.busy === "send"}
-                  disabled={a.busy !== ""}
-                  onClick={() => void a.send()}
-                >
-                  Send for signature
-                </Button>
+                <Banner tone="success">Ready to send. Check the pages, then send it.</Banner>
               ) : (
-                <Button variant="primary" block onClick={() => void a.fixInChat()}>
-                  Fix in chat
-                </Button>
+                <Card className="p-4">
+                  <div className="flex items-baseline gap-2">
+                    <Cap>Before it can be sent</Cap>
+                    <span className="num text-[11px] text-muted-2">{data.review.errors.length}</span>
+                  </div>
+                  <ul className="mt-2.5 flex flex-col gap-1.5 text-[12.5px] text-danger">
+                    {data.review.errors.map((e, i) => (
+                      <li key={i} className="flex gap-2">
+                        <span className="mt-[7px] size-1.5 shrink-0 rounded-full bg-danger" />
+                        <span>{e.message}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </Card>
               )
             ) : null}
+            {isDraft && data.review?.warnings.length ? (
+              <Banner tone="warn">{data.review.warnings.map((w) => w.message).join(" ")}</Banner>
+            ) : null}
 
-            {live && data.canWrite ? (
-              <>
-                <Button
-                  variant="primary"
-                  block
-                  loading={a.busy === "remind"}
-                  disabled={a.busy !== ""}
-                  onClick={() => void a.remind()}
-                >
-                  Send a reminder
-                </Button>
-                <Button block loading={a.busy === "extend"} disabled={a.busy !== ""} onClick={() => void a.extend()}>
-                  Extend deadline by 7 days
-                </Button>
-                {a.confirmVoid ? (
-                  <div className="flex flex-col gap-2.5 rounded-xl border border-danger-line bg-surface p-3">
-                    <p className="text-[12.5px] leading-relaxed text-ink-2">
-                      Void this document? The signing links stop working and the people who have not signed are told it
-                      was withdrawn.
-                    </p>
-                    <div className="flex gap-2">
-                      <Button
-                        variant="danger"
-                        size="sm"
-                        loading={a.busy === "void"}
-                        disabled={a.busy !== ""}
-                        onClick={() => void a.voidIt()}
-                      >
-                        Void document
-                      </Button>
-                      <Button variant="ghost" size="sm" onClick={() => a.setConfirmVoid(false)}>
-                        Keep it
-                      </Button>
-                    </div>
-                  </div>
+            <Card className="p-4">
+              <div className="flex items-baseline gap-2">
+                <Cap>{isDraft ? "Recipients" : "Signers"}</Cap>
+                <span className="num text-[11px] text-muted-2">{total}</span>
+              </div>
+              <div className="mt-2 flex flex-col">
+                {total ? (
+                  doc.signers.map((s, i) => (
+                    <RecipientRow key={`${s.email}-${i}`} signer={s} draft={isDraft} locale={locale} />
+                  ))
                 ) : (
-                  <Button variant="danger" block onClick={() => a.setConfirmVoid(true)}>
-                    Void document
-                  </Button>
+                  <p className="py-2 text-[13px] text-muted">No recipients yet.</p>
                 )}
-              </>
-            ) : null}
+              </div>
+            </Card>
 
-            {doc.status === "completed" && doc.urls?.signed ? (
-              <Button variant="primary" block onClick={() => void openUrl(app, doc.urls?.signed)}>
-                Download signed PDF
-              </Button>
-            ) : null}
-            {doc.status === "completed" && doc.urls?.certificate ? (
-              <Button block onClick={() => void openUrl(app, doc.urls?.certificate)}>
-                Completion certificate
-              </Button>
-            ) : null}
+            {a.result ? <Banner tone={a.result.tone}>{a.result.text}</Banner> : null}
 
-            {!data.canWrite && (isDraft || live) ? (
-              <p className="text-[12px] text-muted">
-                This connection can only read. Reconnect DocuStamp and allow changes to send or remind.
-              </p>
-            ) : null}
+            <div className="flex flex-col gap-2">
+              {isDraft && data.canWrite ? (
+                ready ? (
+                  <Button
+                    variant="primary"
+                    block
+                    icon={icon(Send)}
+                    loading={a.busy === "send"}
+                    disabled={a.busy !== ""}
+                    onClick={() => void a.send()}
+                  >
+                    Send for signature
+                  </Button>
+                ) : (
+                  <Button variant="primary" block onClick={() => void a.fixInChat()}>
+                    Fix in chat
+                  </Button>
+                )
+              ) : null}
 
-            {doc.urls?.app ? (
-              <button
-                type="button"
-                className="mt-1 inline-flex items-center gap-1 self-start text-[12.5px] text-accent hover:text-accent-deep"
-                onClick={() => void openUrl(app, doc.urls?.app)}
-              >
-                Open in DocuStamp
-                <ArrowUpRight className="size-3.5" strokeWidth={1.6} />
-              </button>
-            ) : null}
+              {live && data.canWrite ? (
+                <>
+                  <Button
+                    variant="primary"
+                    block
+                    loading={a.busy === "remind"}
+                    disabled={a.busy !== ""}
+                    onClick={() => void a.remind()}
+                  >
+                    Send a reminder
+                  </Button>
+                  <Button block loading={a.busy === "extend"} disabled={a.busy !== ""} onClick={() => void a.extend()}>
+                    Extend deadline by 7 days
+                  </Button>
+                  {a.confirmVoid ? (
+                    <div className="flex flex-col gap-2.5 rounded-xl border border-danger-line bg-surface p-3">
+                      <p className="text-[12.5px] leading-relaxed text-ink-2">
+                        Void this document? The signing links stop working and the people who have not signed are told it
+                        was withdrawn.
+                      </p>
+                      <div className="flex gap-2">
+                        <Button
+                          variant="danger"
+                          size="sm"
+                          loading={a.busy === "void"}
+                          disabled={a.busy !== ""}
+                          onClick={() => void a.voidIt()}
+                        >
+                          Void document
+                        </Button>
+                        <Button variant="ghost" size="sm" onClick={() => a.setConfirmVoid(false)}>
+                          Keep it
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <Button variant="danger" block onClick={() => a.setConfirmVoid(true)}>
+                      Void document
+                    </Button>
+                  )}
+                </>
+              ) : null}
+
+              {doc.status === "completed" && doc.urls?.signed ? (
+                <Button variant="primary" block onClick={() => void openUrl(app, doc.urls?.signed)}>
+                  Download signed PDF
+                </Button>
+              ) : null}
+              {doc.status === "completed" && doc.urls?.certificate ? (
+                <Button block onClick={() => void openUrl(app, doc.urls?.certificate)}>
+                  Completion certificate
+                </Button>
+              ) : null}
+
+              {!data.canWrite && (isDraft || live) ? (
+                <p className="text-[12px] text-muted">
+                  This connection can only read. Reconnect DocuStamp and allow changes to send or remind.
+                </p>
+              ) : null}
+
+              {doc.urls?.app ? (
+                <button
+                  type="button"
+                  className="mt-1 inline-flex items-center gap-1 self-start text-[12.5px] text-accent hover:text-accent-deep"
+                  onClick={() => void openUrl(app, doc.urls?.app)}
+                >
+                  Open in DocuStamp
+                  <ArrowUpRight className="size-3.5" strokeWidth={1.6} />
+                </button>
+              ) : null}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/** The side of a received document: what is asked of the user, their fields, the way to sign. */
+function ReceivedPanel({
+  ctx,
+  data,
+  onAskToSign
+}: {
+  ctx: ViewContext;
+  data: DocumentData;
+  onAskToSign: () => void;
+}) {
+  const { app, locale } = ctx;
+  const doc = data.document;
+  const needsYou = doc.myStatus === "needs_you";
+  const fields = doc.myFields || [];
+  const openApp = doc.urls?.app ? (
+    <Button
+      block
+      iconRight={<ArrowUpRight className="size-3.5" strokeWidth={1.6} />}
+      onClick={() => void openUrl(app, doc.urls?.app)}
+    >
+      Open in DocuStamp
+    </Button>
+  ) : null;
+  return (
+    <div className="flex flex-col gap-4">
+      {needsYou ? (
+        <div className="flex flex-col gap-3 rounded-xl border border-accent-line bg-accent-tint p-4">
+          <div className="flex items-center gap-2">
+            <span className="size-1.5 rounded-full bg-accent" />
+            <span className="text-[13px] font-semibold">Needs your signature</span>
+          </div>
+          <p className="m-0 text-[12.5px] leading-relaxed text-ink-2">{receivedLine(doc)}</p>
+          <div className="flex flex-col gap-2">
+            <Button variant="primary" block onClick={onAskToSign}>
+              Ask the assistant to sign
+            </Button>
+            {openApp}
           </div>
         </div>
+      ) : (
+        <Banner tone={doc.myStatus === "signed" ? "success" : doc.myStatus === "declined" ? "danger" : "neutral"}>
+          {receivedLine(doc)}
+        </Banner>
+      )}
+
+      {fields.length ? (
+        <Card className="p-4">
+          <div className="flex items-baseline gap-2">
+            <Cap>Your fields</Cap>
+            <span className="num text-[11px] text-muted-2">{fields.length}</span>
+          </div>
+          <div className="mt-1.5 flex flex-col">
+            {fields.map((f, i) => (
+              <div key={`${f.key}-${i}`} className="flex items-baseline gap-3 border-b border-line-soft py-1.5 last:border-0">
+                <span className="min-w-0 flex-1 truncate text-[12.5px]">{f.label || f.type}</span>
+                {f.required ? <span className="text-[11px] text-muted">Required</span> : null}
+                {f.page ? <span className="num shrink-0 text-[11px] text-muted-2">p.{f.page}</span> : null}
+              </div>
+            ))}
+          </div>
+        </Card>
+      ) : null}
+
+      {doc.signers.length ? (
+        <Card className="p-4">
+          <div className="flex items-baseline gap-2">
+            <Cap>Signers</Cap>
+            <span className="num text-[11px] text-muted-2">{doc.signers.length}</span>
+          </div>
+          <div className="mt-2 flex flex-col">
+            {doc.signers.map((s, i) => (
+              <RecipientRow key={`${s.name}-${i}`} signer={s} locale={locale} />
+            ))}
+          </div>
+        </Card>
+      ) : null}
+
+      <div className="flex flex-col gap-2">
+        {doc.urls?.file ? (
+          <Button block onClick={() => void openUrl(app, doc.urls?.file)}>
+            Download PDF
+          </Button>
+        ) : null}
+        {needsYou ? null : openApp}
       </div>
     </div>
   );
@@ -384,9 +541,13 @@ export function DocumentCard({
   const a = useDocumentActions(ctx, data, onChanged);
   const isDraft = doc.status === "draft";
   const ready = Boolean(data.review?.readyToSend);
+  const received = doc.role === "signer";
 
   let main: { label: string; run: () => void; busy?: boolean } | null = null;
-  if (data.canWrite && isDraft && ready)
+  if (received) {
+    // Someone else sent it: the sender's actions (remind, void, extend) are not the user's.
+    if (doc.myStatus === "needs_you") main = { label: "Ask the assistant to sign", run: () => void a.askToSign() };
+  } else if (data.canWrite && isDraft && ready)
     main = {
       label: "Send for signature",
       run: () => void a.send(),
@@ -406,40 +567,74 @@ export function DocumentCard({
     };
 
   return (
-    <div className="flex gap-3 p-3">
-      <div className="w-16 shrink-0">
-        <PagePreview
-          app={app}
-          documentId={doc.objectId}
-          title={doc.name}
-          source={doc.status === "completed" ? "signed" : "original"}
-          startPage={data.previewPage}
-          compact
-        />
-      </div>
-      <div className="flex min-w-0 flex-1 flex-col gap-2">
-        <div className="flex items-start gap-2">
-          <div className="min-w-0 flex-1">
-            <div className="truncate text-[13px] font-semibold">{doc.name}</div>
-            <div className="truncate text-[11.5px] text-muted">
-              <DocSubline doc={doc} locale={locale} />
-            </div>
-          </div>
-          <StatusPill status={doc.status} className="shrink-0" />
+    <div className="flex flex-col">
+      <SignedForYou data={data} />
+      <div className="flex gap-3 p-3">
+        <div className="w-16 shrink-0">
+          <PagePreview
+            app={app}
+            documentId={doc.objectId}
+            title={doc.name}
+            source={doc.status === "completed" ? "signed" : "original"}
+            startPage={data.previewPage}
+            compact
+          />
         </div>
-        {isDraft && data.review && !ready ? (
-          <p className="text-[12px] text-danger">{data.review.errors[0]?.message ?? "Not ready to send yet."}</p>
-        ) : null}
-        {a.result ? <Banner tone={a.result.tone}>{a.result.text}</Banner> : null}
-        <div className="mt-auto flex flex-wrap gap-2">
-          {main ? (
-            <Button size="sm" variant="primary" loading={main.busy} disabled={a.busy !== ""} onClick={main.run}>
-              {main.label}
-            </Button>
+        <div className="flex min-w-0 flex-1 flex-col gap-2">
+          <div className="flex items-start gap-2">
+            <div className="min-w-0 flex-1">
+              <div className="truncate text-[13px] font-semibold">{doc.name}</div>
+              <div className="truncate text-[11.5px] text-muted">
+                {received ? (
+                  <>
+                    {senderOf(doc) ? `From ${senderOf(doc)}` : "Sent to you"}
+                    {doc.expiresAt && doc.myStatus === "needs_you" ? (
+                      <>
+                        {" · due "}
+                        <N>{shortDate(doc.expiresAt, locale)}</N>
+                      </>
+                    ) : doc.sentAt ? (
+                      <>
+                        {" · "}
+                        <N>{shortDate(doc.sentAt, locale)}</N>
+                      </>
+                    ) : null}
+                  </>
+                ) : (
+                  <DocSubline doc={doc} locale={locale} />
+                )}
+              </div>
+            </div>
+            {received ? (
+              <MyStatusPill status={doc.myStatus} className="shrink-0" />
+            ) : (
+              <StatusPill status={doc.status} className="shrink-0" />
+            )}
+          </div>
+          {received ? <p className="m-0 text-[12px] leading-relaxed text-ink-2">{receivedLine(doc, false)}</p> : null}
+          {isDraft && data.review && !ready ? (
+            <p className="text-[12px] text-danger">{data.review.errors[0]?.message ?? "Not ready to send yet."}</p>
           ) : null}
-          <Button size="sm" onClick={onExpand}>
-            {isDraft ? "Review pages" : "Open"}
-          </Button>
+          {a.result ? <Banner tone={a.result.tone}>{a.result.text}</Banner> : null}
+          <div className="mt-auto flex flex-wrap gap-2">
+            {main ? (
+              <Button size="sm" variant="primary" loading={main.busy} disabled={a.busy !== ""} onClick={main.run}>
+                {main.label}
+              </Button>
+            ) : null}
+            {received && doc.urls?.app ? (
+              <Button
+                size="sm"
+                iconRight={<ArrowUpRight className="size-3.5" strokeWidth={1.6} />}
+                onClick={() => void openUrl(app, doc.urls?.app)}
+              >
+                Open in DocuStamp
+              </Button>
+            ) : null}
+            <Button size="sm" variant={received ? "ghost" : "default"} onClick={onExpand}>
+              {isDraft ? "Review pages" : received ? "View pages" : "Open"}
+            </Button>
+          </div>
         </div>
       </div>
     </div>

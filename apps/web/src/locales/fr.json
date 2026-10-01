@@ -84,6 +84,7 @@
     },
     "nav": {
       "ai": "Demander à l'IA",
+      "approvals": "Approbations",
       "automations": "Automatisations",
       "contacts": "Contacts",
       "documents": "Documents",
@@ -115,6 +116,115 @@
       "searchPlaceholder": "Rechercher ou saisir une commande",
       "searchPlaceholderLong": "Rechercher des documents, des personnes, des modèles ou saisir une commande"
     }
+  },
+  "approvals": {
+    "actions": {
+      "approve": "Approuver et signer",
+      "backToList": "Retour aux approbations",
+      "decline": "Refuser",
+      "openDocument": "Ouvrir le document",
+      "review": "Examiner"
+    },
+    "confirm": {
+      "approveBody": "{{agent}} signe « {{title}} » pour vous avec les valeurs affichées.",
+      "approveNote": "La signature est enregistrée comme celle d'un agent IA signant pour vous, avec votre approbation. Une fois signé, impossible de revenir en arrière.",
+      "approveTitle": "Approuver et signer ?",
+      "declineBody": "Rien n'est signé, et {{agent}} est informé de votre refus. Vous pourrez toujours signer le document vous-même plus tard.",
+      "declineTitle": "Refuser cette demande ?"
+    },
+    "detail": {
+      "agentAsked": "<0>{{agent}}</0> a demandé à signer ce document pour vous.",
+      "agentAsks": "<0>{{agent}}</0> veut signer ce document pour vous. Rien n'est signé tant que vous n'avez pas approuvé.",
+      "footerHint": "Lisez la page et l'analyse avant de décider.",
+      "requested": "Demandée <0>{{when}}</0>"
+    },
+    "empty": {
+      "allTitle": "Aucune approbation pour l'instant",
+      "body": "Quand une application que vous avez connectée veut signer un document que quelqu'un vous a envoyé, elle vous demande d'abord ici.",
+      "manageApps": "Gérer les applications connectées",
+      "pendingTitle": "Rien à approuver"
+    },
+    "errors": {
+      "loadFailed": "Impossible de charger les approbations",
+      "notFoundBody": "Elle appartient peut-être à un autre compte, ou le lien est incorrect.",
+      "notFoundTitle": "Cette demande est introuvable"
+    },
+    "intro": "Quand une application que vous avez connectée veut signer un document qu'une autre personne vous a envoyé, elle vous demande d'abord ici. Les documents que vous créez vous-même sont signés tout de suite.",
+    "outcome": {
+      "declinedBody": "Rien n'a été signé. Vous pouvez toujours signer le document vous-même.",
+      "declinedTitle": "Vous avez refusé",
+      "expiredBody": "Le document a changé ou n'est plus ouvert à la signature, donc rien n'a été signé. Redemandez à votre agent si vous voulez toujours le signer.",
+      "expiredTitle": "Cette demande a expiré",
+      "failedBody": "Rien n'a été signé. Ouvrez le document pour le signer vous-même, ou demandez à votre agent de réessayer.",
+      "failedTitle": "La signature n'a pas abouti",
+      "signedBodyChat": "Vous l'avez approuvé dans le chat, et {{agent}} l'a signé pour vous.",
+      "signedBodyWeb": "Vous l'avez approuvé dans {{product}}, et {{agent}} l'a signé pour vous.",
+      "signedTitle": "Signé pour vous"
+    },
+    "preview": {
+      "alt": "Page {{page}} du document",
+      "failedBody": "Réessayez, ou ouvrez le document pour le lire.",
+      "failedTitle": "Impossible de charger cette page",
+      "goToPage": "Afficher la page {{page}}",
+      "next": "Page suivante",
+      "page": "Page {{current}} sur {{total}}",
+      "pageShort": "p. {{page}}",
+      "previous": "Page précédente"
+    },
+    "review": {
+      "aimedAtAi": "Ce document contient du texte écrit pour donner des ordres aux assistants IA. Lisez-le vous-même avant d'approuver.",
+      "disclaimer": "Ceci n'est pas un conseil juridique.",
+      "flags": "À regarder de près",
+      "keyTerms": "Conditions clés",
+      "none": "Il n'y a pas d'analyse par l'IA pour cette demande.",
+      "noneHint": "Lisez le document vous-même avant d'approuver.",
+      "overall": {
+        "concerning": "Préoccupant",
+        "review": "À examiner de près",
+        "standard": "Semble standard"
+      },
+      "parties": "Parties",
+      "section": "Analyse par l'IA",
+      "severity": {
+        "caution": "Prudence",
+        "info": "Remarque",
+        "warning": "Avertissement"
+      },
+      "title": "Ce que l'IA a relevé"
+    },
+    "row": {
+      "from": "De {{sender}}"
+    },
+    "status": {
+      "failed": "Échec"
+    },
+    "table": {
+      "action": "Action",
+      "app": "Application",
+      "document": "Document",
+      "requested": "Demandée",
+      "status": "Statut"
+    },
+    "tabs": {
+      "all": "Toutes",
+      "pending": "En attente"
+    },
+    "toast": {
+      "declined": "Demande refusée",
+      "failed": "Impossible de signer",
+      "signed": "Signé",
+      "signedBody": "{{agent}} l'a signé pour vous."
+    },
+    "values": {
+      "checked": "Cochée",
+      "empty": "Laissé vide",
+      "none": "Seulement votre signature. Rien d'autre n'est rempli.",
+      "notChecked": "Non cochée",
+      "title": "Ce que votre agent va remplir",
+      "titleNotSigned": "Ce que votre agent aurait rempli",
+      "titleSigned": "Ce que votre agent a rempli"
+    },
+    "verifyReason": "Il vous faut une adresse e-mail vérifiée pour qu'une application puisse signer pour vous."
   },
   "auth": {
     "a11y": {
@@ -149,6 +259,8 @@
     },
     "connect": {
       "allow": "Autoriser",
+      "allowSigning": "Autoriser {{app}} à signer des documents pour moi",
+      "allowSigningHint": "Signe tout de suite les documents que vous créez. Vous demande d'abord pour les documents que d'autres vous envoient. Vous pouvez le désactiver à tout moment dans les Paramètres.",
       "backToApp": "Aller sur {{product}}",
       "deny": "Refuser",
       "expiredBody": "Retournez dans l'application que vous connectiez et recommencez.",
@@ -157,11 +269,13 @@
       "redirectNote": "Après votre choix, vous revenez sur <0>{{host}}</0>.",
       "scopeRead": "Voir vos documents, modèles et contacts, et qui a signé",
       "scopeWrite": "Créer, modifier et envoyer des documents à signer, ce qui envoie des e-mails à vos signataires",
+      "signRequested": "{{app}} a demandé à pouvoir signer pour vous. Il ne peut signer que si vous l'autorisez ici.",
       "signedInAs": "Connecté en tant que {{email}}",
       "subtitle": "{{app}} souhaite utiliser votre compte {{product}}.",
       "switchAccount": "Utiliser un autre compte",
       "title": "Connecter {{app}}",
       "unnamedApp": "Une application",
+      "verifyReason": "Pour que {{app}} puisse signer pour vous, confirmez d'abord votre adresse e-mail. Vous pouvez aussi vous connecter sans signature et l'activer plus tard dans les Paramètres.",
       "wants": "{{app}} pourra :",
       "warning": "N'autorisez ceci que si vous avez lancé la connexion depuis {{app}}. Vous pouvez la déconnecter à tout moment dans les Paramètres."
     },
@@ -2043,6 +2157,14 @@
   "settings": {
     "apiWebhooks": {
       "apps": {
+        "canSign": "Peut signer pour moi",
+        "canSignFor": "Autoriser {{app}} à signer pour moi",
+        "canSignHint": "Signe tout de suite les documents que vous créez. Vous demande d'abord pour les documents que d'autres vous envoient.",
+        "confirmOff": "Vous pouvez le désactiver ici à tout moment.",
+        "confirmOthers": "Pour les documents que d'autres personnes vous envoient, elle vous demande d'abord, dans Approbations ou dans le chat.",
+        "confirmOwn": "{{app}} signe tout de suite les documents que vous créez et vous envoie un e-mail à chaque fois.",
+        "confirmTitle": "Autoriser {{app}} à signer pour vous ?",
+        "confirmTurnOn": "Activer la signature",
         "connected": "Connectée",
         "disconnect": "Déconnecter",
         "disconnectConfirm": "{{app}} perd immédiatement l'accès à votre compte. Vous pourrez la reconnecter plus tard.",
@@ -2051,9 +2173,15 @@
         "none": "Aucune application connectée pour l'instant. Pour connecter ChatGPT, Claude ou une autre application MCP, ajoutez-y le point de terminaison MCP ci-dessous et connectez-vous quand elle le demande.",
         "note": "Les applications que vous avez connectées en vous identifiant, comme ChatGPT. Chacune n'a que l'accès que vous avez autorisé.",
         "readOnly": "Lecture seule",
+        "readSendSign": "Lecture, envoi et signature",
         "readWrite": "Lecture et envoi",
+        "signingFailed": "Impossible de modifier la signature",
+        "signingOffToast": "{{app}} ne peut plus signer pour vous",
+        "signingOnToast": "{{app}} peut maintenant signer pour vous",
+        "signingSince": "Signature activée depuis le <0>{{date}}</0>",
         "title": "Applications connectées",
-        "unnamed": "Application sans nom"
+        "unnamed": "Application sans nom",
+        "verifyFirst": "Vérifiez votre adresse e-mail ci-dessus pour l'activer."
       },
       "mcp": {
         "claudeCode": "Claude Code",
@@ -2704,6 +2832,23 @@
       }
     },
     "title": "Paramètres",
+    "verifyEmail": {
+      "codeLabel": "Code de vérification",
+      "done": "Adresse e-mail vérifiée",
+      "note": "Une vérification unique que cette adresse est bien la vôtre.",
+      "reason": "Avant qu'une application puisse signer pour vous, confirmez que cette adresse e-mail est bien la vôtre.",
+      "resend": "Envoyer un nouveau code",
+      "resendIn": "Envoyer un nouveau code dans <0>{{seconds}} s</0>",
+      "send": "Envoyer le code",
+      "sendFailed": "Impossible d'envoyer le code. Veuillez réessayer.",
+      "sent": "Nous avons envoyé un code à 6 chiffres à <0>{{email}}</0>. Saisissez-le ci-dessous.",
+      "title": "Vérifiez votre adresse e-mail",
+      "verified": "Vérifiée",
+      "verifiedLine": "<0>{{email}}</0> est vérifiée.",
+      "verify": "Vérifier",
+      "willSend": "Nous enverrons un code à 6 chiffres à <0>{{email}}</0>.",
+      "wrongCode": "Ce code n'a pas fonctionné. Vérifiez-le et réessayez."
+    },
     "workspaceFallback": "Espace de travail"
   },
   "signer": {

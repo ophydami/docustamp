@@ -7,6 +7,7 @@ import {
   InvalidTokenError,
 } from '@modelcontextprotocol/sdk/server/auth/errors.js';
 import { appName } from '../../Utils.js';
+import { verifiedIdentityProblem } from './agentIdentity.js';
 import { conditionalUpdate } from './atomic.js';
 import { configuredPublicOrigin } from './publicUrl.js';
 
@@ -46,7 +47,32 @@ export const OAUTH_GRANT_CLASS = 'contracts_OAuthGrant';
 
 export const SCOPE_READ = 'documents:read';
 export const SCOPE_WRITE = 'documents:write';
-export const SCOPES_SUPPORTED = Object.freeze([SCOPE_READ, SCOPE_WRITE]);
+/**
+ * Lets the app sign for the user (lib/agentSign.js). Never granted because a
+ * client asked: only the user turns it on, with the "Can sign for me" box on the
+ * consent page or the switch under Settings > API and MCP, and only once their
+ * email address is verified (lib/agentIdentity.js).
+ */
+export const SCOPE_SIGN = 'documents:sign';
+export const SCOPES_SUPPORTED = Object.freeze([SCOPE_READ, SCOPE_WRITE, SCOPE_SIGN]);
+/** What a connection gets when it asks for nothing in particular. */
+const DEFAULT_SCOPES = Object.freeze([SCOPE_READ, SCOPE_WRITE]);
+
+/**
+ * Why this caller's app may not sign for the user, or null when it may. An app
+ * the user connected needs documents:sign ("Can sign for me"). A personal API
+ * token is the user's own key and may; it still needs a verified email
+ * (lib/agentIdentity.js), which lib/agentSign.js checks for everyone.
+ *
+ * @param {import('./context.js').Caller} caller
+ * @returns {string|null}
+ */
+export function signingScopeProblem(caller) {
+  if (!caller?.oauth) return null;
+  if ((caller.scopes || []).includes(SCOPE_SIGN)) return null;
+  const app = String(caller.oauth.clientName || '').trim() || 'this app';
+  return `Signing is off for this app. Turn on 'Can sign for me' for ${app} in ${appName} Settings > API and MCP.`;
+}
 
 export const ACCESS_TOKEN_PREFIX = 'dsat_';
 const REFRESH_TOKEN_PREFIX = 'dsrt_';
@@ -246,6 +272,7 @@ export async function ensureOAuthSchema() {
     schema.addArray('Scopes');
     schema.addString('Resource');
     schema.addString('Status');
+    schema.addBoolean('SignRequested');
     schema.addDate('ExpiresAt');
     schema.addString('CodeHash');
     schema.addDate('CodeExpiresAt');
@@ -266,6 +293,7 @@ export async function ensureOAuthSchema() {
     schema.addString('RefreshTokenHash');
     schema.addDate('RefreshExpiresAt');
     schema.addDate('LastUsedAt');
+    schema.addDate('SigningEnabledAt');
   });
 }
 
@@ -355,15 +383,30 @@ export const clientsStore = {
 
 // ---------------------------------------------------------------- authorization requests
 
+/**
+ * The scopes a request will be granted, and whether it asked to sign.
+ *
+ * documents:sign is taken out: asking for it only lets the consent page offer
+ * the "Can sign for me" box (`signRequested`), the user decides. An MCP client
+ * that asks for every scope the metadata lists therefore still connects with
+ * read and write only.
+ *
+ * @returns {{scopes: string[], signRequested: boolean}}
+ */
 function requestedScopes(scopes) {
   const list = (scopes || []).filter(Boolean);
-  if (!list.length) return [...SCOPES_SUPPORTED];
+  if (!list.length) return { scopes: [...DEFAULT_SCOPES], signRequested: false };
   const unknown = list.filter(scope => !SCOPES_SUPPORTED.includes(scope));
   if (unknown.length) throw new InvalidScopeError(`Unknown scope: ${unknown.join(' ')}`);
+  const signRequested = list.includes(SCOPE_SIGN);
+  const base = list.filter(scope => scope !== SCOPE_SIGN);
+  // Signing happens through a write tool (sign_document), so asking to sign
+  // implies writing.
+  if (signRequested && !base.includes(SCOPE_WRITE)) base.push(SCOPE_WRITE);
   // documents:write implies reading: a connection that may send a document
   // has to be able to look at it first.
-  if (list.includes(SCOPE_WRITE) && !list.includes(SCOPE_READ)) list.unshift(SCOPE_READ);
-  return [...new Set(list)];
+  if (base.includes(SCOPE_WRITE) && !base.includes(SCOPE_READ)) base.unshift(SCOPE_READ);
+  return { scopes: [...new Set(base)], signRequested };
 }
 
 /** Where the browser goes to approve a request: the web app's consent page. */
@@ -376,7 +419,7 @@ export function consentPageUrl(requestId) {
  * request and hand the browser to the consent page.
  */
 async function authorize(client, params, res) {
-  const scopes = requestedScopes(params.scopes);
+  const { scopes, signRequested } = requestedScopes(params.scopes);
   if (!sameResource(params.resource)) {
     throw new InvalidTargetError(
       `Unknown resource. This server issues tokens for ${mcpResourceUrl()}.`
@@ -392,6 +435,7 @@ async function authorize(client, params, res) {
   row.set('CodeChallenge', params.codeChallenge);
   if (params.state) row.set('State', String(params.state).slice(0, 1000));
   row.set('Scopes', scopes);
+  row.set('SignRequested', signRequested);
   row.set('Resource', mcpResourceUrl());
   row.set('Status', 'pending');
   row.set('ExpiresAt', new Date(Date.now() + REQUEST_TTL_MS));
@@ -425,6 +469,8 @@ const EXPIRED_MESSAGE =
 /**
  * What the consent page shows: which app, where it sends the user back to,
  * and what it asks for. The redirect host is the part a client cannot fake.
+ * `signRequested` says the app asked for documents:sign; it is not in `scopes`
+ * because only the user's "Can sign for me" box grants it.
  */
 export async function describeAuthorizationRequest(requestId) {
   const row = await pendingRequest(requestId);
@@ -433,6 +479,7 @@ export async function describeAuthorizationRequest(requestId) {
     clientName: row.get('ClientName') || '',
     redirectHost: hostOf(row.get('RedirectUri')),
     scopes: row.get('Scopes') || [],
+    signRequested: row.get('SignRequested') === true,
     expiresAt: iso(row.get('ExpiresAt')),
   };
 }
@@ -452,9 +499,13 @@ function redirectWith(uri, params) {
  * @param {import('./context.js').Caller} caller the signed-in user
  * @param {string} requestId
  * @param {boolean} approve
+ * @param {{allowSigning?: boolean}} [opts] the "Can sign for me" box. Adds
+ *   documents:sign only for a caller whose email is verified
+ *   (`verifiedIdentityProblem` is null); otherwise it is ignored and the app
+ *   connects without it, so the switch in Settings can turn it on later.
  * @returns {Promise<{redirectUrl: string}>}
  */
-export async function decideAuthorizationRequest(caller, requestId, approve) {
+export async function decideAuthorizationRequest(caller, requestId, approve, opts = {}) {
   const row = await pendingRequest(requestId);
   if (!row) throw new Parse.Error(Parse.Error.OBJECT_NOT_FOUND, EXPIRED_MESSAGE);
   const redirectUri = row.get('RedirectUri');
@@ -478,12 +529,19 @@ export async function decideAuthorizationRequest(caller, requestId, approve) {
     };
   }
   const code = randomToken(32);
+  const scopes = (row.get('Scopes') || [...DEFAULT_SCOPES]).filter(scope => scope !== SCOPE_SIGN);
+  if (opts.allowSigning === true && !verifiedIdentityProblem(caller)) {
+    if (!scopes.includes(SCOPE_WRITE)) scopes.push(SCOPE_WRITE);
+    if (!scopes.includes(SCOPE_READ)) scopes.unshift(SCOPE_READ);
+    scopes.push(SCOPE_SIGN);
+  }
   const won = await conditionalUpdate(
     OAUTH_REQUEST_CLASS,
     row.id,
     { Status: 'pending' },
     {
       Status: 'approved',
+      Scopes: scopes,
       CodeHash: hashSecret(code),
       CodeExpiresAt: new Date(Date.now() + CODE_TTL_MS),
       User: { __type: 'Pointer', className: '_User', objectId: caller.userId },
@@ -583,7 +641,7 @@ async function exchangeAuthorizationCode(client, code, _verifier, redirectUri, r
   );
   if (!won) throw new InvalidGrantError('Authorization code was already used');
 
-  const scopes = row.get('Scopes') || [...SCOPES_SUPPORTED];
+  const scopes = row.get('Scopes') || [...DEFAULT_SCOPES];
   const { accessToken, refreshToken, fields } = freshTokens();
   const grant = new Parse.Object(OAUTH_GRANT_CLASS);
   grant.set('ClientId', client.client_id);
@@ -594,6 +652,7 @@ async function exchangeAuthorizationCode(client, code, _verifier, redirectUri, r
   grant.set('Scopes', scopes);
   grant.set('Resource', row.get('Resource') || mcpResourceUrl());
   grant.set('RequestId', row.get('RequestId'));
+  if (scopes.includes(SCOPE_SIGN)) grant.set('SigningEnabledAt', new Date());
   for (const [key, value] of Object.entries(fields)) grant.set(key, value);
   await grant.save(null, { useMasterKey: true });
   return tokenResponse(accessToken, refreshToken, scopes);
@@ -640,6 +699,9 @@ async function exchangeRefreshToken(client, refreshToken, scopes, resource) {
     const extra = scopes.filter(scope => !granted.includes(scope));
     if (extra.length) throw new InvalidScopeError(`Scope was not granted: ${extra.join(' ')}`);
     next = scopes;
+    // Signing is the user's switch, not the client's: a refresh that names only
+    // read and write (what the client first asked for) must not turn it off.
+    if (granted.includes(SCOPE_SIGN) && !next.includes(SCOPE_SIGN)) next = [...next, SCOPE_SIGN];
   }
   const { accessToken, refreshToken: newRefresh, fields } = freshTokens();
   const won = await conditionalUpdate(
@@ -676,8 +738,10 @@ export function looksLikeOAuthAccessToken(raw) {
 }
 
 /**
- * Resolve an access token for the MCP endpoint.
- * @returns {Promise<{user: Parse.User, extUser: Parse.Object, scopes: string[], clientId: string, clientName: string, touch: Function} | null>}
+ * Resolve an access token for the MCP endpoint. Read fresh on every request, so
+ * turning "Can sign for me" on or off applies to the next call without a
+ * reconnect.
+ * @returns {Promise<{user: Parse.User, extUser: Parse.Object, scopes: string[], clientId: string, clientName: string, redirectHost: string, signingEnabledAt: Date|null, touch: Function} | null>}
  */
 export async function resolveOAuthAccessToken(raw) {
   if (!looksLikeOAuthAccessToken(raw)) return null;
@@ -700,6 +764,8 @@ export async function resolveOAuthAccessToken(raw) {
     scopes: grant.get('Scopes') || [],
     clientId: grant.get('ClientId'),
     clientName: grant.get('ClientName') || '',
+    redirectHost: grant.get('RedirectHost') || '',
+    signingEnabledAt: signingEnabledAtOf(grant),
     touch: () => touchGrant(grant),
   };
 }
@@ -750,6 +816,13 @@ function userQuery(userId) {
   return query;
 }
 
+/** When signing was turned on for a grant, or null while it is off. */
+function signingEnabledAtOf(grant) {
+  if (!(grant.get('Scopes') || []).includes(SCOPE_SIGN)) return null;
+  const at = grant.get('SigningEnabledAt');
+  return at instanceof Date ? at : null;
+}
+
 /** The apps connected to this account, newest first. Never includes a hash. */
 export async function listOAuthGrants(userId) {
   if (!userId) return [];
@@ -765,9 +838,62 @@ export async function listOAuthGrants(userId) {
       clientName: row.get('ClientName') || '',
       redirectHost: row.get('RedirectHost') || '',
       scopes: row.get('Scopes') || [],
+      canSign: (row.get('Scopes') || []).includes(SCOPE_SIGN),
+      signingEnabledAt: iso(signingEnabledAtOf(row)),
       createdAt: iso(row.createdAt),
       lastUsedAt: iso(row.get('LastUsedAt')),
     }));
+}
+
+/**
+ * The "Can sign for me" switch for one connected app. Takes effect on the app's
+ * next request (the grant is read on every call). Turning it on needs a
+ * verified email address; turning it off never does.
+ *
+ * @param {import('./context.js').Caller} caller the signed-in user
+ * @param {string} grantId
+ * @param {boolean} enabled
+ * @returns {Promise<{id: string, canSign: boolean, signingEnabledAt: string|null}>}
+ */
+export async function setOAuthGrantSigning(caller, grantId, enabled) {
+  if (!caller?.userId || typeof grantId !== 'string' || !grantId) {
+    throw new Parse.Error(Parse.Error.OBJECT_NOT_FOUND, 'Connected app not found.');
+  }
+  await ensureOAuthSchema();
+  const query = userQuery(caller.userId);
+  query.equalTo('objectId', grantId);
+  const grant = await query.first({ useMasterKey: true });
+  if (!grant || !(grant.get('RefreshExpiresAt') > new Date())) {
+    throw new Parse.Error(Parse.Error.OBJECT_NOT_FOUND, 'Connected app not found.');
+  }
+  if (enabled) {
+    const problem = verifiedIdentityProblem(caller);
+    if (problem) throw new Parse.Error(Parse.Error.OPERATION_FORBIDDEN, problem);
+  }
+  const scopes = (grant.get('Scopes') || []).filter(scope => scope !== SCOPE_SIGN);
+  if (enabled) {
+    if (!scopes.includes(SCOPE_READ)) scopes.unshift(SCOPE_READ);
+    if (!scopes.includes(SCOPE_WRITE)) scopes.push(SCOPE_WRITE);
+    scopes.push(SCOPE_SIGN);
+  }
+  const already = (grant.get('Scopes') || []).includes(SCOPE_SIGN);
+  const update = new Parse.Object(OAUTH_GRANT_CLASS);
+  update.id = grant.id;
+  update.set('Scopes', scopes);
+  // The date it was first turned on, kept while it stays on: the certificate
+  // says "agent signing on since ...".
+  if (enabled && !(already && grant.get('SigningEnabledAt') instanceof Date)) {
+    update.set('SigningEnabledAt', new Date());
+  } else if (!enabled) {
+    update.unset('SigningEnabledAt');
+  }
+  await update.save(null, { useMasterKey: true });
+  const fresh = await userQuery(caller.userId).equalTo('objectId', grant.id).first({ useMasterKey: true });
+  return {
+    id: grant.id,
+    canSign: (fresh.get('Scopes') || []).includes(SCOPE_SIGN),
+    signingEnabledAt: iso(signingEnabledAtOf(fresh)),
+  };
 }
 
 /** Disconnect one app. Only the account that connected it can. */

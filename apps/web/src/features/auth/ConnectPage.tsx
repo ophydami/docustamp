@@ -3,10 +3,12 @@ import { Trans, useTranslation } from "react-i18next";
 import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Check, Loader2 } from "lucide-react";
-import { Button } from "@/components/ui";
+import { Button, Checkbox } from "@/components/ui";
 import { useAuth } from "@/app/auth";
 import { useSignInBrand } from "@/lib/brand";
 import { cloud } from "@/lib/parse";
+import { useEmailVerification } from "@/features/settings/api";
+import { VerifyEmailCard } from "@/features/settings/VerifyEmailCard";
 import { AuthHeading, AuthLayout, FormError } from "./AuthLayout";
 
 interface ConnectRequest {
@@ -14,6 +16,8 @@ interface ConnectRequest {
   redirectHost: string;
   scopes: string[];
   expiresAt: string | null;
+  /** The app asked for `documents:sign`. Signing is still off unless the box is ticked. */
+  signRequested?: boolean;
 }
 
 /** What each OAuth scope lets the app do, in the words the page uses. */
@@ -30,6 +34,12 @@ const SCOPE_LABELS: Record<string, string> = {
  * the router) makes the user sign in first and brings them back. Allowing or
  * denying asks the server for the url to return to, and the page goes there:
  * with a one-time code when allowed, with `error=access_denied` when not.
+ *
+ * Signing for the person is never part of the default grant. An app that can
+ * send gets an unticked "Let <app> sign documents for me" box, which needs a
+ * verified email first (the inline verify box stands in for it until then);
+ * the choice goes to `oauthdecide` as `allowSigning`. A server without email
+ * verification fails that query, and then the box is left out.
  */
 export default function ConnectPage() {
   const { t } = useTranslation();
@@ -41,6 +51,8 @@ export default function ConnectPage() {
   const requestId = params.get("request") ?? "";
   const [busy, setBusy] = useState<"allow" | "deny" | null>(null);
   const [error, setError] = useState("");
+  const [allowSigning, setAllowSigning] = useState(false);
+  const verification = useEmailVerification(Boolean(requestId));
 
   const request = useQuery({
     queryKey: ["oauth", "request", requestId],
@@ -54,7 +66,12 @@ export default function ConnectPage() {
     setBusy(approve ? "allow" : "deny");
     setError("");
     try {
-      const res = await cloud<{ redirectUrl: string }>("oauthdecide", { requestId, approve });
+      const sign = approve && allowSigning && verification.data?.verified === true;
+      const res = await cloud<{ redirectUrl: string }>("oauthdecide", {
+        requestId,
+        approve,
+        ...(sign ? { allowSigning: true } : {})
+      });
       // Leave `busy` set: the page is navigating away and must not be clicked twice.
       window.location.assign(res.redirectUrl);
     } catch (err) {
@@ -93,6 +110,9 @@ export default function ConnectPage() {
 
   const app = request.data.clientName || t("auth.connect.unnamedApp");
   const scopes = request.data.scopes.filter((scope) => SCOPE_LABELS[scope]);
+  const signRequested = request.data.signRequested === true;
+  const offerSigning =
+    verification.data !== undefined && (request.data.scopes.includes("documents:write") || signRequested);
 
   return (
     <AuthLayout>
@@ -123,6 +143,30 @@ export default function ConnectPage() {
             ))}
           </ul>
         </div>
+
+        {offerSigning ? (
+          <div className="flex flex-col gap-2">
+            {verification.data?.verified ? (
+              <label className="flex cursor-pointer items-start gap-2.5 rounded-md border border-line bg-surface px-3 py-2.5 hover:border-line-strong">
+                <Checkbox
+                  className="mt-[3px]"
+                  checked={allowSigning}
+                  onChange={setAllowSigning}
+                  disabled={busy !== null}
+                />
+                <span className="flex flex-col gap-0.5">
+                  <span className="text-[13px] font-medium text-ink">{t("auth.connect.allowSigning", { app })}</span>
+                  <span className="text-[12px] leading-relaxed text-muted">{t("auth.connect.allowSigningHint")}</span>
+                </span>
+              </label>
+            ) : (
+              <VerifyEmailCard variant="inline" reason={t("auth.connect.verifyReason", { app })} />
+            )}
+            {signRequested ? (
+              <p className="text-[11.5px] leading-relaxed text-muted">{t("auth.connect.signRequested", { app })}</p>
+            ) : null}
+          </div>
+        ) : null}
 
         <p className="text-[12px] leading-relaxed text-muted">
           <Trans

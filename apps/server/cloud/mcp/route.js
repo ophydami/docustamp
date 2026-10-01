@@ -77,13 +77,24 @@ export async function authenticateApiRequest(req, { allowOAuth = false } = {}) {
       extUser: resolved.extUser,
       publicUrl: publicOrigin(req),
     });
+    // Where the request came from, for the audit entry of a signature an
+    // agent makes (lib/agentSign.js passes it on as x-real-ip).
+    const ip = clientIp(req);
+    caller.ip = ip === 'unknown' ? '' : ip;
     // Undefined for an API token, which carries everything the account can do.
     if (resolved.scopes) {
       caller.scopes = resolved.scopes;
       // An app the user connected (ChatGPT, Claude...) rather than a token the
-      // user holds: it gets no signing links, and what it sends needs the
-      // emailed code (./server.js labelTools, lib/documents.js sendDocument).
-      caller.oauth = { clientId: resolved.clientId, clientName: resolved.clientName || '' };
+      // user holds: it never gets signing links (./server.js labelTools), and it
+      // signs only through sign_document, for this user, once the user turned
+      // on "Can sign for me" (documents:sign). The redirect host is what the
+      // audit trail shows next to the self-declared client name.
+      caller.oauth = {
+        clientId: resolved.clientId,
+        clientName: resolved.clientName || '',
+        redirectHost: resolved.redirectHost || '',
+        signingEnabledAt: resolved.signingEnabledAt || null,
+      };
     }
     return { caller };
   } catch (err) {

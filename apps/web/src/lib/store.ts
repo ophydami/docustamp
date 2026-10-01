@@ -1,15 +1,20 @@
 import { create } from "zustand";
 import type { ReactNode } from "react";
 
-/** Sidebar badge counts, set by features (e.g. inbox sets "needs you"). */
+/**
+ * Sidebar badge counts, set by features (e.g. inbox sets "needs you", and the
+ * sidebar keeps "approvals" at the number of pending sign approvals).
+ */
 interface BadgeState {
   inbox: number;
   expiring: number;
-  setBadges: (b: Partial<Pick<BadgeState, "inbox" | "expiring">>) => void;
+  approvals: number;
+  setBadges: (b: Partial<Pick<BadgeState, "inbox" | "expiring" | "approvals">>) => void;
 }
 export const useBadges = create<BadgeState>((set) => ({
   inbox: 0,
   expiring: 0,
+  approvals: 0,
   setBadges: (b) => set(b)
 }));
 

@@ -4,7 +4,11 @@ import { assertOwner, documentStatus, loadDoc } from './documents.js';
 import { listDraftVersions } from './drafts.js';
 import { openSummary, recentOpens } from './documentOpens.js';
 import { API_URL_TTL, bytesFromInput, resolveFileUrl } from './files.js';
-import { certificateBlocks, toDate } from '../parsefunction/pdf/GenerateCertificate.js';
+import {
+  agentRecord,
+  certificateBlocks,
+  toDate,
+} from '../parsefunction/pdf/GenerateCertificate.js';
 
 /**
  * Audit trail, version history and certificate data for a document, as JSON,
@@ -50,13 +54,46 @@ function whoFor(entry, d) {
   };
 }
 
-function entryJson(entry, d) {
+/**
+ * How a signature was made: `method: 'agent'` plus which app signed, for whom
+ * and who allowed it (lib/agentSign.js records these on the entry), or
+ * `method: 'person'` with none of the agent keys, so a reader that predates
+ * agent signing sees the shape it always did. Takes an audit entry or a
+ * certificate block; both carry the same `Method`/`Agent`/`OnBehalfOf`/
+ * `AllowedBy` keys.
+ */
+function methodJson(source) {
+  const record = agentRecord(source);
+  if (!record) return { method: 'person' };
+  const { Agent: agent, OnBehalfOf: behalf, AllowedBy: allowed } = record;
+  return {
+    method: 'agent',
+    agent: { kind: agent.kind, name: agent.name, host: agent.host },
+    onBehalfOf: { name: behalf.name, email: behalf.email },
+    allowedBy: {
+      via: allowed.via,
+      name: allowed.name,
+      email: allowed.email,
+      at: allowed.at || undefined,
+      signingEnabledAt: allowed.signingEnabledAt,
+      approvalId: allowed.approvalId,
+    },
+  };
+}
+
+/**
+ * One audit entry as get_audit_trail returns it.
+ * @param {Object} entry an AuditTrail entry
+ * @param {Object} d the document as JSON (names the participant)
+ */
+export function entryJson(entry, d) {
   const when = ENTRY_TIME_KEYS.map(k => iso(entry?.[k])).find(Boolean);
   const out = {
     activity: entry?.Activity || (entry?.SignedOn || entry?.Signature ? 'Signed' : 'Unknown'),
     at: when,
     who: whoFor(entry, d),
     ip: entry?.ipAddress || undefined,
+    ...methodJson(entry),
   };
   if (entry?.SignedOn && entry?.ViewedOn) out.viewedAt = iso(entry.ViewedOn);
   if (entry?.Signature) out.signatureImage = true;
@@ -133,6 +170,7 @@ export async function getAuditTrail(caller, docId, { versionsLimit = 50 } = {}) 
         viewedAt: b.ViewedOn || undefined,
         opens: b.OpenCount || undefined,
         signedAt: b.SignedOn || undefined,
+        ...methodJson(b),
       })),
       url: d?.CertificateUrl
         ? await resolveFileUrl(d.CertificateUrl, { ttl: API_URL_TTL })

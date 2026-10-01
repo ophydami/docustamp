@@ -84,6 +84,7 @@
     },
     "nav": {
       "ai": "Preguntar a la IA",
+      "approvals": "Aprobaciones",
       "automations": "Automatizaciones",
       "contacts": "Contactos",
       "documents": "Documentos",
@@ -115,6 +116,115 @@
       "searchPlaceholder": "Busca o escribe un comando",
       "searchPlaceholderLong": "Busca documentos, personas, plantillas o escribe un comando"
     }
+  },
+  "approvals": {
+    "actions": {
+      "approve": "Aprobar y firmar",
+      "backToList": "Volver a aprobaciones",
+      "decline": "Rechazar",
+      "openDocument": "Abrir el documento",
+      "review": "Revisar"
+    },
+    "confirm": {
+      "approveBody": "{{agent}} firma «{{title}}» por ti con los datos que se muestran.",
+      "approveNote": "La firma queda registrada como firmada por un agente de IA en tu nombre, con tu aprobación. Una vez firmada, no se puede deshacer.",
+      "approveTitle": "¿Aprobar y firmar?",
+      "declineBody": "No se firma nada y {{agent}} sabrá que dijiste que no. Aún puedes firmar el documento tú mismo más tarde.",
+      "declineTitle": "¿Rechazar esta solicitud?"
+    },
+    "detail": {
+      "agentAsked": "<0>{{agent}}</0> pidió firmar este documento por ti.",
+      "agentAsks": "<0>{{agent}}</0> quiere firmar este documento por ti. No se firma nada hasta que lo apruebes.",
+      "footerHint": "Lee la página y la revisión antes de decidir.",
+      "requested": "Solicitada <0>{{when}}</0>"
+    },
+    "empty": {
+      "allTitle": "Aún no hay aprobaciones",
+      "body": "Cuando una app que conectaste quiere firmar un documento que alguien te envió, primero te pregunta aquí.",
+      "manageApps": "Gestionar apps conectadas",
+      "pendingTitle": "Nada que aprobar"
+    },
+    "errors": {
+      "loadFailed": "No se pudieron cargar las aprobaciones",
+      "notFoundBody": "Puede que sea de otra cuenta o que el enlace esté mal.",
+      "notFoundTitle": "No se encontró esta solicitud"
+    },
+    "intro": "Cuando una app que conectaste quiere firmar un documento que te envió otra persona, primero te pregunta aquí. Los documentos que creas tú se firman al momento.",
+    "outcome": {
+      "declinedBody": "No se firmó nada. Aún puedes firmar el documento tú mismo.",
+      "declinedTitle": "Lo rechazaste",
+      "expiredBody": "El documento cambió o ya no está abierto para firmar, así que no se firmó nada. Vuelve a pedírselo a tu agente si aún quieres firmarlo.",
+      "expiredTitle": "Esta solicitud caducó",
+      "failedBody": "No se firmó nada. Abre el documento para firmarlo tú mismo o pide a tu agente que lo intente de nuevo.",
+      "failedTitle": "La firma no se completó",
+      "signedBodyChat": "Lo aprobaste en el chat y {{agent}} lo firmó por ti.",
+      "signedBodyWeb": "Lo aprobaste en {{product}} y {{agent}} lo firmó por ti.",
+      "signedTitle": "Firmado por ti"
+    },
+    "preview": {
+      "alt": "Página {{page}} del documento",
+      "failedBody": "Inténtalo de nuevo o abre el documento para leerlo.",
+      "failedTitle": "No se pudo cargar esta página",
+      "goToPage": "Mostrar la página {{page}}",
+      "next": "Página siguiente",
+      "page": "Página {{current}} de {{total}}",
+      "pageShort": "pág. {{page}}",
+      "previous": "Página anterior"
+    },
+    "review": {
+      "aimedAtAi": "Este documento tiene texto escrito para dar órdenes a asistentes de IA. Léelo tú mismo antes de aprobar.",
+      "disclaimer": "Esto no es asesoramiento legal.",
+      "flags": "Vale la pena mirar",
+      "keyTerms": "Condiciones clave",
+      "none": "No hay revisión con IA para esta solicitud.",
+      "noneHint": "Lee el documento tú mismo antes de aprobar.",
+      "overall": {
+        "concerning": "Preocupante",
+        "review": "Merece una revisión",
+        "standard": "Parece estándar"
+      },
+      "parties": "Partes",
+      "section": "Revisión con IA",
+      "severity": {
+        "caution": "Precaución",
+        "info": "Nota",
+        "warning": "Advertencia"
+      },
+      "title": "Lo que encontró la IA"
+    },
+    "row": {
+      "from": "De {{sender}}"
+    },
+    "status": {
+      "failed": "Falló"
+    },
+    "table": {
+      "action": "Acción",
+      "app": "App",
+      "document": "Documento",
+      "requested": "Solicitada",
+      "status": "Estado"
+    },
+    "tabs": {
+      "all": "Todas",
+      "pending": "Pendientes"
+    },
+    "toast": {
+      "declined": "Solicitud rechazada",
+      "failed": "No se pudo firmar",
+      "signed": "Firmado",
+      "signedBody": "{{agent}} lo firmó por ti."
+    },
+    "values": {
+      "checked": "Marcada",
+      "empty": "En blanco",
+      "none": "Solo tu firma. No se rellena nada más.",
+      "notChecked": "Sin marcar",
+      "title": "Lo que tu agente va a rellenar",
+      "titleNotSigned": "Lo que tu agente habría rellenado",
+      "titleSigned": "Lo que rellenó tu agente"
+    },
+    "verifyReason": "Necesitas un correo verificado para que una app pueda firmar por ti."
   },
   "auth": {
     "a11y": {
@@ -149,6 +259,8 @@
     },
     "connect": {
       "allow": "Permitir",
+      "allowSigning": "Permitir que {{app}} firme documentos por mí",
+      "allowSigningHint": "Firma al momento los documentos que tú creas. Te pregunta antes en los documentos que te envían otras personas. Puedes desactivarlo cuando quieras en Configuración.",
       "backToApp": "Ir a {{product}}",
       "deny": "Rechazar",
       "expiredBody": "Vuelve a la app que estabas conectando y empieza de nuevo.",
@@ -157,11 +269,13 @@
       "redirectNote": "Después de elegir, vuelves a <0>{{host}}</0>.",
       "scopeRead": "Ver tus documentos, plantillas y contactos, y quién ha firmado",
       "scopeWrite": "Crear, editar y enviar documentos para firmar, lo que envía correos a tus firmantes",
+      "signRequested": "{{app}} pidió poder firmar por ti. Solo puede firmar si lo permites aquí.",
       "signedInAs": "Sesión iniciada como {{email}}",
       "subtitle": "{{app}} quiere usar tu cuenta de {{product}}.",
       "switchAccount": "Usar otra cuenta",
       "title": "Conectar {{app}}",
       "unnamedApp": "Una app",
+      "verifyReason": "Para que {{app}} pueda firmar por ti, primero confirma tu correo. También puedes conectar sin firma y activarla más tarde en Configuración.",
       "wants": "{{app}} podrá:",
       "warning": "Permítelo solo si tú empezaste la conexión desde {{app}}. Puedes desconectarla cuando quieras en Configuración."
     },
@@ -2043,6 +2157,14 @@
   "settings": {
     "apiWebhooks": {
       "apps": {
+        "canSign": "Puede firmar por mí",
+        "canSignFor": "Permitir que {{app}} firme por mí",
+        "canSignHint": "Firma al momento los documentos que tú creas. Te pregunta antes en los documentos que te envían otras personas.",
+        "confirmOff": "Puedes desactivarlo aquí cuando quieras.",
+        "confirmOthers": "En los documentos que te envían otras personas, te pregunta antes, en Aprobaciones o en el chat.",
+        "confirmOwn": "{{app}} firma al momento los documentos que tú creas y te envía un correo cada vez.",
+        "confirmTitle": "¿Permitir que {{app}} firme por ti?",
+        "confirmTurnOn": "Activar la firma",
         "connected": "Conectada",
         "disconnect": "Desconectar",
         "disconnectConfirm": "{{app}} perderá el acceso a tu cuenta de inmediato. Puedes volver a conectarla más tarde.",
@@ -2051,9 +2173,15 @@
         "none": "Aún no hay apps conectadas. Para conectar ChatGPT, Claude u otra app MCP, añade allí el endpoint MCP de abajo e inicia sesión cuando te lo pida.",
         "note": "Apps que conectaste iniciando sesión, como ChatGPT. Cada una solo tiene el acceso que permitiste.",
         "readOnly": "Solo lectura",
+        "readSendSign": "Leer, enviar y firmar",
         "readWrite": "Leer y enviar",
+        "signingFailed": "No se pudo cambiar la firma",
+        "signingOffToast": "{{app}} ya no puede firmar por ti",
+        "signingOnToast": "{{app}} ya puede firmar por ti",
+        "signingSince": "Firma activada desde el <0>{{date}}</0>",
         "title": "Apps conectadas",
-        "unnamed": "App sin nombre"
+        "unnamed": "App sin nombre",
+        "verifyFirst": "Verifica tu correo arriba para activarlo."
       },
       "mcp": {
         "claudeCode": "Claude Code",
@@ -2704,6 +2832,23 @@
       }
     },
     "title": "Ajustes",
+    "verifyEmail": {
+      "codeLabel": "Código de verificación",
+      "done": "Correo verificado",
+      "note": "Una comprobación única de que esta dirección es tuya.",
+      "reason": "Antes de que una app pueda firmar por ti, confirma que este correo es tuyo.",
+      "resend": "Enviar un código nuevo",
+      "resendIn": "Enviar un código nuevo en <0>{{seconds}} s</0>",
+      "send": "Enviar código",
+      "sendFailed": "No se pudo enviar el código. Inténtalo de nuevo.",
+      "sent": "Enviamos un código de 6 dígitos a <0>{{email}}</0>. Escríbelo abajo.",
+      "title": "Verifica tu correo",
+      "verified": "Verificado",
+      "verifiedLine": "<0>{{email}}</0> está verificado.",
+      "verify": "Verificar",
+      "willSend": "Enviaremos un código de 6 dígitos a <0>{{email}}</0>.",
+      "wrongCode": "Ese código no funcionó. Revísalo e inténtalo de nuevo."
+    },
     "workspaceFallback": "Espacio de trabajo"
   },
   "signer": {

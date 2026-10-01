@@ -1,14 +1,21 @@
 import { MAX_DESCRIPTION_LENGTH, MAX_NAME_LENGTH, MAX_NOTE_LENGTH } from '../../Utils.js';
 import { setDocumentCount } from '../../utils/CountUtils.js';
-import { isParticipantBasic } from '../../utils/workflowUtils.js';
+import {
+  findPendingPriorSigner,
+  findPlaceholderIndex,
+  isParticipantBasic,
+} from '../../utils/workflowUtils.js';
 import { accessibleTemplateQuery } from '../parsefunction/GetTemplate.js';
 import { isDocumentOwner } from './acl.js';
+import { verifiedIdentityProblem } from './agentIdentity.js';
+import { agentSignDocument, findAgentSeat, prepareAgentSignature } from './agentSign.js';
 import { emitInBackground } from './webhooks.js';
 import { conditionalUpdate } from './atomic.js';
 import { extUserPointer, userPointer } from './context.js';
 import { assertEmail, ensureContact, normaliseEmail, searchPattern } from './contacts.js';
 import { isValidEmail } from './email.js';
 import { API_URL_TTL, assertStoredFileUrl, resolveFileUrl } from './files.js';
+import { signingScopeProblem } from './oauth.js';
 import {
   MESSAGE_WITHOUT_LINK,
   customRequestBody,
@@ -178,11 +185,42 @@ export function settingsFromDoc(d) {
 }
 
 /**
- * Normalise the recipients list an API caller sends.
- * @param {Array<{name?: string, email: string, role?: string, phone?: string, order?: number}>} input
+ * Put the caller in every recipient marked `me: true`.
+ *
+ * Name and email come from the account, never from the input, so an agent that
+ * adds "me" cannot point the seat at some other address. That seat is what
+ * `signForMe` and `sign_document` sign (lib/agentSign.js findAgentSeat).
+ *
+ * @param {Array} list recipients as the caller sent them.
+ * @param {import('./context.js').Caller} [caller] without one, `me` is refused.
+ * @returns {Array} the same list, `me` entries resolved and the flag dropped.
  */
-export function normaliseRecipients(input) {
-  const list = Array.isArray(input) ? input : [];
+export function resolveMeRecipients(list, caller) {
+  if (!Array.isArray(list)) return list;
+  return list.map((r, i) => {
+    if (!r || typeof r !== 'object' || r.me !== true) return r;
+    const email = normaliseEmail(caller?.email);
+    if (!email) {
+      throw new Parse.Error(
+        Parse.Error.VALIDATION_ERROR,
+        caller
+          ? `Recipient ${i + 1} is marked "me" but this account has no email address.`
+          : `Recipient ${i + 1}: "me" is not accepted here. Give your name and email instead.`
+      );
+    }
+    const { me: _me, ...rest } = r;
+    return { ...rest, name: String(caller.name || rest.name || '').trim(), email };
+  });
+}
+
+/**
+ * Normalise the recipients list an API caller sends.
+ * @param {Array<{name?: string, email?: string, me?: boolean, role?: string, phone?: string, order?: number}>} input
+ *   `me: true` is the caller (see resolveMeRecipients).
+ * @param {import('./context.js').Caller} [caller]
+ */
+export function normaliseRecipients(input, caller) {
+  const list = resolveMeRecipients(Array.isArray(input) ? input : [], caller);
   if (!list.length)
     throw new Parse.Error(Parse.Error.VALIDATION_ERROR, 'At least one recipient is required.');
   if (list.length > MAX_RECIPIENTS) {
@@ -381,7 +419,7 @@ export async function normaliseChain(caller, input) {
   }
   const out = { templateId: t.objectId, templateName: t.Name || '' };
   if (input.recipients !== undefined && input.recipients !== null) {
-    const recipients = normaliseRecipients(input.recipients);
+    const recipients = normaliseRecipients(input.recipients, caller);
     if (recipients.length !== roles.length) {
       throw new Parse.Error(
         Parse.Error.VALIDATION_ERROR,
@@ -590,6 +628,8 @@ export function buildDocumentObject(caller, input = {}) {
  * @param {string} [input.templateId]
  * @param {string} [input.folderId]
  * @param {boolean} [input.send]
+ * @param {boolean} [input.signForMe] with `send`: the caller's agent signs the
+ *   caller's own seat as it goes out (see sendDocument).
  * @param {{pageCount?: number, width?: number, height?: number}} [input.pageInfo] for the default layout
  */
 export async function createDocument(caller, input) {
@@ -600,7 +640,7 @@ export async function createDocument(caller, input) {
   // Never store a url straight from the caller: it is either one of ours, or it
   // is copied into our storage first (see assertStoredFileUrl).
   const url = await assertStoredFileUrl(input?.url, caller, { fileName: input?.fileName });
-  const recipients = normaliseRecipients(input?.recipients);
+  const recipients = normaliseRecipients(input?.recipients, caller);
   assertSettingsInput(input?.settings);
   const settings = normaliseSettings(input?.settings);
   // Both pointers used to be written straight from the caller's input.
@@ -677,7 +717,7 @@ export async function createDocument(caller, input) {
   // a link to a document that could have no fields at all.
   if (input?.send) {
     try {
-      return await sendDocument(caller, saved.id);
+      return await sendDocument(caller, saved.id, { signForMe: input.signForMe === true });
     } catch (err) {
       // The row exists either way, so the caller is told where it is rather than
       // being left with an error and no document id.
@@ -1022,8 +1062,69 @@ export function cachedPageSizes(d) {
   return cache.pages;
 }
 
-/** Mark a draft as sent and mail its signers. */
-export async function sendDocument(caller, docId, { resend = false } = {}) {
+/**
+ * Refuse `signForMe` before anything goes out when it could not work: the app
+ * may not sign, the caller has no seat, or (signing in order) someone signs
+ * before the caller. A required value the agent cannot fill is refused next,
+ * in sendDocument, also before anything goes out. A failure only found while
+ * signing falls back to mailing everybody instead.
+ */
+function assertCanSignForMe(caller, d) {
+  const scopeProblem = signingScopeProblem(caller);
+  if (scopeProblem) throw new Parse.Error(Parse.Error.OPERATION_FORBIDDEN, scopeProblem);
+  const identityProblem = verifiedIdentityProblem(caller);
+  if (identityProblem) throw new Parse.Error(Parse.Error.OPERATION_FORBIDDEN, identityProblem);
+  const seat = findAgentSeat(d, caller);
+  if (!seat) {
+    throw new Parse.Error(
+      Parse.Error.VALIDATION_ERROR,
+      'You are not one of the recipients, so there is nothing for your agent to sign. Add yourself as a recipient with me: true, or send without signForMe.'
+    );
+  }
+  if (d.SendinOrder === true) {
+    const idx = findPlaceholderIndex(d.Placeholders, seat.contactId);
+    if (findPendingPriorSigner(d.Placeholders, idx, d.AuditTrail)) {
+      throw new Parse.Error(
+        Parse.Error.VALIDATION_ERROR,
+        "You are not first in the signing order, so your agent can't sign before sending. Send it, then call sign_document when it's your turn."
+      );
+    }
+  }
+}
+
+/** Whether anybody has signed this document yet. */
+function hasSignature(d) {
+  return (d?.AuditTrail || []).some(entry => entry?.Activity === 'Signed');
+}
+
+/** What the audit trail records as the permission for an own-document signature. */
+export function ownDocumentAllowance(caller) {
+  return {
+    via: 'own_document',
+    name: caller.name,
+    email: caller.email,
+    at: new Date(),
+    signingEnabledAt: caller.oauth?.signingEnabledAt || null,
+  };
+}
+
+/**
+ * Mark a draft as sent and mail its signers.
+ *
+ * `signForMe`: the caller is one of the signers and their agent signs that part
+ * as the document goes out ("draft it, sign for me, send it to the tenant").
+ * The order is the guarded "mark sent", the agent's signature
+ * (lib/agentSign.js, which also emails the owner a "signed for you" notice),
+ * then the request mail to whoever still has to sign, so the caller is never
+ * asked to sign a part that is already signed. Missing values are refused
+ * before sending. If the signature still fails, everybody is mailed as usual,
+ * the caller included, and `warnings` says why.
+ *
+ * @param {import('./context.js').Caller} caller
+ * @param {string} docId
+ * @param {{resend?: boolean, signForMe?: boolean}} [opts]
+ */
+export async function sendDocument(caller, docId, { resend = false, signForMe = false } = {}) {
   const obj = await loadDoc(docId);
   const d = JSON.parse(JSON.stringify(obj));
   assertOwner(d, caller);
@@ -1037,6 +1138,25 @@ export async function sendDocument(caller, docId, { resend = false } = {}) {
       Parse.Error.SCRIPT_FAILED,
       'Document was already sent. Pass resend: true to mail again.'
     );
+  }
+  if (signForMe && alreadySent) {
+    throw new Parse.Error(
+      Parse.Error.SCRIPT_FAILED,
+      'signForMe only works when a draft is first sent. To sign a document that is already out, call sign_document.'
+    );
+  }
+  if (signForMe) {
+    assertCanSignForMe(caller, d);
+    // Every value the agent will fill, checked on the draft before it goes out:
+    // a required field the agent cannot fill is refused here, not after mailing.
+    const { missing } = await prepareAgentSignature(caller, d.objectId, { allowDraft: true });
+    if (missing.length) {
+      const list = missing.map(m => `${m.label} (field ${m.key}): ${m.reason}`).join(' ');
+      throw new Parse.Error(
+        Parse.Error.VALIDATION_ERROR,
+        `Your agent cannot sign your part, so nothing was sent. ${list} Send without signForMe and sign from your email, or fill this in DocuStamp.`
+      );
+    }
   }
   let only;
   if (!alreadySent) {
@@ -1057,11 +1177,10 @@ export async function sendDocument(caller, docId, { resend = false } = {}) {
         SentToOthers: true,
         DocSentAt: sentAt,
         SendMail: true,
-        // Sent by an app the user connected (ChatGPT and the like): the signing
-        // link alone is not enough, the signer also enters a code mailed to
-        // their own address. Whoever else holds the link (the sender, or an
-        // assistant acting for the sender) cannot sign in their place.
-        ...(caller?.oauth ? { IsEnableOTP: true } : {}),
+        // A document an app sent (ChatGPT and the like) used to be forced to
+        // need the emailed code. Not any more: the app never holds a signing
+        // link (mcp/server.js strips them), so the link in the signer's own
+        // inbox is enough, and the code stays a per-document setting (`otp`).
         // The clock starts now: a draft that sat for a month used to be sent
         // already expired, because ExpiryDate was fixed at creation.
         ExpiryDate,
@@ -1086,23 +1205,76 @@ export async function sendDocument(caller, docId, { resend = false } = {}) {
     }
     only = pending;
   }
-  const mail = await mailForDocument(caller, d.objectId, { only });
-  if (!alreadySent && !mail.sent.length) {
-    // Nothing was delivered, so nobody holds a link. Put the document back to a
-    // draft rather than leave it looking sent, and say so: the call can then
-    // simply be retried once the mail settings are fixed.
-    const revert = new Parse.Object('contracts_Document');
-    revert.id = d.objectId;
-    revert.unset('SignedUrl');
-    revert.unset('DocSentAt');
-    revert.set('SendMail', false);
-    revert.set('SentToOthers', false);
-    await revert.save(null, { useMasterKey: true });
-    const reason = mail.failed[0]?.reason || 'mail_failed';
-    throw new Parse.Error(
-      Parse.Error.SCRIPT_FAILED,
-      `The document could not be mailed to anybody (${reason}), so it is still a draft. Fix the mail settings and send again.`
+
+  const warnings = [];
+  let signedForYou = null;
+  let signError = '';
+  if (signForMe) {
+    try {
+      signedForYou = await agentSignDocument(caller, d.objectId, {
+        allowedBy: ownDocumentAllowance(caller),
+        notifyOwner: true,
+      });
+    } catch (err) {
+      console.log('documents: the agent could not sign before mailing', err?.message || err);
+      signError = String(err?.message || 'signing failed').replace(/\.?\s*$/, '.');
+    }
+  }
+
+  // Read back after any signing attempt: an agent signature can land even when
+  // something after it failed, and a signed document must never go back to a
+  // draft or ask its signer to sign again.
+  const fresh = signForMe ? JSON.parse(JSON.stringify(await loadDoc(d.objectId))) : null;
+  const landed = Boolean(signedForYou) || hasSignature(fresh);
+  if (signError) {
+    warnings.push(
+      landed
+        ? `Your part was signed, but something after it failed: ${signError} Check the document with get_document.`
+        : `Your agent could not sign for you: ${signError} The request went to every signer, you included, so you can sign from your email, or call sign_document once the problem is fixed.`
     );
+  }
+  let mail;
+  if (landed) {
+    // A signature has landed: from here on the document is out for good, and
+    // only the people still owing a signature are mailed, like a resend. On an
+    // in-order document lib/agentSign.js has already mailed the next signer
+    // (the signer page does that for a person), so that one is not mailed twice.
+    const mailedBySigning =
+      fresh.SendinOrder === true ? normaliseEmail(signedForYou?.nextSigner?.email) : '';
+    const pending = pendingRequestRecipients(fresh)
+      .map(r => r.email)
+      .filter(email => email !== mailedBySigning);
+    mail = pending.length
+      ? await mailForDocument(caller, d.objectId, { only: pending })
+      : { sent: [], failed: [], signingLinks: [] };
+    if (mailedBySigning) mail = { ...mail, sent: [...mail.sent, mailedBySigning] };
+    if (mail.failed.length) {
+      warnings.push(
+        `Your part is signed, but the request could not be mailed to ${mail.failed
+          .map(f => `${f.email} (${f.reason})`)
+          .join(', ')}. Fix the mail settings, then call resend_to.`
+      );
+    }
+  } else {
+    mail = await mailForDocument(caller, d.objectId, { only });
+    if (!alreadySent && !mail.sent.length) {
+      // Nothing was delivered, so nobody holds a link. Put the document back to a
+      // draft rather than leave it looking sent, and say so: the call can then
+      // simply be retried once the mail settings are fixed. Never once a
+      // signature landed (the branch above): that document is out for good.
+      const revert = new Parse.Object('contracts_Document');
+      revert.id = d.objectId;
+      revert.unset('SignedUrl');
+      revert.unset('DocSentAt');
+      revert.set('SendMail', false);
+      revert.set('SentToOthers', false);
+      await revert.save(null, { useMasterKey: true });
+      const reason = mail.failed[0]?.reason || 'mail_failed';
+      throw new Parse.Error(
+        Parse.Error.SCRIPT_FAILED,
+        `The document could not be mailed to anybody (${reason}), so it is still a draft. Fix the mail settings and send again.`
+      );
+    }
   }
   if (!alreadySent) emitInBackground('sent', { ...d, DocSentAt: { iso: new Date().toISOString() }, SignedUrl: d.URL }, {});
   // The REST contract includes the signing urls here; the MCP tool strips them
@@ -1111,8 +1283,13 @@ export async function sendDocument(caller, docId, { resend = false } = {}) {
   // The custom body (document, tenant or sender template) had no place for the
   // link, so `buildRequestMail` appended one. The mail is out; say what happened.
   const body = customRequestBody(d);
-  const warnings = body && !hasSigningLinkMarker(body) ? [MESSAGE_WITHOUT_LINK.message] : undefined;
-  return { ...summary, mail, ...(warnings ? { warnings } : {}) };
+  if (body && !hasSigningLinkMarker(body)) warnings.push(MESSAGE_WITHOUT_LINK.message);
+  return {
+    ...summary,
+    mail,
+    ...(signedForYou ? { signedForYou } : {}),
+    ...(warnings.length ? { warnings } : {}),
+  };
 }
 
 export async function signingLinks(caller, docId) {
@@ -1185,7 +1362,7 @@ export async function listTemplates(caller, { limit = 50, skip = 0, search = '' 
 export async function createDocumentFromTemplate(caller, templateId, input = {}) {
   // Ownership, direct sharing and team sharing, in the query itself.
   const t = await loadAccessibleTemplate(caller, templateId);
-  const recipients = normaliseRecipients(input.recipients);
+  const recipients = normaliseRecipients(input.recipients, caller);
   const signerGroups = (t.Placeholders || []).filter(g => g?.Role !== PREFILL_ROLE);
   const prefillGroups = (t.Placeholders || []).filter(g => g?.Role === PREFILL_ROLE);
   if (signerGroups.length !== recipients.length) {
@@ -1246,6 +1423,7 @@ export async function createDocumentFromTemplate(caller, templateId, input = {})
     },
     message: input.message || { subject: t.RequestSubject, body: t.RequestBody },
     send: input.send === true,
+    signForMe: input.signForMe === true,
     folderId: input.folderId,
     origin: input.origin,
     chain,

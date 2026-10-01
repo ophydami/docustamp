@@ -2,6 +2,7 @@ import { createHmac, randomBytes, randomUUID } from 'node:crypto';
 import axios from 'axios';
 import { extUserPointer, userPointer } from './context.js';
 import { summariseDocument } from './documents.js';
+import { normaliseEmail } from './email.js';
 import { assertFetchableUrl } from './files.js';
 
 /**
@@ -14,6 +15,12 @@ import { assertFetchableUrl } from './files.js';
  * Payload: { id, event, createdAt, document (the get_document summary, no
  * signing links), signer? (for viewed/signed/declined), reason?, chain? (for
  * chained: the ChainResult - status sent/failed, documentId of the follow-up) }.
+ *
+ * One event goes the other way: `received` is delivered to the webhooks of the
+ * person a document was sent TO, when it becomes their turn to sign (see
+ * `emitUserEvent` and requestMail.js `announceReceived`). Its `document` is what
+ * that person's inbox shows (`receivedDocumentJson`), never the owner's summary.
+ *
  * Headers: X-DocuStamp-Event, X-DocuStamp-Delivery (payload id),
  * X-DocuStamp-Signature: sha256=<hex hmac of the raw body>.
  */
@@ -28,6 +35,7 @@ export const WEBHOOK_EVENTS = Object.freeze([
   'voided',
   'reminder',
   'chained',
+  'received',
 ]);
 const MAX_WEBHOOKS_PER_USER = 10;
 const DELIVERY_TIMEOUT_MS = 8000;
@@ -233,6 +241,19 @@ async function deliverOnce(row, payload) {
   return { webhookId: row.id, ok, status, error: ok ? undefined : lastError };
 }
 
+/** The active webhooks of one `_User` that subscribe to `event` (or to "*"). */
+async function hooksFor(userId, event) {
+  await ensureWebhookSchema();
+  const q = new Parse.Query(WEBHOOK_CLASS);
+  q.equalTo('CreatedBy', { __type: 'Pointer', className: '_User', objectId: userId });
+  q.notEqualTo('Active', false);
+  q.limit(MAX_WEBHOOKS_PER_USER);
+  return (await q.find({ useMasterKey: true })).filter(r => {
+    const events = r.get('Events') || [];
+    return events.includes('*') || events.includes(event);
+  });
+}
+
 /**
  * Send one event to every matching webhook of the document's owner.
  * Awaitable (tests), but callers in request paths use `emitInBackground`.
@@ -245,15 +266,7 @@ export async function emitDocumentEvent(event, docJson, extra = {}) {
   if (!transport) return [];
   const ownerId = docJson?.CreatedBy?.objectId || docJson?.ExtUserPtr?.UserId?.objectId || docJson?.CreatedBy?.id;
   if (!ownerId) return [];
-  await ensureWebhookSchema();
-  const q = new Parse.Query(WEBHOOK_CLASS);
-  q.equalTo('CreatedBy', { __type: 'Pointer', className: '_User', objectId: ownerId });
-  q.notEqualTo('Active', false);
-  q.limit(MAX_WEBHOOKS_PER_USER);
-  const rows = (await q.find({ useMasterKey: true })).filter(r => {
-    const events = r.get('Events') || [];
-    return events.includes('*') || events.includes(event);
-  });
+  const rows = await hooksFor(ownerId, event);
   if (!rows.length) return [];
   let document;
   try {
@@ -278,6 +291,69 @@ export function emitInBackground(event, docJson, extra = {}) {
   Promise.resolve()
     .then(() => emitDocumentEvent(event, docJson, extra))
     .catch(err => console.log(`webhooks: ${event} delivery failed`, err?.message || err));
+}
+
+function isoOf(value) {
+  if (!value) return undefined;
+  const raw = typeof value === 'string' || value instanceof Date ? value : value.iso;
+  const t = new Date(raw);
+  return Number.isNaN(t.getTime()) ? undefined : t.toISOString();
+}
+
+/**
+ * A document as the person it was sent to may see it: the fields of a
+ * `list_inbox` item, with the sender named the way the request mail names them.
+ * No signing link or token, no other signer's address, no note, no settings.
+ *
+ * @param {Object} d plain document JSON with ExtUserPtr (and CreatedBy) included.
+ * @param {{myRole?: string}} [opts] the recipient's own role on it.
+ */
+export function receivedDocumentJson(d, { myRole } = {}) {
+  const ext = d?.ExtUserPtr?.__type === 'Pointer' ? null : d?.ExtUserPtr;
+  const user = d?.CreatedBy?.__type === 'Pointer' ? null : d?.CreatedBy;
+  return {
+    id: d?.objectId,
+    title: d?.Name || '',
+    sender: {
+      name: d?.SenderName || ext?.Name || user?.name || '',
+      company: ext?.Company || '',
+      email: normaliseEmail(d?.SenderMail || ext?.Email || user?.email || ''),
+    },
+    sentAt: isoOf(d?.DocSentAt),
+    expiresAt: isoOf(d?.ExpiryDate),
+    myRole: myRole || undefined,
+  };
+}
+
+/**
+ * Send one event to the webhooks of a person who is not the document's owner
+ * (today: `received`, to the recipient whose turn it now is). Same signing,
+ * retries and transport as `emitDocumentEvent`, but the `document` in the
+ * payload is `receivedDocumentJson`, never the owner's summary. Awaitable;
+ * request paths call it from a background chain (requestMail.js
+ * `announceReceived`).
+ *
+ * @param {string} event one of WEBHOOK_EVENTS
+ * @param {string} userId the `_User` whose own webhooks receive it
+ * @param {Object} docJson the document (plain JSON, ExtUserPtr included)
+ * @param {{myRole?: string}} [extra] `myRole` goes on the document; anything
+ *   else lands at the top level of the payload, as with `emitDocumentEvent`
+ */
+export async function emitUserEvent(event, userId, docJson, extra = {}) {
+  if (!transport || !userId) return [];
+  const rows = await hooksFor(userId, event);
+  if (!rows.length) return [];
+  const { myRole, ...rest } = extra || {};
+  const payload = {
+    id: randomUUID(),
+    event,
+    createdAt: new Date().toISOString(),
+    document: receivedDocumentJson(docJson, { myRole }),
+    ...rest,
+  };
+  const results = [];
+  for (const row of rows) results.push(await deliverOnce(row, payload));
+  return results;
 }
 
 /** A ping to one webhook, to check the endpoint and the signature from the other side. */

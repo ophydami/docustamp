@@ -173,7 +173,11 @@ describe('OAuth for MCP clients', () => {
         expect(res.status).toBe(200, url);
         expect(res.data.resource).toBe(mcpResourceUrl());
         expect(res.data.authorization_servers).toEqual([oauthIssuer()]);
-        expect(res.data.scopes_supported).toEqual(['documents:read', 'documents:write']);
+        expect(res.data.scopes_supported).toEqual([
+          'documents:read',
+          'documents:write',
+          'documents:sign',
+        ]);
       }
       expect(
         (await http.get(`${BASE}/.well-known/oauth-protected-resource/elsewhere`)).status
@@ -247,6 +251,7 @@ describe('OAuth for MCP clients', () => {
       expect(info.clientName).toBe('ChatGPT');
       expect(info.redirectHost).toBe('chatgpt.com');
       expect(info.scopes).toEqual(['documents:read', 'documents:write']);
+      expect(info.signRequested).toBeFalse();
       await expectAsync(Parse.Cloud.run('oauthrequest', { requestId })).toBeRejected();
     });
 
@@ -419,8 +424,19 @@ describe('OAuth for MCP clients', () => {
       const { access_token: accessToken } = await connect();
       const res = await mcp(accessToken, 'tools/list');
       const tools = res.data.result.tools;
-      // Every labelled tool except get_signing_links, which a connected app never gets.
-      expect(tools.length).toBe(Object.keys(TOOL_ANNOTATIONS).length - 1);
+      // Every tool a personal token gets, except get_signing_links, which a
+      // connected app never gets. (TOOL_ANNOTATIONS also labels tools that are
+      // registered elsewhere or later, so it is not the count.)
+      const { token: apiToken } = await Parse.Cloud.run(
+        'generateapitoken',
+        {},
+        { sessionToken: user.getSessionToken() }
+      );
+      const all = (await mcp(apiToken, 'tools/list')).data.result.tools.map(t => t.name);
+      expect(tools.map(t => t.name).sort()).toEqual(
+        all.filter(name => name !== 'get_signing_links').sort()
+      );
+      for (const name of all) expect(TOOL_ANNOTATIONS[name]).toBeDefined(name);
       for (const tool of tools) {
         expect(typeof tool.annotations?.readOnlyHint).toBe('boolean', tool.name);
         expect(typeof tool.annotations?.destructiveHint).toBe('boolean', tool.name);
@@ -439,6 +455,9 @@ describe('OAuth for MCP clients', () => {
       );
       expect(byName.list_documents.annotations.readOnlyHint).toBeTrue();
       expect(byName.delete_draft.annotations.destructiveHint).toBeTrue();
+      // Offered to every write connection; the sign permission is checked inside.
+      expect(byName.sign_document.annotations.destructiveHint).toBeTrue();
+      expect(byName.sign_document._meta.securitySchemes[0].scopes).toEqual(['documents:write']);
     });
 
     it('gives a read-only connection only the tools that change nothing', async () => {
@@ -460,7 +479,7 @@ describe('OAuth for MCP clients', () => {
     });
   });
 
-  describe('signing links and the emailed code', () => {
+  describe('signing links, and no forced emailed code', () => {
     let tenant;
     let extUser;
 
@@ -545,8 +564,11 @@ describe('OAuth for MCP clients', () => {
         signers: [{ email: 'a@x.test', signingUrl: 'https://s/1' }],
         mail: { sent: ['a@x.test'], signingLinks: [{ url: 'https://s/1' }] },
         nested: { signingToken: 't', keep: 1 },
+        // What signing answers with: the next signer's link and address.
+        handoff: { nextSignerUrl: 'https://s/2', nextSignerEmail: 'b@x.test', keep: 2 },
       });
-      expect(JSON.stringify(cleaned)).not.toMatch(/signing(Url|Links|Token)/);
+      expect(JSON.stringify(cleaned)).not.toMatch(/signing(Url|Links|Token)|nextSigner(Url|Email)/);
+      expect(cleaned.handoff.keep).toBe(2);
       expect(cleaned.nested.keep).toBe(1);
       expect(cleaned.mail.sent).toEqual(['a@x.test']);
     });
@@ -579,7 +601,7 @@ describe('OAuth for MCP clients', () => {
       expect(viaToken.data.result.content[0].text).toMatch(/signingUrl/);
     });
 
-    it('makes a document sent by a connected app require the emailed code', async () => {
+    it('no longer forces the emailed code on a document a connected app sends, and still strips the links', async () => {
       const doc = await makeDocument({ draft: true });
       const { access_token: accessToken } = await connect();
       const res = await mcp(accessToken, 'tools/call', {
@@ -588,10 +610,13 @@ describe('OAuth for MCP clients', () => {
       });
       expect(res.data.result.isError).toBeFalsy(JSON.stringify(res.data));
       const body = JSON.parse(res.data.result.content[0].text);
-      expect(body.otp).toBeTrue();
-      expect(res.data.result.content[0].text).not.toMatch(/signingUrl|signingToken|signingLinks/);
+      expect(body.otp).toBeFalse();
+      expect(body.status).toBe('in_progress');
+      expect(res.data.result.content[0].text).not.toMatch(
+        /signingUrl|signingToken|signingLinks|nextSignerUrl/
+      );
       await doc.fetch({ useMasterKey: true });
-      expect(doc.get('IsEnableOTP')).toBeTrue();
+      expect(doc.get('IsEnableOTP')).not.toBeTrue();
     });
   });
 

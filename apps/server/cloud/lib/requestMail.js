@@ -1,8 +1,11 @@
 import { appName, replaceMailVaribles } from '../../Utils.js';
 import { bodyCarriesUrl, mailTemplate, renderMail } from './mailShell.js';
+import { documentStatus, loadDoc } from './documents.js';
 import { normaliseEmail } from './email.js';
 import { COMPLETION_ACTIVITIES, isParticipantBasic } from '../../utils/workflowUtils.js';
 import { mintSigningToken, signingTokenExpiry } from './signingToken.js';
+import { emitUserEvent } from './webhooks.js';
+import { extUserRowsForUser } from '../parsefunction/authGuard.js';
 import { withTenantBranding } from '../parsefunction/tenantBranding.js';
 import sendSystemMail from '../parsefunction/sendSystemMail.js';
 
@@ -392,7 +395,90 @@ export async function sendSignatureRequestMails({ doc, publicUrl, only }) {
       failed.push({ email: recipient.email, reason: err?.message || 'mail_failed' });
     }
   }
+  announceReceived(doc.objectId, sent);
   return { sent, failed, signingLinks };
+}
+
+/* ------------------------------------------------------- the received event */
+
+/** The role of the seat bound to `contactId`, numbered like the inbox numbers it. */
+function seatRole(doc, contactId) {
+  let order = 0;
+  for (const group of doc?.Placeholders || []) {
+    if (!isParticipantBasic(group)) continue;
+    order += 1;
+    if ((group?.signerObjId || group?.signerPtr?.objectId) === contactId) {
+      return group?.Role || `Role ${order}`;
+    }
+  }
+  return '';
+}
+
+/**
+ * The `_User` id behind a contact when it is a real DocuStamp account at the
+ * address the request went to, else ''.
+ *
+ * Every contact points at a `_User` (a shadow one is made for each new address),
+ * so the account is told apart by its `contracts_Users` profile, and a suspended
+ * one does not count. The address must match too, the same rule
+ * `agentSign.findAgentSeat` applies before an agent may sign that seat.
+ */
+async function accountUserId(contact, email) {
+  const userId = contact?.UserId?.objectId || '';
+  if (!userId || !email) return '';
+  const rows = await extUserRowsForUser(userId, { include: ['UserId'], activeOnly: true });
+  const matches = rows.some(
+    row =>
+      normaliseEmail(row.get('Email')) === email ||
+      normaliseEmail(row.get('UserId')?.get?.('email')) === email
+  );
+  return matches ? userId : '';
+}
+
+/**
+ * Deliver `received` to the own webhooks of each mailed recipient whose turn it
+ * now is. The document is read fresh, so the turn is judged on what is stored
+ * after the send or the signature that caused this: on a document signed in
+ * order only the first person still to sign counts, otherwise everyone who has
+ * not signed. A recipient whose contact is not a real account is skipped.
+ * Awaitable (tests); request paths go through `announceReceived`.
+ *
+ * @param {string} docId
+ * @param {string[]} emails addresses the request mail actually went to.
+ * @returns {Promise<Array>} the delivery results.
+ */
+export async function deliverReceived(docId, emails) {
+  const wanted = new Set((emails || []).map(normaliseEmail).filter(Boolean));
+  if (!docId || !wanted.size) return [];
+  const doc = JSON.parse(JSON.stringify(await loadDoc(docId)));
+  if (documentStatus(doc) !== 'in_progress') return [];
+  const results = [];
+  for (const recipient of pendingRequestRecipients(doc)) {
+    if (!recipient.signerObjId || !wanted.has(recipient.email)) continue;
+    const contact = (doc.Signers || []).find(s => s?.objectId === recipient.signerObjId);
+    const userId = await accountUserId(contact, recipient.email);
+    if (!userId) continue;
+    const myRole = seatRole(doc, recipient.signerObjId);
+    results.push(...(await emitUserEvent('received', userId, doc, { myRole })));
+  }
+  return results;
+}
+
+/**
+ * Tell the people a request mail just went to, on their own webhooks, that the
+ * document now waits on them (the `received` event). Called after every request
+ * mail: the first send, the next signer after a signature, a replaced signer and
+ * a resend (a resend asks them again, so it is announced again; a consumer
+ * keys on the document id). Fire and forget: a send never fails or waits over it.
+ *
+ * @param {string} docId
+ * @param {string[]} emails addresses the request mail actually went to.
+ */
+export function announceReceived(docId, emails) {
+  if (!docId || !Array.isArray(emails) || !emails.length) return;
+  Promise.resolve()
+    .then(() => deliverReceived(docId, emails))
+    .catch(err => console.log('requestMail: received event failed', err?.message || err));
 }
 
 /**

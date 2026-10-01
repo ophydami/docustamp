@@ -83,6 +83,7 @@
     },
     "nav": {
       "ai": "Ask AI",
+      "approvals": "Approvals",
       "automations": "Automations",
       "contacts": "Contacts",
       "documents": "Documents",
@@ -114,6 +115,115 @@
       "searchPlaceholder": "Search or type a command",
       "searchPlaceholderLong": "Search documents, people, templates, or type a command"
     }
+  },
+  "approvals": {
+    "actions": {
+      "approve": "Approve and sign",
+      "backToList": "Back to approvals",
+      "decline": "Decline",
+      "openDocument": "Open the document",
+      "review": "Review"
+    },
+    "confirm": {
+      "approveBody": "{{agent}} signs “{{title}}” for you with the values shown.",
+      "approveNote": "The signature is recorded as an AI agent signing for you, with your approval. Once it is signed, you can't undo it.",
+      "approveTitle": "Approve and sign?",
+      "declineBody": "Nothing gets signed, and {{agent}} is told you said no. You can still sign the document yourself later.",
+      "declineTitle": "Decline this request?"
+    },
+    "detail": {
+      "agentAsked": "<0>{{agent}}</0> asked to sign this document for you.",
+      "agentAsks": "<0>{{agent}}</0> wants to sign this document for you. Nothing is signed until you approve.",
+      "footerHint": "Read the page and the review before you decide.",
+      "requested": "Requested <0>{{when}}</0>"
+    },
+    "empty": {
+      "allTitle": "No approvals yet",
+      "body": "When an app you connected wants to sign a document someone sent you, it asks here first.",
+      "manageApps": "Manage connected apps",
+      "pendingTitle": "Nothing to approve"
+    },
+    "errors": {
+      "loadFailed": "Could not load approvals",
+      "notFoundBody": "It may belong to another account, or the link is wrong.",
+      "notFoundTitle": "This request could not be found"
+    },
+    "intro": "When an app you connected wants to sign a document someone else sent you, it asks here first. Documents you create yourself are signed right away.",
+    "outcome": {
+      "declinedBody": "Nothing was signed. You can still sign the document yourself.",
+      "declinedTitle": "You declined",
+      "expiredBody": "The document changed or is no longer open for signing, so nothing was signed. Ask your agent again if you still want it signed.",
+      "expiredTitle": "This request expired",
+      "failedBody": "Nothing was signed. Open the document to sign it yourself, or ask your agent to try again.",
+      "failedTitle": "Signing did not go through",
+      "signedBodyChat": "You approved this in the chat, and {{agent}} signed it for you.",
+      "signedBodyWeb": "You approved this in {{product}}, and {{agent}} signed it for you.",
+      "signedTitle": "Signed for you"
+    },
+    "preview": {
+      "alt": "Page {{page}} of the document",
+      "failedBody": "Try again, or open the document to read it.",
+      "failedTitle": "Could not load this page",
+      "goToPage": "Show page {{page}}",
+      "next": "Next page",
+      "page": "Page {{current}} of {{total}}",
+      "pageShort": "p. {{page}}",
+      "previous": "Previous page"
+    },
+    "review": {
+      "aimedAtAi": "This document has text written to give orders to AI assistants. Read it yourself before you approve.",
+      "disclaimer": "This is not legal advice.",
+      "flags": "Worth a look",
+      "keyTerms": "Key terms",
+      "none": "There is no AI review for this request.",
+      "noneHint": "Read the document yourself before you approve.",
+      "overall": {
+        "concerning": "Concerning",
+        "review": "Worth a closer look",
+        "standard": "Looks standard"
+      },
+      "parties": "Parties",
+      "section": "AI review",
+      "severity": {
+        "caution": "Caution",
+        "info": "Note",
+        "warning": "Warning"
+      },
+      "title": "What the AI found"
+    },
+    "row": {
+      "from": "From {{sender}}"
+    },
+    "status": {
+      "failed": "Failed"
+    },
+    "table": {
+      "action": "Action",
+      "app": "App",
+      "document": "Document",
+      "requested": "Requested",
+      "status": "Status"
+    },
+    "tabs": {
+      "all": "All",
+      "pending": "Pending"
+    },
+    "toast": {
+      "declined": "Request declined",
+      "failed": "Could not sign",
+      "signed": "Signed",
+      "signedBody": "{{agent}} signed it for you."
+    },
+    "values": {
+      "checked": "Checked",
+      "empty": "Left blank",
+      "none": "Only your signature. Nothing else gets filled in.",
+      "notChecked": "Not checked",
+      "title": "What your agent will fill in",
+      "titleNotSigned": "What your agent would have filled in",
+      "titleSigned": "What your agent filled in"
+    },
+    "verifyReason": "You need a verified email before an app can sign for you."
   },
   "auth": {
     "a11y": {
@@ -148,6 +258,8 @@
     },
     "connect": {
       "allow": "Allow",
+      "allowSigning": "Let {{app}} sign documents for me",
+      "allowSigningHint": "Signs documents you create right away. Asks you first on documents others send you. You can turn this off at any time in Settings.",
       "backToApp": "Go to {{product}}",
       "deny": "Deny",
       "expiredBody": "Go back to the app you were connecting and start again.",
@@ -156,11 +268,13 @@
       "redirectNote": "After you choose, you go back to <0>{{host}}</0>.",
       "scopeRead": "See your documents, templates and contacts, and who has signed",
       "scopeWrite": "Create, edit and send documents for signature, which emails your signers",
+      "signRequested": "{{app}} asked to be able to sign for you. It can only sign if you allow it here.",
       "signedInAs": "Signed in as {{email}}",
       "subtitle": "{{app}} wants to use your {{product}} account.",
       "switchAccount": "Use another account",
       "title": "Connect {{app}}",
       "unnamedApp": "An app",
+      "verifyReason": "To let {{app}} sign for you, first confirm your email. You can also connect without signing and turn it on later in Settings.",
       "wants": "{{app}} will be able to:",
       "warning": "Only allow this if you started connecting from {{app}}. You can disconnect it at any time in Settings."
     },
@@ -2042,6 +2156,14 @@
   "settings": {
     "apiWebhooks": {
       "apps": {
+        "canSign": "Can sign for me",
+        "canSignFor": "Let {{app}} sign for me",
+        "canSignHint": "Signs documents you create right away. Asks you first on documents others send you.",
+        "confirmOff": "You can turn this off here at any time.",
+        "confirmOthers": "On documents other people send you, it asks you first, in Approvals or in the chat.",
+        "confirmOwn": "{{app}} signs documents you create right away, and emails you each time.",
+        "confirmTitle": "Let {{app}} sign for you?",
+        "confirmTurnOn": "Turn on signing",
         "connected": "Connected",
         "disconnect": "Disconnect",
         "disconnectConfirm": "{{app}} loses access to your account right away. You can connect it again later.",
@@ -2050,9 +2172,15 @@
         "none": "No apps connected yet. To connect ChatGPT, Claude or another MCP app, add the MCP endpoint below in that app and sign in when it asks.",
         "note": "Apps you connected by signing in, such as ChatGPT. Each one has only the access you allowed.",
         "readOnly": "Read only",
+        "readSendSign": "Read, send and sign",
         "readWrite": "Read and send",
+        "signingFailed": "Could not change signing",
+        "signingOffToast": "{{app}} can no longer sign for you",
+        "signingOnToast": "{{app}} can now sign for you",
+        "signingSince": "Signing on since <0>{{date}}</0>",
         "title": "Connected apps",
-        "unnamed": "Unnamed app"
+        "unnamed": "Unnamed app",
+        "verifyFirst": "Verify your email above to turn this on."
       },
       "mcp": {
         "claudeCode": "Claude Code",
@@ -2703,6 +2831,23 @@
       }
     },
     "title": "Settings",
+    "verifyEmail": {
+      "codeLabel": "Verification code",
+      "done": "Email verified",
+      "note": "A one-time check that this address is yours.",
+      "reason": "Before an app can sign for you, confirm that this email address is yours.",
+      "resend": "Send a new code",
+      "resendIn": "Send a new code in <0>{{seconds}}s</0>",
+      "send": "Send code",
+      "sendFailed": "Could not send the code. Please try again.",
+      "sent": "We sent a 6-digit code to <0>{{email}}</0>. Enter it below.",
+      "title": "Verify your email",
+      "verified": "Verified",
+      "verifiedLine": "<0>{{email}}</0> is verified.",
+      "verify": "Verify",
+      "willSend": "We'll send a 6-digit code to <0>{{email}}</0>.",
+      "wrongCode": "That code did not work. Check it and try again."
+    },
     "workspaceFallback": "Workspace"
   },
   "signer": {

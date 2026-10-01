@@ -226,9 +226,26 @@ function systemBlocks() {
   return [{ type: 'text', text: SYSTEM_PROMPT, cache_control: { type: 'ephemeral' } }];
 }
 
-function userText({ transcript, instructions, recipients, pageCount }) {
+/** One line of caller-supplied text for the prompt: no line breaks, bounded. */
+function promptLine(value, max) {
+  return String(value || '')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .slice(0, max);
+}
+
+function userText({ transcript, instructions, recipients, sender, pageCount }) {
   const parts = [];
   parts.push(`The PDF has ${pageCount} page(s).`);
+  if (sender?.email) {
+    const name = promptLine(sender.name, 120) || '(no name)';
+    const company = promptLine(sender.company, 120);
+    parts.push(
+      `The sender, who prepares and sends this document, is ${name} <${promptLine(sender.email, 200)}>${company ? ` of ${company}` : ''}. ` +
+        "Set is_sender true only for the role that is the sender's own party (the document names them or their company as that party, or the sender's instructions say so), and only when the document clearly has a signing line for that party. " +
+        'A document the sender only sends to others has no sender role.'
+    );
+  }
   if (recipients?.length) {
     parts.push(
       'The sender already named these recipients (use them as the roles, in this order, matching by label/name when the document names parties):\n' +
@@ -254,7 +271,7 @@ function userText({ transcript, instructions, recipients, pageCount }) {
  */
 const REJECTS_THINKING = new Set();
 
-async function callClaude({ bytes, transcript, layout, instructions, recipients, useVision }) {
+async function callClaude({ bytes, transcript, layout, instructions, recipients, sender, useVision }) {
   const client = getAiClient();
   const content = [];
   if (useVision) {
@@ -270,7 +287,7 @@ async function callClaude({ bytes, transcript, layout, instructions, recipients,
   }
   content.push({
     type: 'text',
-    text: userText({ transcript, instructions, recipients, pageCount: layout.pageCount }),
+    text: userText({ transcript, instructions, recipients, sender, pageCount: layout.pageCount }),
   });
 
   const model = aiModel();
@@ -402,9 +419,12 @@ function overlaps(a, b) {
  * @param {Uint8Array} input.bytes PDF bytes
  * @param {string} [input.instructions]
  * @param {Array<{name?: string, email: string, role?: string}>} [input.recipients] known recipients
+ * @param {{name?: string, email: string, company?: string}} [input.sender] the
+ *   account preparing the document, so the model can tell whether one of the
+ *   parties is the sender (`is_sender`)
  * @returns {Promise<Object>} see `shapeProposal`
  */
-export async function analyzePdf({ bytes, instructions = '', recipients = [] }) {
+export async function analyzePdf({ bytes, instructions = '', recipients = [], sender }) {
   const layout = await extractLayout(bytes);
   if (!layout.pages.length) {
     throw new Parse.Error(Parse.Error.VALIDATION_ERROR, 'The PDF has no pages.');
@@ -428,6 +448,7 @@ export async function analyzePdf({ bytes, instructions = '', recipients = [] }) 
     layout,
     instructions,
     recipients,
+    sender,
     useVision,
   });
   return shapeProposal(proposal, layout, { usage, model, usedVision: useVision, recipients });

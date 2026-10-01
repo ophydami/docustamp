@@ -190,18 +190,29 @@ signs in to DocuStamp, and allows access. The server is its own OAuth 2.1 author
    every use and the old pair stops working. A code presented twice is treated as stolen: the
    connection it produced is deleted.
 
-Scopes: `documents:read` and `documents:write` (write implies read; no scope asked for means
-both). A connection without `documents:write` does not even see the tools that change anything.
+Scopes: `documents:read`, `documents:write` and `documents:sign` (write implies read; no scope
+asked for means read and write). A connection without `documents:write` does not even see the tools
+that change anything. `documents:sign` lets the app sign for the user (see "Agents that sign"
+below) and is **never granted because a client asked for it**: asking only makes the consent page
+offer a "Can sign for me" box (`oauthrequest` returns `signRequested`). The user grants it with
+that box (`oauthdecide { allowSigning: true }`) or later with the switch under Settings > API and
+MCP > Connected apps (`setoauthgrantsigning { id, enabled }`), and either way only once their email
+address is verified. The grant records `SigningEnabledAt`; `listoauthgrants` returns `canSign` and
+`signingEnabledAt`. The grant is read on every request, so the switch applies to the app's next
+call without a reconnect, and a refresh that names only read and write keeps it.
 Access tokens are bound to the MCP endpoint (`resource`, RFC 8707) and are refused by the REST API,
 which keeps using personal tokens. Personal `os_` tokens work on the MCP endpoint exactly as before.
 
 A connected app is never given signing links, because a link is a bearer credential: whoever opens
 it signs as that signer. `get_signing_links` is not registered for an OAuth caller, and every
-result it receives has `signingUrl`, `signingLinks` and `signingToken` removed (`stripSigningLinks`
-in `cloud/mcp/server.js`), whatever the tool. And a document sent by a connected app requires the
-emailed code (`IsEnableOTP`, set in `sendDocument`): the link alone is not enough, so nobody but the
-owner of the signer's inbox can sign, not the sender and not an assistant acting for the sender.
-Personal `os_` tokens, which the user holds directly, keep both as before.
+result it receives has `signingUrl`, `signingLinks`, `signingToken`, `nextSignerUrl` and
+`nextSignerEmail` removed (`stripSigningLinks` in `cloud/mcp/server.js`), whatever the tool. An
+app signs only through `sign_document` / `signForMe`, for the user who connected it. Personal `os_`
+tokens, which the user holds directly, still get links.
+
+Version 0.4.2 also forced the emailed code (`IsEnableOTP`) on every document a connected app sent.
+That is gone: the app never holds a link, so the link in the signer's own inbox is enough, and the
+code is again a per-document setting (`settings.otp`).
 
 Storage is three master-key-only classes, tokens and codes as sha256 hashes:
 `contracts_OAuthClient`, `contracts_OAuthRequest`, `contracts_OAuthGrant` (one row per connection;
@@ -213,6 +224,106 @@ OAuth needs `PUBLIC_URL` on https (http is accepted on localhost for development
 with `OAUTH_ENABLED=false`, the endpoints answer 404 and the 401 carries no `resource_metadata`.
 Rate limits per IP: `OAUTH_REGISTER_RATE_LIMIT` (20/min), `OAUTH_AUTHORIZE_RATE_LIMIT` (60/min),
 `OAUTH_TOKEN_RATE_LIMIT` (120/min, also used for revoke), `OAUTH_DISCOVERY_RATE_LIMIT` (120/min).
+
+### Agents that sign
+
+An agent signs only for the person who connected it, through its own path (`cloud/lib/agentSign.js`
+stamps the PDF on the server and records the signature), never through a signing link.
+
+- **Who may.** An OAuth app needs `documents:sign` ("Can sign for me", above); a personal API
+  token is the user's own key and may. Either way the user's email must be verified, and the
+  sign-in address, account email and profile email must match (`cloud/lib/agentIdentity.js`).
+  Without the scope, `sign_document` (registered for every write connection) answers "Signing is
+  off for this app. Turn on 'Can sign for me' for <app> in DocuStamp Settings > API and MCP."
+- **Which seat.** Only the recipient whose contact is the user's own account and address. A
+  recipient `{ "me": true, "role": "Landlord" }` is that seat: name and email come from the
+  account (`resolveMeRecipients` in `cloud/lib/documents.js`; every tool that takes recipients
+  accepts it). The server instructions tell the model to add the user only when they sign too,
+  and never to type or draw the user's signature into a PDF it generates itself.
+- **`signForMe: true`** on `quick_send`, `send_document`, `create_document { send: true }` and
+  `create_document_from_template { send: true }`: the document is marked sent, the agent signs the
+  user's seat, then only the people still owing a signature are mailed, so the user gets a "signed
+  for you" notice (with a Void button) instead of a request. The result carries `signedForYou`.
+  Refused before anything goes out when the app may not sign, the user is not a recipient, the
+  document signs in order and the user is not first ("Send it, then call sign_document when it's
+  your turn"), or a required value of the user's is one the agent cannot fill (checked on the
+  draft with `prepareAgentSignature(..., { allowDraft: true })`). If the signature still fails,
+  everybody is mailed as usual, the user included, and `warnings` gives the reason.
+- **`sign_document { documentId, fields? }`** (destructive): signs the user's seat on a sent
+  document. On the user's own document it signs right away, emails the user the same notice, and
+  (in hosts that show apps) shows the document card with a "signed for you" banner. `fields`
+  gives values the account cannot fill, keyed by the field key from `get_draft`, or from
+  `get_document`'s `myFields` on a document sent to the user (text, number, dropdown, radio,
+  cells: a string; checkbox: true/false or option labels). On a document someone else sent, it
+  signs nothing and asks the user to approve (below).
+- **Recorded.** The audit entry gets `Method: "agent"`, the agent (name and redirect host),
+  on whose behalf, and what allowed it (`own_document` with when signing was turned on, or
+  `web` / `chat` with the approval id). The client IP of the MCP request (`caller.ip`, set in
+  `authenticateApiRequest`) is the signing IP; for a web approval it is the browser's.
+  `get_audit_trail` returns these as `method`, `agent`, `onBehalfOf` and `allowedBy`.
+- `analyze_document` / `quick_send` tell the model who the sender is, so `is_sender` is only set
+  for the sender's own party when the document has a signing line for it.
+
+### Documents other people send the user
+
+The flow the server instructions describe: `list_inbox` -> `get_document` -> `review_document`
+-> `sign_document` -> (the user approves) -> `get_approval`.
+
+- **`list_inbox { status?, limit?, skip? }`** (`cloud/lib/inbox.js`): documents sent to the user,
+  `needs_you` (default: live and their turn, the in-order rule applied on the server), `waiting`,
+  `completed` or `all`. A participant is a contact on the document bound to the user's account.
+- **Participant reads.** `get_document`, `preview_page`, `show_document`, `app_document` and
+  `app_page` answer the owner exactly as before; for someone the document was sent to they fall
+  back to what that person sees: title, sender, status, `myStatus`, their seat and fields with
+  keys, the other signers' names (never their addresses), a short-lived link to the current PDF,
+  and page images in signer mode with only their own fields drawn. Never signing links, notes or
+  webhooks. Anyone else gets "Document not found."
+- **`review_document { documentId }`** (`cloud/ai/review.js`): the AI's read of the terms (summary,
+  parties, key terms with quotes, flags, `instructionsAimedAtAI`), with the document fenced as
+  untrusted input. Behind the AI switch and budget; "not legal advice".
+- **Verified email.** Every read of a document the user does not own (the inbox, the participant
+  views, the review) needs `verifiedIdentityProblem(caller) === null`: an account opened in
+  someone else's name must not read what was sent to that address. Only someone the document was
+  sent to is told to verify; a stranger gets the answer they always got.
+
+### Approvals
+
+`cloud/lib/approvals.js`, class `contracts_SignApproval` (master-key only, an empty ACL on every
+row, created on first use and by `databases/migrations/20261001120000-create_contracts_signapproval.cjs`;
+indexes in `migrationdb/createSignApprovalIndexes.js`).
+
+- **Asking.** `sign_document` on someone else's document checks everything a signature needs
+  (`prepareAgentSignature`: the seat, the turn, the values; a missing value is refused with the
+  list, so the user never approves something that cannot be signed), stores the values it would
+  fill, the AI review (null when AI is off or fails; it waits up to 25 s, then joins the request
+  when it lands), the agent and a fingerprint of the document, emails the user ("ChatGPT wants to
+  sign ... for you", button "Review and approve" to `/approvals/:id`), and returns
+  `{ status: "awaiting_approval", approvalId, appUrl, message }` with the approval card
+  (`structuredContent: { view: "approval", approval, chatApproval, appUrl }`). One open request per
+  seat: asking again with the same values returns it (with a new chat code), different values
+  replace it. At most 10 new requests a minute per user.
+- **Approving in the chat.** Only for apps whose sign-in redirected to a host on
+  `CHAT_APPROVAL_HOSTS` (comma separated, default `chatgpt.com`, `none` turns it off): hosts known
+  to keep a tool result's `_meta` from the model. There the result carries a single-use code in
+  `_meta["docustamp/approvalNonce"]` (never in `structuredContent` or the text); only its sha256
+  is stored, it lasts 24 hours, it is tied to the app's client id, a repeat `sign_document`
+  replaces it, and any decision spends it. The card's buttons call the app-only
+  `app_decide_approval { approvalId, nonce, decision }`; `app_approval { approvalId }` refreshes
+  it. Everywhere else the card has one button that opens DocuStamp.
+- **Approving in DocuStamp.** Cloud functions (session, the approval must be the user's):
+  `listsignapprovals { status?: 'pending'|'all' }`, `getsignapproval { id }`,
+  `getsignapprovalpage { id, page }` (a PNG data url of the page as the user will sign it),
+  `decidesignapproval { id, decision }`.
+- **Deciding** claims the row with a conditional write (pending -> approving, or declined), so the
+  web and the chat cannot both sign. Approving re-checks the values and the fingerprint, then
+  signs the current copy with `agentSignDocument(..., { agent, allowedBy: { via, approvalId } })`:
+  the agent that asked is recorded even when the user approved in a web session. The result is
+  `signed`, or `failed` with the reason in `error`.
+- **Staying current.** Every read settles the request first: it expires when the document is
+  completed, declined, voided, expired or deleted, when the user signed some other way, or when
+  the file, the seats or the signers changed (the fingerprint covers `URL`, the placeholder ids,
+  roles and contacts, and `Signers`; not the signed copy, so a co-signer signing does not expire it).
+- **`get_approval { approvalId, waitSec? }`** long-polls (up to 55 s) until the user decides.
 
 ### The DocuStamp app inside ChatGPT and Claude (MCP Apps)
 
@@ -227,13 +338,16 @@ it expects change incompatibly; hosts cache by uri.
 | --- | --- |
 | `open_docustamp` | ChatGPT sidebar app (`openai/ui` global entrypoint): In progress, Drafts, Completed, each document's page, signers and actions |
 | `open_review_panel` | ChatGPT panel beside a conversation (thread entrypoint, "Review and send") |
-| `show_document` | a card in the chat; a draft shows its signing page and a Send button so the user sends it themselves |
+| `show_document` | a card in the chat; a draft shows its signing page and a Send button so the user sends it themselves; a document sent to the user shows what it asks of them |
 | `show_documents` | a short list card in the chat |
-| `app_home`, `app_document`, `app_page` | data the page fetches, hidden from the model (`visibility: ["app"]`) |
+| `sign_document` | the "signed for you" document card, or the approval card for a document someone else sent |
+| `app_home`, `app_document`, `app_page`, `app_approval`, `app_decide_approval` | data and actions the page uses, hidden from the model (`visibility: ["app"]`) |
 
 The page acts only through the ordinary tools (`send_document`, `send_reminder`, `extend_expiry`,
 `void_document`), so it can do nothing the connection could not; a read-only connection gets
-`canWrite: false` and no action buttons. It uses the web app's design tokens
+`canWrite: false` and no action buttons. The exception is `app_decide_approval`, which needs the
+approval code only the card holds. In ChatGPT the model reads `structuredContent` as well as the
+text, so nothing secret goes there; the result's `_meta` is the page's alone. It uses the web app's design tokens
 (`apps/web/src/styles/tokens.css`) and components, and takes only light or dark from the host.
 
 To work on it without ChatGPT, run the server with `CORS_ORIGINS=http://localhost:3001`, then
@@ -249,10 +363,11 @@ table, `TOOL_ANNOTATIONS` in `cloud/mcp/server.js`, and the scope it needs in
 `_meta.securitySchemes`. Hosts such as ChatGPT ask the user before running a tool marked
 destructive. Four kinds:
 
-- read only (20 tools): looks, changes nothing.
+- read only (23 tools): looks, changes nothing.
 - changes (25): changes something in the account that can be put back; every draft edit is
   snapshotted first.
-- destructive (5): deletes, or overwrites workspace-wide branding.
+- destructive (6): deletes, overwrites workspace-wide branding, or signs for the user
+  (`sign_document`, which cannot be taken back from here, only voided).
 - outreach (7): emails people or arms an automatic send (`send_document`, `quick_send`,
   `send_reminder`, `resend_to`, `replace_signer`, `void_document`, `set_chain`). Marked
   destructive and open-world, because a sent email cannot be taken back.
@@ -262,7 +377,7 @@ webhook url. A new tool without an entry in the table is refused at registration
 `spec/OAuth.spec.js` checks the whole list.
 
 Tools: `whoami`, `get_branding`, `update_branding`, `get_audit_trail`, `verify_document`, `void_document`, `replace_signer`, `resend_to`, `extend_expiry`, `wait_for`, `preview_page`, `find_text`, `detect_fields`, `place_field_at_text`, `upload_document`, `analyze_document`, `create_document`, `quick_send`,
-`send_document`, `list_documents`, `get_document`, `get_signing_links`, `send_reminder`,
+`send_document`, `sign_document`, `get_approval`, `list_inbox`, `review_document`, `list_documents`, `get_document`, `get_signing_links`, `send_reminder`,
 `list_contacts`, `add_contact`, `update_contact`, `delete_contact`, `list_templates`, `create_template`, `save_as_template`, `delete_template`, `create_document_from_template`, `list_folders`, `create_folder`, `merge_documents`, `create_upload`, `complete_upload`, `register_webhook`, `list_webhooks`, `test_webhook`, `delete_webhook`, plus the
 draft tools below. `quick_send` = upload + AI analysis + bind recipients + create + email in one
 call; when a role has no email it returns `needsRecipients` (with `suggestedEmail` when the
@@ -302,7 +417,7 @@ proposal back in `proposal` on the follow-up call to skip a second, identical mo
 `register_webhook` / `list_webhooks` / `test_webhook` / `delete_webhook` (`cloud/lib/webhooks.js`,
 class `contracts_Webhook`, master-key only, created on first use and by
 `databases/migrations/20260822120000-create_contracts_webhook.cjs`). Events: `sent`, `viewed`,
-`signed`, `completed`, `declined`, `voided`, `reminder`, `chained` (or `*`). Every delivery is a JSON POST
+`signed`, `completed`, `declined`, `voided`, `reminder`, `chained`, `received` (or `*`). Every delivery is a JSON POST
 `{id, event, createdAt, document, signer?, reason?, chain?}` (`document` is the `get_document` summary without
 signing links) with `X-DocuStamp-Event`, `X-DocuStamp-Delivery` and
 `X-DocuStamp-Signature: sha256=HMAC_SHA256(secret, raw body)`; three attempts (0 s, 2 s, 8 s), 8 s
@@ -310,6 +425,11 @@ timeout, https only, private hosts refused, at most 10 per account. Delivery is 
 from the action that caused the event and never fails it; the last status and failure count show
 in `list_webhooks`. The secret is returned once by `register_webhook` (and by
 `list_webhooks { showSecrets: true }`).
+
+`received` is the one event about someone else's document: it goes to the recipient's own hooks
+when a document sent to them becomes their turn (at send, or when the signer before them
+finishes), with `document` = `{id, title, sender {name, company, email}, sentAt, expiresAt, myRole}`
+and no links, so an agent can follow it with `list_inbox` or `get_document`.
 
 `create_upload` / `complete_upload` (`cloud/lib/uploads.js`): a presigned PUT url on object
 storage (15 minutes) for the raw bytes, then `complete_upload { uploadId }` reads them back,
@@ -535,8 +655,10 @@ TESTING=true npx jasmine spec/OAuth.spec.js
 
 ## 7. Known limits
 
-- One personal token per user (rotate replaces it), with no scopes. OAuth connections have two
-  scopes (`documents:read`, `documents:write`); there is no finer split yet.
+- One personal token per user (rotate replaces it), with no scopes. OAuth connections have three
+  scopes (`documents:read`, `documents:write`, `documents:sign`); there is no finer split yet.
+- Agent signing covers the user's own documents. Documents other people send need an approval
+  step that is not built yet; `sign_document` refuses them.
 - OAuth: dynamic client registration only. Client ID Metadata Documents (CIMD) are not supported
   yet, and MCP Events (automations that start from a document event) are not implemented.
 - Every rate limit and the idempotency store are in-memory per Node process; scale out and they

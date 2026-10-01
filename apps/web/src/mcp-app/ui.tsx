@@ -78,12 +78,13 @@ export function StatusPill({ status, className }: { status: DocStatus; className
   );
 }
 
-/** Tinted message, the web app's inline banner: green, amber or red only as a tint. */
-export function Banner({ tone, children }: { tone: "success" | "warn" | "danger"; children: ReactNode }) {
+/** Tinted message, the web app's inline banner: green, amber or red only as a tint, grey for plain news. */
+export function Banner({ tone, children }: { tone: "success" | "warn" | "danger" | "neutral"; children: ReactNode }) {
   const tones = {
     success: "bg-success-soft text-success-ink",
     warn: "bg-warn-soft text-warn-ink",
-    danger: "bg-danger-soft text-danger"
+    danger: "bg-danger-soft text-danger",
+    neutral: "bg-surface-3 text-ink-2"
   };
   return <div className={cn("rounded-md px-3 py-2 text-[12.5px] leading-relaxed", tones[tone])}>{children}</div>;
 }
