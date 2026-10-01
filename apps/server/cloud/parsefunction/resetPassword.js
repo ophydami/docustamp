@@ -1,4 +1,5 @@
 import { revokeApiTokenForExtUser } from '../lib/apiTokens.js';
+import { revokeOAuthGrantsForUser } from '../lib/oauth.js';
 import { assertNotDisabled, checkRateLimit, extUserForUser, resolveCaller } from './authGuard.js';
 
 /**
@@ -115,6 +116,7 @@ export default async function resetPassword(request) {
     // The old password is gone, so everything it still authorises goes too.
     const destroyed = await destroySessions(user);
     await revokeApiTokenForExtUser(targetExt);
+    await revokeOAuthGrantsForUser(user.id);
 
     return {
       status: 'success',

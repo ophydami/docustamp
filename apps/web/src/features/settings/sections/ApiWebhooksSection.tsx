@@ -1,11 +1,18 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Check, Copy, KeyRound, RefreshCw, Trash2 } from "lucide-react";
+import { Check, Copy, KeyRound, Plug, RefreshCw, Trash2 } from "lucide-react";
 import { Button, Dialog, Pill, toast } from "@/components/ui";
 import { customRouteBase } from "@/lib/parse";
 import { whenShort } from "@/lib/format";
 import { FormColumn, ReadOnlyRow, SectionCard, SectionError, SectionLoading } from "../parts";
-import { useApiToken, useGenerateApiToken, useRevokeApiToken } from "../api";
+import {
+  useApiToken,
+  useGenerateApiToken,
+  useOAuthGrants,
+  useRevokeApiToken,
+  useRevokeOAuthGrant,
+  type OAuthGrantInfo
+} from "../api";
 import { MCP_TOOL_NAMES } from "../mcpTools";
 
 /** `/api/app` -> `/api`: the MCP endpoint and the REST API live beside the Parse mount (@/lib/parse). */
@@ -42,6 +49,100 @@ function CodeBlock({ code, label }: { code: string; label: string }) {
       </div>
       <pre className="overflow-x-auto px-3 py-2.5 pr-20 text-[11.5px] leading-relaxed font-mono text-ink-2 whitespace-pre">{code}</pre>
     </div>
+  );
+}
+
+/**
+ * Apps connected through "Sign in with DocuStamp" (OAuth), such as ChatGPT.
+ * Each row is one connection; disconnecting ends its tokens at once.
+ */
+function ConnectedAppsCard() {
+  const { t } = useTranslation();
+  const grants = useOAuthGrants();
+  const revoke = useRevokeOAuthGrant();
+  const [confirm, setConfirm] = useState<OAuthGrantInfo | null>(null);
+
+  async function onDisconnect() {
+    if (!confirm) return;
+    try {
+      await revoke.mutateAsync(confirm.id);
+      setConfirm(null);
+      toast.success(t("settings.apiWebhooks.apps.disconnected"));
+    } catch (err) {
+      toast.error(t("settings.apiWebhooks.apps.failed"), (err as Error).message);
+    }
+  }
+
+  const list = grants.data?.grants ?? [];
+  const nameOf = (grant: OAuthGrantInfo) => grant.clientName || t("settings.apiWebhooks.apps.unnamed");
+
+  return (
+    <SectionCard
+      title={t("settings.apiWebhooks.apps.title")}
+      note={t("settings.apiWebhooks.apps.note")}
+      aside={<Plug className="size-4 text-muted" strokeWidth={1.6} />}
+    >
+      {grants.isLoading ? (
+        <SectionLoading />
+      ) : grants.error ? (
+        <SectionError error={grants.error} onRetry={() => void grants.refetch()} />
+      ) : list.length === 0 ? (
+        <p className="text-[12px] text-muted">{t("settings.apiWebhooks.apps.none")}</p>
+      ) : (
+        <ul className="flex flex-col divide-y divide-line">
+          {list.map((grant) => (
+            <li key={grant.id} className="flex items-center justify-between gap-3 py-2.5 first:pt-0 last:pb-0">
+              <div className="min-w-0 flex flex-col gap-1">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="text-[13px] font-semibold text-ink truncate">{nameOf(grant)}</span>
+                  {grant.redirectHost ? <span className="font-mono text-[11px] text-muted">{grant.redirectHost}</span> : null}
+                  <Pill tone={grant.scopes.includes("documents:write") ? "accent" : "neutral"}>
+                    {grant.scopes.includes("documents:write")
+                      ? t("settings.apiWebhooks.apps.readWrite")
+                      : t("settings.apiWebhooks.apps.readOnly")}
+                  </Pill>
+                </div>
+                <span className="text-[11.5px] text-muted">
+                  {t("settings.apiWebhooks.apps.connected")}{" "}
+                  {grant.createdAt ? whenShort(grant.createdAt) : t("common.state.unknown")}
+                  <span className="px-1.5 text-muted-2">&middot;</span>
+                  {t("settings.apiWebhooks.token.lastUsed")}{" "}
+                  {grant.lastUsedAt ? whenShort(grant.lastUsedAt) : t("settings.apiWebhooks.token.never")}
+                </span>
+              </div>
+              <Button
+                size="sm"
+                variant="danger"
+                icon={<Trash2 className="size-3.5" strokeWidth={1.6} />}
+                onClick={() => setConfirm(grant)}
+              >
+                {t("settings.apiWebhooks.apps.disconnect")}
+              </Button>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      <Dialog
+        open={confirm !== null}
+        onClose={() => setConfirm(null)}
+        title={t("settings.apiWebhooks.apps.disconnect")}
+        description={confirm ? t("settings.apiWebhooks.apps.disconnectConfirm", { app: nameOf(confirm) }) : ""}
+        width={440}
+        footer={
+          <>
+            <Button variant="ghost" onClick={() => setConfirm(null)}>
+              {t("common.actions.cancel")}
+            </Button>
+            <Button variant="danger" loading={revoke.isPending} onClick={() => void onDisconnect()}>
+              {t("settings.apiWebhooks.apps.disconnect")}
+            </Button>
+          </>
+        }
+      >
+        {null}
+      </Dialog>
+    </SectionCard>
   );
 }
 
@@ -94,6 +195,8 @@ export default function ApiWebhooksSection() {
 
   return (
     <FormColumn className="max-w-[640px]">
+      <ConnectedAppsCard />
+
       <SectionCard
         title={t("settings.apiWebhooks.token.title")}
         note={t("settings.apiWebhooks.token.note")}

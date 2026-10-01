@@ -29,12 +29,13 @@ export function resolveWebRoot(configured = process.env.WEB_ROOT) {
 /**
  * Paths that belong to the API even without the /api prefix: the Parse mount
  * and the plain Express routes in cloud/routes/customApp.js. They never fall
- * back to index.html.
+ * back to index.html. `/.well-known` is here because the OAuth discovery
+ * documents (cloud/routes/oauth.js) must live at the origin root.
  */
 function apiPathPattern(parseMount) {
   const mount = (parseMount || '/app').replace(/\/+$/, '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   return new RegExp(
-    `^(${mount}|/public|/docxtopdf|/decryptpdf|/delete-account|/deleteuser|/mcp|/v1)(/|$)`
+    `^(${mount}|/public|/docxtopdf|/decryptpdf|/delete-account|/deleteuser|/mcp|/v1|/oauth|/\\.well-known)(/|$)`
   );
 }
 

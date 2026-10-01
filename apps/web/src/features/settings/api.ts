@@ -471,3 +471,35 @@ export function useRevokeApiToken() {
     onSuccess: () => void qc.invalidateQueries({ queryKey: apiTokenKey })
   });
 }
+
+/* ------------------------------------------------------------ connected apps */
+
+/** One app connected through "Sign in with DocuStamp" (OAuth), as `listoauthgrants` describes it. */
+export interface OAuthGrantInfo {
+  id: string;
+  clientName: string;
+  /** Where the app sent the user back to, e.g. `chatgpt.com`. The part an app cannot fake. */
+  redirectHost: string;
+  scopes: string[];
+  createdAt: string | null;
+  lastUsedAt: string | null;
+}
+
+export const oauthGrantsKey = ["settings", "oauthGrants"] as const;
+
+export function useOAuthGrants() {
+  return useQuery({
+    queryKey: oauthGrantsKey,
+    queryFn: () => cloud<{ grants: OAuthGrantInfo[] }>("listoauthgrants"),
+    staleTime: 60_000
+  });
+}
+
+/** Disconnect: the app's tokens stop working at once. */
+export function useRevokeOAuthGrant() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (grantId: string) => cloud<{ revoked: boolean }>("revokeoauthgrant", { grantId }),
+    onSuccess: () => void qc.invalidateQueries({ queryKey: oauthGrantsKey })
+  });
+}

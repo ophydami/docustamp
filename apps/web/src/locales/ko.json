@@ -147,6 +147,24 @@
       "digitAria": "{{label}}, {{index}}번째 자리",
       "label": "로그인 코드"
     },
+    "connect": {
+      "allow": "허용",
+      "backToApp": "{{product}}(으)로 이동",
+      "deny": "거부",
+      "expiredBody": "연결하던 앱으로 돌아가서 다시 시작하세요.",
+      "expiredTitle": "요청이 만료되었습니다",
+      "failed": "문제가 발생했습니다. 다시 시도하세요.",
+      "redirectNote": "선택하면 <0>{{host}}</0>(으)로 돌아갑니다.",
+      "scopeRead": "문서, 템플릿, 연락처와 서명 현황 보기",
+      "scopeWrite": "서명용 문서 만들기, 편집, 보내기 (서명자에게 이메일이 발송됨)",
+      "signedInAs": "{{email}}(으)로 로그인됨",
+      "subtitle": "{{app}}에서 {{product}} 계정을 사용하려고 합니다.",
+      "switchAccount": "다른 계정 사용",
+      "title": "{{app}} 연결",
+      "unnamedApp": "앱",
+      "wants": "{{app}}에서 할 수 있는 일:",
+      "warning": "{{app}}에서 직접 연결을 시작한 경우에만 허용하세요. 연결은 설정에서 언제든지 해제할 수 있습니다."
+    },
     "divider": {
       "or": "또는"
     },
@@ -2024,11 +2042,24 @@
   },
   "settings": {
     "apiWebhooks": {
+      "apps": {
+        "connected": "연결됨",
+        "disconnect": "연결 해제",
+        "disconnectConfirm": "{{app}}은(는) 즉시 계정에 접근할 수 없게 됩니다. 나중에 다시 연결할 수 있습니다.",
+        "disconnected": "앱 연결이 해제되었습니다",
+        "failed": "앱 연결을 해제하지 못했습니다",
+        "none": "아직 연결된 앱이 없습니다. ChatGPT, Claude 또는 다른 MCP 앱을 연결하려면 해당 앱에 아래 MCP 엔드포인트를 추가하고 요청이 오면 로그인하세요.",
+        "note": "로그인해서 연결한 앱(예: ChatGPT)입니다. 각 앱은 허용한 권한만 가집니다.",
+        "readOnly": "읽기 전용",
+        "readWrite": "읽기 및 보내기",
+        "title": "연결된 앱",
+        "unnamed": "이름 없는 앱"
+      },
       "mcp": {
         "claudeCode": "Claude Code",
         "claudeDesktop": "Claude Desktop / 기타 클라이언트 (mcp-remote 사용)",
         "endpoint": "엔드포인트",
-        "note": "상태 없는 Streamable HTTP. 모든 요청에 토큰이 포함되며 로그인이 필요 없습니다.",
+        "note": "Streamable HTTP. ChatGPT 같은 앱은 로그인으로 연결합니다. 스크립트와 Claude Code는 개인 토큰을 사용합니다.",
         "title": "MCP 서버",
         "tools": "도구"
       },

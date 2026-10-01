@@ -9,19 +9,30 @@ import {
   safeErrorMessage,
 } from '../api/shared.js';
 import { publicOriginFor } from '../lib/publicUrl.js';
+import {
+  oauthEnabled,
+  protectedResourceMetadataUrl,
+  resolveOAuthAccessToken,
+} from '../lib/oauth.js';
 import { buildMcpServer } from './server.js';
 
 /**
  * Stateless Streamable-HTTP MCP endpoint, mounted at `/mcp` (reached as
  * `https://<host>/api/mcp`).
  *
- * Every POST carries `Authorization: Bearer os_...`; the token is resolved to a
+ * Every POST carries `Authorization: Bearer <token>`; the token is resolved to a
  * caller, a throw-away McpServer + transport is built for that request and torn
  * down when the response ends. No session ids, nothing kept between requests, so
  * it works the same from a terminal, a script or Claude Code:
  *
  *   claude mcp add --transport http docustamp https://sign.example.com/api/mcp \
  *     --header "Authorization: Bearer os_..."
+ *
+ * The token is either a personal API token (`os_`) or an OAuth access token
+ * (`dsat_`) that an MCP client such as ChatGPT obtained through "Sign in with
+ * DocuStamp" (cloud/lib/oauth.js). A request without one gets a 401 whose
+ * `WWW-Authenticate` header points at the protected-resource metadata, which is
+ * how those clients discover the sign-in flow.
  */
 
 /**
@@ -35,13 +46,21 @@ import { buildMcpServer } from './server.js';
 const PER_TOKEN_PER_MIN = 120;
 const PER_IP_PER_MIN = 240;
 
-export async function authenticateApiRequest(req) {
+/**
+ * @param {import('express').Request} req
+ * @param {{allowOAuth?: boolean}} [opts] OAuth access tokens are minted for the
+ *   MCP endpoint only (their scopes are enforced per tool in ./server.js), so
+ *   only `mcpHandler` passes `allowOAuth`; the REST API keeps to API tokens.
+ */
+export async function authenticateApiRequest(req, { allowOAuth = false } = {}) {
   const raw = tokenFromHeaders(req.headers || {});
   if (!raw) return { error: 'missing_token' };
   checkRateLimit('api-ip', `ip:${clientIp(req)}`, PER_IP_PER_MIN);
   let resolved;
   try {
-    resolved = await resolveApiToken(raw);
+    resolved =
+      (allowOAuth && oauthEnabled() && (await resolveOAuthAccessToken(raw))) ||
+      (await resolveApiToken(raw));
   } catch (err) {
     // A token whose user row has gone (deleted account, half-removed pointer)
     // throws OBJECT_NOT_FOUND in here. That is an authentication failure, not a
@@ -58,6 +77,8 @@ export async function authenticateApiRequest(req) {
       extUser: resolved.extUser,
       publicUrl: publicOrigin(req),
     });
+    // Undefined for an API token, which carries everything the account can do.
+    if (resolved.scopes) caller.scopes = resolved.scopes;
     return { caller };
   } catch (err) {
     // A disabled account is a real answer (403), not a bad token.
@@ -77,7 +98,12 @@ function publicOrigin(req) {
 }
 
 function unauthorized(res, reason) {
-  res.setHeader('WWW-Authenticate', 'Bearer realm="docustamp", error="invalid_token"');
+  // RFC 6750: no error code when no credential was sent at all. RFC 9728: the
+  // resource_metadata parameter is what starts an MCP client's OAuth discovery.
+  const params = ['realm="docustamp"'];
+  if (oauthEnabled()) params.push(`resource_metadata="${protectedResourceMetadataUrl()}"`);
+  if (reason !== 'missing_token') params.push('error="invalid_token"');
+  res.setHeader('WWW-Authenticate', `Bearer ${params.join(', ')}`);
   return res.status(401).json({
     jsonrpc: '2.0',
     error: {
@@ -85,7 +111,7 @@ function unauthorized(res, reason) {
       message:
         reason === 'missing_token'
           ? 'Missing API token. Send "Authorization: Bearer <token>"; create one under Settings > API & MCP.'
-          : 'Invalid or revoked API token.',
+          : 'Invalid, expired or revoked token.',
     },
     id: null,
   });
@@ -117,7 +143,7 @@ export async function mcpHandler(req, res) {
   }
   let auth;
   try {
-    auth = await authenticateApiRequest(req);
+    auth = await authenticateApiRequest(req, { allowOAuth: true });
   } catch (err) {
     const status = httpStatusFor(err);
     return res

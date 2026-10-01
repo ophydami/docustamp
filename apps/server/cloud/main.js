@@ -59,6 +59,12 @@ import {
   getApiToken,
   revokeApiTokenFn,
 } from './parsefunction/apiTokenFunctions.js';
+import {
+  listOAuthGrantsFn,
+  oauthDecide,
+  oauthRequest,
+  revokeOAuthGrantFn,
+} from './parsefunction/oauthFunctions.js';
 import getSigningLinks from './parsefunction/getSigningLinks.js';
 import savePlaceholders from './parsefunction/savePlaceholders.js';
 import updateProfile from './parsefunction/updateProfile.js';
@@ -133,6 +139,11 @@ Parse.Cloud.define('aipreparedocument', aiPrepareDocument);
 Parse.Cloud.define('generateapitoken', generateApiToken);
 Parse.Cloud.define('revokeapitoken', revokeApiTokenFn);
 Parse.Cloud.define('getapitoken', getApiToken);
+// "Sign in with DocuStamp" for MCP clients: the consent page and connected apps.
+Parse.Cloud.define('oauthrequest', oauthRequest);
+Parse.Cloud.define('oauthdecide', oauthDecide);
+Parse.Cloud.define('listoauthgrants', listOAuthGrantsFn);
+Parse.Cloud.define('revokeoauthgrant', revokeOAuthGrantFn);
 // Access hardening: tokenised signing links, signer-side placeholder save,
 // and the contracts_Users writes the web app used to do over the open REST class.
 Parse.Cloud.define('getsigninglinks', getSigningLinks);

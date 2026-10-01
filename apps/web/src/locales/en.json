@@ -146,6 +146,24 @@
       "digitAria": "{{label}}, digit {{index}}",
       "label": "Sign-in code"
     },
+    "connect": {
+      "allow": "Allow",
+      "backToApp": "Go to {{product}}",
+      "deny": "Deny",
+      "expiredBody": "Go back to the app you were connecting and start again.",
+      "expiredTitle": "This request has expired",
+      "failed": "Something went wrong. Please try again.",
+      "redirectNote": "After you choose, you go back to <0>{{host}}</0>.",
+      "scopeRead": "See your documents, templates and contacts, and who has signed",
+      "scopeWrite": "Create, edit and send documents for signature, which emails your signers",
+      "signedInAs": "Signed in as {{email}}",
+      "subtitle": "{{app}} wants to use your {{product}} account.",
+      "switchAccount": "Use another account",
+      "title": "Connect {{app}}",
+      "unnamedApp": "An app",
+      "wants": "{{app}} will be able to:",
+      "warning": "Only allow this if you started connecting from {{app}}. You can disconnect it at any time in Settings."
+    },
     "divider": {
       "or": "or"
     },
@@ -2023,11 +2041,24 @@
   },
   "settings": {
     "apiWebhooks": {
+      "apps": {
+        "connected": "Connected",
+        "disconnect": "Disconnect",
+        "disconnectConfirm": "{{app}} loses access to your account right away. You can connect it again later.",
+        "disconnected": "App disconnected",
+        "failed": "Could not disconnect the app",
+        "none": "No apps connected yet. To connect ChatGPT, Claude or another MCP app, add the MCP endpoint below in that app and sign in when it asks.",
+        "note": "Apps you connected by signing in, such as ChatGPT. Each one has only the access you allowed.",
+        "readOnly": "Read only",
+        "readWrite": "Read and send",
+        "title": "Connected apps",
+        "unnamed": "Unnamed app"
+      },
       "mcp": {
         "claudeCode": "Claude Code",
         "claudeDesktop": "Claude Desktop / other clients (via mcp-remote)",
         "endpoint": "Endpoint",
-        "note": "Stateless Streamable HTTP. Every request carries your token, nothing to log in to.",
+        "note": "Streamable HTTP. Apps like ChatGPT connect by signing in. Scripts and Claude Code use your personal token.",
         "title": "MCP server",
         "tools": "Tools"
       },

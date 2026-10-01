@@ -8,6 +8,7 @@ import { deleteUserByAdmin, deleteUserPost } from './deleteAccount/deleteUser.js
 import { deleteUserGet } from './deleteAccount/deleteUserGet.js';
 import { deleteUserOtp } from './deleteAccount/deleteUserOtp.js';
 import { mcpHandler } from '../mcp/route.js';
+import { router as oauthRouter } from './oauth.js';
 import { v1 } from '../api/v1.js';
 import { checkRateLimit, RATE_LIMIT_CODE } from '../parsefunction/authGuard.js';
 
@@ -105,6 +106,8 @@ app.post(
   deleteUserByAdmin
 );
 
-// Token-authenticated integrations: stateless MCP endpoint and REST API v1.
+// Token-authenticated integrations: stateless MCP endpoint and REST API v1, and
+// the OAuth server that lets MCP clients connect an account (./oauth.js).
+app.use(oauthRouter);
 app.all('/mcp', rateLimitByIp('route:mcp', ROUTE_RATE_LIMIT), apiJson, mcpHandler);
 app.use('/v1', rateLimitByIp('route:v1', ROUTE_RATE_LIMIT), apiJson, v1);

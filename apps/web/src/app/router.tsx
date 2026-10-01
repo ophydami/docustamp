@@ -10,6 +10,7 @@ const LoginPage = lazy(() => import("@/features/auth/LoginPage"));
 const SignupPage = lazy(() => import("@/features/auth/SignupPage"));
 const ForgotPasswordPage = lazy(() => import("@/features/auth/ForgotPasswordPage"));
 const GuestLoginPage = lazy(() => import("@/features/auth/GuestLoginPage"));
+const ConnectPage = lazy(() => import("@/features/auth/ConnectPage"));
 
 const InboxPage = lazy(() => import("@/features/inbox/InboxPage"));
 const DocumentsPage = lazy(() => import("@/features/documents/DocumentsPage"));
@@ -49,6 +50,15 @@ export const router = createBrowserRouter([
   { path: "/terms", element: <S><LegalPage kind="terms" /></S> },
   { path: "/privacy", element: <S><LegalPage kind="privacy" /></S> },
   { path: "/status", element: <S><LegalPage kind="status" /></S> },
+  // OAuth consent for MCP apps such as ChatGPT: signed in, but in the auth frame, not the app shell.
+  {
+    path: "/connect",
+    element: (
+      <RequireAuth>
+        <S><ConnectPage /></S>
+      </RequireAuth>
+    )
+  },
 
   // Signer (public, token in URL; no account needed)
   {

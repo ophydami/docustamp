@@ -147,6 +147,24 @@
       "digitAria": "{{label}}, chiffre {{index}}",
       "label": "Code de connexion"
     },
+    "connect": {
+      "allow": "Autoriser",
+      "backToApp": "Aller sur {{product}}",
+      "deny": "Refuser",
+      "expiredBody": "Retournez dans l'application que vous connectiez et recommencez.",
+      "expiredTitle": "Cette demande a expiré",
+      "failed": "Une erreur s'est produite. Veuillez réessayer.",
+      "redirectNote": "Après votre choix, vous revenez sur <0>{{host}}</0>.",
+      "scopeRead": "Voir vos documents, modèles et contacts, et qui a signé",
+      "scopeWrite": "Créer, modifier et envoyer des documents à signer, ce qui envoie des e-mails à vos signataires",
+      "signedInAs": "Connecté en tant que {{email}}",
+      "subtitle": "{{app}} souhaite utiliser votre compte {{product}}.",
+      "switchAccount": "Utiliser un autre compte",
+      "title": "Connecter {{app}}",
+      "unnamedApp": "Une application",
+      "wants": "{{app}} pourra :",
+      "warning": "N'autorisez ceci que si vous avez lancé la connexion depuis {{app}}. Vous pouvez la déconnecter à tout moment dans les Paramètres."
+    },
     "divider": {
       "or": "ou"
     },
@@ -2024,11 +2042,24 @@
   },
   "settings": {
     "apiWebhooks": {
+      "apps": {
+        "connected": "Connectée",
+        "disconnect": "Déconnecter",
+        "disconnectConfirm": "{{app}} perd immédiatement l'accès à votre compte. Vous pourrez la reconnecter plus tard.",
+        "disconnected": "Application déconnectée",
+        "failed": "Impossible de déconnecter l'application",
+        "none": "Aucune application connectée pour l'instant. Pour connecter ChatGPT, Claude ou une autre application MCP, ajoutez-y le point de terminaison MCP ci-dessous et connectez-vous quand elle le demande.",
+        "note": "Les applications que vous avez connectées en vous identifiant, comme ChatGPT. Chacune n'a que l'accès que vous avez autorisé.",
+        "readOnly": "Lecture seule",
+        "readWrite": "Lecture et envoi",
+        "title": "Applications connectées",
+        "unnamed": "Application sans nom"
+      },
       "mcp": {
         "claudeCode": "Claude Code",
         "claudeDesktop": "Claude Desktop / autres clients (via mcp-remote)",
         "endpoint": "Point de terminaison",
-        "note": "Streamable HTTP sans état. Chaque requête porte votre jeton, aucune connexion requise.",
+        "note": "Streamable HTTP. Les applications comme ChatGPT se connectent en vous identifiant. Les scripts et Claude Code utilisent votre jeton personnel.",
         "title": "Serveur MCP",
         "tools": "Outils"
       },

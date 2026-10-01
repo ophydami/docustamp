@@ -5,6 +5,7 @@ import createDocumentOpenIndex from './createDocumentOpenIndex.js';
 import createDocumentVersionIndex from './createDocumentVersionIndex.js';
 import createIdentityIndexes from './createIdentityIndexes.js';
 import createNormalizedEmailUnique from './createNormalizedEmailUnqiue.js';
+import createOAuthIndexes from './createOAuthIndexes.js';
 import lowercaseUserEmails from './lowercaseUserEmails.js';
 import rotateShadowPasswords from './rotateShadowPasswords.js';
 
@@ -30,6 +31,7 @@ export default async function runDbMigrations() {
     // reported as a duplicate that blocks the index.
     ['lowercaseUserEmails', lowercaseUserEmails],
     ['identityIndexes', createIdentityIndexes],
+    ['oauthIndexes', createOAuthIndexes],
   ];
   // Bcrypt-heavy one-off pass over `_User`; specs drive it directly instead.
   if (!process.env.TESTING) migrations.push(['shadowPasswordRotation', rotateShadowPasswords]);

@@ -51,6 +51,7 @@ import {
 } from '../lib/lifecycle.js';
 import { unbrandedSenderWarning } from '../lib/drafts.js';
 import { checkAiRateLimit } from '../parsefunction/aiFunctions.js';
+import { SCOPE_READ, SCOPE_WRITE } from '../lib/oauth.js';
 import { sanitisePlaceholders } from '../lib/widgets.js';
 import {
   analyzeFlow,
@@ -315,6 +316,122 @@ function guarded(fn) {
 }
 
 /**
+ * Safety labels for every tool (MCP tool annotations). Hosts use them to decide
+ * what needs the user's confirmation: ChatGPT asks before running a tool marked
+ * destructive, and its plugin review requires every tool to be labelled.
+ *
+ *   READ         looks, changes nothing
+ *   WRITE        changes something in this account that can be put back:
+ *                every draft edit is snapshotted first (undo_draft_change)
+ *   DESTRUCTIVE  deletes, overwrites workspace-wide settings, or cannot be
+ *                undone from here
+ *   OUTREACH     emails people or posts to an outside url: sending, reminding,
+ *                voiding, chaining, webhooks. Destructive, because a sent
+ *                email cannot be taken back
+ *
+ * `openWorldHint` is also set on the tools that may download a PDF from a
+ * public url (the `url` input of FileInputShape).
+ *
+ * Every registered tool must have an entry: `buildMcpServer` refuses to
+ * register one without, so a new tool cannot ship unlabelled.
+ */
+const READ = Object.freeze({ readOnlyHint: true, destructiveHint: false, openWorldHint: false });
+const READ_URL = Object.freeze({ readOnlyHint: true, destructiveHint: false, openWorldHint: true });
+const WRITE = Object.freeze({ readOnlyHint: false, destructiveHint: false, openWorldHint: false });
+const WRITE_URL = Object.freeze({ readOnlyHint: false, destructiveHint: false, openWorldHint: true });
+const DESTRUCTIVE = Object.freeze({ readOnlyHint: false, destructiveHint: true, openWorldHint: false });
+const OUTREACH = Object.freeze({ readOnlyHint: false, destructiveHint: true, openWorldHint: true });
+
+export const TOOL_ANNOTATIONS = Object.freeze({
+  whoami: READ,
+  get_branding: READ,
+  update_branding: DESTRUCTIVE,
+  upload_document: WRITE_URL,
+  analyze_document: READ_URL,
+  create_document: WRITE_URL,
+  merge_documents: WRITE_URL,
+  create_upload: WRITE,
+  complete_upload: WRITE,
+  register_webhook: WRITE_URL,
+  list_webhooks: READ,
+  test_webhook: WRITE_URL,
+  delete_webhook: DESTRUCTIVE,
+  quick_send: OUTREACH,
+  send_document: OUTREACH,
+  list_documents: READ,
+  get_document: READ,
+  void_document: OUTREACH,
+  replace_signer: OUTREACH,
+  resend_to: OUTREACH,
+  extend_expiry: WRITE,
+  set_chain: OUTREACH,
+  wait_for: READ,
+  get_audit_trail: READ,
+  verify_document: READ_URL,
+  get_signing_links: READ,
+  send_reminder: OUTREACH,
+  list_contacts: READ,
+  add_contact: WRITE,
+  list_templates: READ,
+  create_document_from_template: WRITE,
+  get_draft: READ,
+  review_draft: READ,
+  update_draft: WRITE_URL,
+  set_draft_fields: WRITE,
+  update_draft_field: WRITE,
+  remove_draft_fields: WRITE,
+  ai_layout_draft: WRITE,
+  preview_page: READ,
+  find_text: READ,
+  detect_fields: READ,
+  place_field_at_text: WRITE,
+  create_template: WRITE_URL,
+  save_as_template: WRITE,
+  delete_template: DESTRUCTIVE,
+  update_contact: WRITE,
+  delete_contact: DESTRUCTIVE,
+  list_folders: READ,
+  create_folder: WRITE,
+  save_draft_version: WRITE,
+  list_draft_versions: READ,
+  get_draft_version: READ,
+  restore_draft_version: WRITE,
+  undo_draft_change: WRITE,
+  duplicate_document: WRITE,
+  delete_draft: DESTRUCTIVE,
+  restore_deleted_document: WRITE,
+});
+
+/**
+ * Wrap `server.registerTool` so every tool gets its safety labels and the
+ * OAuth scope it needs (`securitySchemes`, which ChatGPT reads), and so a
+ * connection that was only allowed to read (an OAuth grant without
+ * documents:write) never sees the tools that change anything. API tokens carry
+ * no scopes and get every tool.
+ *
+ * @param {McpServer} server
+ * @param {import('../lib/context.js').Caller} caller
+ */
+function labelTools(server, caller) {
+  const register = server.registerTool.bind(server);
+  server.registerTool = (name, config, cb) => {
+    const annotations = TOOL_ANNOTATIONS[name];
+    if (!annotations) throw new Error(`MCP tool "${name}" has no entry in TOOL_ANNOTATIONS`);
+    const scope = annotations.readOnlyHint ? SCOPE_READ : SCOPE_WRITE;
+    if (caller.scopes && !caller.scopes.includes(scope)) return undefined;
+    return register(
+      name,
+      {
+        ...config,
+        annotations: { ...annotations, ...config.annotations },
+        _meta: { ...config._meta, securitySchemes: [{ type: 'oauth2', scopes: [scope] }] },
+      },
+      cb
+    );
+  };
+}
+
+/**
  * @param {import('../lib/context.js').Caller} caller
  */
 export function buildMcpServer(caller) {
@@ -327,6 +444,7 @@ export function buildMcpServer(caller) {
       'get_branding shows how the workspace\'s emails are branded (sender display name, reply-to, footer, logo, Powered-by line, default request and completion subject/body); update_branding changes any of them (workspace admins only; null clears a field).',
     ].join(' '),
   });
+  labelTools(server, caller);
 
   server.registerTool(
     'whoami',

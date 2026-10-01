@@ -147,6 +147,24 @@
       "digitAria": "{{label}}, Ziffer {{index}}",
       "label": "Anmeldecode"
     },
+    "connect": {
+      "allow": "Zulassen",
+      "backToApp": "Zu {{product}}",
+      "deny": "Ablehnen",
+      "expiredBody": "Gehen Sie zurück zu der App, die Sie verbinden wollten, und starten Sie erneut.",
+      "expiredTitle": "Diese Anfrage ist abgelaufen",
+      "failed": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
+      "redirectNote": "Nach Ihrer Auswahl kehren Sie zu <0>{{host}}</0> zurück.",
+      "scopeRead": "Ihre Dokumente, Vorlagen und Kontakte sehen und wer unterschrieben hat",
+      "scopeWrite": "Dokumente erstellen, bearbeiten und zur Unterschrift senden, wobei Ihre Unterzeichner E-Mails erhalten",
+      "signedInAs": "Angemeldet als {{email}}",
+      "subtitle": "{{app}} möchte Ihr {{product}}-Konto verwenden.",
+      "switchAccount": "Anderes Konto verwenden",
+      "title": "{{app}} verbinden",
+      "unnamedApp": "Eine App",
+      "wants": "{{app}} kann dann:",
+      "warning": "Lassen Sie dies nur zu, wenn Sie die Verbindung selbst in {{app}} gestartet haben. Sie können die Verbindung jederzeit in den Einstellungen trennen."
+    },
     "divider": {
       "or": "oder"
     },
@@ -2024,11 +2042,24 @@
   },
   "settings": {
     "apiWebhooks": {
+      "apps": {
+        "connected": "Verbunden",
+        "disconnect": "Trennen",
+        "disconnectConfirm": "{{app}} verliert sofort den Zugriff auf Ihr Konto. Sie können die App später erneut verbinden.",
+        "disconnected": "App getrennt",
+        "failed": "Die App konnte nicht getrennt werden",
+        "none": "Noch keine Apps verbunden. Um ChatGPT, Claude oder eine andere MCP-App zu verbinden, fügen Sie dort den MCP-Endpunkt unten hinzu und melden Sie sich an, wenn Sie gefragt werden.",
+        "note": "Apps, die Sie durch Anmelden verbunden haben, zum Beispiel ChatGPT. Jede hat nur den Zugriff, den Sie erlaubt haben.",
+        "readOnly": "Nur lesen",
+        "readWrite": "Lesen und senden",
+        "title": "Verbundene Apps",
+        "unnamed": "Unbenannte App"
+      },
       "mcp": {
         "claudeCode": "Claude Code",
         "claudeDesktop": "Claude Desktop / andere Clients (über mcp-remote)",
         "endpoint": "Endpunkt",
-        "note": "Zustandsloses Streamable HTTP. Jede Anfrage trägt Ihr Token, keine Anmeldung nötig.",
+        "note": "Streamable HTTP. Apps wie ChatGPT verbinden sich per Anmeldung. Skripte und Claude Code verwenden Ihr persönliches Token.",
         "title": "MCP-Server",
         "tools": "Werkzeuge"
       },

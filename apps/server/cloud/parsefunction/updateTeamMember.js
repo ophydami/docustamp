@@ -1,5 +1,6 @@
 import { extUserForUser, resolveCaller } from './authGuard.js';
 import { revokeApiTokenForExtUser } from '../lib/apiTokens.js';
+import { revokeOAuthGrantsForUser } from '../lib/oauth.js';
 
 /**
  * Admin-only edits to another member's `contracts_Users` row: their role and
@@ -113,10 +114,11 @@ export default async function updateTeamMember(request) {
   const saved = await target.save(null, { useMasterKey: true });
 
   // Suspending an account must also cut off what it already holds: its personal
-  // API token (REST/MCP) and every live session.
+  // API token (REST/MCP), the apps it connected over OAuth and every live session.
   if (isDisabled === true) {
     await revokeApiTokenForExtUser(saved);
     const targetUserId = saved.get('UserId')?.id;
+    if (targetUserId) await revokeOAuthGrantsForUser(targetUserId);
     if (targetUserId) {
       const sessions = new Parse.Query(Parse.Session);
       sessions.equalTo('user', { __type: 'Pointer', className: '_User', objectId: targetUserId });

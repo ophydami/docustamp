@@ -532,7 +532,8 @@ app.use(cors(corsOptions()));
  * which has its own 50 MB cap and never sees this parser.
  */
 const PARSE_BODY_LIMIT = process.env.PARSE_BODY_LIMIT || '72mb';
-const CUSTOM_ROUTE_PATHS = /^\/(docxtopdf|decryptpdf|delete-account|deleteuser|mcp|v1)(\/|$)/;
+const CUSTOM_ROUTE_PATHS =
+  /^\/(docxtopdf|decryptpdf|delete-account|deleteuser|mcp|v1|oauth|\.well-known)(\/|$)/;
 const parseJsonBody = express.json({ limit: PARSE_BODY_LIMIT });
 const parseUrlencodedBody = express.urlencoded({ limit: PARSE_BODY_LIMIT, extended: true });
 app.use(function (req, res, next) {

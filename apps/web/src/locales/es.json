@@ -147,6 +147,24 @@
       "digitAria": "{{label}}, dígito {{index}}",
       "label": "Código de acceso"
     },
+    "connect": {
+      "allow": "Permitir",
+      "backToApp": "Ir a {{product}}",
+      "deny": "Rechazar",
+      "expiredBody": "Vuelve a la app que estabas conectando y empieza de nuevo.",
+      "expiredTitle": "Esta solicitud ha caducado",
+      "failed": "Algo salió mal. Inténtalo de nuevo.",
+      "redirectNote": "Después de elegir, vuelves a <0>{{host}}</0>.",
+      "scopeRead": "Ver tus documentos, plantillas y contactos, y quién ha firmado",
+      "scopeWrite": "Crear, editar y enviar documentos para firmar, lo que envía correos a tus firmantes",
+      "signedInAs": "Sesión iniciada como {{email}}",
+      "subtitle": "{{app}} quiere usar tu cuenta de {{product}}.",
+      "switchAccount": "Usar otra cuenta",
+      "title": "Conectar {{app}}",
+      "unnamedApp": "Una app",
+      "wants": "{{app}} podrá:",
+      "warning": "Permítelo solo si tú empezaste la conexión desde {{app}}. Puedes desconectarla cuando quieras en Configuración."
+    },
     "divider": {
       "or": "o"
     },
@@ -2024,11 +2042,24 @@
   },
   "settings": {
     "apiWebhooks": {
+      "apps": {
+        "connected": "Conectada",
+        "disconnect": "Desconectar",
+        "disconnectConfirm": "{{app}} perderá el acceso a tu cuenta de inmediato. Puedes volver a conectarla más tarde.",
+        "disconnected": "App desconectada",
+        "failed": "No se pudo desconectar la app",
+        "none": "Aún no hay apps conectadas. Para conectar ChatGPT, Claude u otra app MCP, añade allí el endpoint MCP de abajo e inicia sesión cuando te lo pida.",
+        "note": "Apps que conectaste iniciando sesión, como ChatGPT. Cada una solo tiene el acceso que permitiste.",
+        "readOnly": "Solo lectura",
+        "readWrite": "Leer y enviar",
+        "title": "Apps conectadas",
+        "unnamed": "App sin nombre"
+      },
       "mcp": {
         "claudeCode": "Claude Code",
         "claudeDesktop": "Claude Desktop / otros clientes (vía mcp-remote)",
         "endpoint": "Endpoint",
-        "note": "Streamable HTTP sin estado. Cada petición lleva tu token; no hay que iniciar sesión.",
+        "note": "Streamable HTTP. Las apps como ChatGPT se conectan iniciando sesión. Los scripts y Claude Code usan tu token personal.",
         "title": "Servidor MCP",
         "tools": "Herramientas"
       },

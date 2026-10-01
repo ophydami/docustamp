@@ -7,6 +7,8 @@ cloud/ai/client.js        Claude client selection (Bedrock or Anthropic), model 
 cloud/ai/pdfLayout.js     pdf.js text extraction -> coordinate-annotated transcript
 cloud/ai/analyze.js       the prompt, the forced tool schema, anchor -> coordinate resolution
 cloud/lib/apiTokens.js    personal tokens (hashed on contracts_Users)
+cloud/lib/oauth.js        "Sign in with DocuStamp": OAuth 2.1 server for MCP clients (ChatGPT, Claude...)
+cloud/routes/oauth.js     the OAuth endpoints and /.well-known discovery documents
 cloud/lib/context.js      the Caller object every library function takes
 cloud/lib/documents.js    createDocument / sendDocument / list / get / templates
 cloud/lib/contacts.js     ensureContact / listContacts (master key, scoped to the caller)
@@ -17,12 +19,15 @@ cloud/mcp/server.js       the MCP tools
 cloud/mcp/route.js        stateless Streamable-HTTP endpoint + token auth
 cloud/api/v1.js           REST API v1 (thin wrappers over cloud/lib)
 cloud/api/shared.js       the flows REST and MCP share: analyse, quick-send, remind, sizes, errors
-cloud/parsefunction/aiFunctions.js, apiTokenFunctions.js   cloud functions for the web app
+cloud/parsefunction/aiFunctions.js, apiTokenFunctions.js, oauthFunctions.js   cloud functions for the web app
 spec/ApiMcpAi.spec.js     coverage (fake Claude client)
+spec/OAuth.spec.js        coverage for the OAuth flow, scopes and tool safety labels
 ```
 
 Web: `apps/web/src/features/ai/` (the "Ask AI" page at `/ai`), the "Prepare with AI" card on
-the send page, and Settings > API and MCP (`features/settings/sections/ApiWebhooksSection.tsx`).
+the send page, Settings > API and MCP (`features/settings/sections/ApiWebhooksSection.tsx`, which
+also lists connected apps), and the OAuth consent page at `/connect`
+(`features/auth/ConnectPage.tsx`).
 
 ## 1. How the AI preparation works
 
@@ -157,6 +162,66 @@ claude mcp add --transport http docustamp https://sign.example.com/api/mcp \
 ```
 
 Claude Desktop and other stdio-only clients: `npx -y mcp-remote https://sign.example.com/api/mcp --header "Authorization: Bearer os_..."`.
+
+### Connecting by signing in (OAuth): ChatGPT, Claude and other MCP apps
+
+Apps that cannot take a pasted header (ChatGPT plugins, Claude connectors) connect with
+"Sign in with DocuStamp" instead: the user adds `https://sign.example.com/api/mcp` in the app,
+signs in to DocuStamp, and allows access. The server is its own OAuth 2.1 authorization server
+(`cloud/lib/oauth.js`), using the MCP SDK's handlers for the protocol details:
+
+1. A request without a token gets `401` with
+   `WWW-Authenticate: Bearer realm="docustamp", resource_metadata="https://sign.example.com/.well-known/oauth-protected-resource/api/mcp"`.
+2. Discovery: that document (RFC 9728) names the issuer (the public origin); the issuer's
+   `/.well-known/oauth-authorization-server` (also served as `openid-configuration`, RFC 8414)
+   lists `/api/oauth/register`, `/authorize`, `/token` and `/revoke`, PKCE `S256` only, and
+   `token_endpoint_auth_methods_supported: ["none"]`.
+3. Registration (RFC 7591) is open and every client is a public one: no client secret, whatever
+   the client asked for. Redirect uris must be https, http on loopback, or a private-use scheme
+   (`vscode:`); `javascript:`, `data:`, `file:` and friends are refused.
+4. `/api/oauth/authorize` stores the request (10 minutes) and redirects to the web app's consent
+   page, `/connect?request=<id>`. The page goes through sign-in first, shows the app's name, the
+   host it returns to (the part a client cannot fake) and what it asks for, and calls
+   `oauthrequest` / `oauthdecide`. Allowing mints a one-time code (5 minutes).
+5. `/api/oauth/token` checks the PKCE verifier and the redirect uri and returns a Bearer access
+   token (`dsat_`, 1 hour) and a refresh token (`dsrt_`, 30 days). Refresh tokens rotate on
+   every use and the old pair stops working. A code presented twice is treated as stolen: the
+   connection it produced is deleted.
+
+Scopes: `documents:read` and `documents:write` (write implies read; no scope asked for means
+both). A connection without `documents:write` does not even see the tools that change anything.
+Access tokens are bound to the MCP endpoint (`resource`, RFC 8707) and are refused by the REST API,
+which keeps using personal tokens. Personal `os_` tokens work on the MCP endpoint exactly as before.
+
+Storage is three master-key-only classes, tokens and codes as sha256 hashes:
+`contracts_OAuthClient`, `contracts_OAuthRequest`, `contracts_OAuthGrant` (one row per connection;
+Settings > API and MCP > Connected apps lists and deletes these through `listoauthgrants` /
+`revokeoauthgrant`). Suspending a member or an admin resetting their password deletes their
+connections too.
+
+OAuth needs `PUBLIC_URL` on https (http is accepted on localhost for development). Without it, or
+with `OAUTH_ENABLED=false`, the endpoints answer 404 and the 401 carries no `resource_metadata`.
+Rate limits per IP: `OAUTH_REGISTER_RATE_LIMIT` (20/min), `OAUTH_AUTHORIZE_RATE_LIMIT` (60/min),
+`OAUTH_TOKEN_RATE_LIMIT` (120/min, also used for revoke), `OAUTH_DISCOVERY_RATE_LIMIT` (120/min).
+
+### Tool safety labels
+
+Every tool carries MCP annotations (`readOnlyHint`, `destructiveHint`, `openWorldHint`) from one
+table, `TOOL_ANNOTATIONS` in `cloud/mcp/server.js`, and the scope it needs in
+`_meta.securitySchemes`. Hosts such as ChatGPT ask the user before running a tool marked
+destructive. Four kinds:
+
+- read only (20 tools): looks, changes nothing.
+- changes (25): changes something in the account that can be put back; every draft edit is
+  snapshotted first.
+- destructive (5): deletes, or overwrites workspace-wide branding.
+- outreach (7): emails people or arms an automatic send (`send_document`, `quick_send`,
+  `send_reminder`, `resend_to`, `replace_signer`, `void_document`, `set_chain`). Marked
+  destructive and open-world, because a sent email cannot be taken back.
+
+`openWorldHint` is also set on the tools that may download a PDF from a public url or post to a
+webhook url. A new tool without an entry in the table is refused at registration, and
+`spec/OAuth.spec.js` checks the whole list.
 
 Tools: `whoami`, `get_branding`, `update_branding`, `get_audit_trail`, `verify_document`, `void_document`, `replace_signer`, `resend_to`, `extend_expiry`, `wait_for`, `preview_page`, `find_text`, `detect_fields`, `place_field_at_text`, `upload_document`, `analyze_document`, `create_document`, `quick_send`,
 `send_document`, `list_documents`, `get_document`, `get_signing_links`, `send_reminder`,
@@ -427,11 +492,15 @@ signedAt, signingUrl }], hasCertificate }`.
 ```bash
 cd apps/server && npx mongodb-runner start --port 27017
 SERVER_URL=http://localhost:30001/test APP_ID=test MASTER_KEY=test TESTING=true npx jasmine --filter="API tokens"
+TESTING=true npx jasmine spec/OAuth.spec.js
 ```
 
 ## 7. Known limits
 
-- One token per user (rotate replaces it). No scopes.
+- One personal token per user (rotate replaces it), with no scopes. OAuth connections have two
+  scopes (`documents:read`, `documents:write`); there is no finer split yet.
+- OAuth: dynamic client registration only. Client ID Metadata Documents (CIMD) are not supported
+  yet, and MCP Events (automations that start from a document event) are not implemented.
 - Every rate limit and the idempotency store are in-memory per Node process; scale out and they
   multiply. There is no per-account cost ceiling on AI usage beyond the 10 calls/minute.
 - The AI transcript stops at 60 pages and ~320k characters; fields the model puts on a page past
