@@ -195,6 +195,14 @@ both). A connection without `documents:write` does not even see the tools that c
 Access tokens are bound to the MCP endpoint (`resource`, RFC 8707) and are refused by the REST API,
 which keeps using personal tokens. Personal `os_` tokens work on the MCP endpoint exactly as before.
 
+A connected app is never given signing links, because a link is a bearer credential: whoever opens
+it signs as that signer. `get_signing_links` is not registered for an OAuth caller, and every
+result it receives has `signingUrl`, `signingLinks` and `signingToken` removed (`stripSigningLinks`
+in `cloud/mcp/server.js`), whatever the tool. And a document sent by a connected app requires the
+emailed code (`IsEnableOTP`, set in `sendDocument`): the link alone is not enough, so nobody but the
+owner of the signer's inbox can sign, not the sender and not an assistant acting for the sender.
+Personal `os_` tokens, which the user holds directly, keep both as before.
+
 Storage is three master-key-only classes, tokens and codes as sha256 hashes:
 `contracts_OAuthClient`, `contracts_OAuthRequest`, `contracts_OAuthGrant` (one row per connection;
 Settings > API and MCP > Connected apps lists and deletes these through `listoauthgrants` /

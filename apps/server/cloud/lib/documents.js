@@ -1057,6 +1057,11 @@ export async function sendDocument(caller, docId, { resend = false } = {}) {
         SentToOthers: true,
         DocSentAt: sentAt,
         SendMail: true,
+        // Sent by an app the user connected (ChatGPT and the like): the signing
+        // link alone is not enough, the signer also enters a code mailed to
+        // their own address. Whoever else holds the link (the sender, or an
+        // assistant acting for the sender) cannot sign in their place.
+        ...(caller?.oauth ? { IsEnableOTP: true } : {}),
         // The clock starts now: a draft that sat for a month used to be sent
         // already expired, because ExpiryDate was fixed at creation.
         ExpiryDate,

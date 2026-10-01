@@ -677,7 +677,7 @@ export function looksLikeOAuthAccessToken(raw) {
 
 /**
  * Resolve an access token for the MCP endpoint.
- * @returns {Promise<{user: Parse.User, extUser: Parse.Object, scopes: string[], clientId: string, touch: Function} | null>}
+ * @returns {Promise<{user: Parse.User, extUser: Parse.Object, scopes: string[], clientId: string, clientName: string, touch: Function} | null>}
  */
 export async function resolveOAuthAccessToken(raw) {
   if (!looksLikeOAuthAccessToken(raw)) return null;
@@ -699,6 +699,7 @@ export async function resolveOAuthAccessToken(raw) {
     extUser,
     scopes: grant.get('Scopes') || [],
     clientId: grant.get('ClientId'),
+    clientName: grant.get('ClientName') || '',
     touch: () => touchGrant(grant),
   };
 }

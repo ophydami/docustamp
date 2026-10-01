@@ -417,11 +417,54 @@ export const TOOL_ANNOTATIONS = Object.freeze({
 });
 
 /**
+ * Signing links are bearer credentials: whoever opens one signs as that
+ * signer. An app the user connected over OAuth (ChatGPT, Claude...) never
+ * receives them, so an assistant cannot open a link and sign in somebody's
+ * place: the links tool is not registered for it, and every result it gets
+ * has these keys removed, whatever tool produced it (send_document,
+ * get_document with includeLinks, create_document with send...). API tokens,
+ * held by the user directly, keep them.
+ */
+const LINK_TOOLS = new Set(['get_signing_links']);
+const LINK_KEYS = new Set(['signingUrl', 'signingLinks', 'signingToken']);
+
+export function stripSigningLinks(value) {
+  if (Array.isArray(value)) return value.map(stripSigningLinks);
+  if (!value || typeof value !== 'object') return value;
+  const out = {};
+  for (const [key, child] of Object.entries(value)) {
+    if (!LINK_KEYS.has(key)) out[key] = stripSigningLinks(child);
+  }
+  return out;
+}
+
+function withoutSigningLinks(cb) {
+  return async (...args) => {
+    const result = await cb(...args);
+    if (!result || typeof result !== 'object') return result;
+    const content = (result.content || []).map(part => {
+      if (part?.type !== 'text' || typeof part.text !== 'string') return part;
+      try {
+        return { ...part, text: JSON.stringify(stripSigningLinks(JSON.parse(part.text)), null, 2) };
+      } catch {
+        return part; // plain text, not JSON
+      }
+    });
+    return {
+      ...result,
+      content,
+      ...(result.structuredContent ? { structuredContent: stripSigningLinks(result.structuredContent) } : {}),
+    };
+  };
+}
+
+/**
  * Wrap `server.registerTool` so every tool gets its safety labels and the
- * OAuth scope it needs (`securitySchemes`, which ChatGPT reads), and so a
+ * OAuth scope it needs (`securitySchemes`, which ChatGPT reads), so a
  * connection that was only allowed to read (an OAuth grant without
- * documents:write) never sees the tools that change anything. API tokens carry
- * no scopes and get every tool.
+ * documents:write) never sees the tools that change anything, and so a
+ * connected app never sees signing links (above). API tokens carry no scopes
+ * and get every tool.
  *
  * @param {McpServer} server
  * @param {import('../lib/context.js').Caller} caller
@@ -433,6 +476,7 @@ function labelTools(server, caller) {
     if (!annotations) throw new Error(`MCP tool "${name}" has no entry in TOOL_ANNOTATIONS`);
     const scope = annotations.readOnlyHint ? SCOPE_READ : SCOPE_WRITE;
     if (caller.scopes && !caller.scopes.includes(scope)) return undefined;
+    if (caller.oauth && LINK_TOOLS.has(name)) return undefined;
     return register(
       name,
       {
@@ -440,7 +484,7 @@ function labelTools(server, caller) {
         annotations: { ...annotations, ...config.annotations },
         _meta: { ...config._meta, securitySchemes: [{ type: 'oauth2', scopes: [scope] }] },
       },
-      cb
+      caller.oauth ? withoutSigningLinks(cb) : cb
     );
   };
 }

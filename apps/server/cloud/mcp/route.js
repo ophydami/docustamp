@@ -78,7 +78,13 @@ export async function authenticateApiRequest(req, { allowOAuth = false } = {}) {
       publicUrl: publicOrigin(req),
     });
     // Undefined for an API token, which carries everything the account can do.
-    if (resolved.scopes) caller.scopes = resolved.scopes;
+    if (resolved.scopes) {
+      caller.scopes = resolved.scopes;
+      // An app the user connected (ChatGPT, Claude...) rather than a token the
+      // user holds: it gets no signing links, and what it sends needs the
+      // emailed code (./server.js labelTools, lib/documents.js sendDocument).
+      caller.oauth = { clientId: resolved.clientId, clientName: resolved.clientName || '' };
+    }
     return { caller };
   } catch (err) {
     // A disabled account is a real answer (403), not a bad token.

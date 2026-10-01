@@ -12,7 +12,8 @@ import {
   protectedResourceMetadataUrl,
   revokeOAuthGrantsForUser,
 } from '../cloud/lib/oauth.js';
-import { TOOL_ANNOTATIONS } from '../cloud/mcp/server.js';
+import { stripSigningLinks, TOOL_ANNOTATIONS } from '../cloud/mcp/server.js';
+import { setRequestMailTransport } from '../cloud/lib/requestMail.js';
 import { resetRateLimits } from '../cloud/parsefunction/authGuard.js';
 import { uniqueEmail } from './support/env.js';
 
@@ -418,7 +419,8 @@ describe('OAuth for MCP clients', () => {
       const { access_token: accessToken } = await connect();
       const res = await mcp(accessToken, 'tools/list');
       const tools = res.data.result.tools;
-      expect(tools.length).toBe(Object.keys(TOOL_ANNOTATIONS).length);
+      // Every labelled tool except get_signing_links, which a connected app never gets.
+      expect(tools.length).toBe(Object.keys(TOOL_ANNOTATIONS).length - 1);
       for (const tool of tools) {
         expect(typeof tool.annotations?.readOnlyHint).toBe('boolean', tool.name);
         expect(typeof tool.annotations?.destructiveHint).toBe('boolean', tool.name);
@@ -455,6 +457,141 @@ describe('OAuth for MCP clients', () => {
       });
       const failed = call.data.error || call.data.result?.isError;
       expect(failed).toBeTruthy();
+    });
+  });
+
+  describe('signing links and the emailed code', () => {
+    let tenant;
+    let extUser;
+
+    let contactSeq = 0;
+    async function makeContact(name) {
+      contactSeq += 1;
+      const email = uniqueEmail(
+        `${name.toLowerCase().replace(/\s+/g, '.')}.${contactSeq}`,
+        'example.test'
+      );
+      const shadow = new Parse.User();
+      shadow.set('username', email);
+      shadow.set('password', `${email}-pw`);
+      shadow.set('email', email);
+      await shadow.signUp();
+      const contact = new Parse.Object('contracts_Contactbook');
+      contact.set('Name', name);
+      contact.set('Email', email);
+      contact.set('UserId', shadow.toPointer());
+      contact.set('TenantId', tenant.toPointer());
+      contact.set('UserRole', 'contracts_Guest');
+      return await contact.save(null, { useMasterKey: true });
+    }
+
+    /** A document owned by `user` with one signer holding one signature field; sent unless `draft`. */
+    async function makeDocument({ draft = false } = {}) {
+      const contact = await makeContact('Jane Signer');
+      const doc = new Parse.Object('contracts_Document');
+      doc.set('Name', draft ? 'Draft to send' : 'Already sent');
+      doc.set('URL', 'http://localhost:30001/files/source.pdf');
+      if (!draft) {
+        doc.set('SignedUrl', 'http://localhost:30001/files/source.pdf');
+        doc.set('DocSentAt', new Date());
+        doc.set('SentToOthers', true);
+      }
+      doc.set('CreatedBy', user.toPointer());
+      doc.set('ExtUserPtr', extUser.toPointer());
+      doc.set('Signers', [contact.toPointer()]);
+      doc.set('Placeholders', [
+        {
+          Id: 10000001,
+          Role: 'Signer',
+          blockColor: '#93a3db',
+          signerObjId: contact.id,
+          signerPtr: contact.toPointer(),
+          email: contact.get('Email'),
+          placeHolder: [
+            {
+              pageNumber: 1,
+              pos: [
+                {
+                  key: 1,
+                  type: 'signature',
+                  xPosition: 100,
+                  yPosition: 600,
+                  Width: 150,
+                  Height: 40,
+                  options: {},
+                },
+              ],
+            },
+          ],
+        },
+      ]);
+      await doc.save(null, { useMasterKey: true });
+      return doc;
+    }
+
+    beforeAll(async () => {
+      extUser = await new Parse.Query('contracts_Users')
+        .equalTo('UserId', user.toPointer())
+        .include('TenantId')
+        .first({ useMasterKey: true });
+      tenant = extUser.get('TenantId');
+      setRequestMailTransport(async () => ({ status: 'success' }));
+    });
+
+    afterAll(() => setRequestMailTransport(null));
+
+    it('strips every signing link field, however deep', () => {
+      const cleaned = stripSigningLinks({
+        signers: [{ email: 'a@x.test', signingUrl: 'https://s/1' }],
+        mail: { sent: ['a@x.test'], signingLinks: [{ url: 'https://s/1' }] },
+        nested: { signingToken: 't', keep: 1 },
+      });
+      expect(JSON.stringify(cleaned)).not.toMatch(/signing(Url|Links|Token)/);
+      expect(cleaned.nested.keep).toBe(1);
+      expect(cleaned.mail.sent).toEqual(['a@x.test']);
+    });
+
+    it('never hands a connected app a signing link, while a personal token still gets them', async () => {
+      const doc = await makeDocument();
+      const { access_token: accessToken } = await connect();
+
+      const tools = (await mcp(accessToken, 'tools/list')).data.result.tools.map(t => t.name);
+      expect(tools).not.toContain('get_signing_links');
+
+      const viaApp = await mcp(accessToken, 'tools/call', {
+        name: 'get_document',
+        arguments: { documentId: doc.id, includeLinks: true },
+      });
+      expect(viaApp.data.result.isError).toBeFalsy(JSON.stringify(viaApp.data));
+      expect(viaApp.data.result.content[0].text).not.toMatch(
+        /signingUrl|signingToken|signingLinks/
+      );
+
+      const { token } = await Parse.Cloud.run(
+        'generateapitoken',
+        {},
+        { sessionToken: user.getSessionToken() }
+      );
+      const viaToken = await mcp(token, 'tools/call', {
+        name: 'get_document',
+        arguments: { documentId: doc.id, includeLinks: true },
+      });
+      expect(viaToken.data.result.content[0].text).toMatch(/signingUrl/);
+    });
+
+    it('makes a document sent by a connected app require the emailed code', async () => {
+      const doc = await makeDocument({ draft: true });
+      const { access_token: accessToken } = await connect();
+      const res = await mcp(accessToken, 'tools/call', {
+        name: 'send_document',
+        arguments: { documentId: doc.id, includeLinks: true },
+      });
+      expect(res.data.result.isError).toBeFalsy(JSON.stringify(res.data));
+      const body = JSON.parse(res.data.result.content[0].text);
+      expect(body.otp).toBeTrue();
+      expect(res.data.result.content[0].text).not.toMatch(/signingUrl|signingToken|signingLinks/);
+      await doc.fetch({ useMasterKey: true });
+      expect(doc.get('IsEnableOTP')).toBeTrue();
     });
   });
 
