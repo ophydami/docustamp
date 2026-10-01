@@ -292,13 +292,13 @@ function checkRedirectUri(value) {
   }
 }
 
+// Control characters, stripped from a client's display name.
+// eslint-disable-next-line no-control-regex -- matching them is the point
+const CONTROL_CHARS = /[\u0000-\u001f\u007f]/g;
+
 function cleanClientName(value) {
   if (typeof value !== 'string') return '';
-  // eslint-disable-next-line no-control-regex -- strip control characters from a display name
-  return value
-    .replace(/[\u0000-\u001f\u007f]/g, '')
-    .trim()
-    .slice(0, MAX_CLIENT_NAME);
+  return value.replace(CONTROL_CHARS, '').trim().slice(0, MAX_CLIENT_NAME);
 }
 
 function clientFromRow(row) {
