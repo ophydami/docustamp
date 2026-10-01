@@ -1,6 +1,6 @@
 {
   "name": "docustamp-server",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "DocuStamp server (Parse Server + Express)",
   "homepage": "https://docustamp.dev",
   "repository": {
@@ -25,6 +25,7 @@
     "@anthropic-ai/sdk": "^0.128.0",
     "@aws-sdk/client-s3": "^3.1141.0",
     "@aws-sdk/s3-request-presigner": "^3.1138.0",
+    "@modelcontextprotocol/ext-apps": "^1.7.5",
     "@modelcontextprotocol/sdk": "^1.30.1",
     "@parse/fs-files-adapter": "^3.0.0",
     "@parse/push-adapter": "^8.5.5",

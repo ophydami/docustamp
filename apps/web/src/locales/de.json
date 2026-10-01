@@ -140,7 +140,7 @@
       "useDifferentEmail": "Andere E-Mail-Adresse verwenden"
     },
     "checkEmail": {
-      "sentTo": "Ein 4-stelliger Code wurde an <1>{{email}}</1> gesendet.",
+      "sentTo": "Ein 6-stelliger Code wurde an <1>{{email}}</1> gesendet.",
       "title": "Sehen Sie in Ihre E-Mails"
     },
     "code": {

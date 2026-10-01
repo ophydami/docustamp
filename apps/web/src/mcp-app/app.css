@@ -1,0 +1,55 @@
+/*
+  The DocuStamp app inside ChatGPT and other MCP Apps hosts, in the same
+  Control room design as the web app: the shared tokens (../styles/tokens.css),
+  the same ui components, IBM Plex Sans and Geist Mono (embedded, ./fonts.css).
+
+  The host only decides light or dark (data-theme, set from the host context).
+  Its style variables are deliberately not applied: they would replace these
+  tokens and the fonts with the host's own.
+
+  `source(none)`: Tailwind scans this folder and the shared components it
+  uses, not the whole web app.
+*/
+@import "tailwindcss" source(none);
+@source "./";
+@source "../components/ui/Button.tsx";
+@source "../components/ui/Pill.tsx";
+@source "../components/ui/Avatar.tsx";
+@source "../components/ui/Card.tsx";
+@source "../components/ui/Tabs.tsx";
+@source "../components/ui/Kbd.tsx";
+@import "../styles/tokens.css";
+@import "./fonts.css";
+
+@layer base {
+  html,
+  body {
+    margin: 0;
+    background: var(--color-surface);
+  }
+  body {
+    @apply text-ink font-sans antialiased;
+    font-size: 13px;
+    line-height: 1.45;
+  }
+  button,
+  [role="button"] {
+    cursor: pointer;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+  ::selection {
+    background: var(--color-accent-soft);
+    color: var(--color-ink);
+  }
+}
+
+@layer components {
+  /* The rendered PDF page keeps a white ground in both themes, as in the web app. */
+  .paper-white {
+    background-color: #ffffff;
+    color-scheme: light;
+  }
+}

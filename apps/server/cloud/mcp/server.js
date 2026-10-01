@@ -52,6 +52,7 @@ import {
 import { unbrandedSenderWarning } from '../lib/drafts.js';
 import { checkAiRateLimit } from '../parsefunction/aiFunctions.js';
 import { SCOPE_READ, SCOPE_WRITE } from '../lib/oauth.js';
+import { APP_ICON, registerAppViews } from './app.js';
 import { sanitisePlaceholders } from '../lib/widgets.js';
 import {
   analyzeFlow,
@@ -68,7 +69,12 @@ import {
  * headers or sessions themselves. The same library functions back the REST API.
  */
 
-export const MCP_SERVER_INFO = { name: 'docustamp', version: '1.2.0' };
+export const MCP_SERVER_INFO = {
+  name: 'docustamp',
+  title: appName,
+  version: '1.3.0',
+  icons: [APP_ICON],
+};
 
 const RecipientSchema = z.object({
   name: z.string().optional().describe('Full name. Defaults to the part of the email before @.'),
@@ -400,6 +406,14 @@ export const TOOL_ANNOTATIONS = Object.freeze({
   duplicate_document: WRITE,
   delete_draft: DESTRUCTIVE,
   restore_deleted_document: WRITE,
+  // The app views (./app.js): they show things, the page acts through the tools above.
+  open_docustamp: READ,
+  open_review_panel: READ,
+  show_document: READ,
+  show_documents: READ,
+  app_home: READ,
+  app_document: READ,
+  app_page: READ,
 });
 
 /**
@@ -441,6 +455,7 @@ export function buildMcpServer(caller) {
       "Typical flow: upload_document (or pass fileBase64 directly) -> analyze_document to let AI find the signers and field positions -> create_document (with the proposal's placeholders, or your own fields) -> send_document. quick_send does all of it in one call.",
       'Drafts are fully editable until sent: get_draft shows everything (recipients, every field with its key and coordinates, settings, message); review_draft lists what blocks sending; update_draft changes title, note, recipients, settings, message, folder or the PDF; set_draft_fields / update_draft_field / remove_draft_fields edit the fields; ai_layout_draft lets the AI place the fields again. Every change is snapshotted first: undo_draft_change reverts the last one, list_draft_versions + restore_draft_version go back further, save_draft_version stores a named checkpoint. duplicate_document copies any document into a new draft; delete_draft / restore_deleted_document soft-delete and bring back.',
       'Coordinates are PDF points with the origin at the top-left of the page. Documents are drafts until sent; sending emails every signer a signing link.',
+      'In hosts that show apps (ChatGPT, Claude): after preparing a draft, call show_document so the user sees the pages and presses Send themselves, unless they asked you to send it straight away; open_docustamp shows all their documents.',
       'get_branding shows how the workspace\'s emails are branded (sender display name, reply-to, footer, logo, Powered-by line, default request and completion subject/body); update_branding changes any of them (workspace admins only; null clears a field).',
     ].join(' '),
   });
@@ -1497,6 +1512,9 @@ export function buildMcpServer(caller) {
         : { deleted: await listDeletedDocuments(caller, { limit }) }
     )
   );
+
+  // The app views for hosts that render MCP Apps (ChatGPT, Claude): ./app.js.
+  registerAppViews(server, caller);
 
   return server;
 }

@@ -1,6 +1,6 @@
 import type { HTMLAttributes } from "react";
 import { cn } from "@/lib/cn";
-import { initials } from "@/lib/format";
+import { initials } from "@/lib/initials";
 
 export type AvatarTone = "accent" | "success" | "ink" | "neutral" | "danger";
 

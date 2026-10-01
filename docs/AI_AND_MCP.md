@@ -9,6 +9,7 @@ cloud/ai/analyze.js       the prompt, the forced tool schema, anchor -> coordina
 cloud/lib/apiTokens.js    personal tokens (hashed on contracts_Users)
 cloud/lib/oauth.js        "Sign in with DocuStamp": OAuth 2.1 server for MCP clients (ChatGPT, Claude...)
 cloud/routes/oauth.js     the OAuth endpoints and /.well-known discovery documents
+cloud/mcp/app.js          the MCP Apps page and the tools that show it (ChatGPT sidebar, panel, cards)
 cloud/lib/context.js      the Caller object every library function takes
 cloud/lib/documents.js    createDocument / sendDocument / list / get / templates
 cloud/lib/contacts.js     ensureContact / listContacts (master key, scoped to the caller)
@@ -22,6 +23,7 @@ cloud/api/shared.js       the flows REST and MCP share: analyse, quick-send, rem
 cloud/parsefunction/aiFunctions.js, apiTokenFunctions.js, oauthFunctions.js   cloud functions for the web app
 spec/ApiMcpAi.spec.js     coverage (fake Claude client)
 spec/OAuth.spec.js        coverage for the OAuth flow, scopes and tool safety labels
+spec/McpApp.spec.js       coverage for the MCP Apps page, entrypoints and app-only tools
 ```
 
 Web: `apps/web/src/features/ai/` (the "Ask AI" page at `/ai`), the "Prepare with AI" card on
@@ -203,6 +205,34 @@ OAuth needs `PUBLIC_URL` on https (http is accepted on localhost for development
 with `OAUTH_ENABLED=false`, the endpoints answer 404 and the 401 carries no `resource_metadata`.
 Rate limits per IP: `OAUTH_REGISTER_RATE_LIMIT` (20/min), `OAUTH_AUTHORIZE_RATE_LIMIT` (60/min),
 `OAUTH_TOKEN_RATE_LIMIT` (120/min, also used for revoke), `OAUTH_DISCOVERY_RATE_LIMIT` (120/min).
+
+### The DocuStamp app inside ChatGPT and Claude (MCP Apps)
+
+Hosts that render MCP Apps get screens, not just tools (`cloud/mcp/app.js`). One page, built from
+`apps/web/src/mcp-app/` into `apps/web/dist/mcp-app.html` by `npm run build` (script
+`scripts/build-mcp-app.mjs`: a single self-contained HTML file with the script, the CSS and the
+IBM Plex Sans / Geist Mono fonts inlined, because the host sandbox loads nothing from outside), is
+registered as the UI resource `ui://docustamp/app-v1`. Bump that version when the page and the data
+it expects change incompatibly; hosts cache by uri.
+
+| Tool | Where it shows |
+| --- | --- |
+| `open_docustamp` | ChatGPT sidebar app (`openai/ui` global entrypoint): In progress, Drafts, Completed, each document's page, signers and actions |
+| `open_review_panel` | ChatGPT panel beside a conversation (thread entrypoint, "Review and send") |
+| `show_document` | a card in the chat; a draft shows its signing page and a Send button so the user sends it themselves |
+| `show_documents` | a short list card in the chat |
+| `app_home`, `app_document`, `app_page` | data the page fetches, hidden from the model (`visibility: ["app"]`) |
+
+The page acts only through the ordinary tools (`send_document`, `send_reminder`, `extend_expiry`,
+`void_document`), so it can do nothing the connection could not; a read-only connection gets
+`canWrite: false` and no action buttons. It uses the web app's design tokens
+(`apps/web/src/styles/tokens.css`) and components, and takes only light or dark from the host.
+
+To work on it without ChatGPT, run the server with `CORS_ORIGINS=http://localhost:3001`, then
+`npm run dev` in apps/web and open
+`http://localhost:3001/dev/mcp-host/?mcp=http://localhost:8080/api/mcp&token=os_...&tool=open_docustamp&mode=fullscreen`
+(`mode` inline | fullscreen | panel, `theme` light | dark, `args` as JSON). The server re-reads the
+built page on every request outside production, so `npm run build:mcp-app` is enough after a change.
 
 ### Tool safety labels
 

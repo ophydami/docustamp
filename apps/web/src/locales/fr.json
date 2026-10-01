@@ -140,7 +140,7 @@
       "useDifferentEmail": "Utiliser une autre adresse e-mail"
     },
     "checkEmail": {
-      "sentTo": "Nous avons envoyé un code à 4 chiffres à <1>{{email}}</1>.",
+      "sentTo": "Nous avons envoyé un code à 6 chiffres à <1>{{email}}</1>.",
       "title": "Consultez votre messagerie"
     },
     "code": {

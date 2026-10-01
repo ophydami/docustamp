@@ -140,7 +140,7 @@
       "useDifferentEmail": "다른 이메일 사용"
     },
     "checkEmail": {
-      "sentTo": "<1>{{email}}</1>(으)로 4자리 코드를 보냈습니다.",
+      "sentTo": "<1>{{email}}</1>(으)로 6자리 코드를 보냈습니다.",
       "title": "이메일을 확인하세요"
     },
     "code": {
