@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { applyDocumentTheme, type McpUiDisplayMode } from "@modelcontextprotocol/ext-apps";
 import { useApp } from "@modelcontextprotocol/ext-apps/react";
 import { OpenAIExtensions } from "@openai/mcp-extensions/app";
@@ -41,6 +41,21 @@ type Screen =
   | { kind: "loading"; expect: "home" | "document" | "list" }
   | { kind: "error"; message: string };
 
+/**
+ * How often a full-screen view re-reads its data while it is on screen.
+ * ChatGPT keeps the sidebar app open as a tab while the conversation beside it
+ * creates, sends and completes documents, so what it shows goes stale unless
+ * the page asks again.
+ */
+const REFRESH_MS = 15_000;
+
+/** Which live data a view shows: the key a refresh is fetched for, '' when it has none. */
+function liveKeyOf(data: ViewData): string {
+  if (data.view === "document") return `document:${data.document.objectId}`;
+  if (data.view === "home" || data.view === "panel") return data.view;
+  return "";
+}
+
 function errorText(result: { content?: Array<{ type: string; text?: string }> }): string {
   const text = (result.content || []).find((part) => part.type === "text")?.text || "";
   return text.replace(/^Error(?: \([^)]*\))?:\s*/, "") || "Something went wrong.";
@@ -51,6 +66,8 @@ export default function Root() {
   const [first, setFirst] = useState<Screen>({ kind: "loading", expect: "list" });
   const [stack, setStack] = useState<Screen[]>([]);
   const [mode, setMode] = useState<McpUiDisplayMode>("inline");
+  const [refreshing, setRefreshing] = useState(false);
+  const lastLoaded = useRef(0);
 
   const { app, error } = useApp({
     appInfo: { name: "DocuStamp", version: "1.0.0" },
@@ -59,6 +76,7 @@ export default function Root() {
     onAppCreated: (created) => {
       setExt(new OpenAIExtensions(created));
       created.ontoolresult = (result) => {
+        lastLoaded.current = Date.now();
         setStack([]);
         if (result.isError) setFirst({ kind: "error", message: errorText(result) });
         else if (result.structuredContent)
@@ -101,6 +119,7 @@ export default function Root() {
       push({ kind: "loading", expect });
       try {
         replaceTop({ kind: "view", data: await load() });
+        lastLoaded.current = Date.now();
       } catch (err) {
         replaceTop({ kind: "error", message: (err as Error).message });
       }
@@ -111,16 +130,58 @@ export default function Root() {
     app && void open("document", () => callTool<DocumentData>(app, "app_document", { documentId: doc.objectId }));
   const openHome = () => app && void open("home", () => callTool<HomeData>(app, "app_home"));
 
+  const top = stack.length ? stack[stack.length - 1] : first;
+  const canGoBack = stack.length > 0;
+  const inline = displayMode === "inline" && !canGoBack;
+
+  // Only full-screen views refresh: cards in the chat are snapshots, and a
+  // long conversation can hold many of them.
+  const liveKey = top.kind === "view" && !inline ? liveKeyOf(top.data) : "";
+
+  const refresh = useCallback(async () => {
+    if (!app || !liveKey) return;
+    setRefreshing(true);
+    try {
+      const next: ViewData = liveKey.startsWith("document:")
+        ? await callTool<DocumentData>(app, "app_document", { documentId: liveKey.slice("document:".length) })
+        : { ...(await callTool<HomeData>(app, "app_home")), view: liveKey as "home" | "panel" };
+      lastLoaded.current = Date.now();
+      // Replace only the screen this was fetched for: the user may have moved on meanwhile.
+      const apply = (screen: Screen): Screen =>
+        screen.kind === "view" && liveKeyOf(screen.data) === liveKey ? { kind: "view", data: next } : screen;
+      setStack((s) => (s.length ? [...s.slice(0, -1), apply(s[s.length - 1])] : s));
+      setFirst((f) => apply(f));
+    } catch {
+      // Keep showing what is there; the next tick tries again.
+    } finally {
+      setRefreshing(false);
+    }
+  }, [app, liveKey]);
+
+  useEffect(() => {
+    if (!liveKey) return;
+    // Coming back to a screen (Back to the list) shows it fresh; a screen that
+    // was just delivered by its tool call is not fetched a second time.
+    if (Date.now() - lastLoaded.current > 3000) void refresh();
+    const tick = () => {
+      if (document.visibilityState === "visible") void refresh();
+    };
+    const timer = window.setInterval(tick, REFRESH_MS);
+    window.addEventListener("focus", tick);
+    document.addEventListener("visibilitychange", tick);
+    return () => {
+      window.clearInterval(timer);
+      window.removeEventListener("focus", tick);
+      document.removeEventListener("visibilitychange", tick);
+    };
+  }, [liveKey, refresh]);
+
   if (error)
     return (
       <div className="p-4">
         <Banner tone="danger">Could not connect to the host: {error.message}</Banner>
       </div>
     );
-
-  const top = stack.length ? stack[stack.length - 1] : first;
-  const canGoBack = stack.length > 0;
-  const inline = displayMode === "inline" && !canGoBack;
 
   if (!ctx || top.kind === "loading") {
     const expect = top.kind === "loading" ? top.expect : "list";
@@ -156,12 +217,24 @@ export default function Root() {
         }}
       />
     ) : (
-      <DocumentView ctx={ctx} data={data} onBack={canGoBack ? back : undefined} onChanged={updateTop} />
+      <DocumentView
+        ctx={ctx}
+        data={data}
+        onBack={canGoBack ? back : undefined}
+        onChanged={updateTop}
+        onRefresh={() => void refresh()}
+        refreshing={refreshing}
+      />
     );
   }
   if (data.view === "list")
     return <ListCard ctx={ctx} data={data as ListData} onOpen={openDocument} onOpenAll={openHome} />;
-  if (data.view === "panel") return <PanelView ctx={ctx} data={data} onOpen={openDocument} />;
+  if (data.view === "panel")
+    return (
+      <PanelView ctx={ctx} data={data} onOpen={openDocument} onRefresh={() => void refresh()} refreshing={refreshing} />
+    );
   if (inline) return <HomeCard data={data} onOpen={() => void goFullscreen()} />;
-  return <HomeView ctx={ctx} data={data} onOpen={openDocument} />;
+  return (
+    <HomeView ctx={ctx} data={data} onOpen={openDocument} onRefresh={() => void refresh()} refreshing={refreshing} />
+  );
 }

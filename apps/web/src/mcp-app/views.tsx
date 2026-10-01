@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import type { App } from "@modelcontextprotocol/ext-apps";
 import type { OpenAIExtensions } from "@openai/mcp-extensions/app";
-import { ArrowUpRight, ChevronLeft, Plus, Send } from "lucide-react";
+import { ArrowUpRight, ChevronLeft, Plus, RotateCw, Send } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Cap, Card, EmptyState } from "@/components/ui/Card";
 import { Tabs } from "@/components/ui/Tabs";
+import { cn } from "@/lib/cn";
 import { askAssistant, callTool, openUrl, tellModel } from "./bridge";
 import { Banner, DocRowItem, DocSubline, N, PagePreview, RecipientRow, Skel, RowsSkeleton, StatusPill } from "./ui";
 import { shortDate, signedCount } from "./format";
@@ -97,18 +98,38 @@ function useDocumentActions(ctx: ViewContext, data: DocumentData, onChanged: (ne
   };
 }
 
+/** Re-read now. The full-screen views also refresh on their own every few seconds while on screen. */
+function RefreshButton({ onRefresh, refreshing }: { onRefresh?: () => void; refreshing?: boolean }) {
+  if (!onRefresh) return null;
+  return (
+    <Button
+      size="xs"
+      variant="ghost"
+      aria-label="Refresh"
+      title="Refresh"
+      disabled={refreshing}
+      onClick={onRefresh}
+      icon={<RotateCw className={cn("size-3.5", refreshing && "animate-spin")} strokeWidth={1.6} />}
+    />
+  );
+}
+
 /* ------------------------------------------------------------------ document */
 
 export function DocumentView({
   ctx,
   data,
   onBack,
-  onChanged
+  onChanged,
+  onRefresh,
+  refreshing
 }: {
   ctx: ViewContext;
   data: DocumentData;
   onBack?: () => void;
   onChanged: (next: DocumentData) => void;
+  onRefresh?: () => void;
+  refreshing?: boolean;
 }) {
   const { app, locale } = ctx;
   const doc = data.document;
@@ -120,11 +141,16 @@ export function DocumentView({
 
   return (
     <div className="mx-auto flex max-w-[1200px] flex-col gap-5 px-4 py-5 md:px-6">
-      {onBack ? (
-        <Button size="xs" variant="ghost" className="-ml-2 self-start" icon={icon(ChevronLeft)} onClick={onBack}>
-          Documents
-        </Button>
-      ) : null}
+      <div className="-mx-2 -mb-2 flex items-center justify-between">
+        {onBack ? (
+          <Button size="xs" variant="ghost" icon={icon(ChevronLeft)} onClick={onBack}>
+            Documents
+          </Button>
+        ) : (
+          <span />
+        )}
+        <RefreshButton onRefresh={onRefresh} refreshing={refreshing} />
+      </div>
 
       <header>
         <div className="flex items-start gap-3">
@@ -444,13 +470,26 @@ function count(n: number, limit: number) {
 }
 
 /** The sidebar app: every document, by where it stands. */
-export function HomeView({ ctx, data, onOpen }: { ctx: ViewContext; data: HomeData; onOpen: (doc: DocRow) => void }) {
+export function HomeView({
+  ctx,
+  data,
+  onOpen,
+  onRefresh,
+  refreshing
+}: {
+  ctx: ViewContext;
+  data: HomeData;
+  onOpen: (doc: DocRow) => void;
+  onRefresh?: () => void;
+  refreshing?: boolean;
+}) {
   const [tab, setTab] = useState<Tab>(data.waiting.length || !data.drafts.length ? "waiting" : "drafts");
   const rows = data[tab];
   return (
     <div className="mx-auto flex max-w-[960px] flex-col gap-4 px-4 py-5 md:px-6">
       <header className="flex items-center gap-3">
         <h1 className="min-w-0 flex-1 text-[20px] font-semibold leading-tight tracking-[-.015em]">Documents</h1>
+        <RefreshButton onRefresh={onRefresh} refreshing={refreshing} />
         {data.canWrite ? (
           <Button
             variant="primary"
@@ -524,19 +563,22 @@ function Section({
   rows,
   empty,
   ctx,
-  onOpen
+  onOpen,
+  right
 }: {
   title: string;
   rows: DocRow[];
   empty: string;
   ctx: ViewContext;
   onOpen: (doc: DocRow) => void;
+  right?: ReactNode;
 }) {
   return (
     <Card className="overflow-hidden">
-      <div className="flex items-baseline gap-2 px-3 pt-3 pb-1.5">
+      <div className="flex items-center gap-2 px-3 pt-2.5 pb-1">
         <Cap>{title}</Cap>
         <span className="num text-[11px] text-muted-2">{rows.length}</span>
+        {right ? <div className="ml-auto -mr-1.5">{right}</div> : null}
       </div>
       {rows.length ? (
         rows.map((doc) => <DocRowItem key={doc.objectId} doc={doc} onOpen={onOpen} locale={ctx.locale} />)
@@ -548,7 +590,19 @@ function Section({
 }
 
 /** The panel beside a conversation: drafts to check first, then what is in progress. */
-export function PanelView({ ctx, data, onOpen }: { ctx: ViewContext; data: HomeData; onOpen: (doc: DocRow) => void }) {
+export function PanelView({
+  ctx,
+  data,
+  onOpen,
+  onRefresh,
+  refreshing
+}: {
+  ctx: ViewContext;
+  data: HomeData;
+  onOpen: (doc: DocRow) => void;
+  onRefresh?: () => void;
+  refreshing?: boolean;
+}) {
   return (
     <div className="flex flex-col gap-4 p-4">
       <Section
@@ -557,6 +611,7 @@ export function PanelView({ ctx, data, onOpen }: { ctx: ViewContext; data: HomeD
         empty="No drafts. Ask in the chat to prepare one."
         ctx={ctx}
         onOpen={onOpen}
+        right={<RefreshButton onRefresh={onRefresh} refreshing={refreshing} />}
       />
       <Section
         title="In progress"

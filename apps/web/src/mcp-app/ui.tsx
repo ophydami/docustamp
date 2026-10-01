@@ -119,7 +119,10 @@ export function DocRowItem({ doc, onOpen, locale }: { doc: DocRow; onOpen: (doc:
       onClick={() => onOpen(doc)}
       className="w-full flex items-center gap-3 px-3 py-2.5 text-left border-b border-line-soft last:border-0 hover:bg-surface-2 focus-visible:outline-offset-[-2px]"
     >
-      <AvatarStack people={doc.signers.map((s) => ({ name: s.name, email: s.email }))} size={22} max={2} />
+      {/* A fixed slot, so titles line up whether a row has one signer or several. */}
+      <span className="flex w-[38px] shrink-0">
+        <AvatarStack people={doc.signers.map((s) => ({ name: s.name, email: s.email }))} size={22} max={2} />
+      </span>
       <div className="min-w-0 flex-1">
         <div className="text-[13px] font-medium truncate">{doc.name}</div>
         <div className="text-[11.5px] text-muted truncate">
