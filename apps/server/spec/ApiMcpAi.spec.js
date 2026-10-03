@@ -557,16 +557,23 @@ describe('API tokens, REST v1, MCP and AI preparation', () => {
                   label: 'Date signed',
                 },
               ],
-              send: true,
             },
           },
           4
         )
       )
     );
-    expect(created.status).toBe('in_progress');
+    // A draft: creating never emails anyone, sending is its own step.
+    expect(created.status).toBe('draft');
     expect(created.fieldCount).toBe(2);
-    expect(created.mail.sent).toEqual(['mia@example.test']);
+    expect(created.mail).toBeNull();
+    const sent = toolJson(
+      rpcResult(
+        await rpc('tools/call', { name: 'send_document', arguments: { documentId: created.objectId } }, 41)
+      )
+    );
+    expect(sent.status).toBe('in_progress');
+    expect(sent.mail.sent).toEqual(['mia@example.test']);
 
     const got = toolJson(
       rpcResult(

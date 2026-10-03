@@ -40,6 +40,10 @@ const SCOPE_LABELS: Record<string, string> = {
  * verified email first (the inline verify box stands in for it until then);
  * the choice goes to `oauthdecide` as `allowSigning`. A server without email
  * verification fails that query, and then the box is left out.
+ *
+ * An app that asks to write also gets a "Read only" box: ticked, the app may
+ * only look (`oauthdecide` gets `readOnly`, the server grants documents:read
+ * alone), the list shows just that, and the signing box goes away.
  */
 export default function ConnectPage() {
   const { t } = useTranslation();
@@ -52,6 +56,7 @@ export default function ConnectPage() {
   const [busy, setBusy] = useState<"allow" | "deny" | null>(null);
   const [error, setError] = useState("");
   const [allowSigning, setAllowSigning] = useState(false);
+  const [readOnly, setReadOnly] = useState(false);
   const verification = useEmailVerification(Boolean(requestId));
 
   const request = useQuery({
@@ -66,10 +71,12 @@ export default function ConnectPage() {
     setBusy(approve ? "allow" : "deny");
     setError("");
     try {
-      const sign = approve && allowSigning && verification.data?.verified === true;
+      const onlyRead = approve && readOnly;
+      const sign = approve && !readOnly && allowSigning && verification.data?.verified === true;
       const res = await cloud<{ redirectUrl: string }>("oauthdecide", {
         requestId,
         approve,
+        ...(onlyRead ? { readOnly: true } : {}),
         ...(sign ? { allowSigning: true } : {})
       });
       // Leave `busy` set: the page is navigating away and must not be clicked twice.
@@ -109,10 +116,17 @@ export default function ConnectPage() {
   }
 
   const app = request.data.clientName || t("auth.connect.unnamedApp");
-  const scopes = request.data.scopes.filter((scope) => SCOPE_LABELS[scope]);
   const signRequested = request.data.signRequested === true;
-  const offerSigning =
-    verification.data !== undefined && (request.data.scopes.includes("documents:write") || signRequested);
+  const offerReadOnly = request.data.scopes.includes("documents:write") || signRequested;
+  const scopes = request.data.scopes.filter(
+    (scope) => SCOPE_LABELS[scope] && (!readOnly || scope === "documents:read")
+  );
+  const offerSigning = !readOnly && verification.data !== undefined && offerReadOnly;
+
+  function changeReadOnly(next: boolean) {
+    setReadOnly(next);
+    if (next) setAllowSigning(false);
+  }
 
   return (
     <AuthLayout>
@@ -143,6 +157,16 @@ export default function ConnectPage() {
             ))}
           </ul>
         </div>
+
+        {offerReadOnly ? (
+          <label className="flex cursor-pointer items-start gap-2.5 rounded-md border border-line bg-surface px-3 py-2.5 hover:border-line-strong">
+            <Checkbox className="mt-[3px]" checked={readOnly} onChange={changeReadOnly} disabled={busy !== null} />
+            <span className="flex flex-col gap-0.5">
+              <span className="text-[13px] font-medium text-ink">{t("auth.connect.readOnly")}</span>
+              <span className="text-[12px] leading-relaxed text-muted">{t("auth.connect.readOnlyHint", { app })}</span>
+            </span>
+          </label>
+        ) : null}
 
         {offerSigning ? (
           <div className="flex flex-col gap-2">

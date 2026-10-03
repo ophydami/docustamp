@@ -577,9 +577,10 @@ describe('signer name check over MCP', () => {
         { recipient: 'Landlord', type: 'signature', page: 1, x: 250, y: 470 },
         { recipient: 'Tenant', type: 'signature', page: 1, x: 250, y: 570 },
       ],
-      send: true,
     });
     expect(created.error).toBeUndefined(created.error);
+    const sent = await call(ownerToken, 'send_document', { documentId: created.body.objectId });
+    expect(sent.error).toBeUndefined(sent.error);
     return created.body;
   }
 
@@ -779,10 +780,11 @@ describe('signer name check over MCP', () => {
         { recipient: 'Buyer', type: 'signature', page: 1, x: 72, y: 500 },
         { recipient: 'Seller', type: 'signature', page: 1, x: 320, y: 500 },
       ],
-      send: true,
     });
     expect(created.error).toBeUndefined(created.error);
     const docId = created.body.objectId;
+    const sent = await call(senderToken, 'send_document', { documentId: docId });
+    expect(sent.error).toBeUndefined(sent.error);
 
     const asked = await call(bobToken, 'sign_document', { documentId: docId });
     expect(asked.error).toBeUndefined(asked.error);

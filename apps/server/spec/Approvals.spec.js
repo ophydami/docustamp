@@ -213,10 +213,11 @@ describe('Approvals: agents signing documents sent to their user', () => {
         { recipient: 'Seller', type: 'signature', page: 1, x: 320, y: 500 },
         ...witness.map(() => ({ recipient: 'Witness', type: 'signature', page: 1, x: 320, y: 600 })),
       ],
-      send: true,
     });
     expect(created.error).toBeUndefined(created.error);
-    return created.body;
+    const sent = await call(senderToken, 'send_document', { documentId: created.body.objectId });
+    expect(sent.error).toBeUndefined(sent.error);
+    return sent.body;
   }
 
   async function auditOf(docId) {
@@ -741,9 +742,10 @@ describe('Approvals: agents signing documents sent to their user', () => {
           { recipient: 'Seller', type: 'signature', page: 1, x: 72, y: 500 },
           { recipient: 'Buyer', type: 'signature', page: 1, x: 320, y: 500 },
         ],
-        send: true,
       });
       expect(created.error).toBeUndefined(created.error);
+      const sent = await call(bobToken, 'send_document', { documentId: created.body.objectId });
+      expect(sent.error).toBeUndefined(sent.error);
       const res = await askToSign(created.body.objectId);
       expect(res.body.status).toBe('signed');
       expect(res._meta?.[NONCE_KEY]).toBeUndefined();

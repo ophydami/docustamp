@@ -16,8 +16,10 @@ cloud/lib/contacts.js     ensureContact / listContacts (master key, scoped to th
 cloud/lib/files.js        upload PDF bytes, fetch stored PDFs
 cloud/lib/requestMail.js  the signature-request email, rendered and sent server-side
 cloud/lib/widgets.js      server-side widget factory (same shapes as both frontends)
+cloud/lib/decline.js      decline_document: the user declines a document someone else sent them
 cloud/mcp/server.js       the MCP tools
 cloud/mcp/route.js        stateless Streamable-HTTP endpoint + token auth
+scripts/mcp-reference.mjs generates docs/MCP_TOOLS.md from the live tool list
 cloud/api/v1.js           REST API v1 (thin wrappers over cloud/lib)
 cloud/api/shared.js       the flows REST and MCP share: analyse, quick-send, remind, sizes, errors
 cloud/parsefunction/aiFunctions.js, apiTokenFunctions.js, oauthFunctions.js   cloud functions for the web app
@@ -30,6 +32,11 @@ Web: `apps/web/src/features/ai/` (the "Ask AI" page at `/ai`), the "Prepare with
 the send page, Settings > API and MCP (`features/settings/sections/ApiWebhooksSection.tsx`, which
 also lists connected apps), and the OAuth consent page at `/connect`
 (`features/auth/ConnectPage.tsx`).
+
+The per-tool reference (every tool's class, OAuth scope, description and inputs) is
+[MCP_TOOLS.md](MCP_TOOLS.md). It is generated from the live tool list: run `npm run mcp:docs` in
+apps/server after changing a tool; `npm run mcp:docs:check`, run by server-ci, fails when it is out
+of step.
 
 ## 1. How the AI preparation works
 
@@ -184,7 +191,8 @@ signs in to DocuStamp, and allows access. The server is its own OAuth 2.1 author
 4. `/api/oauth/authorize` stores the request (10 minutes) and redirects to the web app's consent
    page, `/connect?request=<id>`. The page goes through sign-in first, shows the app's name, the
    host it returns to (the part a client cannot fake) and what it asks for, and calls
-   `oauthrequest` / `oauthdecide`. Allowing mints a one-time code (5 minutes).
+   `oauthrequest` / `oauthdecide`. Whenever the app asks for write access the page also offers a
+   **Read only** box (below). Allowing mints a one-time code (5 minutes).
 5. `/api/oauth/token` checks the PKCE verifier and the redirect uri and returns a Bearer access
    token (`dsat_`, 1 hour) and a refresh token (`dsrt_`, 30 days). Refresh tokens rotate on
    every use and the old pair stops working. A code presented twice is treated as stolen: the
@@ -200,6 +208,15 @@ MCP > Connected apps (`setoauthgrantsigning { id, enabled }`), and either way on
 address is verified. The grant records `SigningEnabledAt`; `listoauthgrants` returns `canSign` and
 `signingEnabledAt`. The grant is read on every request, so the switch applies to the app's next
 call without a reconnect, and a refresh that names only read and write keeps it.
+
+**Read only.** The user can always give an app less than it asked for. When the request includes
+`documents:write`, the consent page shows a "Read only" box; ticking it hides "Can sign for me" and
+sends `oauthdecide { readOnly: true }`, and the grant gets `documents:read` alone, whatever the app
+asked for (`allowSigning` is ignored). Such a connection is never offered a tool that changes
+anything. `listoauthgrants` returns `readOnly` per grant and the Connected apps card shows a "Read
+only" pill; `setoauthgrantsigning` refuses to turn signing on for a read-only grant rather than
+quietly adding write access. To give the app more, the user disconnects it and connects again.
+
 Access tokens are bound to the MCP endpoint (`resource`, RFC 8707) and are refused by the REST API,
 which keeps using personal tokens. Personal `os_` tokens work on the MCP endpoint exactly as before.
 
@@ -218,7 +235,8 @@ Storage is three master-key-only classes, tokens and codes as sha256 hashes:
 `contracts_OAuthClient`, `contracts_OAuthRequest`, `contracts_OAuthGrant` (one row per connection;
 Settings > API and MCP > Connected apps lists and deletes these through `listoauthgrants` /
 `revokeoauthgrant`). Suspending a member or an admin resetting their password deletes their
-connections too.
+connections too, and so does deleting the account, which also removes the user's webhooks, their
+signing approvals and the draft history (`contracts_DocumentVersion`) of their documents.
 
 OAuth needs `PUBLIC_URL` on https (http is accepted on localhost for development). Without it, or
 with `OAUTH_ENABLED=false`, the endpoints answer 404 and the 401 carries no `resource_metadata`.
@@ -240,9 +258,9 @@ stamps the PDF on the server and records the signature), never through a signing
   account (`resolveMeRecipients` in `cloud/lib/documents.js`; every tool that takes recipients
   accepts it). The server instructions tell the model to add the user only when they sign too,
   and never to type or draw the user's signature into a PDF it generates itself.
-- **`signForMe: true`** on `quick_send`, `send_document`, `create_document { send: true }` and
-  `create_document_from_template { send: true }`: the document is marked sent, the agent signs the
-  user's seat, then only the people still owing a signature are mailed, so the user gets a "signed
+- **`signForMe: true`** on `quick_send` and `send_document` (`create_document` and
+  `create_document_from_template` only make drafts, so it goes on the `send_document` that follows
+  them): the document is marked sent, the agent signs the user's seat, then only the people still owing a signature are mailed, so the user gets a "signed
   for you" notice (with a Void button) instead of a request. The result carries `signedForYou`.
   Refused before anything goes out when the app may not sign, the user is not a recipient, the
   document signs in order and the user is not first ("Send it, then call sign_document when it's
@@ -285,7 +303,7 @@ stamps the PDF on the server and records the signature), never through a signing
   - On the user's own document (`sign_document`, and `signForMe`, checked on the draft before
     anyone is mailed) a mismatch is refused: `This document names "Jordan Ellis" as the Landlord,
     but your agent signs as Morgan Avery. ...`. `confirmNameMismatch: true` (on `sign_document`,
-    `quick_send`, `send_document`, `create_document`, `create_document_from_template`) signs
+    `quick_send` and `send_document`; the create tools only make drafts and never sign) signs
     anyway, after the user confirms.
   - On a document someone else sent it never refuses: the approval carries `nameCheck {status,
     expected, role, printed[]}`, and the card, the `/approvals/:id` page and the email warn.
@@ -302,7 +320,8 @@ stamps the PDF on the server and records the signature), never through a signing
 ### Documents other people send the user
 
 The flow the server instructions describe: `list_inbox` -> `get_document` -> `review_document`
--> `sign_document` -> (the user approves) -> `get_approval`.
+-> `sign_document` -> (the user approves) -> `get_approval`, or `decline_document` when the user
+will not sign.
 
 - **`list_inbox { status?, limit?, skip? }`** (`cloud/lib/inbox.js`): documents sent to the user,
   `needs_you` (default: live and their turn, the in-order rule applied on the server), `waiting`,
@@ -316,6 +335,16 @@ The flow the server instructions describe: `list_inbox` -> `get_document` -> `re
 - **`review_document { documentId }`** (`cloud/ai/review.js`): the AI's read of the terms (summary,
   parties, key terms with quotes, flags, `instructionsAimedAtAI`), with the document fenced as
   untrusted input. Behind the AI switch and budget; "not legal advice".
+- **`decline_document { documentId, reason }`** (sensitive; `cloud/lib/decline.js`): declines on
+  the user's behalf when they have said they will not sign. Only the user's own seat (matched the
+  way agent signing matches it), only while it is unsigned and the document is live (not completed,
+  declined, voided, expired or deleted). The owner is refused ("You sent this document; use
+  void_document to cancel it."). It writes the same decline the web app writes (`DeclineReason`,
+  `DeclineBy`, `DeclineByContact`, the audit entry, the email to the sender, the `declined`
+  webhook) and records the agent that did it on whose behalf, like an agent signature
+  (`allowedBy.via: "connection"`: no separate approval, the connection is what allowed it). Returns
+  `{ status: "declined", documentId, senderNotified, document }`. It ends the document for every
+  signer and cannot be undone from here. Needs a verified email.
 - **Verified email.** Every read of a document the user does not own (the inbox, the participant
   views, the review) needs `verifiedIdentityProblem(caller) === null`: an account opened in
   someone else's name must not read what was sent to that address. Only someone the document was
@@ -404,29 +433,71 @@ built page on every request outside production, so `npm run build:mcp-app` is en
 Every tool carries MCP annotations (`readOnlyHint`, `destructiveHint`, `openWorldHint`) from one
 table, `TOOL_ANNOTATIONS` in `cloud/mcp/server.js`, and the scope it needs in
 `_meta.securitySchemes`. Hosts such as ChatGPT ask the user before running a tool marked
-destructive. Four kinds:
+destructive. Every tool falls in one of three classes, and [MCP_TOOLS.md](MCP_TOOLS.md) lists the
+class of each:
 
-- read only (23 tools): looks, changes nothing.
-- changes (25): changes something in the account that can be put back; every draft edit is
-  snapshotted first.
-- destructive (6): deletes, overwrites workspace-wide branding, or signs for the user
-  (`sign_document`, which cannot be taken back from here, only voided).
-- outreach (7): emails people or arms an automatic send (`send_document`, `quick_send`,
-  `send_reminder`, `resend_to`, `replace_signer`, `void_document`, `set_chain`). Marked
-  destructive and open-world, because a sent email cannot be taken back.
+- **read** (`readOnlyHint: true`; `READ`, `READ_URL` in the table): looks, changes nothing.
+- **write** (`readOnlyHint: false`, `destructiveHint: false`; `WRITE`, `WRITE_URL`): changes the
+  user's own data and reaches nobody else; every draft edit is snapshotted first.
+- **sensitive** (`destructiveHint: true`): reaches other people or cannot be undone. Two kinds in
+  the table:
+  - `DESTRUCTIVE`: deletes, overwrites workspace-wide branding, or signs for the user
+    (`sign_document`, which cannot be taken back from here, only voided).
+  - `OUTREACH`: emails people, posts to an outside url or arms an automatic send
+    (`send_document`, `quick_send`, `send_reminder`, `resend_to`, `replace_signer`,
+    `void_document`, `set_chain`, `decline_document`, `register_webhook`, `test_webhook`). Marked
+    destructive and open-world, because a sent email or a delivered webhook cannot be taken back.
+
+Hosts should confirm every use of a sensitive tool. A tool that both reads and writes is labelled
+as a write, and no write tool hides a send: `create_document` and `create_document_from_template`
+only create drafts. Their `send` and `signForMe` inputs remain only so an older caller is told
+loudly: either one set to true is refused ("create_document only creates drafts. Call it without
+send, then call send_document with the new documentId (pass signForMe there if the user signs
+too).") and nothing is created. Sending is always `send_document` or `quick_send`. The REST API
+keeps its `send` option.
 
 `openWorldHint` is also set on the tools that may download a PDF from a public url or post to a
 webhook url. A new tool without an entry in the table is refused at registration, and
 `spec/OAuth.spec.js` checks the whole list.
 
 Tools: `whoami`, `get_branding`, `update_branding`, `get_audit_trail`, `verify_document`, `void_document`, `replace_signer`, `resend_to`, `extend_expiry`, `wait_for`, `preview_page`, `find_text`, `detect_fields`, `place_field_at_text`, `upload_document`, `analyze_document`, `create_document`, `quick_send`,
-`send_document`, `sign_document`, `get_approval`, `list_inbox`, `review_document`, `list_documents`, `get_document`, `get_signing_links`, `send_reminder`,
+`send_document`, `sign_document`, `get_approval`, `list_inbox`, `decline_document`, `review_document`, `list_documents`, `get_document`, `get_signing_links`, `send_reminder`,
 `list_contacts`, `add_contact`, `update_contact`, `delete_contact`, `list_templates`, `create_template`, `save_as_template`, `delete_template`, `create_document_from_template`, `list_folders`, `create_folder`, `merge_documents`, `create_upload`, `complete_upload`, `register_webhook`, `list_webhooks`, `test_webhook`, `delete_webhook`, plus the
 draft tools below. `quick_send` = upload + AI analysis + bind recipients + create + email in one
 call; when a role has no email it returns `needsRecipients` (with `suggestedEmail` when the
 address was only printed in the document) and the **full** proposal instead of sending. Pass that
 proposal back in `proposal` on the follow-up call to skip a second, identical model call.
 `list_contacts`, `list_templates` and `list_documents` all take `limit` + `skip`.
+
+### Retries, duplicates and approved drafts
+
+A host may retry a call that timed out, and the tools that send mail real people, so a retry must
+not send twice and a send must go out as the user approved it.
+
+- **`requestId`** (optional, any unique string up to 200 characters, a UUID for example) on
+  `quick_send`, `create_document` and `create_document_from_template`. Repeating a call with the
+  same `requestId` returns the first result instead of creating or sending again; a repeat that
+  arrives while the first call is still running waits for it. The result of a replay carries
+  `idempotentReplay: true`. It is the REST `Idempotency-Key` (§5) under another name: kept in
+  memory for 10 minutes and stored on the document (`CreatedWithKey`), so a retry after a restart
+  still finds the first document.
+- **Duplicate guard on `quick_send`** (not for `dryRun`). Before any AI work, the call's file (the
+  url without its query string, or a sha256 of `fileBase64`) and its recipients (by lowercased
+  email, with roles) are compared with the caller's documents sent in the last 10 minutes that are
+  not voided, declined or deleted (column `SendFingerprint`). A match sends nothing and answers
+  `{ document, duplicate: true, sent: false, message }`, the message naming the earlier document
+  and how long ago it went out. When the user really wants a second copy, call again with
+  `allowDuplicate: true`.
+- **`revision` on drafts.** `get_draft` and `review_draft` return `revision`, a short hash of
+  everything that defines the draft (file, recipients, fields, settings, message; `draftRevision`
+  in `cloud/lib/drafts.js`, not changed by presigned urls). Two reads in a row give the same value
+  and any edit changes it. `send_document { documentId, revision }` refuses when the draft has
+  changed since that revision: "This draft changed after it was shown (revision A, now B). Show
+  the user the current draft with get_draft and ask again before sending." So an approval covers
+  only the draft the user saw. Without `revision` it sends the current draft, as before.
+- After a timeout, look before trying again: `get_document`, `list_documents` or `wait_for` say
+  whether the first call went through. `send_document` itself refuses a document that was already
+  sent (unless `resend: true`), `void_document` one already voided, and signing twice is refused.
 
 ### Conventions worth knowing (fixed 2026-08-22)
 
@@ -603,8 +674,8 @@ first use and by `databases/migrations/20260821120000-create_contracts_documentv
 
 | Tool | What it does |
 |---|---|
-| `get_draft` | Everything about a document: recipients with contact ids and their fields (`key`, type, page, x, y, width, height, label, required, values, defaultValue), prefill fields, settings, email message, note, folder, version count, editor/send links. `pages: true` adds page sizes |
-| `review_draft` | `readyToSend` plus `errors` (no recipients, missing/duplicate/invalid emails, unbound contact, no fields, field off the page or beyond the last page, too many reminders, unreadable PDF), `warnings` (recipient without fields or without a signature field, overlapping fields, untitled, long subject) and `info` |
+| `get_draft` | Everything about a document: recipients with contact ids and their fields (`key`, type, page, x, y, width, height, label, required, values, defaultValue), prefill fields, settings, email message, note, folder, version count, editor/send links, and `revision` (pass it to `send_document`). `pages: true` adds page sizes |
+| `review_draft` | `revision`, `readyToSend` plus `errors` (no recipients, missing/duplicate/invalid emails, unbound contact, no fields, field off the page or beyond the last page, too many reminders, unreadable PDF), `warnings` (recipient without fields or without a signature field, overlapping fields, untitled, long subject) and `info` |
 | `update_draft` | Any of `name`, `note`, `description`, `settings` (partial merge), `message`, `folderId` (null = root), `url` / `fileBase64` (replace the PDF, fields kept), `recipients` (full list; a recipient keeps its fields when it matches an existing one by contact, email, role label, or same slot in a same-length list unless given a different role label; removed recipients lose theirs, reported as `droppedFields`) |
 | `set_draft_fields` | `mode: "replace"` (default, empty list clears) or `"append"`; same field shape as `create_document` (`recipient` = index, email, role, or `"prefill"`) |
 | `update_draft_field` | One field by `key`: x, y, page, width, height, label, required, values, defaultValue, readOnly, recipient (hand over, or `"prefill"`), type, dateFormat. Keeps its key |
@@ -682,7 +753,15 @@ page size, and `pageCount` in the body is only the fallback when it cannot be re
 `POST /documents` and `POST /documents/quick-send` accept an **`Idempotency-Key`** header. The
 same key from the same token replays the first answer (and waits for it while it is still
 running) instead of creating and mailing a second copy, for 10 minutes. In-memory per process,
-so it covers a client retry rather than two instances behind a load balancer.
+so it covers a client retry rather than two instances behind a load balancer. The key is also
+stored on the document, so `POST /documents` and `POST /documents/quick-send` replay the first
+document after a restart too. The MCP tools take the same key as a `requestId` input (§4,
+"Retries, duplicates and approved drafts").
+
+`POST /documents/quick-send` has the same duplicate guard as `quick_send`: the same PDF to the same
+people within 10 minutes sends nothing and answers `duplicate: true` with the first document;
+`"allowDuplicate": true` in the body sends anyway. `POST /documents/:id/send` takes an optional
+`"revision"` in the body and refuses a draft that changed since it, like `send_document`.
 
 Document summary: `{ objectId, name, status, createdAt, sentAt, expiresAt, fieldCount,
 sendInOrder, otp, signers[{ order, role, name, email, contactId, status: pending|signed|declined,
@@ -694,6 +773,7 @@ signedAt, signingUrl }], hasCertificate }`.
 cd apps/server && npx mongodb-runner start --port 27017
 SERVER_URL=http://localhost:30001/test APP_ID=test MASTER_KEY=test TESTING=true npx jasmine --filter="API tokens"
 TESTING=true npx jasmine spec/OAuth.spec.js
+npm run mcp:docs:check   # docs/MCP_TOOLS.md matches the registered tools (no database needed)
 ```
 
 ## 7. Known limits
@@ -702,8 +782,16 @@ TESTING=true npx jasmine spec/OAuth.spec.js
   scopes (`documents:read`, `documents:write`, `documents:sign`); there is no finer split yet.
 - The name check reads printed text only: a scanned page, a name drawn as an image, or wording it
   does not know ("The party of the first part, J. Ellis") comes out `unknown` and does not block.
-- OAuth: dynamic client registration only. Client ID Metadata Documents (CIMD) are not supported
+- On documents other people send, the agent signs only after the user approves. Approving inside
+  the chat works only for hosts on `CHAT_APPROVAL_HOSTS`; everywhere else the user approves in
+  DocuStamp (the `/approvals` page or the emailed link).
+- OAuth: dynamic client registration only, every client public (PKCE, no client secret). There are
+  no pre-registered confidential clients, Client ID Metadata Documents (CIMD) are not supported
   yet, and MCP Events (automations that start from a document event) are not implemented.
+- A read-only connection cannot be upgraded in place: the user disconnects the app and connects
+  it again with write access.
+- Creating an account, verifying the email address and turning on "Can sign for me" happen in
+  DocuStamp, not through a tool.
 - Every rate limit and the idempotency store are in-memory per Node process; scale out and they
   multiply. There is no per-account cost ceiling on AI usage beyond the 10 calls/minute.
 - The AI transcript stops at 60 pages and ~320k characters; fields the model puts on a page past

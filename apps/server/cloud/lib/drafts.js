@@ -1,3 +1,4 @@
+import crypto from 'node:crypto';
 import { PDFDocument } from 'pdf-lib';
 import { appName, MAX_DESCRIPTION_LENGTH, MAX_NAME_LENGTH, MAX_NOTE_LENGTH } from '../../Utils.js';
 import { resolveTenantBranding } from '../parsefunction/tenantBranding.js';
@@ -348,6 +349,8 @@ export async function draftDetail(caller, d, { pages = false } = {}) {
   const out = {
     ...summary,
     editable: summary.status === 'draft',
+    // Pass it back to send_document to send exactly what the user was shown.
+    revision: draftRevision(d),
     url: d.URL,
     settings: settingsFromDoc(d),
     message: { subject: d.RequestSubject || '', body: d.RequestBody || '' },
@@ -475,6 +478,47 @@ export function draftState(d) {
   const folder = cleanPointer(d?.Folder, 'contracts_Document');
   if (folder) state.Folder = folder;
   return state;
+}
+
+/** A query string that signs a file url rather than meaning anything. */
+const SIGNED_QUERY = /(?:^|&)(?:X-Amz-[A-Za-z-]+|token)=/;
+
+/**
+ * A short fingerprint of everything that defines the draft (the same state a
+ * snapshot stores), so an agent can show the user a draft and then send exactly
+ * that draft: send_document refuses a `revision` that no longer matches.
+ *
+ * Stored file urls can come back signed (an S3 presign, or the `?token=` of a
+ * local `/files/` url), with a signature and an expiry that change on every
+ * read, so those query strings are dropped first: two reads of an unchanged
+ * draft give the same revision. Any other query string (a redirect url's) counts.
+ *
+ * @param {Object} d the document as plain JSON.
+ * @returns {string} 16 hex characters.
+ */
+export function draftRevision(d) {
+  const json = JSON.stringify(draftState(d)).replace(
+    /(https?:\/\/[^"?\s]*)\?([^"\s]*)/g,
+    (all, bare, query) => (SIGNED_QUERY.test(query) ? bare : all)
+  );
+  return crypto.createHash('sha256').update(json, 'utf8').digest('hex').slice(0, 16);
+}
+
+/**
+ * Refuse to go on when the draft is no longer the one the user was shown.
+ *
+ * @param {import('./context.js').Caller} caller
+ * @param {string} docId
+ * @param {string} [revision] what get_draft or review_draft returned; nothing to check when absent.
+ */
+export async function assertDraftRevision(caller, docId, revision) {
+  if (revision === undefined || revision === null || revision === '') return;
+  const current = draftRevision(await loadOwnedDocument(caller, docId));
+  if (String(revision) !== current) {
+    throw fail(
+      `This draft changed after it was shown (revision ${revision}, now ${current}). Show the user the current draft with get_draft and ask again before sending.`
+    );
+  }
 }
 
 function versionJson(v) {
@@ -1901,6 +1945,7 @@ export async function reviewDraft(caller, docId) {
     objectId: detail.objectId,
     name: detail.name,
     status: detail.status,
+    revision: detail.revision,
     readyToSend: detail.status === 'draft' && !errors.length,
     errors,
     warnings,

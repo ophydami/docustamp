@@ -275,6 +275,8 @@
       "expiredBody": "Gehen Sie zurück zu der App, die Sie verbinden wollten, und starten Sie erneut.",
       "expiredTitle": "Diese Anfrage ist abgelaufen",
       "failed": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
+      "readOnly": "Nur lesen",
+      "readOnlyHint": "{{app}} kann Ihre Dokumente ansehen, aber nichts ändern, senden oder unterschreiben.",
       "redirectNote": "Nach Ihrer Auswahl kehren Sie zu <0>{{host}}</0> zurück.",
       "scopeRead": "Ihre Dokumente, Vorlagen und Kontakte sehen und wer unterschrieben hat",
       "scopeWrite": "Dokumente erstellen, bearbeiten und zur Unterschrift senden, wobei Ihre Unterzeichner E-Mails erhalten",

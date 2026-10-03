@@ -341,10 +341,11 @@ describe('Agents that sign over MCP', () => {
           { recipient: 'Landlord', type: 'signature', page: 1, x: 250, y: 470 },
           { recipient: 'Tenant', type: 'signature', page: 1, x: 250, y: 570 },
         ],
-        send: true,
       });
       expect(created.error).toBeUndefined();
-      return { doc: created.body, tenantEmail };
+      const sent = await tool(accessToken, 'send_document', { documentId: created.body.objectId });
+      expect(sent.error).toBeUndefined();
+      return { doc: sent.body, tenantEmail };
     }
 
     it('says how to turn signing on when the app may not sign, then signs once it may', async () => {
@@ -470,7 +471,7 @@ describe('Agents that sign over MCP', () => {
     it('refuses signForMe before sending when the agent cannot fill a required value', async () => {
       const { access_token: accessToken } = await connect(owner, { allowSigning: true });
       const tenantEmail = nextTenant();
-      const res = await tool(accessToken, 'create_document', {
+      const draft = await tool(accessToken, 'create_document', {
         name: 'Lease with a blank only the owner can fill',
         url: PDF_URL,
         recipients: [
@@ -482,14 +483,14 @@ describe('Agents that sign over MCP', () => {
           { recipient: 'Landlord', type: 'text input', page: 1, x: 250, y: 420, required: true },
           { recipient: 'Tenant', type: 'signature', page: 1, x: 250, y: 570 },
         ],
-        send: true,
-        signForMe: true,
       });
+      expect(draft.error).toBeUndefined();
+      const id = draft.body.objectId;
+      const res = await tool(accessToken, 'send_document', { documentId: id, signForMe: true });
       expect(res.error).toContain('Your agent cannot sign your part, so nothing was sent');
       expect(res.error).toContain('A value is required');
       expect(requestMails.length).toBe(0);
       expect(ownerNotices.length).toBe(0);
-      const id = /documentId (\w+)/.exec(res.error)?.[1];
       const row = await new Parse.Query('contracts_Document').get(id, { useMasterKey: true });
       expect(row.get('DocSentAt')).toBeUndefined();
     });

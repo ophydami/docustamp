@@ -499,10 +499,13 @@ function redirectWith(uri, params) {
  * @param {import('./context.js').Caller} caller the signed-in user
  * @param {string} requestId
  * @param {boolean} approve
- * @param {{allowSigning?: boolean}} [opts] the "Can sign for me" box. Adds
- *   documents:sign only for a caller whose email is verified
- *   (`verifiedIdentityProblem` is null); otherwise it is ignored and the app
- *   connects without it, so the switch in Settings can turn it on later.
+ * @param {{allowSigning?: boolean, readOnly?: boolean}} [opts]
+ *   allowSigning: the "Can sign for me" box. Adds documents:sign only for a
+ *   caller whose email is verified (`verifiedIdentityProblem` is null);
+ *   otherwise it is ignored and the app connects without it, so the switch in
+ *   Settings can turn it on later.
+ *   readOnly: the "Read only" box. The app gets documents:read and nothing
+ *   else, whatever it asked for, and allowSigning is ignored.
  * @returns {Promise<{redirectUrl: string}>}
  */
 export async function decideAuthorizationRequest(caller, requestId, approve, opts = {}) {
@@ -529,8 +532,11 @@ export async function decideAuthorizationRequest(caller, requestId, approve, opt
     };
   }
   const code = randomToken(32);
-  const scopes = (row.get('Scopes') || [...DEFAULT_SCOPES]).filter(scope => scope !== SCOPE_SIGN);
-  if (opts.allowSigning === true && !verifiedIdentityProblem(caller)) {
+  const scopes =
+    opts.readOnly === true
+      ? [SCOPE_READ]
+      : (row.get('Scopes') || [...DEFAULT_SCOPES]).filter(scope => scope !== SCOPE_SIGN);
+  if (opts.readOnly !== true && opts.allowSigning === true && !verifiedIdentityProblem(caller)) {
     if (!scopes.includes(SCOPE_WRITE)) scopes.push(SCOPE_WRITE);
     if (!scopes.includes(SCOPE_READ)) scopes.unshift(SCOPE_READ);
     scopes.push(SCOPE_SIGN);
@@ -838,6 +844,9 @@ export async function listOAuthGrants(userId) {
       clientName: row.get('ClientName') || '',
       redirectHost: row.get('RedirectHost') || '',
       scopes: row.get('Scopes') || [],
+      // Connected with "Read only", or the app only asked to read: it can
+      // change nothing, and signing cannot be turned on for it.
+      readOnly: !(row.get('Scopes') || []).includes(SCOPE_WRITE),
       canSign: (row.get('Scopes') || []).includes(SCOPE_SIGN),
       signingEnabledAt: iso(signingEnabledAtOf(row)),
       createdAt: iso(row.createdAt),
@@ -848,7 +857,10 @@ export async function listOAuthGrants(userId) {
 /**
  * The "Can sign for me" switch for one connected app. Takes effect on the app's
  * next request (the grant is read on every call). Turning it on needs a
- * verified email address; turning it off never does.
+ * verified email address and an app that may write: a read-only connection
+ * stays read-only (signing would quietly give it write access too), so the
+ * user reconnects it with full access instead. Turning it off never needs
+ * either.
  *
  * @param {import('./context.js').Caller} caller the signed-in user
  * @param {string} grantId
@@ -865,6 +877,12 @@ export async function setOAuthGrantSigning(caller, grantId, enabled) {
   const grant = await query.first({ useMasterKey: true });
   if (!grant || !(grant.get('RefreshExpiresAt') > new Date())) {
     throw new Parse.Error(Parse.Error.OBJECT_NOT_FOUND, 'Connected app not found.');
+  }
+  if (enabled && !(grant.get('Scopes') || []).includes(SCOPE_WRITE)) {
+    throw new Parse.Error(
+      Parse.Error.OPERATION_FORBIDDEN,
+      'This app is connected with read-only access, so it cannot sign for you. Disconnect it and connect it again with full access to let it sign.'
+    );
   }
   if (enabled) {
     const problem = verifiedIdentityProblem(caller);

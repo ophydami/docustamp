@@ -1430,6 +1430,8 @@ export async function createDocumentFromTemplate(caller, templateId, input = {})
   }
   return await createDocument(caller, {
     name: input.name || t.Name,
+    // Stored on the row, so a retried request finds this document (findByIdempotencyKey).
+    idempotencyKey: input.idempotencyKey,
     url: t.URL,
     recipients: ordered,
     placeholders,

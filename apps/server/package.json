@@ -1,6 +1,6 @@
 {
   "name": "docustamp-server",
-  "version": "0.5.1",
+  "version": "0.6.0",
   "description": "DocuStamp server (Parse Server + Express)",
   "homepage": "https://docustamp.dev",
   "repository": {
@@ -13,6 +13,8 @@
     "coverage": "TESTING=true nyc jasmine",
     "lint": "eslint --cache .",
     "lint-fix": "eslint --cache --fix .",
+    "mcp:docs": "node scripts/mcp-reference.mjs --write",
+    "mcp:docs:check": "node scripts/mcp-reference.mjs",
     "prettier": "prettier --write '{cloud,spec}/{**/*,*}.js' 'index.js'",
     "start": "node index.js",
     "test": "TESTING=true jasmine",

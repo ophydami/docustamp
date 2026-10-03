@@ -14,16 +14,17 @@ import { checkRateLimit } from './authGuard.js';
  *
  *   oauthrequest     { requestId } -> { clientName, redirectHost, scopes, signRequested, expiresAt }
  *                    what the consent page (/connect) shows
- *   oauthdecide      { requestId, approve, allowSigning? } -> { redirectUrl }
+ *   oauthdecide      { requestId, approve, allowSigning?, readOnly? } -> { redirectUrl }
  *                    allow or deny; the page then navigates to redirectUrl.
  *                    allowSigning ("Can sign for me") only counts once the
- *                    user's email is verified
- *   listoauthgrants  -> { grants: [{ id, clientName, redirectHost, scopes, canSign,
- *                        signingEnabledAt, createdAt, lastUsedAt }] }
+ *                    user's email is verified. readOnly ("Read only") grants
+ *                    documents:read alone and outranks allowSigning
+ *   listoauthgrants  -> { grants: [{ id, clientName, redirectHost, scopes, readOnly,
+ *                        canSign, signingEnabledAt, createdAt, lastUsedAt }] }
  *   revokeoauthgrant { grantId } -> { revoked }
  *   setoauthgrantsigning { id, enabled } -> { id, canSign, signingEnabledAt }
  *                    the "Can sign for me" switch; turning it on needs a
- *                    verified email
+ *                    verified email and a connection that is not read-only
  *
  * All of them need a signed-in user. The consent page is reached through
  * RequireAuth, so a user who is not signed in logs in first and comes back.
@@ -72,7 +73,10 @@ export async function oauthDecide(request) {
     caller,
     request.params?.requestId,
     request.params?.approve === true,
-    { allowSigning: request.params?.allowSigning === true }
+    {
+      allowSigning: request.params?.allowSigning === true,
+      readOnly: request.params?.readOnly === true,
+    }
   );
 }
 

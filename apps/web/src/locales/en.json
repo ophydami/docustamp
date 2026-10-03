@@ -274,6 +274,8 @@
       "expiredBody": "Go back to the app you were connecting and start again.",
       "expiredTitle": "This request has expired",
       "failed": "Something went wrong. Please try again.",
+      "readOnly": "Read only",
+      "readOnlyHint": "{{app}} can look at your documents but cannot change, send or sign anything.",
       "redirectNote": "After you choose, you go back to <0>{{host}}</0>.",
       "scopeRead": "See your documents, templates and contacts, and who has signed",
       "scopeWrite": "Create, edit and send documents for signature, which emails your signers",

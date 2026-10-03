@@ -25,6 +25,7 @@ export const MCP_TOOL_NAMES: readonly string[] = [
   "sign_document",
   "get_approval",
   "list_inbox",
+  "decline_document",
   "review_document",
   "list_documents",
   "get_document",

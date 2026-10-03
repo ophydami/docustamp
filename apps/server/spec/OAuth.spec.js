@@ -112,15 +112,18 @@ describe('OAuth for MCP clients', () => {
   let other;
   let clientId;
 
-  /** The whole dance, as ChatGPT does it: authorize, allow, trade the code. */
-  async function connect({ scope, as = user } = {}) {
+  /**
+   * The whole dance, as ChatGPT does it: authorize, allow, trade the code.
+   * `choices` are the consent page's boxes (readOnly, allowSigning).
+   */
+  async function connect({ scope, as = user, choices = {} } = {}) {
     const { verifier, challenge } = pkce();
     const start = await authorize(clientId, { challenge, scope });
     expect(start.status).toBe(302, JSON.stringify(start.data));
     const requestId = requestIdFrom(start.headers.location);
     const { redirectUrl } = await Parse.Cloud.run(
       'oauthdecide',
-      { requestId, approve: true },
+      { requestId, approve: true, ...choices },
       { sessionToken: as.getSessionToken() }
     );
     const code = new URL(redirectUrl).searchParams.get('code');
@@ -476,6 +479,82 @@ describe('OAuth for MCP clients', () => {
       });
       const failed = call.data.error || call.data.result?.isError;
       expect(failed).toBeTruthy();
+    });
+  });
+
+  describe('the "Read only" choice', () => {
+    let verified;
+
+    beforeAll(async () => {
+      // Verified, so a refused signing switch is down to read-only alone.
+      verified = await makeAccount('oauth.readonly');
+      const fresh = await new Parse.Query(Parse.User).get(verified.id, { useMasterKey: true });
+      fresh.set('emailVerified', true);
+      await fresh.save(null, { useMasterKey: true });
+    });
+
+    async function grantsOf(account) {
+      return (
+        await Parse.Cloud.run('listoauthgrants', {}, { sessionToken: account.getSessionToken() })
+      ).grants;
+    }
+
+    it('grants only documents:read, whatever the app asked for, and hides every write tool', async () => {
+      const { access_token: accessToken, scope } = await connect({
+        as: verified,
+        choices: { readOnly: true },
+      });
+      expect(scope).toBe('documents:read');
+      const tools = (await mcp(accessToken, 'tools/list')).data.result.tools;
+      expect(tools.length).toBeGreaterThan(0);
+      expect(tools.every(tool => tool.annotations.readOnlyHint)).toBeTrue();
+      const names = tools.map(tool => tool.name);
+      expect(names).toContain('get_document');
+      for (const name of ['create_document', 'send_document', 'quick_send', 'sign_document']) {
+        expect(names).not.toContain(name);
+      }
+
+      const grant = (await grantsOf(verified))[0];
+      expect(grant).toEqual(
+        jasmine.objectContaining({ scopes: ['documents:read'], readOnly: true, canSign: false })
+      );
+    });
+
+    it('outranks "Can sign for me", which still works without it', async () => {
+      const asked = 'documents:read documents:write documents:sign';
+      const both = await connect({
+        as: verified,
+        scope: asked,
+        choices: { readOnly: true, allowSigning: true },
+      });
+      expect(both.scope).toBe('documents:read');
+
+      // The same account and request without Read only does get signing.
+      const signing = await connect({ as: verified, scope: asked, choices: { allowSigning: true } });
+      expect(signing.scope.split(' ')).toContain('documents:sign');
+
+      const grants = await grantsOf(verified);
+      expect(grants.find(g => g.canSign)?.readOnly).toBeFalse();
+    });
+
+    it('will not turn signing on later for a read-only connection', async () => {
+      await connect({ as: verified, choices: { readOnly: true } });
+      const grant = (await grantsOf(verified))[0];
+      expect(grant.readOnly).toBeTrue();
+      const session = { sessionToken: verified.getSessionToken() };
+      await expectAsync(
+        Parse.Cloud.run('setoauthgrantsigning', { id: grant.id, enabled: true }, session)
+      ).toBeRejectedWith(
+        jasmine.objectContaining({
+          code: Parse.Error.OPERATION_FORBIDDEN,
+          message: jasmine.stringContaining('read-only'),
+        })
+      );
+      const after = (await grantsOf(verified)).find(g => g.id === grant.id);
+      expect(after.scopes).toEqual(['documents:read']);
+      // Turning it off is always allowed, and changes nothing here.
+      const off = await Parse.Cloud.run('setoauthgrantsigning', { id: grant.id, enabled: false }, session);
+      expect(off.canSign).toBeFalse();
     });
   });
 

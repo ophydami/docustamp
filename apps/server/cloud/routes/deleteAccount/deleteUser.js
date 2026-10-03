@@ -3,11 +3,14 @@ import { generateId } from '../../../Utils.js';
 import {
   deleteContactsInBatch,
   deleteDataFiles,
+  deleteDocumentDependents,
   deleteFileUrls,
   deleteInBatches,
+  deleteScopedRows,
 } from './deleteFileUrl.js';
 import { MAX_ATTEMPTS } from './deleteUtils.js';
 import { authoriseDeletionRequest, clearDeletionState } from '../../lib/deletionToken.js';
+import { revokeOAuthGrantsForUser } from '../../lib/oauth.js';
 import { hashOtp } from '../../lib/otp.js';
 import { extUserForUser, resolveCaller } from '../../parsefunction/authGuard.js';
 
@@ -137,6 +140,18 @@ export async function deleteUser(userId, adminId, adminTenantId, isOrgAdmin, org
     const membershipCount = await membershipQuery.count({ useMasterKey: true });
     const isMultiTenant = membershipCount > 1;
 
+    // STEP 1b: what hangs off this membership's documents (their draft history
+    // and the requests to sign them), while the documents still lead to it,
+    // plus the requests to sign that this membership's own agent made.
+    try {
+      await deleteDocumentDependents(extUserPointer);
+      await deleteScopedRows('contracts_SignApproval', { extUserPtr: extUserPointer });
+    } catch (err) {
+      console.error('Failed during draft history and approval cleanup:', err);
+      const errorMessage = 'Failed during draft history and approval cleanup:' + err?.message;
+      return { code: 400, message: errorMessage };
+    }
+
     // STEP 2: contracts_Document & contracts_Template
     try {
       for (const className of ['contracts_Document', 'contracts_Template']) {
@@ -174,6 +189,23 @@ export async function deleteUser(userId, adminId, adminTenantId, isOrgAdmin, org
     } catch (err) {
       console.error('Failed to delete appToken entries:', err);
       const errorMessage = 'Failed to delete appToken entries:' + err?.message;
+      return { code: 400, message: errorMessage };
+    }
+
+    // STEP 4b: connected apps (OAuth grants) and webhooks. Both belong to the
+    // `_User`, not to one tenant, so like the app tokens they only go with the
+    // account's last membership. A connected app used to keep working against
+    // whatever was left, and a webhook kept its url and secret. The personal API
+    // token lives on the `contracts_Users` row and goes with it (STEP 11).
+    try {
+      if (!isMultiTenant) {
+        const { revoked } = await revokeOAuthGrantsForUser(userId);
+        const webhooks = await deleteScopedRows('contracts_Webhook', { createdBy: userPointer });
+        console.log(`Revoked ${revoked} connected apps and deleted ${webhooks} webhooks`);
+      }
+    } catch (err) {
+      console.error('Failed during connected app and webhook cleanup:', err);
+      const errorMessage = 'Failed during connected app and webhook cleanup:' + err?.message;
       return { code: 400, message: errorMessage };
     }
 
@@ -345,8 +377,8 @@ export async function deleteUser(userId, adminId, adminTenantId, isOrgAdmin, org
       code: 200,
       filesDeleted,
       message:
-        'Your account, your documents and templates, your contacts and your saved signatures ' +
-        'have been deleted. Documents other people sent you that you signed are their records ' +
+        'Your account, your documents and templates, your contacts, your saved signatures, ' +
+        'your connected apps and your webhooks have been deleted. Documents other people sent you that you signed are their records ' +
         'of a completed agreement and are kept, including your name, email and signature on them.',
     };
   } catch (error) {

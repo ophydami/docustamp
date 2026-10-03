@@ -1,5 +1,8 @@
+import crypto from 'node:crypto';
 import { isAiEnabled } from '../ai/client.js';
-import { assertOwner } from '../lib/documents.js';
+import { conditionalUpdate } from '../lib/atomic.js';
+import { userPointer } from '../lib/context.js';
+import { assertOwner, findByIdempotencyKey, getDocument } from '../lib/documents.js';
 import { pageSizes } from '../lib/drafts.js';
 import { fetchReminderDoc, sendReminderForDoc } from '../parsefunction/sendReminder.js';
 import { analyzeDocumentFlow, prepareDocumentFlow } from '../parsefunction/aiFunctions.js';
@@ -113,7 +116,7 @@ const inFlight = new Map();
  * Per process (like every other counter here): it covers the client-retry case
  * on a single-instance deployment, not two instances behind a load balancer.
  */
-export async function withIdempotency(caller, scope, key, fn) {
+export async function withIdempotency(caller, scope, key, fn, { keep, onReplay } = {}) {
   const raw = String(key || '').trim();
   if (!raw) return await fn();
   if (raw.length > 200) {
@@ -122,14 +125,22 @@ export async function withIdempotency(caller, scope, key, fn) {
   const id = `${caller?.userId || 'anon'}:${scope}:${raw}`;
   const now = Date.now();
   const hit = inFlight.get(id);
-  if (hit && hit.expires > now) return await hit.promise;
+  if (hit && hit.expires > now) {
+    const first = await hit.promise;
+    return onReplay ? onReplay(first) : first;
+  }
   const promise = (async () => await fn())();
   inFlight.set(id, { expires: now + IDEMPOTENCY_TTL_MS, promise });
   if (inFlight.size > IDEMPOTENCY_MAX) {
     for (const [k, v] of inFlight) if (v.expires <= now) inFlight.delete(k);
   }
   try {
-    return await promise;
+    const result = await promise;
+    // `keep` says whether this answer is the request's final one. quick_send
+    // that only asks for the missing recipients is not: the follow-up call with
+    // them filled in must run, not replay "recipients needed".
+    if (keep && !keep(result) && inFlight.get(id)?.promise === promise) inFlight.delete(id);
+    return result;
   } catch (err) {
     // A failure is not a result: let the caller retry it.
     inFlight.delete(id);
@@ -214,25 +225,137 @@ export async function analyzeFlow(caller, input = {}) {
  */
 export async function quickSendFlow(caller, input = {}, origin = 'api') {
   requireAiEnabled();
-  const { document, proposal, needsRecipients, warnings } = await prepareDocumentFlow(
-    caller,
-    { ...input, signForMe: input.signForMe === true },
-    { origin, strict: true, send: input.dryRun !== true }
-  );
-  if (needsRecipients.length) {
-    return {
-      document: null,
-      needsRecipients,
-      // Full, so it can come back in `proposal` on the next call.
-      proposal,
-      reusableProposal: true,
-    };
+  // A retry with the same Idempotency-Key (REST) or requestId (MCP) after a
+  // restart: the in-memory replay is gone, the key stored on the row is not.
+  const replayed = await findByIdempotencyKey(caller, input.idempotencyKey);
+  if (replayed) return { document: { ...replayed, mail: null }, idempotentReplay: true };
+
+  const sending = input.dryRun !== true;
+  const fingerprint = sending ? sendFingerprint(input) : '';
+  const guarded = fingerprint && input.allowDuplicate !== true;
+  const flightKey = `${caller?.userId || 'anon'}:${fingerprint}`;
+  if (guarded) {
+    const earlier = await recentSendWithFingerprint(caller, fingerprint);
+    if (earlier) return await duplicateResult(caller, earlier.id);
+    // The same send still running (a host that gave up waiting and called
+    // again): wait for it rather than start a second one.
+    const running = sendsInFlight.get(flightKey);
+    if (running) {
+      const first = await running.catch(() => null);
+      if (first?.document?.objectId) return await duplicateResult(caller, first.document.objectId);
+    }
   }
+
+  const run = (async () => {
+    const { document, proposal, needsRecipients, warnings } = await prepareDocumentFlow(
+      caller,
+      { ...input, signForMe: input.signForMe === true },
+      { origin, strict: true, send: sending }
+    );
+    if (needsRecipients.length) {
+      return {
+        document: null,
+        needsRecipients,
+        // Full, so it can come back in `proposal` on the next call.
+        proposal,
+        reusableProposal: true,
+      };
+    }
+    if (fingerprint && document?.objectId) {
+      // Best effort: the send has happened, a missing stamp only weakens the
+      // duplicate check for this one document.
+      await conditionalUpdate('contracts_Document', document.objectId, {}, {
+        SendFingerprint: fingerprint,
+      }).catch(err => console.log('quick_send: could not record the send fingerprint', err?.message));
+    }
+    return {
+      document,
+      proposal: briefProposal(proposal),
+      ...(warnings.length ? { warnings } : {}),
+    };
+  })();
+  if (!guarded) return await run;
+  sendsInFlight.set(flightKey, run);
+  try {
+    return await run;
+  } finally {
+    if (sendsInFlight.get(flightKey) === run) sendsInFlight.delete(flightKey);
+  }
+}
+
+/* ------------------------------------------------------ duplicate sends */
+
+/**
+ * How long an identical quick_send counts as a repeat of the first. A host
+ * that timed out waiting for the AI and the mail calls again within seconds;
+ * the window only has to cover that, not a deliberate second send next week.
+ */
+export const DUPLICATE_SEND_WINDOW_MS = 10 * 60 * 1000;
+const sendsInFlight = new Map();
+
+/**
+ * What makes two quick_send calls the same send: the same file to the same
+ * people. The title, message and settings are left out on purpose, since a
+ * retry may word them differently. '' when there is no file to compare.
+ *
+ * @param {Object} input the quick_send input.
+ * @returns {string} 32 hex characters, or ''.
+ */
+export function sendFingerprint(input = {}) {
+  let file = '';
+  if (typeof input.fileBase64 === 'string' && input.fileBase64.trim()) {
+    const bytes = input.fileBase64.replace(/^data:[^,]*,/, '').replace(/\s+/g, '');
+    file = `sha256:${crypto.createHash('sha256').update(bytes, 'utf8').digest('hex')}`;
+  } else if (typeof input.url === 'string' && input.url.trim()) {
+    file = `url:${input.url.trim().split('?')[0]}`;
+  }
+  if (!file) return '';
+  const people = (Array.isArray(input.recipients) ? input.recipients : [])
+    .map(r =>
+      [
+        r?.me === true ? '@me' : String(r?.email || '').trim().toLowerCase(),
+        String(r?.role || '').trim().toLowerCase(),
+      ].join('|')
+    )
+    .sort();
+  const extracted = input.acceptExtractedRecipients === true;
+  return crypto
+    .createHash('sha256')
+    .update(JSON.stringify({ file, people, extracted }), 'utf8')
+    .digest('hex')
+    .slice(0, 32);
+}
+
+/** The caller's live document sent with this fingerprint inside the window, if any. */
+async function recentSendWithFingerprint(caller, fingerprint) {
+  const query = new Parse.Query('contracts_Document');
+  query.equalTo('CreatedBy', userPointer(caller));
+  query.equalTo('SendFingerprint', fingerprint);
+  query.greaterThanOrEqualTo('DocSentAt', new Date(Date.now() - DUPLICATE_SEND_WINDOW_MS));
+  // Voiding sets IsDeclined too: a voided or declined copy may be sent again.
+  query.notEqualTo('IsDeclined', true);
+  query.notEqualTo('IsArchive', true);
+  query.descending('DocSentAt');
+  return await query.first({ useMasterKey: true });
+}
+
+async function duplicateResult(caller, docId) {
+  const document = await getDocument(caller, docId);
+  const sentAt = document?.sentAt ? new Date(document.sentAt).getTime() : Date.now();
+  const minutes = Math.floor(Math.max(0, Date.now() - sentAt) / 60000);
+  const ago =
+    minutes < 1 ? 'less than a minute ago' : minutes === 1 ? '1 minute ago' : `${minutes} minutes ago`;
   return {
     document,
-    proposal: briefProposal(proposal),
-    ...(warnings.length ? { warnings } : {}),
+    duplicate: true,
+    sent: false,
+    message: `This same PDF was already sent to the same people ${ago} (documentId ${docId}). Nothing was sent again. To send a second copy anyway, call quick_send again with allowDuplicate: true.`,
   };
+}
+
+/** Test seam. */
+export function resetSendsInFlight() {
+  sendsInFlight.clear();
 }
 
 /* ------------------------------------------------------------------ remind */

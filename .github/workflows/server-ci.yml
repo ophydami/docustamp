@@ -59,6 +59,10 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      # docs/MCP_TOOLS.md is generated from the live tool list; no database needed.
+      - name: MCP tool reference is current
+        run: npm run mcp:docs:check
+
       - name: Test
         run: npx jasmine
         env:

@@ -275,6 +275,8 @@
       "expiredBody": "Torna all'app che stavi collegando e ricomincia.",
       "expiredTitle": "Questa richiesta è scaduta",
       "failed": "Qualcosa è andato storto. Riprova.",
+      "readOnly": "Sola lettura",
+      "readOnlyHint": "{{app}} può vedere i tuoi documenti, ma non può modificare, inviare o firmare nulla.",
       "redirectNote": "Dopo la scelta torni su <0>{{host}}</0>.",
       "scopeRead": "Vedere i tuoi documenti, modelli e contatti, e chi ha firmato",
       "scopeWrite": "Creare, modificare e inviare documenti da firmare, con email ai tuoi firmatari",

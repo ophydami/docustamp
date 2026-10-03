@@ -275,6 +275,8 @@
       "expiredBody": "Retournez dans l'application que vous connectiez et recommencez.",
       "expiredTitle": "Cette demande a expiré",
       "failed": "Une erreur s'est produite. Veuillez réessayer.",
+      "readOnly": "Lecture seule",
+      "readOnlyHint": "{{app}} peut consulter vos documents, mais ne peut rien modifier, envoyer ni signer.",
       "redirectNote": "Après votre choix, vous revenez sur <0>{{host}}</0>.",
       "scopeRead": "Voir vos documents, modèles et contacts, et qui a signé",
       "scopeWrite": "Créer, modifier et envoyer des documents à signer, ce qui envoie des e-mails à vos signataires",

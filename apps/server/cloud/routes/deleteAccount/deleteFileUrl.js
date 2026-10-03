@@ -240,3 +240,59 @@ export async function deleteDataFiles(className, scope) {
 export async function deleteContactsInBatch(className, scope) {
   return await deletePages(className, scope, []);
 }
+
+/** Rows with no files of their own (webhooks, sign approvals): same scoping rules. */
+export async function deleteScopedRows(className, scope) {
+  return await deletePages(className, scope, []);
+}
+
+/**
+ * Classes whose rows hang off a document through a `Document` pointer: the
+ * draft history (lib/drafts.js) and the requests to sign it (lib/approvals.js).
+ */
+const DOCUMENT_DEPENDENTS = ['contracts_DocumentVersion', 'contracts_SignApproval'];
+
+/**
+ * Delete the rows that point at this membership's documents, before the
+ * documents themselves go: neither class carries `ExtUserPtr`, so once the
+ * documents are deleted nothing leads back to these rows and they would stay
+ * behind for good (a draft history holds every earlier version of a draft).
+ *
+ * @param {Object} extUserPtr the `contracts_Users` pointer the documents carry.
+ * @returns {Promise<number>} rows removed.
+ */
+export async function deleteDocumentDependents(extUserPtr) {
+  if (!extUserPtr?.objectId) {
+    throw new Error('deleteDocumentDependents: refusing an unscoped deletion query');
+  }
+  let total = 0;
+  let after = '';
+  /* eslint-disable no-await-in-loop */
+  for (;;) {
+    const docs = new Parse.Query('contracts_Document');
+    docs.equalTo('ExtUserPtr', extUserPtr);
+    if (after) docs.greaterThan('objectId', after);
+    docs.ascending('objectId');
+    docs.select('objectId');
+    docs.limit(PAGE_SIZE);
+    const page = await docs.find({ useMasterKey: true });
+    if (!page.length) break;
+    after = page[page.length - 1].id;
+    const pointers = page.map(doc => doc.toPointer());
+    for (const className of DOCUMENT_DEPENDENTS) {
+      for (;;) {
+        const rows = await new Parse.Query(className)
+          .containedIn('Document', pointers)
+          .limit(PAGE_SIZE)
+          .find({ useMasterKey: true });
+        if (rows.length) await Parse.Object.destroyAll(rows, { useMasterKey: true });
+        total += rows.length;
+        if (rows.length < PAGE_SIZE) break;
+      }
+    }
+    if (page.length < PAGE_SIZE) break;
+  }
+  /* eslint-enable no-await-in-loop */
+  console.log(`Deleted ${total} draft history and approval rows for extUser ${extUserPtr.objectId}`);
+  return total;
+}

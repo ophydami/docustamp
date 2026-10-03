@@ -13,6 +13,7 @@ import {
 } from '../lib/documents.js';
 import {
   aiLayoutDraft,
+  assertDraftRevision,
   deleteDocument,
   duplicateDocument,
   getDraft,
@@ -205,10 +206,11 @@ v1.get(
 
 v1.post(
   '/documents/:id/send',
-  route(
-    async req =>
-      await sendDocument(req.caller, req.params.id, { resend: req.body?.resend === true })
-  )
+  route(async req => {
+    // The draft the user approved, and nothing edited since (GET .../draft returns it).
+    await assertDraftRevision(req.caller, req.params.id, req.body?.revision);
+    return await sendDocument(req.caller, req.params.id, { resend: req.body?.resend === true });
+  })
 );
 
 v1.get(
