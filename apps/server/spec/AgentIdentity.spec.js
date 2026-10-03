@@ -511,6 +511,42 @@ describe('agent identity', () => {
         expect(after.get('AuditTrail') || []).toEqual([]);
       });
 
+      it("signs as a co-signer only with that co-signer's own link, like anyone holding it", async () => {
+        // A sender testing on one computer opens a signer's emailed link while
+        // still signed in. The link decides; the session adds nothing.
+        const ownerUser = await readUser(owner.user.id);
+        const doc = await makeDoc([ownerSeat, aliceSeat, bobSeat]);
+        const request = { user: ownerUser, params: {} };
+
+        const withLink = await resolveDocumentActor(request, doc, {
+          contactId: aliceSeat.id,
+          signingToken: tokenFor(doc, aliceSeat),
+          ownerMayActForContact: false,
+        });
+        expect(withLink).toEqual(
+          jasmine.objectContaining({ kind: 'signer', user: null, contactId: aliceSeat.id })
+        );
+
+        // Bob's link does not make the sender Alice.
+        await expectAsync(
+          resolveDocumentActor(request, doc, {
+            contactId: aliceSeat.id,
+            signingToken: tokenFor(doc, bobSeat),
+            ownerMayActForContact: false,
+          })
+        ).toBeRejectedWithError(/only sign as yourself/i);
+
+        // A document that asks for the emailed code still asks for it.
+        const coded = await makeDoc([ownerSeat, aliceSeat], { IsEnableOTP: true });
+        await expectAsync(
+          resolveDocumentActor(request, coded, {
+            contactId: aliceSeat.id,
+            signingToken: tokenFor(coded, aliceSeat),
+            ownerMayActForContact: false,
+          })
+        ).toBeRejectedWithError(OTP_GATE_MESSAGE);
+      });
+
       it('can still self-sign, claim their own seat, and read any seat', async () => {
         const ownerUser = await readUser(owner.user.id);
         const doc = await makeDoc([ownerSeat, aliceSeat]);

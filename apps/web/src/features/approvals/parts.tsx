@@ -1,7 +1,7 @@
 import type { TFunction } from "i18next";
 import type { PillTone } from "@/components/ui";
-import { dateMedium, timeShort } from "@/lib/format";
-import type { Approval, ApprovalStatus, ApprovalValue, FlagSeverity, ReviewOverall } from "./types";
+import { activeLocale, dateMedium, timeShort } from "@/lib/format";
+import type { Approval, ApprovalStatus, ApprovalValue, FlagSeverity, NameCheck, ReviewOverall } from "./types";
 
 /** Status pill for an approval. Pending is the one that needs you, so it is the blue one. */
 export function approvalPill(status: ApprovalStatus, t: TFunction): { text: string; tone: PillTone } {
@@ -92,4 +92,14 @@ export function formatValue(value: ApprovalValue["value"], t: TFunction): string
 export function isNumericValue(v: ApprovalValue): boolean {
   if (v.type === "date" || v.type === "number") return true;
   return typeof v.value === "number";
+}
+
+/** The names printed for the person's party that are not theirs, as one phrase in the reader's language. */
+export function mismatchedNames(check: NameCheck): string {
+  const names = check.printed.filter((p) => !p.matches).map((p) => p.name);
+  try {
+    return new Intl.ListFormat(activeLocale(), { type: "conjunction" }).format(names);
+  } catch {
+    return names.join(", ");
+  }
 }

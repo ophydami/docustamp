@@ -25,6 +25,7 @@ import {
   signingLinksFor,
 } from './requestMail.js';
 import { scheduleFieldsFor } from './schedule.js';
+import { accountOf, checkSeatName, nameMismatchMessage } from './signerName.js';
 import {
   buildPlaceholders,
   countFields,
@@ -630,6 +631,8 @@ export function buildDocumentObject(caller, input = {}) {
  * @param {boolean} [input.send]
  * @param {boolean} [input.signForMe] with `send`: the caller's agent signs the
  *   caller's own seat as it goes out (see sendDocument).
+ * @param {boolean} [input.confirmNameMismatch] with `signForMe`: the user
+ *   confirmed they sign for the party the document names (see sendDocument).
  * @param {{pageCount?: number, width?: number, height?: number}} [input.pageInfo] for the default layout
  */
 export async function createDocument(caller, input) {
@@ -717,7 +720,10 @@ export async function createDocument(caller, input) {
   // a link to a document that could have no fields at all.
   if (input?.send) {
     try {
-      return await sendDocument(caller, saved.id, { signForMe: input.signForMe === true });
+      return await sendDocument(caller, saved.id, {
+        signForMe: input.signForMe === true,
+        confirmNameMismatch: input.confirmNameMismatch === true,
+      });
     } catch (err) {
       // The row exists either way, so the caller is told where it is rather than
       // being left with an error and no document id.
@@ -1065,9 +1071,12 @@ export function cachedPageSizes(d) {
 /**
  * Refuse `signForMe` before anything goes out when it could not work: the app
  * may not sign, the caller has no seat, or (signing in order) someone signs
- * before the caller. A required value the agent cannot fill is refused next,
- * in sendDocument, also before anything goes out. A failure only found while
- * signing falls back to mailing everybody instead.
+ * before the caller. A required value the agent cannot fill, or a name printed
+ * for the caller's party that is not theirs, is refused next, in sendDocument,
+ * also before anything goes out. A failure only found while signing falls back
+ * to mailing everybody instead.
+ *
+ * @returns {{contactId: string, placeholder: Object}} the caller's seat.
  */
 function assertCanSignForMe(caller, d) {
   const scopeProblem = signingScopeProblem(caller);
@@ -1090,6 +1099,7 @@ function assertCanSignForMe(caller, d) {
       );
     }
   }
+  return seat;
 }
 
 /** Whether anybody has signed this document yet. */
@@ -1117,14 +1127,20 @@ export function ownDocumentAllowance(caller) {
  * (lib/agentSign.js, which also emails the owner a "signed for you" notice),
  * then the request mail to whoever still has to sign, so the caller is never
  * asked to sign a part that is already signed. Missing values are refused
- * before sending. If the signature still fails, everybody is mailed as usual,
- * the caller included, and `warnings` says why.
+ * before sending, and so is a document that prints another name for the
+ * caller's party (lib/signerName.js) unless `confirmNameMismatch` says the user
+ * confirmed they sign for it. If the signature still fails, everybody is mailed
+ * as usual, the caller included, and `warnings` says why.
  *
  * @param {import('./context.js').Caller} caller
  * @param {string} docId
- * @param {{resend?: boolean, signForMe?: boolean}} [opts]
+ * @param {{resend?: boolean, signForMe?: boolean, confirmNameMismatch?: boolean}} [opts]
  */
-export async function sendDocument(caller, docId, { resend = false, signForMe = false } = {}) {
+export async function sendDocument(
+  caller,
+  docId,
+  { resend = false, signForMe = false, confirmNameMismatch = false } = {}
+) {
   const obj = await loadDoc(docId);
   const d = JSON.parse(JSON.stringify(obj));
   assertOwner(d, caller);
@@ -1145,8 +1161,9 @@ export async function sendDocument(caller, docId, { resend = false, signForMe = 
       'signForMe only works when a draft is first sent. To sign a document that is already out, call sign_document.'
     );
   }
+  let nameCheck = null;
   if (signForMe) {
-    assertCanSignForMe(caller, d);
+    const seat = assertCanSignForMe(caller, d);
     // Every value the agent will fill, checked on the draft before it goes out:
     // a required field the agent cannot fill is refused here, not after mailing.
     const { missing } = await prepareAgentSignature(caller, d.objectId, { allowDraft: true });
@@ -1155,6 +1172,15 @@ export async function sendDocument(caller, docId, { resend = false, signForMe = 
       throw new Parse.Error(
         Parse.Error.VALIDATION_ERROR,
         `Your agent cannot sign your part, so nothing was sent. ${list} Send without signForMe and sign from your email, or fill this in DocuStamp.`
+      );
+    }
+    // The name the draft prints for the caller's party, before anyone is mailed:
+    // the other side must never get a document whose page and signature disagree.
+    nameCheck = await checkSeatName(d, seat, accountOf(caller));
+    if (nameCheck.status === 'mismatch' && confirmNameMismatch !== true) {
+      throw new Parse.Error(
+        Parse.Error.VALIDATION_ERROR,
+        `${nameMismatchMessage(nameCheck)} Nothing was sent.`
       );
     }
   }
@@ -1214,6 +1240,8 @@ export async function sendDocument(caller, docId, { resend = false, signForMe = 
       signedForYou = await agentSignDocument(caller, d.objectId, {
         allowedBy: ownDocumentAllowance(caller),
         notifyOwner: true,
+        confirmNameMismatch: confirmNameMismatch === true,
+        nameCheck,
       });
     } catch (err) {
       console.log('documents: the agent could not sign before mailing', err?.message || err);
@@ -1424,6 +1452,7 @@ export async function createDocumentFromTemplate(caller, templateId, input = {})
     message: input.message || { subject: t.RequestSubject, body: t.RequestBody },
     send: input.send === true,
     signForMe: input.signForMe === true,
+    confirmNameMismatch: input.confirmNameMismatch === true,
     folderId: input.folderId,
     origin: input.origin,
     chain,

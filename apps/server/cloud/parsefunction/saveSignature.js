@@ -54,8 +54,11 @@ export default async function saveSignature(request) {
   return await signatureCls.save(null, { useMasterKey: true });
 }
 
-/** Owner-only ACL: nobody but the signature's owner (and the master key). */
-function ownerAcl(userId) {
+/**
+ * Owner-only ACL: nobody but the signature's owner (and the master key). Also
+ * used for the signature an AI agent saves for its user (lib/savedSignature.js).
+ */
+export function ownerAcl(userId) {
   const acl = new Parse.ACL();
   acl.setPublicReadAccess(false);
   acl.setPublicWriteAccess(false);
@@ -90,7 +93,7 @@ async function assertOwnsSignature(id, callerId) {
  * @param {string} userId `_User` objectId.
  * @returns {Promise<string|null>} contracts_Signature objectId.
  */
-async function findSignatureIdFor(userId) {
+export async function findSignatureIdFor(userId) {
   const query = new Parse.Query('contracts_Signature');
   query.equalTo('UserId', { __type: 'Pointer', className: '_User', objectId: userId });
   query.descending('updatedAt');

@@ -533,6 +533,11 @@ export async function resolveDocumentActor(request, docObject, opts = {}) {
 
   if (request?.master) return { kind: 'master', user: null, contactId: claimed };
 
+  const token =
+    typeof opts.signingToken === 'string' && opts.signingToken
+      ? opts.signingToken
+      : signingTokenFromRequest(request);
+
   const user = await resolveCaller(request);
   if (user && isDocumentOwner(docJson, user.id)) {
     if (claimed && !opts.ownerMayActForContact) {
@@ -543,6 +548,17 @@ export async function resolveDocumentActor(request, docObject, opts = {}) {
         );
       }
       if (!contactIdsForUser(docJson, user).includes(claimed)) {
+        // The signing link is what proves a signer. A sender who opens a
+        // signer's link while still signed in (testing with a second address
+        // on one computer) holds exactly what that signer holds, so the link
+        // decides, as it would signed out. The session alone never does.
+        const verified = token ? verifySigningToken(token, { docId }) : null;
+        if (verified && verified.contactId === claimed) {
+          if (docJson?.IsEnableOTP === true) {
+            throw new Parse.Error(Parse.Error.OPERATION_FORBIDDEN, OTP_GATE_MESSAGE);
+          }
+          return { kind: 'signer', user: null, contactId: claimed };
+        }
         throw new Parse.Error(
           Parse.Error.OPERATION_FORBIDDEN,
           'You can only sign as yourself. Each signer signs from their own link.'
@@ -569,10 +585,6 @@ export async function resolveDocumentActor(request, docObject, opts = {}) {
     );
   };
 
-  const token =
-    typeof opts.signingToken === 'string' && opts.signingToken
-      ? opts.signingToken
-      : signingTokenFromRequest(request);
   if (token) {
     const verified = verifySigningToken(token, { docId });
     if (!verified) refuse('This signing link is invalid or has expired.');

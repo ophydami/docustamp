@@ -460,6 +460,9 @@ describe('agent signing (lib/agentSign.js)', () => {
           contactId: ownerContact.id,
         },
         nextSigner: { name: 'Terry Tenant', email: tenantPerson.email.toLowerCase() },
+        // Olivia had no saved signature: the typed one is hers from now on
+        // (spec/AgentSavedSignature.spec.js covers the rest).
+        signatureSaved: true,
       });
       // Never a link or a token.
       expect(JSON.stringify(res)).not.toMatch(/login|token|nextSignerUrl/i);
@@ -516,6 +519,7 @@ describe('agent signing (lib/agentSign.js)', () => {
       expect(ownerMails[0].html).toContain(`${PUBLIC_URL}/documents/${doc.id}`);
       expect(ownerMails[0].html).toContain('Review or void');
       expect(ownerMails[0].html).toContain('Terry Tenant');
+      expect(ownerMails[0].html).toContain('We saved this as your signature.');
 
       // Signing twice is refused like any second submit.
       const again = await refusal(
@@ -560,6 +564,9 @@ describe('agent signing (lib/agentSign.js)', () => {
       expect(requestMails.length).toBe(0);
       expect(ownerMails.length).toBe(1);
       expect(ownerMails[0].html).toContain('the document is complete');
+      // Saved by the first signature above, so nothing new to say.
+      expect(res.signatureSaved).toBe(false);
+      expect(ownerMails[0].html).not.toContain('We saved this as your signature');
     }, 90000);
 
     it('refuses an account whose address is not verified', async () => {

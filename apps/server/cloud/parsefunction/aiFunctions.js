@@ -290,6 +290,9 @@ export async function prepareDocumentFlow(caller, input = {}, opts = {}) {
     // The caller's agent signs the caller's own seat as it goes out
     // (lib/documents.js sendDocument). Only on a send.
     signForMe: send && input.signForMe === true,
+    // The user confirmed they sign for the party the document names, though
+    // the name it prints is not theirs (lib/signerName.js).
+    confirmNameMismatch: send && input.confirmNameMismatch === true,
     origin,
   });
   return { document, proposal, needsRecipients: [], warnings };

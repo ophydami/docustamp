@@ -149,6 +149,12 @@
       "notFoundTitle": "This request could not be found"
     },
     "intro": "When an app you connected wants to sign a document someone else sent you, it asks here first. Documents you create yourself are signed right away.",
+    "nameCheck": {
+      "confirm": "The signature will show {{expected}}, not {{names}}.",
+      "hint": "Your agent signs as {{expected}}. Approve only if you really sign for that party.",
+      "mismatch": "This document names <0>{{names}}</0> as the {{role}}, not you.",
+      "mismatchNoRole": "This document names <0>{{names}}</0> next to your signature, not you."
+    },
     "outcome": {
       "declinedBody": "Nothing was signed. You can still sign the document yourself.",
       "declinedTitle": "You declined",
@@ -156,6 +162,7 @@
       "expiredTitle": "This request expired",
       "failedBody": "Nothing was signed. Open the document to sign it yourself, or ask your agent to try again.",
       "failedTitle": "Signing did not go through",
+      "signatureSaved": "We saved this as your signature. You can change it any time in {{product}} Settings > My signature and initials.",
       "signedBodyChat": "You approved this in the chat, and {{agent}} signed it for you.",
       "signedBodyWeb": "You approved this in {{product}}, and {{agent}} signed it for you.",
       "signedTitle": "Signed for you"
@@ -219,6 +226,8 @@
       "empty": "Left blank",
       "none": "Only your signature. Nothing else gets filled in.",
       "notChecked": "Not checked",
+      "savedInitials": "Your saved initials",
+      "savedSignature": "Your saved signature",
       "title": "What your agent will fill in",
       "titleNotSigned": "What your agent would have filled in",
       "titleSigned": "What your agent filled in"

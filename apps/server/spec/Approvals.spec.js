@@ -375,7 +375,7 @@ describe('Approvals: agents signing documents sent to their user', () => {
       const { tools } = await rpc(bobToken, 'tools/list');
       const byName = Object.fromEntries(tools.map(t => [t.name, t]));
       expect(byName.sign_document._meta.ui.resourceUri).toBe(APP_RESOURCE_URI);
-      for (const name of ['app_approval', 'app_decide_approval']) {
+      for (const name of ['app_approval', 'app_approval_images', 'app_decide_approval']) {
         expect(byName[name]._meta.ui.visibility).toEqual(['app'], name);
       }
       for (const name of ['list_inbox', 'review_document', 'get_approval']) {

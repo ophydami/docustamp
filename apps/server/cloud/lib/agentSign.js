@@ -1,4 +1,4 @@
-import { appName } from '../../Utils.js';
+import { appName, escapeHtml } from '../../Utils.js';
 import {
   findPendingPriorSigner,
   findPlaceholderIndex,
@@ -12,11 +12,20 @@ import { readFresh } from './atomic.js';
 import { normaliseEmail } from './email.js';
 import { fetchPdfBytes } from './files.js';
 import { renderMail, strong } from './mailShell.js';
+import { accountOf, checkSeatName, nameMismatchMessage, nameMismatchRecord } from './signerName.js';
 import {
   pendingRequestRecipients,
   resolveAppOrigin,
   sendSignatureRequestMails,
 } from './requestMail.js';
+import {
+  hasSignatureValues,
+  loadSavedImage,
+  readSavedSignature,
+  saveTypedImages,
+  savedImageUrls,
+  withSavedImages,
+} from './savedSignature.js';
 import {
   IMAGE_TYPES,
   certificateSignature,
@@ -37,16 +46,24 @@ import {
  * that account and that verified address), only when it is that seat's turn,
  * and only with values the server decides: the name, email, company and job
  * title come from the profile, dates are today in the document's format, the
- * signature is the user's name set in a handwriting face with a small "Signed
- * via ChatGPT for Jane Doe" line under it, and the agent supplies just the
- * free-form answers (`fields`). The stamping is the browser's, ported
- * (lib/stamp.js), and the signature goes through the same `signPdf` code as a
- * person's, called as master with an `agent` record for the audit trail.
+ * signature and initials are the ones the user saved in DocuStamp (or, when
+ * they have none, their name set in a handwriting face, which is then saved as
+ * theirs: lib/savedSignature.js) with a small "Signed via ChatGPT for Jane Doe"
+ * line in the box, and the agent supplies just the free-form answers
+ * (`fields`). The stamping is the browser's, ported (lib/stamp.js), and the
+ * signature goes through the same `signPdf` code as a person's, called as
+ * master with an `agent` record for the audit trail.
  *
  * A document the user created is signed straight away and the user is mailed a
  * "signed for you" notice with a way to void it, so a misled model cannot sign
  * quietly. A document someone else sent needs the user's approval first
  * (`allowedBy.via` 'web' or 'chat', recorded with the approval).
+ *
+ * Before it signs, the name the PDF prints for the seat's party is checked
+ * against the account (lib/signerName.js): an agent always signs as the
+ * account holder, so a document naming somebody else for that party is
+ * refused on the user's own document until the user confirms
+ * (`confirmNameMismatch`), and recorded as confirmed on an approved one.
  */
 
 /** How the signature was allowed, as recorded in `AuditTrail[].AllowedBy.via`. */
@@ -317,7 +334,7 @@ function decideValues(caller, doc, seat, input) {
       if (has) {
         problem(
           f,
-          'Signatures and initials are drawn from your profile name; leave this field out.'
+          'Signatures and initials come from your saved signature, or your profile name; leave this field out.'
         );
         continue;
       }
@@ -484,15 +501,20 @@ function decideValues(caller, doc, seat, input) {
  * @param {string} docId
  * @param {{fields?: Object, allowDraft?: boolean}} [opts] `fields` are the
  *   agent's answers, keyed by field key.
+ * Signature and initials values carry `imageUrl`, a short-lived link to the
+ * saved image that will be stamped, when the user has one; without it the
+ * name is set in the handwriting face.
+ *
  * @returns {Promise<{doc: Object, seat: {contactId: string, role: string},
  *   values: Object[], missing: Object[]}>}
  */
 export async function prepareAgentSignature(caller, docId, { fields = {}, allowDraft = false } = {}) {
   const prepared = await prepare(caller, docId, fields, { allowDraft });
+  const urls = hasSignatureValues(prepared.values) ? await savedImageUrls(caller?.userId) : {};
   return {
     doc: prepared.doc,
     seat: prepared.seatInfo,
-    values: prepared.values,
+    values: withSavedImages(prepared.values, urls),
     missing: prepared.missing,
   };
 }
@@ -577,6 +599,14 @@ function allowedByRecord(caller, allowedBy, own) {
   return record;
 }
 
+/**
+ * The audit trail's note of a signature made over a name mismatch: confirmed by
+ * the user, on their own document with `confirmNameMismatch`, or by approving.
+ */
+function mismatchFor(check, allowed) {
+  return nameMismatchRecord(check, allowed.via === 'own_document' ? {} : { via: allowed.via });
+}
+
 /** A stored agent identity in the audit trail's shape. */
 function recordedAgent(agent) {
   return {
@@ -587,11 +617,35 @@ function recordedAgent(agent) {
   };
 }
 
-/** The images every signature and initials field gets, rendered once. */
-async function signatureImages(name) {
-  const signature = await typedSignaturePng(name);
-  const initials = await typedSignaturePng(initialsFrom(name));
-  return { signature, initials, certificate: await certificateSignature(signature) };
+/**
+ * The images every signature and initials field gets, made once: the ones the
+ * user saved, read now, else the name set in the handwriting face. `typed`
+ * holds what was made for a field on this document, to be saved as the user's
+ * own once the signature lands. The certificate always gets the signature,
+ * also on a seat with only initials.
+ *
+ * @param {string} userId
+ * @param {string} name
+ * @param {{signature: boolean, initials: boolean}} fieldsOf which kinds the seat has.
+ */
+async function signatureImages(userId, name, fieldsOf) {
+  const saved = await readSavedSignature(userId);
+  const typed = {};
+  let signature;
+  if (saved.signature) signature = await loadSavedImage(saved.signature, 'signature');
+  else {
+    signature = await typedSignaturePng(name);
+    if (fieldsOf.signature) typed.signature = signature;
+  }
+  let initials = null;
+  if (fieldsOf.initials) {
+    if (saved.initials) initials = await loadSavedImage(saved.initials, 'initials');
+    else {
+      initials = await typedSignaturePng(initialsFrom(name));
+      typed.initials = initials;
+    }
+  }
+  return { signature, initials, typed, certificate: await certificateSignature(signature) };
 }
 
 /** Who still has to sign, in order. */
@@ -607,7 +661,10 @@ function waitingLine(pending) {
     : `It now waits on ${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}.`;
 }
 
-function signedForYouHtml({ doc, agent, name, pending, url }) {
+/** The one-time line for a user whose typed signature was just saved as theirs. */
+export const SIGNATURE_SAVED_LINE = `We saved this as your signature. You can change it any time in ${appName} Settings > My signature and initials.`;
+
+function signedForYouHtml({ doc, agent, name, pending, url, signatureSaved }) {
   const done = !pending.length;
   return renderMail({
     title: `${agent.name} signed for you`,
@@ -618,6 +675,7 @@ function signedForYouHtml({ doc, agent, name, pending, url }) {
       done
         ? 'Everyone has signed, so the document is complete.'
         : `${waitingLine(pending)} If you did not ask for this, void the document now.`,
+      signatureSaved ? escapeHtml(SIGNATURE_SAVED_LINE) : '',
     ],
     details: [
       { label: 'Document', value: doc.Name },
@@ -630,7 +688,7 @@ function signedForYouHtml({ doc, agent, name, pending, url }) {
   });
 }
 
-async function mailOwner(caller, doc, agent, pending) {
+async function mailOwner(caller, doc, agent, pending, { signatureSaved = false } = {}) {
   const origin = resolveAppOrigin(caller?.publicUrl);
   const recipient = normaliseEmail(caller?.email) || normaliseEmail(doc?.ExtUserPtr?.Email);
   if (!recipient) return;
@@ -646,6 +704,7 @@ async function mailOwner(caller, doc, agent, pending) {
         name: caller?.name || '',
         pending,
         url: `${origin}/documents/${doc.objectId}`,
+        signatureSaved,
       }),
     });
     if (res?.status !== 'success') {
@@ -686,12 +745,26 @@ async function mailNextSigner(caller, doc, next) {
  * @param {Object} [opts.agent] the agent to record, `{kind, clientId, name, host}`:
  *   an approved request signs as the agent that asked, even when the user
  *   approved in a DocuStamp session. Defaults to `agentIdentity(caller)`.
+ * @param {boolean} [opts.confirmNameMismatch] the user confirmed they sign for
+ *   the party the document names, though the name printed for it is not
+ *   theirs. Without it an own-document signature over a mismatch is refused.
+ * @param {Object} [opts.nameCheck] a name check already made for this seat
+ *   (lib/signerName.js), so the PDF is not read for it again.
  * @returns {Promise<{status: 'signed', documentId: string, completed: boolean,
  *   signer: {name: string, email: string, contactId: string},
- *   nextSigner: {name: string, email: string}|null}>}
+ *   nextSigner: {name: string, email: string}|null, signatureSaved: boolean}>}
+ *   `signatureSaved` is true when the user had no saved signature (or
+ *   initials) and the typed one used here was saved as theirs: tell them once.
  */
 export async function agentSignDocument(caller, docId, opts = {}) {
-  const { fields = {}, allowedBy, notifyOwner = true, agent: asAgent } = opts || {};
+  const {
+    fields = {},
+    allowedBy,
+    notifyOwner = true,
+    agent: asAgent,
+    confirmNameMismatch = false,
+    nameCheck: knownCheck,
+  } = opts || {};
   const identityProblem = verifiedIdentityProblem(caller);
   if (identityProblem) throw fail(identityProblem, Parse.Error.OPERATION_FORBIDDEN);
 
@@ -708,7 +781,10 @@ export async function agentSignDocument(caller, docId, opts = {}) {
   const contact = (doc.Signers || []).find(s => s?.objectId === seat.contactId) || {};
   const name = String(caller.name || '').trim();
   const note = `Signed via ${agent.name} for ${name}`;
-  const images = await signatureImages(name);
+  const images = await signatureImages(caller.userId, name, {
+    signature: prepared.stamp.some(f => f.response === 'signature'),
+    initials: prepared.stamp.some(f => f.response === 'initials'),
+  });
   const stampFields = prepared.stamp.map(f => {
     if (f.response === 'signature') return { ...f, response: images.signature, note };
     if (f.response === 'initials') return { ...f, response: images.initials };
@@ -720,6 +796,17 @@ export async function agentSignDocument(caller, docId, opts = {}) {
     OnBehalfOf: { name, email: normaliseEmail(caller.email), userId: caller.userId },
     AllowedBy: allowed,
   };
+  // The name the document prints for this party: refused on the user's own
+  // document unless they confirmed; an approval is the user's confirmation.
+  const applyNameCheck = check => {
+    if (check.status !== 'mismatch') return;
+    if (allowed.via === 'own_document' && confirmNameMismatch !== true) {
+      throw fail(nameMismatchMessage(check), Parse.Error.VALIDATION_ERROR);
+    }
+    record.AllowedBy = { ...allowed, nameMismatch: mismatchFor(check, allowed) };
+  };
+  let nameChecked = Boolean(knownCheck?.status);
+  if (nameChecked) applyNameCheck(knownCheck);
 
   let signed = false;
   // One attempt at a time on purpose: each one stamps the file the last one lost to.
@@ -731,6 +818,11 @@ export async function agentSignDocument(caller, docId, opts = {}) {
     const baseUrl = fresh?.SignedUrl || fresh?.URL;
     if (!baseUrl) throw fail('This document has no file to sign.');
     const pdfBytes = await fetchPdfBytes(baseUrl);
+    if (!nameChecked) {
+      // Read from the copy about to be stamped, so the file is fetched once.
+      applyNameCheck(await checkSeatName(doc, seat, accountOf(caller), { bytes: pdfBytes }));
+      nameChecked = true;
+    }
     const stamped = await embedWidgetsToDoc({
       pdfBytes,
       fields: stampFields,
@@ -760,6 +852,10 @@ export async function agentSignDocument(caller, docId, opts = {}) {
   }
   /* eslint-enable no-await-in-loop */
 
+  // Signed with a typed signature: from now on it is the user's own.
+  const kept = await saveTypedImages(caller.userId, images.typed, { name });
+  const signatureSaved = kept.signature || kept.initials;
+
   const after = await loadDocJson(doc.objectId);
   const completed = after.IsCompleted === true;
   const pending = completed ? [] : outstanding(after);
@@ -768,7 +864,7 @@ export async function agentSignDocument(caller, docId, opts = {}) {
   // (sendmailv3 'next_signer'); with no browser, the server does.
   if (after.SendinOrder === true && next?.email) await mailNextSigner(caller, after, next);
   if (allowed.via === 'own_document' && notifyOwner !== false) {
-    await mailOwner(caller, after, agent, pending);
+    await mailOwner(caller, after, agent, pending, { signatureSaved });
   }
 
   return {
@@ -782,5 +878,6 @@ export async function agentSignDocument(caller, docId, opts = {}) {
     },
     // Another sender's co-signers are not the caller's business beyond a name.
     nextSigner: next ? { name: next.name, email: own ? next.email : '' } : null,
+    signatureSaved,
   };
 }

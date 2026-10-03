@@ -150,6 +150,12 @@
       "notFoundTitle": "Questa richiesta non è stata trovata"
     },
     "intro": "Quando un'app che hai collegato vuole firmare un documento che ti ha mandato qualcun altro, prima te lo chiede qui. I documenti che crei tu vengono firmati subito.",
+    "nameCheck": {
+      "confirm": "La firma mostrerà {{expected}}, non {{names}}.",
+      "hint": "Il tuo agente firma come {{expected}}. Approva solo se firmi davvero per quella parte.",
+      "mismatch": "Questo documento indica <0>{{names}}</0> come {{role}}, non te.",
+      "mismatchNoRole": "Questo documento indica <0>{{names}}</0> accanto alla tua firma, non te."
+    },
     "outcome": {
       "declinedBody": "Non è stato firmato nulla. Puoi comunque firmare il documento tu.",
       "declinedTitle": "Hai rifiutato",
@@ -157,6 +163,7 @@
       "expiredTitle": "Questa richiesta è scaduta",
       "failedBody": "Non è stato firmato nulla. Apri il documento per firmarlo tu, oppure chiedi al tuo agente di riprovare.",
       "failedTitle": "La firma non è andata a buon fine",
+      "signatureSaved": "L'abbiamo salvata come tua firma. Puoi cambiarla quando vuoi in {{product}}, in Impostazioni > La mia firma e le mie iniziali.",
       "signedBodyChat": "L'hai approvato nella chat e {{agent}} l'ha firmato per te.",
       "signedBodyWeb": "L'hai approvato in {{product}} e {{agent}} l'ha firmato per te.",
       "signedTitle": "Firmato per te"
@@ -220,6 +227,8 @@
       "empty": "Lasciato vuoto",
       "none": "Solo la tua firma. Non viene compilato altro.",
       "notChecked": "Non spuntata",
+      "savedInitials": "Le tue iniziali salvate",
+      "savedSignature": "La tua firma salvata",
       "title": "Cosa compilerà il tuo agente",
       "titleNotSigned": "Cosa avrebbe compilato il tuo agente",
       "titleSigned": "Cosa ha compilato il tuo agente"

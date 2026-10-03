@@ -110,9 +110,35 @@ export interface ApprovalValue {
   label?: string;
   value: unknown;
   page?: number;
+  /**
+   * Signature and initials on a pending request: the user has saved this
+   * image, and approving stamps it. The card shows it through
+   * app_approval_images, since it loads nothing from the network itself.
+   * The MCP server sends `savedImage` instead of the link.
+   */
+  savedImage?: boolean;
+  imageUrl?: string;
+}
+
+/** app_approval_images: the saved images a pending request will stamp, as data urls. */
+export interface SavedImages {
+  signature?: string;
+  initials?: string;
 }
 
 export type ApprovalStatus = "pending" | "signed" | "declined" | "failed" | "expired" | string;
+
+/**
+ * Whether the document prints the user's own name for the party their agent
+ * signs (server: cloud/lib/signerName.js). The agent always signs as the
+ * account holder, so a mismatch means the page and the signature disagree.
+ */
+export interface NameCheck {
+  status: "match" | "mismatch" | "unknown" | string;
+  expected: string;
+  role?: string;
+  printed: Array<{ name: string; page?: number; quote?: string; source?: string; matches: boolean }>;
+}
 
 /** A request from the user's agent to sign a document someone else sent them. */
 export interface Approval {
@@ -133,6 +159,9 @@ export interface Approval {
   agent: { name?: string; host?: string; kind?: string };
   values: ApprovalValue[];
   review: ContractReview | null;
+  nameCheck?: NameCheck | null;
+  /** Signing saved the typed signature as the user's own (they had none). */
+  signatureSaved?: boolean;
 }
 
 /**

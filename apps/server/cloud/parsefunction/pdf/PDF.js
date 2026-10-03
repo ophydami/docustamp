@@ -228,7 +228,8 @@ function sameFile(a, b) {
  * The audit-trail fields of a signature made by an AI agent for its user (see
  * lib/agentSign.js). Rebuilt key by key so nothing but these lands on the trail.
  *
- * @param {Object} agent `{Method, Agent, OnBehalfOf, AllowedBy}`.
+ * @param {Object} agent `{Method, Agent, OnBehalfOf, AllowedBy}`; `AllowedBy`
+ *   may carry `nameMismatch {printed, expected, confirmed, via?}`.
  * @returns {Object}
  */
 function agentAuditFields(agent) {
@@ -249,6 +250,17 @@ function agentAuditFields(agent) {
     signingEnabledAt: date(allowed.signingEnabledAt),
   };
   if (allowed.approvalId) allowedBy.approvalId = text(allowed.approvalId, 64);
+  // The document printed another name for this party and the user confirmed
+  // they sign for it anyway (lib/signerName.js).
+  const mismatch = allowed.nameMismatch;
+  if (mismatch && typeof mismatch === 'object') {
+    allowedBy.nameMismatch = {
+      printed: text(mismatch.printed),
+      expected: text(mismatch.expected),
+      confirmed: mismatch.confirmed === true,
+    };
+    if (mismatch.via) allowedBy.nameMismatch.via = text(mismatch.via, 20);
+  }
   return {
     Method: 'agent',
     Agent: {

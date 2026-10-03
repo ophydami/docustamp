@@ -27,10 +27,11 @@ import { WIDGET_SPEC } from './widgets.js';
  * browser does not stamp them either (signer/api.ts marks a prefill seat's
  * fields as nobody's).
  *
- * What is new on this side: the signature itself. An agent cannot draw, so the
- * user's name is set in Caveat (the face the web uses for a typed signature,
- * bundled in `font/`), and a field can carry a small `note` that is printed
- * under its box ("Signed via ChatGPT for Jane Doe").
+ * What is new on this side: the signature itself. An agent cannot draw, so it
+ * stamps the user's saved signature like any adopted image (lib/savedSignature.js),
+ * or, when they have none, their name set in Caveat (the face the web uses for a
+ * typed signature, bundled in `font/`). A field can carry a small `note` that is
+ * printed inside its box ("Signed via ChatGPT for Jane Doe").
  */
 
 /** Every widget type the signer knows (signer/widgets.ts WIDGET_TYPES). */
@@ -407,6 +408,21 @@ export function initialsFrom(name) {
   if (!parts.length) return '';
   if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
   return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+}
+
+/**
+ * Width and height of an image in pixels. Throws when the canvas cannot read
+ * it, so a stored image that is not one fails before anything is stamped: the
+ * stamp skips an image it cannot embed, which would leave the box empty.
+ *
+ * @param {Buffer|Uint8Array|string} src image bytes or a data URL.
+ * @returns {Promise<{width: number, height: number}>}
+ */
+export async function imageSize(src) {
+  const lib = await canvasLib();
+  const img = await lib.loadImage(imageBytes(src));
+  if (!img?.width || !img?.height) throw new Error('The image is empty.');
+  return { width: img.width, height: img.height };
 }
 
 /**

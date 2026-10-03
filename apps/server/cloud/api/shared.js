@@ -199,7 +199,9 @@ export async function analyzeFlow(caller, input = {}) {
 /**
  * `POST /v1/documents/quick-send` and the `quick_send` tool: analyse, bind, create, mail.
  * With `signForMe`, the caller's agent signs the caller's own seat as it goes
- * out (lib/documents.js sendDocument), so only the others are mailed.
+ * out (lib/documents.js sendDocument), so only the others are mailed;
+ * `confirmNameMismatch` lets it sign when the document names someone else for
+ * the caller's party and the user confirmed.
  *
  * Nothing is mailed to an address that only the document named: those roles come
  * back in `needsRecipients` with a `suggestedEmail` until the caller passes them

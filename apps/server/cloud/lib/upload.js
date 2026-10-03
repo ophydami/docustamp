@@ -70,9 +70,11 @@ const DATA_URI_RE = /^data:image\/(png|jpe?g);base64,/i;
  * falls back to the "not available" mark.
  *
  * @param {string} value data uri or bare base64 of the image.
+ * @param {{label?: string}} [opts] `label` ends the stored file's name
+ *   ("signature", "initials").
  * @returns {Promise<string>} the stored url, '' when there was nothing to store.
  */
-export async function storeSignatureImage(value) {
+export async function storeSignatureImage(value, { label = 'signature' } = {}) {
   const raw = typeof value === 'string' ? value.trim() : '';
   if (!raw) return '';
   // An earlier build (or a re-signed document) may already carry a url.
@@ -83,7 +85,7 @@ export async function storeSignatureImage(value) {
     const base64 = match ? raw.slice(match[0].length) : raw;
     const bytes = Buffer.from(base64, 'base64');
     if (!bytes.length || bytes.length > MAX_SIGNATURE_BYTES) return '';
-    const name = `${generateId(12)}_signature.${isJpeg ? 'jpg' : 'png'}`;
+    const name = `${generateId(12)}_${label}.${isJpeg ? 'jpg' : 'png'}`;
     const res = await parseUploadFile(name, bytes, isJpeg ? 'image/jpeg' : 'image/png');
     // The bare url, not a signed one: the trail outlives any token, and every
     // reader signs it again (the afterFind triggers, `getsignedurl`).

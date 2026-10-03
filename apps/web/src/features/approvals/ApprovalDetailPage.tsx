@@ -1,7 +1,7 @@
 import { useState, type ReactNode } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { Trans, useTranslation } from "react-i18next";
-import { ArrowLeft, ArrowUpRight, Bot, CheckCircle2, ChevronLeft, ChevronRight, Clock, PenLine, XCircle } from "lucide-react";
+import { AlertTriangle, ArrowLeft, ArrowUpRight, Bot, CheckCircle2, ChevronLeft, ChevronRight, Clock, PenLine, XCircle } from "lucide-react";
 import { Button, Cap, Card, Dialog, EmptyState, Pill, toast } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import { num, whenShort } from "@/lib/format";
@@ -10,14 +10,15 @@ import { useEmailVerification } from "@/features/settings/api";
 import { VerifyEmailCard } from "@/features/settings/VerifyEmailCard";
 import { useApproval, useApprovalPage, useDecideApproval } from "./api";
 import { ReviewPanel } from "./ReviewPanel";
-import { agentLabel, approvalPill, fieldTypeLabel, formatValue, isNumericValue, senderLabel, stampOf } from "./parts";
-import type { Approval, ApprovalDecision } from "./types";
+import { agentLabel, approvalPill, fieldTypeLabel, formatValue, isNumericValue, mismatchedNames, senderLabel, stampOf } from "./parts";
+import type { Approval, ApprovalDecision, ApprovalValue, NameCheck } from "./types";
 
 /**
  * One sign approval: the page as it stands, what the agent will fill in, the
  * AI's read of the terms, and Approve and sign / Decline, each behind a
  * confirm step. Once decided it shows the outcome and links to the document.
- * The approval email links here.
+ * When the document prints someone else's name for the person's party, an
+ * amber warning says so above everything else. The approval email links here.
  */
 export default function ApprovalDetailPage() {
   const { t } = useTranslation();
@@ -53,6 +54,7 @@ export default function ApprovalDetailPage() {
   const sender = senderLabel(approval.document);
   const unverified = verification.data?.verified === false;
   const pageCount = Math.max(1, approval.document.pageCount || 1);
+  const nameCheck = approval.nameCheck?.status === "mismatch" ? approval.nameCheck : null;
 
   async function onDecide(decision: ApprovalDecision) {
     if (!approval) return;
@@ -143,6 +145,8 @@ export default function ApprovalDetailPage() {
               </div>
             </div>
 
+            {nameCheck ? <NameMismatch check={nameCheck} pending={pending} onPage={setPage} /> : null}
+
             {!pending ? <Outcome approval={approval} /> : null}
 
             {pending && unverified ? <VerifyEmailCard variant="inline" reason={t("approvals.verifyReason")} /> : null}
@@ -169,10 +173,11 @@ export default function ApprovalDetailPage() {
                         <span
                           className={cn(
                             "min-w-0 flex-1 break-words text-[13px] text-ink-2",
-                            isNumericValue(v) && "num"
+                            isNumericValue(v) && "num",
+                            v.imageUrl && "self-center"
                           )}
                         >
-                          {formatValue(v.value, t)}
+                          {v.imageUrl ? <SavedImage value={v} /> : formatValue(v.value, t)}
                         </span>
                         {v.page ? (
                           <button
@@ -230,7 +235,14 @@ export default function ApprovalDetailPage() {
           </>
         }
       >
-        <p className="text-[12px] leading-relaxed text-muted">{t("approvals.confirm.approveNote")}</p>
+        <div className="flex flex-col gap-2">
+          {nameCheck ? (
+            <p className="rounded-md bg-warn-soft px-3 py-2 text-[12px] leading-relaxed text-warn-ink">
+              {t("approvals.nameCheck.confirm", { expected: nameCheck.expected, names: mismatchedNames(nameCheck) })}
+            </p>
+          ) : null}
+          <p className="text-[12px] leading-relaxed text-muted">{t("approvals.confirm.approveNote")}</p>
+        </div>
       </Dialog>
 
       <Dialog
@@ -275,6 +287,44 @@ function Header({ title, onBack, children }: { title: string; onBack: () => void
   );
 }
 
+/**
+ * "This document names Cameron Brooks as the Tenant, not you." The agent
+ * always signs as the account holder, so the page and the signature would
+ * disagree; approving is the person's confirmation that they sign for that
+ * party anyway. Amber, the warning tint, with the page it is printed on.
+ */
+function NameMismatch({ check, pending, onPage }: { check: NameCheck; pending: boolean; onPage: (page: number) => void }) {
+  const { t } = useTranslation();
+  const page = check.printed.find((p) => !p.matches)?.page;
+  return (
+    <div role="alert" className="flex items-start gap-2.5 rounded-lg bg-warn-soft px-3.5 py-2.5">
+      <AlertTriangle className="mt-0.5 size-4 shrink-0 text-warn" strokeWidth={1.8} />
+      <div className="min-w-0 flex-1 flex flex-col gap-0.5">
+        <p className="text-[13px] leading-relaxed text-warn-ink">
+          <Trans
+            i18nKey={check.role ? "approvals.nameCheck.mismatch" : "approvals.nameCheck.mismatchNoRole"}
+            values={{ names: mismatchedNames(check), role: check.role }}
+            components={[<span key="names" className="font-semibold" />]}
+          />
+        </p>
+        {pending ? (
+          <p className="text-[12px] leading-relaxed text-warn-ink">{t("approvals.nameCheck.hint", { expected: check.expected })}</p>
+        ) : null}
+      </div>
+      {page ? (
+        <button
+          type="button"
+          onClick={() => onPage(page)}
+          className="num shrink-0 text-[11px] text-warn-ink hover:underline underline-offset-2"
+          aria-label={t("approvals.preview.goToPage", { page })}
+        >
+          {t("approvals.preview.pageShort", { page: num(page) })}
+        </button>
+      ) : null}
+    </div>
+  );
+}
+
 /** What happened, once the request is no longer pending, with the way back to the document. */
 function Outcome({ approval }: { approval: Approval }) {
   const { t } = useTranslation();
@@ -301,10 +351,18 @@ function Outcome({ approval }: { approval: Approval }) {
   let body: ReactNode = null;
   if (approval.status === "signed") {
     title = t("approvals.outcome.signedTitle");
-    body =
-      approval.decidedVia === "chat"
-        ? t("approvals.outcome.signedBodyChat", { agent: approval.agent.name })
-        : t("approvals.outcome.signedBodyWeb", { agent: approval.agent.name, product: product.name });
+    body = (
+      <>
+        <span className="block">
+          {approval.decidedVia === "chat"
+            ? t("approvals.outcome.signedBodyChat", { agent: approval.agent.name })
+            : t("approvals.outcome.signedBodyWeb", { agent: approval.agent.name, product: product.name })}
+        </span>
+        {approval.signatureSaved ? (
+          <span className="block">{t("approvals.outcome.signatureSaved", { product: product.name })}</span>
+        ) : null}
+      </>
+    );
   } else if (approval.status === "declined") {
     title = t("approvals.outcome.declinedTitle");
     body = t("approvals.outcome.declinedBody");
@@ -333,6 +391,27 @@ function Outcome({ approval }: { approval: Approval }) {
         <div className="pt-0.5">{docLink}</div>
       </div>
     </div>
+  );
+}
+
+/**
+ * The signature or initials the person saved, which approving stamps, on white
+ * paper in both themes like the page itself. The link is short-lived, so an
+ * image that no longer loads falls back to the name.
+ */
+function SavedImage({ value }: { value: ApprovalValue }) {
+  const { t } = useTranslation();
+  const [broken, setBroken] = useState(false);
+  if (!value.imageUrl || broken) return <>{formatValue(value.value, t)}</>;
+  return (
+    <span className="paper-white inline-flex rounded-sm border border-line-soft px-2 py-1">
+      <img
+        src={value.imageUrl}
+        alt={t(value.type === "initials" ? "approvals.values.savedInitials" : "approvals.values.savedSignature")}
+        className="block h-9 max-w-[180px] object-contain"
+        onError={() => setBroken(true)}
+      />
+    </span>
   );
 }
 

@@ -150,6 +150,12 @@
       "notFoundTitle": "Cette demande est introuvable"
     },
     "intro": "Quand une application que vous avez connectée veut signer un document qu'une autre personne vous a envoyé, elle vous demande d'abord ici. Les documents que vous créez vous-même sont signés tout de suite.",
+    "nameCheck": {
+      "confirm": "La signature indiquera {{expected}}, et non {{names}}.",
+      "hint": "Votre agent signe en tant que {{expected}}. N'approuvez que si vous signez vraiment pour cette partie.",
+      "mismatch": "Ce document désigne <0>{{names}}</0> comme {{role}}, et non vous.",
+      "mismatchNoRole": "Ce document indique <0>{{names}}</0> à côté de votre signature, et non vous."
+    },
     "outcome": {
       "declinedBody": "Rien n'a été signé. Vous pouvez toujours signer le document vous-même.",
       "declinedTitle": "Vous avez refusé",
@@ -157,6 +163,7 @@
       "expiredTitle": "Cette demande a expiré",
       "failedBody": "Rien n'a été signé. Ouvrez le document pour le signer vous-même, ou demandez à votre agent de réessayer.",
       "failedTitle": "La signature n'a pas abouti",
+      "signatureSaved": "Nous l'avons enregistrée comme votre signature. Vous pouvez la modifier à tout moment dans {{product}}, sous Paramètres > Ma signature et mes initiales.",
       "signedBodyChat": "Vous l'avez approuvé dans le chat, et {{agent}} l'a signé pour vous.",
       "signedBodyWeb": "Vous l'avez approuvé dans {{product}}, et {{agent}} l'a signé pour vous.",
       "signedTitle": "Signé pour vous"
@@ -220,6 +227,8 @@
       "empty": "Laissé vide",
       "none": "Seulement votre signature. Rien d'autre n'est rempli.",
       "notChecked": "Non cochée",
+      "savedInitials": "Vos initiales enregistrées",
+      "savedSignature": "Votre signature enregistrée",
       "title": "Ce que votre agent va remplir",
       "titleNotSigned": "Ce que votre agent aurait rempli",
       "titleSigned": "Ce que votre agent a rempli"

@@ -150,6 +150,12 @@
       "notFoundTitle": "Diese Anfrage wurde nicht gefunden"
     },
     "intro": "Wenn eine verbundene App ein Dokument unterschreiben möchte, das Ihnen jemand anderes geschickt hat, fragt sie zuerst hier. Dokumente, die Sie selbst erstellen, werden sofort unterschrieben.",
+    "nameCheck": {
+      "confirm": "Die Unterschrift zeigt {{expected}}, nicht {{names}}.",
+      "hint": "Ihr Agent unterschreibt als {{expected}}. Geben Sie nur frei, wenn Sie wirklich für diese Partei unterschreiben.",
+      "mismatch": "Dieses Dokument nennt <0>{{names}}</0> als {{role}}, nicht Sie.",
+      "mismatchNoRole": "Dieses Dokument nennt <0>{{names}}</0> neben Ihrer Unterschrift, nicht Sie."
+    },
     "outcome": {
       "declinedBody": "Es wurde nichts unterschrieben. Sie können das Dokument trotzdem selbst unterschreiben.",
       "declinedTitle": "Sie haben abgelehnt",
@@ -157,6 +163,7 @@
       "expiredTitle": "Diese Anfrage ist abgelaufen",
       "failedBody": "Es wurde nichts unterschrieben. Öffnen Sie das Dokument, um selbst zu unterschreiben, oder bitten Sie Ihren Agenten, es noch einmal zu versuchen.",
       "failedTitle": "Das Unterschreiben hat nicht geklappt",
+      "signatureSaved": "Wir haben das als Ihre Unterschrift gespeichert. Sie können sie jederzeit in {{product}} unter Einstellungen > Meine Unterschrift und Initialen ändern.",
       "signedBodyChat": "Sie haben das im Chat freigegeben, und {{agent}} hat es für Sie unterschrieben.",
       "signedBodyWeb": "Sie haben das in {{product}} freigegeben, und {{agent}} hat es für Sie unterschrieben.",
       "signedTitle": "Für Sie unterschrieben"
@@ -220,6 +227,8 @@
       "empty": "Leer gelassen",
       "none": "Nur Ihre Unterschrift. Sonst wird nichts ausgefüllt.",
       "notChecked": "Nicht angekreuzt",
+      "savedInitials": "Ihre gespeicherten Initialen",
+      "savedSignature": "Ihre gespeicherte Unterschrift",
       "title": "Was Ihr Agent ausfüllt",
       "titleNotSigned": "Was Ihr Agent ausgefüllt hätte",
       "titleSigned": "Was Ihr Agent ausgefüllt hat"

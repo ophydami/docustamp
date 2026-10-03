@@ -10,7 +10,7 @@ import {
 } from '@modelcontextprotocol/ext-apps/server';
 import { appName } from '../../Utils.js';
 import { verifiedIdentityProblem } from '../lib/agentIdentity.js';
-import { decideApproval, getApproval } from '../lib/approvals.js';
+import { decideApproval, getApproval, getApprovalImages, withoutImageUrls } from '../lib/approvals.js';
 import { getDocument, listDocuments } from '../lib/documents.js';
 import { getDraft, reviewDraft } from '../lib/drafts.js';
 import { getParticipantDocument, loadParticipantDocument } from '../lib/inbox.js';
@@ -37,7 +37,8 @@ import { safeErrorMessage } from '../api/shared.js';
  *   show_documents     a short list card in the chat
  *   sign_document      (registered in ./server.js) the "signed for you" card, or
  *                      the approval card for a document someone else sent
- *   app_home, app_document, app_page, app_approval, app_decide_approval
+ *   app_home, app_document, app_page, app_approval, app_approval_images,
+ *   app_decide_approval
  *                      data and actions the page uses as the user moves around;
  *                      hidden from the model (`visibility: ["app"]`)
  *
@@ -51,7 +52,8 @@ import { safeErrorMessage } from '../api/shared.js';
  * `structuredContent`, so nothing secret goes there. The result's `_meta` is
  * the page's alone: hosts on the CHAT_APPROVAL_HOSTS list keep it from the
  * model, which is the only reason the approval code may travel in it. Page
- * images only ever go to the page (`app_page`).
+ * images, and the saved signature an approval will stamp, only ever go to the
+ * page (`app_page`, `app_approval_images`).
  */
 
 /** Bump the version when the page and the data it expects change incompatibly: hosts cache by uri. */
@@ -315,7 +317,8 @@ function documentSummary(data) {
  *   lib/approvals.js createSignApproval
  */
 export function approvalResult(out) {
-  const { approval, chatApproval, nonce, appUrl } = out;
+  const { chatApproval, nonce, appUrl } = out;
+  const approval = withoutImageUrls(out.approval);
   const where = chatApproval
     ? `with the Approve button on the card shown in this chat, or in ${appName} at ${appUrl}`
     : `in ${appName} at ${appUrl} (the card has a button that opens it)`;
@@ -323,6 +326,7 @@ export function approvalResult(out) {
     `Nothing is signed yet. "${approval.document.title}" was sent to the user by someone else, so ${appName} needs the user's approval before you sign it for them.`,
     `They approve or decline ${where}; they were also emailed a link.`,
     `Then call get_approval with approvalId "${approval.id}" to wait for the decision.`,
+    nameWarning(approval.nameCheck),
     out.created
       ? ''
       : 'This request was already open, so it was shown again instead of a new one.',
@@ -344,6 +348,17 @@ export function approvalResult(out) {
     { view: 'approval', approval, chatApproval, appUrl },
     chatApproval && nonce ? { 'docustamp/approvalNonce': nonce } : undefined
   );
+}
+
+/** The name check's warning for the model to pass on, or ''. */
+function nameWarning(check) {
+  if (check?.status !== 'mismatch') return '';
+  const names = check.printed
+    .filter(p => !p.matches)
+    .map(p => `"${p.name}"`)
+    .join(' and ');
+  const where = check.role ? `as the ${check.role}` : "next to the user's signature line";
+  return `Tell the user: this document names ${names} ${where}, but ${appName} signs as ${check.expected}. Approving signs as ${check.expected} anyway, so they should approve only if they really sign for that party.`;
 }
 
 function plural(n, word) {
@@ -556,8 +571,22 @@ export function registerAppViews(server, caller) {
       _meta: APP_ONLY,
     },
     guardedView(async ({ approvalId }) => {
-      const approval = await getApproval(caller, approvalId);
+      const approval = withoutImageUrls(await getApproval(caller, approvalId));
       return result(`Approval ${approval.status}.`, { approval });
+    })
+  );
+
+  server.registerTool(
+    'app_approval_images',
+    {
+      title: 'App: saved signature images',
+      description: `The signature and initials the user has saved in ${appName}, which approving a request stamps, as images for the ${appName} app's approval card.`,
+      inputSchema: { approvalId: z.string() },
+      _meta: APP_ONLY,
+    },
+    guardedView(async ({ approvalId }) => {
+      const images = await getApprovalImages(caller, approvalId);
+      return result('Saved signature images.', images);
     })
   );
 
@@ -574,10 +603,15 @@ export function registerAppViews(server, caller) {
       _meta: APP_ONLY,
     },
     guardedView(async ({ approvalId, nonce, decision }) => {
-      const approval = await decideApproval({ approvalId, decision, via: 'chat', caller, nonce });
+      const approval = withoutImageUrls(
+        await decideApproval({ approvalId, decision, via: 'chat', caller, nonce })
+      );
+      const saved = approval.signatureSaved
+        ? ` It saved the typed signature it used as the user's signature; they can change it in ${appName} Settings > My signature and initials.`
+        : '';
       const said =
         approval.status === 'signed'
-          ? `The user approved and ${appName} signed "${approval.document.title}" for them.`
+          ? `The user approved and ${appName} signed "${approval.document.title}" for them.${saved}`
           : approval.status === 'declined'
             ? `The user declined: do not sign "${approval.document.title}".`
             : `The user approved, but signing failed: ${approval.error || 'no reason given.'}`;

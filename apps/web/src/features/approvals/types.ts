@@ -30,6 +30,36 @@ export interface ApprovalValue {
   label: string;
   value: string | number | boolean | string[] | null;
   page?: number;
+  /**
+   * Signature and initials on a pending request: a short-lived link to the
+   * image the person saved, which approving stamps. Absent when they have none
+   * and their name will be typed instead.
+   */
+  imageUrl?: string;
+}
+
+/** One name the document prints for the person's party. */
+export interface PrintedName {
+  name: string;
+  page?: number;
+  quote?: string;
+  source?: "role" | "nearby";
+  /** The person themselves, or their own company. */
+  matches: boolean;
+}
+
+/**
+ * Whether the document prints the person's own name for the party the agent
+ * signs (server: cloud/lib/signerName.js). The agent always signs as the
+ * account holder, so a mismatch means the page and the signature disagree.
+ */
+export interface NameCheck {
+  status: "match" | "mismatch" | "unknown";
+  /** The account name the signature shows. */
+  expected: string;
+  /** The party's role label on the document, "" when it has none. */
+  role: string;
+  printed: PrintedName[];
 }
 
 export interface Approval {
@@ -50,6 +80,10 @@ export interface Approval {
   agent: { name: string; host?: string; kind?: string };
   values: ApprovalValue[];
   review: Review | null;
+  /** Null on a request made before the check existed. */
+  nameCheck?: NameCheck | null;
+  /** Signing saved the typed signature as the person's own (they had none). */
+  signatureSaved?: boolean;
 }
 
 export type ApprovalFilter = "pending" | "all";

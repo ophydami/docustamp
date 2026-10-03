@@ -122,16 +122,22 @@ function clip(value, max) {
  * certificate a counterparty reads.
  *
  * @param {Object} entry an AuditTrail entry (or a certificate block)
+ * `AllowedBy.nameMismatch` is there only when the document printed another
+ * name for the signer's party and the user confirmed they sign for it
+ * (lib/signerName.js).
+ *
  * @returns {{Method: 'agent', Agent: {kind: string, name: string, host: string},
  *   OnBehalfOf: {name: string, email: string},
  *   AllowedBy: {via: string, name: string, email: string, at: string,
- *   signingEnabledAt: string|null, approvalId?: string}}|null}
+ *   signingEnabledAt: string|null, approvalId?: string,
+ *   nameMismatch?: {printed: string, expected: string, confirmed: boolean, via?: string}}}|null}
  */
 export function agentRecord(entry) {
   if (entry?.Method !== 'agent') return null;
   const agent = entry.Agent || {};
   const behalf = entry.OnBehalfOf || {};
   const allowed = entry.AllowedBy || {};
+  const mismatch = allowed.nameMismatch;
   return {
     Method: 'agent',
     Agent: { kind: oneLine(agent.kind), name: oneLine(agent.name), host: oneLine(agent.host) },
@@ -143,6 +149,16 @@ export function agentRecord(entry) {
       at: toDate(allowed.at)?.toISOString() || '',
       signingEnabledAt: toDate(allowed.signingEnabledAt)?.toISOString() || null,
       ...(allowed.approvalId ? { approvalId: String(allowed.approvalId) } : {}),
+      ...(mismatch && typeof mismatch === 'object' && oneLine(mismatch.printed)
+        ? {
+            nameMismatch: {
+              printed: oneLine(mismatch.printed),
+              expected: oneLine(mismatch.expected),
+              confirmed: mismatch.confirmed === true,
+              ...(mismatch.via ? { via: oneLine(mismatch.via) } : {}),
+            },
+          }
+        : {}),
     },
   };
 }
@@ -155,6 +171,8 @@ export function agentRecord(entry) {
  * that app ("Allowed by"); on a document someone else sent they approved this
  * signature, in the web app or in the chat ("Approved by"). Dates use the
  * document's format and zone, as every other date on the certificate does.
+ * When the document printed another name for the signer's party and the user
+ * confirmed they sign for it, a third row says so ("Name on document").
  *
  * @param {Object} block from certificateBlocks
  * @param {{DateFormat?: string, timezone?: string, Is12Hr?: boolean}} [opts]
@@ -187,6 +205,13 @@ export function agentCertificateRows(block, { DateFormat, timezone = '', Is12Hr 
       allowed.via === 'web' ? appName : (agent.kind !== 'api_token' && name) || 'the AI app';
     const at = formatDateStr(allowed.at, DateFormat, timezone, Is12Hr);
     rows.push({ label: 'Approved by', value: `${who} in ${where}${at ? `, ${at}` : ''}` });
+  }
+  const mismatch = allowed.nameMismatch;
+  if (mismatch?.confirmed && mismatch.printed) {
+    rows.push({
+      label: 'Name on document',
+      value: `${clip(mismatch.printed, 120)} (signed as ${mismatch.expected || forWhom}, confirmed by ${who})`,
+    });
   }
   return rows;
 }

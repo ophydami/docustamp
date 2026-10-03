@@ -1,5 +1,5 @@
 import crypto from 'node:crypto';
-import { appName } from '../../Utils.js';
+import { appName, escapeHtml } from '../../Utils.js';
 import { isAiEnabled } from '../ai/client.js';
 import { reviewDocument } from '../ai/review.js';
 import { safeErrorMessage } from '../api/shared.js';
@@ -8,6 +8,7 @@ import sendSystemMail from '../parsefunction/sendSystemMail.js';
 import {
   agentSignDocument,
   assertAgentTurn,
+  findAgentSeat,
   isOwnDocument,
   prepareAgentSignature,
 } from './agentSign.js';
@@ -20,6 +21,13 @@ import { renderMail, strong } from './mailShell.js';
 import { signingScopeProblem } from './oauth.js';
 import { renderParticipantPreview } from './preview.js';
 import { resolveAppOrigin } from './requestMail.js';
+import {
+  hasSignatureValues,
+  savedImageDataUrls,
+  savedImageUrls,
+  withSavedImages,
+} from './savedSignature.js';
+import { accountOf, checkSeatName, mismatchedNames } from './signerName.js';
 
 /**
  * "Your agent wants to sign this for you": the approval an agent needs before
@@ -39,6 +47,16 @@ import { resolveAppOrigin } from './requestMail.js';
  * web click and a chat click racing each other sign at most once. Approving
  * re-checks the seat, the turn and the values, then signs the current copy
  * with the agent that asked recorded, and how the user allowed it.
+ *
+ * The request also carries the name check (lib/signerName.js): when the
+ * document prints another name for the user's party, the request still goes
+ * out, with the warning on the card, the page and the email. Approving is the
+ * user's confirmation, recorded on the audit entry and the certificate.
+ *
+ * While a request is pending, its signature and initials values carry
+ * `imageUrl`, the image the user has saved right now (lib/savedSignature.js),
+ * which is what approving stamps. When the user had none and the typed one
+ * was saved as theirs, the signed request says so (`signatureSaved`).
  *
  * A request goes stale by itself, checked on every read: the document ended
  * (completed, declined, voided, expired or deleted), the user signed some other
@@ -146,6 +164,7 @@ async function ensureApprovalSchema() {
     schema.addArray('Values');
     schema.addObject('DocumentInfo');
     schema.addObject('Review');
+    schema.addObject('NameCheck');
     schema.addString('Fingerprint');
     schema.addString('Status');
     schema.addString('NonceHash');
@@ -155,6 +174,7 @@ async function ensureApprovalSchema() {
     schema.addDate('DecidedAt');
     schema.addString('DecidedVia');
     schema.addString('Error');
+    schema.addBoolean('SignatureSaved');
     schema.setCLP(LOCKED_CLP);
     try {
       await schema.save();
@@ -261,14 +281,51 @@ function missingMessage(missing) {
 
 /* ------------------------------------------------------------------ shape */
 
+/** The stored name check as the contract shows it, or null for a request made before it existed. */
+function nameCheckJson(check) {
+  if (!check || typeof check !== 'object' || !check.status) return null;
+  return {
+    status: check.status,
+    expected: check.expected || '',
+    role: check.role || '',
+    printed: (Array.isArray(check.printed) ? check.printed : []).map(p => ({
+      name: p.name,
+      page: p.page,
+      quote: p.quote,
+      source: p.source,
+      matches: p.matches === true,
+    })),
+  };
+}
+
 /**
  * The approval as the web app, the chat card and the model see it. Never the
  * approval code or its hash.
  *
  * @param {Parse.Object} row
+ * @param {{signature?: string, initials?: string}} [imageUrls] links to the
+ *   saved images a pending request will stamp (`approvalsOut` reads them).
  * @returns {Object} the contract's `Approval`.
  */
-export function approvalJson(row) {
+/**
+ * The approval as an AI app receives it (tool text, structuredContent): the
+ * links to the user's saved signature images become a plain `savedImage: true`.
+ * The model has no use for a link to someone's signature, and the chat card
+ * fetches the images itself through the app-only `app_approval_images`. The
+ * web Approvals page keeps the links.
+ *
+ * @param {Object} approval from `approvalJson`.
+ * @returns {Object}
+ */
+export function withoutImageUrls(approval) {
+  if (!approval?.values?.some(v => v?.imageUrl)) return approval;
+  return {
+    ...approval,
+    values: approval.values.map(({ imageUrl, ...v }) => (imageUrl ? { ...v, savedImage: true } : v)),
+  };
+}
+
+export function approvalJson(row, imageUrls = {}) {
   const info = row.get('DocumentInfo') || {};
   const agent = row.get('Agent') || {};
   return {
@@ -288,15 +345,50 @@ export function approvalJson(row) {
       pageCount: info.pageCount || undefined,
     },
     agent: { name: agent.name || 'AI agent', host: agent.host || '', kind: agent.kind || '' },
-    values: (row.get('Values') || []).map(v => ({
-      key: String(v.key),
-      type: v.type,
-      label: v.label,
-      value: v.value ?? null,
-      page: v.page,
-    })),
+    values: withSavedImages(
+      (row.get('Values') || []).map(v => ({
+        key: String(v.key),
+        type: v.type,
+        label: v.label,
+        value: v.value ?? null,
+        page: v.page,
+      })),
+      row.get('Status') === 'pending' ? imageUrls : {}
+    ),
     review: row.get('Review') || null,
+    // Whether the document prints the user's own name for their party:
+    // {status: match|mismatch|unknown, expected, role, printed[]}.
+    nameCheck: nameCheckJson(row.get('NameCheck')),
+    // Signing saved the typed signature as the user's own: say so, once.
+    signatureSaved: row.get('SignatureSaved') === true,
   };
+}
+
+/**
+ * `approvalJson` for rows of one user, with the images their saved signature
+ * would stamp read now: a request decided later signs with what is saved then,
+ * so that is what it shows. Only pending requests get them.
+ *
+ * @param {Parse.Object[]} rows
+ * @returns {Promise<Object[]>}
+ */
+async function approvalsOut(rows) {
+  const wants = rows.find(
+    r => r.get('Status') === 'pending' && hasSignatureValues(r.get('Values'))
+  );
+  let urls = {};
+  if (wants) {
+    try {
+      urls = await savedImageUrls(wants.get('User')?.id);
+    } catch (err) {
+      console.log('approvals: saved signature not read', err?.message || err);
+    }
+  }
+  return rows.map(row => approvalJson(row, urls));
+}
+
+async function approvalOut(row) {
+  return (await approvalsOut([row]))[0];
 }
 
 /* ------------------------------------------------------------------ reads */
@@ -432,9 +524,7 @@ export async function listApprovals(caller, { status = 'pending' } = {}) {
   query.descending('createdAt');
   query.limit(LIST_LIMIT);
   const rows = await Promise.all((await query.find({ useMasterKey: true })).map(settle));
-  return rows
-    .filter(row => bucket === 'all' || row.get('Status') === 'pending')
-    .map(approvalJson);
+  return await approvalsOut(rows.filter(row => bucket === 'all' || row.get('Status') === 'pending'));
 }
 
 /**
@@ -444,7 +534,23 @@ export async function listApprovals(caller, { status = 'pending' } = {}) {
  * @param {string} approvalId
  */
 export async function getApproval(caller, approvalId) {
-  return approvalJson(await settle(await loadOwnRow(caller, approvalId)));
+  return await approvalOut(await settle(await loadOwnRow(caller, approvalId)));
+}
+
+/**
+ * The saved images a pending request will stamp, as data urls, for the chat
+ * card: its page loads nothing from the network (mcp/app.js), so it cannot
+ * show `imageUrl` itself. Empty once the request is decided.
+ *
+ * @param {import('./context.js').Caller} caller
+ * @param {string} approvalId
+ * @returns {Promise<{signature?: string, initials?: string}>}
+ */
+export async function getApprovalImages(caller, approvalId) {
+  const row = await settle(await loadOwnRow(caller, approvalId));
+  if (row.get('Status') !== 'pending') return {};
+  const kinds = (row.get('Values') || []).map(v => v?.type);
+  return await savedImageDataUrls(caller.userId, kinds);
 }
 
 /**
@@ -517,7 +623,15 @@ function senderLine(info) {
   return info.senderCompany && info.senderCompany !== who ? `${who} (${info.senderCompany})` : who;
 }
 
-function approvalMailHtml({ caller, agent, info, url }) {
+/** "This document names Cameron Brooks as the Tenant, but ...", for the email. */
+function nameWarning(check) {
+  if (check?.status !== 'mismatch') return '';
+  const names = mismatchedNames(check).map(strong).join(' and ');
+  const where = check.role ? `as the ${escapeHtml(check.role)}` : 'next to your signature line';
+  return `Check the name first: this document names ${names} ${where}, but your agent signs as ${strong(check.expected)}. Approve only if you really sign for that party.`;
+}
+
+function approvalMailHtml({ caller, agent, info, url, nameCheck }) {
   const title = info.title || 'a document';
   return renderMail({
     title: `${agent.name} wants to sign for you`,
@@ -526,7 +640,8 @@ function approvalMailHtml({ caller, agent, info, url }) {
     paragraphs: [
       `${strong(agentLabel(agent))} asked to sign ${strong(title)} for you. ${strong(senderLine(info))} sent it to you.`,
       'Nothing is signed until you approve. Check the document and what will be filled in, then approve or decline.',
-    ],
+      nameWarning(nameCheck),
+    ].filter(Boolean),
     details: [
       { label: 'Document', value: title },
       { label: 'From', value: senderLine(info) },
@@ -547,7 +662,13 @@ async function mailUser(caller, row) {
       from: appName,
       recipient,
       subject: `${agent.name} wants to sign "${info.title}" for you`,
-      html: approvalMailHtml({ caller, agent, info, url: approvalUrl(caller, row.id) }),
+      html: approvalMailHtml({
+        caller,
+        agent,
+        info,
+        url: approvalUrl(caller, row.id),
+        nameCheck: row.get('NameCheck'),
+      }),
     });
     if (res?.status !== 'success') {
       console.log('approvals: request mail not sent', res?.reason || res?.message || res?.status);
@@ -579,9 +700,11 @@ async function rotateNonce(row, caller) {
  * Refuses, with the reason, everything that would make the signature fail
  * later (the app may not sign, the email is not verified, it is not the user's
  * turn, a required value is missing), so the user is never asked to approve
- * something that cannot be signed. An open request for the same seat is
- * returned again (with a new approval code) when the agent asks with the same
- * values, and replaced when the values differ.
+ * something that cannot be signed. A document that prints another name for the
+ * user's party is not refused: the request carries the name check, and the
+ * user decides. An open request for the same seat is returned again (with a
+ * new approval code) when the agent asks with the same values, and replaced
+ * when the values differ.
  *
  * @param {import('./context.js').Caller} caller the agent's connection.
  * @param {string} docId
@@ -627,8 +750,10 @@ export async function createSignApproval(caller, docId, { fields = {} } = {}) {
     const nonce = chatApproval ? await rotateNonce(row, caller) : null;
     // eslint-disable-next-line no-await-in-loop
     const now = await loadRow(row.id);
+    // eslint-disable-next-line no-await-in-loop -- returns on the first match
+    const approval = await approvalOut(now);
     return {
-      approval: approvalJson(now),
+      approval,
       chatApproval: chatApproval && Boolean(nonce),
       nonce,
       appUrl: approvalUrl(caller, row.id),
@@ -637,13 +762,14 @@ export async function createSignApproval(caller, docId, { fields = {} } = {}) {
   }
 
   const reviewing = reviewOrNull(caller, doc.objectId);
-  const [raw, participant, review] = await Promise.all([
+  const [raw, participant, review, nameCheck] = await Promise.all([
     readFresh('contracts_Document', doc.objectId, DOC_KEYS),
     getParticipantDocument(caller, doc.objectId),
     Promise.race([
       reviewing.then(value => ({ value })),
       new Promise(resolve => setTimeout(() => resolve(null), REVIEW_WAIT_MS).unref?.()),
     ]),
+    checkSeatName(doc, findAgentSeat(doc, caller), accountOf(caller)),
   ]);
 
   await ensureApprovalSchema();
@@ -675,6 +801,7 @@ export async function createSignApproval(caller, docId, { fields = {} } = {}) {
     pageCount: participant.pageCount || null,
   });
   row.set('Review', review?.value || null);
+  row.set('NameCheck', nameCheck);
   row.set('Fingerprint', approvalFingerprint(raw));
   row.set('Status', 'pending');
   if (minted) {
@@ -703,7 +830,7 @@ export async function createSignApproval(caller, docId, { fields = {} } = {}) {
   await mailUser(caller, row);
 
   return {
-    approval: approvalJson(await loadRow(row.id)),
+    approval: await approvalOut(await loadRow(row.id)),
     chatApproval: Boolean(minted),
     nonce: minted?.nonce || null,
     appUrl: approvalUrl(caller, row.id),
@@ -756,7 +883,9 @@ function assertChatNonce(row, caller, nonce) {
  *
  * Approving signs with the request's stored values and the agent that asked,
  * on the copy as it is now, after checking the seat, the turn and the values
- * again. The outcome is `signed`, or `failed` with the reason.
+ * again, with the signature the user has saved now. The outcome is `signed`
+ * (with `signatureSaved` when the typed signature became the user's own), or
+ * `failed` with the reason.
  *
  * @param {Object} opts
  * @param {string} opts.approvalId
@@ -801,7 +930,7 @@ export async function decideApproval({ approvalId, decision, via, caller, nonce 
     }
     throw fail(decidedMessage(row), Parse.Error.OPERATION_FORBIDDEN);
   }
-  if (decision === 'decline') return approvalJson(await loadRow(row.id));
+  if (decision === 'decline') return await approvalOut(await loadRow(row.id));
 
   const docId = row.get('Document')?.id;
   const fields = row.get('Fields') || {};
@@ -815,9 +944,12 @@ export async function decideApproval({ approvalId, decision, via, caller, nonce 
     if (approvalFingerprint(raw) !== row.get('Fingerprint')) {
       throw fail('The document changed after your agent asked, so your agent has to ask again.');
     }
-    await agentSignDocument(caller, docId, {
+    const signed = await agentSignDocument(caller, docId, {
       fields,
       agent: row.get('Agent'),
+      // Checked when the agent asked, on the file the fingerprint still pins;
+      // approving it is the user's confirmation of a name mismatch.
+      nameCheck: row.get('NameCheck') || undefined,
       allowedBy: {
         via,
         name: caller.name,
@@ -828,11 +960,11 @@ export async function decideApproval({ approvalId, decision, via, caller, nonce 
       },
       notifyOwner: false,
     });
-    outcome = { Status: 'signed' };
+    outcome = { Status: 'signed', ...(signed.signatureSaved ? { SignatureSaved: true } : {}) };
   } catch (err) {
     console.log('approvals: signing after approval failed', err?.message || err);
     outcome = { Status: 'failed', Error: safeErrorMessage(err) };
   }
   await conditionalUpdate(APPROVAL_CLASS, row.id, { Status: 'approving' }, outcome);
-  return approvalJson(await loadRow(row.id));
+  return await approvalOut(await loadRow(row.id));
 }

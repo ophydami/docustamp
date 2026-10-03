@@ -256,11 +256,46 @@ stamps the PDF on the server and records the signature), never through a signing
   `get_document`'s `myFields` on a document sent to the user (text, number, dropdown, radio,
   cells: a string; checkbox: true/false or option labels). On a document someone else sent, it
   signs nothing and asks the user to approve (below).
+- **What it stamps** (`cloud/lib/savedSignature.js`). The signature and initials the user saved in
+  Settings > My signature and initials (`contracts_Signature`, read fresh at signing time, so an
+  approval decided later uses what is saved then), letterboxed into the box like an adopted image,
+  with the "Signed via ChatGPT for Jane Doe" note in the band at the bottom; the certificate image
+  is made from the same signature. A saved image that cannot be read refuses the signature rather
+  than stamping something else. With nothing saved, the name (or initials) is set in Caveat as
+  before, and once signed that image is saved as the user's own (the settings page's row, ACL and
+  storage; only into an empty column, so an image saved meanwhile is never replaced). Only what the
+  document used is saved. The result then has `signatureSaved: true`, and the "signed for you"
+  email adds "We saved this as your signature. You can change it any time in DocuStamp Settings >
+  My signature and initials."
 - **Recorded.** The audit entry gets `Method: "agent"`, the agent (name and redirect host),
   on whose behalf, and what allowed it (`own_document` with when signing was turned on, or
   `web` / `chat` with the approval id). The client IP of the MCP request (`caller.ip`, set in
   `authenticateApiRequest`) is the signing IP; for a web approval it is the browser's.
   `get_audit_trail` returns these as `method`, `agent`, `onBehalfOf` and `allowedBy`.
+- **Who is signing** (`cloud/lib/signerName.js`). An agent always signs as the account holder, so
+  before it signs, the PDF's own text is read (pdf.js, no AI) for the names it prints for the
+  seat's party: role-anchored text anywhere ("Landlord: Jordan Ellis", "Landlord name: X",
+  "Jordan Ellis (Landlord)", 'Acme Corp ("Buyer")', "X, Landlord"), and labels by the seat's
+  signature, initials and name fields ("Name:", "Printed name:", "By:", a bare party label; same
+  column, up to 100pt above or 40pt below, nearer to this seat's fields than to anyone else's).
+  Blanks, placeholders, dates, emails and addresses are skipped. A name matches when it is the
+  account name (case, accents, punctuation and titles aside; a middle name more or less;
+  initials) or the account's company. The result is `match`, `mismatch` or `unknown`; unknown
+  (nothing found, a scan, an unreadable file) never blocks.
+  - On the user's own document (`sign_document`, and `signForMe`, checked on the draft before
+    anyone is mailed) a mismatch is refused: `This document names "Jordan Ellis" as the Landlord,
+    but your agent signs as Morgan Avery. ...`. `confirmNameMismatch: true` (on `sign_document`,
+    `quick_send`, `send_document`, `create_document`, `create_document_from_template`) signs
+    anyway, after the user confirms.
+  - On a document someone else sent it never refuses: the approval carries `nameCheck {status,
+    expected, role, printed[]}`, and the card, the `/approvals/:id` page and the email warn.
+    Approving is the confirmation.
+  - A signature over a mismatch records `AllowedBy.nameMismatch {printed, expected, confirmed,
+    via?}` (`allowedBy.nameMismatch` in `get_audit_trail`), and the certificate adds "Name on
+    document: Jordan Ellis (signed as Morgan Avery, confirmed by Morgan Avery)".
+  - The server instructions tell the model to print the user's real name (whoami) for their party
+    when it drafts a document, never an invented one unless asked, and to pass
+    `confirmNameMismatch` only when the user confirms.
 - `analyze_document` / `quick_send` tell the model who the sender is, so `is_sender` is only set
   for the sender's own party when the document has a signing line for it.
 
@@ -318,7 +353,15 @@ indexes in `migrationdb/createSignApprovalIndexes.js`).
   web and the chat cannot both sign. Approving re-checks the values and the fingerprint, then
   signs the current copy with `agentSignDocument(..., { agent, allowedBy: { via, approvalId } })`:
   the agent that asked is recorded even when the user approved in a web session. The result is
-  `signed`, or `failed` with the reason in `error`.
+  `signed`, or `failed` with the reason in `error`. When signing saved the typed signature as the
+  user's own, the approval keeps `signatureSaved: true` (column `SignatureSaved`), and the page and
+  the card say so in the signed state.
+- **The saved image.** While a request is pending, its signature and initials values carry
+  `imageUrl`, a short-lived link (`API_FILE_URL_TTL`) to the image the user has saved right now,
+  read on every read and never stored on the request; absent when the name will be typed. The
+  `/approvals/:id` page shows it in "What your agent will fill in". The card's page loads nothing
+  from the network, so it asks the app-only `app_approval_images { approvalId }` for the same
+  images as data urls.
 - **Staying current.** Every read settles the request first: it expires when the document is
   completed, declined, voided, expired or deleted, when the user signed some other way, or when
   the file, the seats or the signers changed (the fingerprint covers `URL`, the placeholder ids,
@@ -341,7 +384,7 @@ it expects change incompatibly; hosts cache by uri.
 | `show_document` | a card in the chat; a draft shows its signing page and a Send button so the user sends it themselves; a document sent to the user shows what it asks of them |
 | `show_documents` | a short list card in the chat |
 | `sign_document` | the "signed for you" document card, or the approval card for a document someone else sent |
-| `app_home`, `app_document`, `app_page`, `app_approval`, `app_decide_approval` | data and actions the page uses, hidden from the model (`visibility: ["app"]`) |
+| `app_home`, `app_document`, `app_page`, `app_approval`, `app_approval_images`, `app_decide_approval` | data and actions the page uses, hidden from the model (`visibility: ["app"]`) |
 
 The page acts only through the ordinary tools (`send_document`, `send_reminder`, `extend_expiry`,
 `void_document`), so it can do nothing the connection could not; a read-only connection gets
@@ -657,8 +700,8 @@ TESTING=true npx jasmine spec/OAuth.spec.js
 
 - One personal token per user (rotate replaces it), with no scopes. OAuth connections have three
   scopes (`documents:read`, `documents:write`, `documents:sign`); there is no finer split yet.
-- Agent signing covers the user's own documents. Documents other people send need an approval
-  step that is not built yet; `sign_document` refuses them.
+- The name check reads printed text only: a scanned page, a name drawn as an image, or wording it
+  does not know ("The party of the first part, J. Ellis") comes out `unknown` and does not block.
 - OAuth: dynamic client registration only. Client ID Metadata Documents (CIMD) are not supported
   yet, and MCP Events (automations that start from a document event) are not implemented.
 - Every rate limit and the idempotency store are in-memory per Node process; scale out and they

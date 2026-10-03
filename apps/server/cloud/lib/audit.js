@@ -77,6 +77,9 @@ function methodJson(source) {
       at: allowed.at || undefined,
       signingEnabledAt: allowed.signingEnabledAt,
       approvalId: allowed.approvalId,
+      // The document named someone else for this party and the user confirmed
+      // they sign for it (lib/signerName.js): {printed, expected, confirmed, via?}.
+      ...(allowed.nameMismatch ? { nameMismatch: allowed.nameMismatch } : {}),
     },
   };
 }

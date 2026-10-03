@@ -8,7 +8,7 @@ import { askAssistant, callTool, openUrl, tellModel } from "./bridge";
 import { agentName, approvalStatusOf, isNumeric, overallOf, severityOf, shortDate, stamp, valueText } from "./format";
 import { Banner, N, PagePreview } from "./ui";
 import { RefreshButton, type ViewContext } from "./views";
-import type { Approval, ApprovalData, ApprovalValue, ContractReview } from "./types";
+import type { Approval, ApprovalData, ApprovalValue, ContractReview, NameCheck, SavedImages } from "./types";
 
 /*
   A request from the user's agent to sign a document someone else sent them
@@ -175,6 +175,29 @@ function useApproval(
 
 type ApprovalState = ReturnType<typeof useApproval>;
 
+/**
+ * The signature and initials the user saved, which approving stamps, from the
+ * app-only app_approval_images as data urls: this page loads nothing from the
+ * network itself, and the server marks those values `savedImage` rather than
+ * handing the model a link to the user's signature. Nothing to fetch
+ * when none is saved (the name is typed) or once the request is decided.
+ */
+function useSavedImages(ctx: ViewContext, approval: Approval): SavedImages {
+  const [images, setImages] = useState<SavedImages>({});
+  const wanted = approval.status === "pending" && approval.values.some((v) => v.savedImage || v.imageUrl);
+  useEffect(() => {
+    if (!wanted) return;
+    let live = true;
+    callTool<SavedImages>(ctx.app, "app_approval_images", { approvalId: approval.id })
+      .then((next) => live && setImages(next && typeof next === "object" ? next : {}))
+      .catch(() => live && setImages({}));
+    return () => {
+      live = false;
+    };
+  }, [ctx.app, approval.id, wanted]);
+  return wanted ? images : {};
+}
+
 /* ------------------------------------------------------------------ pieces */
 
 function ApprovalPill({ status, className }: { status: string; className?: string }) {
@@ -197,7 +220,7 @@ function sender(approval: Approval): string {
   return senderCompany && senderCompany !== who ? `${who}, ${senderCompany}` : who;
 }
 
-function ValuesList({ approval }: { approval: Approval }) {
+function ValuesList({ approval, images = {} }: { approval: Approval; images?: SavedImages }) {
   const title =
     approval.status === "pending"
       ? "What your agent will fill in"
@@ -215,6 +238,7 @@ function ValuesList({ approval }: { approval: Approval }) {
           {approval.values.map((v, i) => {
             const text = valueText(v.value);
             const blank = v.value === "" || v.value === null || v.value === undefined;
+            const image = v.type === "signature" || v.type === "initials" ? images[v.type] : undefined;
             return (
               <div
                 key={`${v.key}-${i}`}
@@ -227,10 +251,21 @@ function ValuesList({ approval }: { approval: Approval }) {
                   className={cn(
                     "m-0 min-w-0 flex-1 break-words text-[12.5px]",
                     blank ? "text-muted-2" : "text-ink",
-                    !blank && isNumeric(v.type, text) && "num"
+                    !blank && isNumeric(v.type, text) && "num",
+                    image && "self-center"
                   )}
                 >
-                  {text}
+                  {image ? (
+                    <span className="paper-white inline-flex rounded-sm border border-line-soft px-1.5 py-0.5">
+                      <img
+                        src={image}
+                        alt={v.type === "initials" ? "Your saved initials" : "Your saved signature"}
+                        className="block h-8 max-w-[160px] object-contain"
+                      />
+                    </span>
+                  ) : (
+                    text
+                  )}
                 </dd>
                 {v.page ? <span className="num shrink-0 text-[11px] text-muted-2">p.{v.page}</span> : null}
               </div>
@@ -241,6 +276,41 @@ function ValuesList({ approval }: { approval: Approval }) {
         <p className="mt-1.5 text-[12.5px] text-muted">Only your signature.</p>
       )}
     </div>
+  );
+}
+
+/** "Cameron Brooks" or "Cameron Brooks and Jordan Ellis": the printed names that are not the user. */
+function otherNames(check: NameCheck): string {
+  const names = check.printed.filter((p) => !p.matches).map((p) => p.name);
+  if (names.length <= 1) return names[0] || "";
+  return `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}`;
+}
+
+/**
+ * The document prints someone else's name for the user's party. The agent
+ * always signs as the account holder, so approving is the user saying they
+ * sign for that party anyway.
+ */
+function NameWarning({ approval }: { approval: Approval }) {
+  const check = approval.nameCheck;
+  if (check?.status !== "mismatch") return null;
+  const page = check.printed.find((p) => !p.matches)?.page;
+  return (
+    <Banner tone="warn">
+      This document names <span className="font-semibold">{otherNames(check)}</span>{" "}
+      {check.role ? `as the ${check.role}` : "next to your signature"}, not you.
+      {page ? (
+        <>
+          {" "}
+          <span className="num whitespace-nowrap">p.{page}</span>
+        </>
+      ) : null}
+      {approval.status === "pending" ? (
+        <span className="block pt-0.5 text-[12px]">
+          {agentShort(approval)} signs as {check.expected}. Approve only if you really sign for that party.
+        </span>
+      ) : null}
+    </Banner>
   );
 }
 
@@ -325,6 +395,12 @@ function Outcome({ approval, a, ctx, url }: { approval: Approval; a: ApprovalSta
       <Banner tone="success">
         <span className="font-semibold">Signed.</span> DocuStamp signed &ldquo;{title}&rdquo; for you after you approved
         {approval.decidedVia === "web" ? " in DocuStamp" : " here"}.{when}
+        {approval.signatureSaved ? (
+          <span className="block pt-0.5 text-[12px]">
+            We saved this as your signature. You can change it any time in DocuStamp Settings &gt; My signature and
+            initials.
+          </span>
+        ) : null}
       </Banner>
     );
   else if (approval.status === "declined")
@@ -477,6 +553,7 @@ export function ApprovalCard({
 }) {
   const approval = data.approval;
   const a = useApproval(ctx, data, nonce, onChanged);
+  const images = useSavedImages(ctx, approval);
   const pending = approval.status === "pending";
   return (
     <div className="flex flex-col">
@@ -516,8 +593,13 @@ export function ApprovalCard({
           </p>
         </div>
       </div>
+      {approval.nameCheck?.status === "mismatch" ? (
+        <div className="px-3 pb-3">
+          <NameWarning approval={approval} />
+        </div>
+      ) : null}
       <div className="border-t border-line-soft px-3 py-2.5">
-        <ValuesList approval={approval} />
+        <ValuesList approval={approval} images={images} />
       </div>
       <div className="border-t border-line-soft px-3 py-2.5">
         <ReviewBlock review={approval.review} compact />
@@ -560,6 +642,7 @@ export function ApprovalView({
   const { app, locale } = ctx;
   const approval = data.approval;
   const a = useApproval(ctx, data, nonce, onChanged);
+  const images = useSavedImages(ctx, approval);
   const pending = approval.status === "pending";
   const doc = approval.document;
   return (
@@ -611,8 +694,9 @@ export function ApprovalView({
         </div>
 
         <div className="flex flex-col gap-4">
+          <NameWarning approval={approval} />
           <Card className="p-4">
-            <ValuesList approval={approval} />
+            <ValuesList approval={approval} images={images} />
           </Card>
           <Card className="p-4">
             <ReviewBlock review={approval.review} />
