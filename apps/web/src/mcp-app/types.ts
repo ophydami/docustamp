@@ -140,6 +140,19 @@ export interface NameCheck {
   printed: Array<{ name: string; page?: number; quote?: string; source?: string; matches: boolean }>;
 }
 
+/**
+ * Whether the user's rules for their AI let the agent sign without asking
+ * (server: checkSignRules in cloud/lib/agentRules.js). `reasons` are the
+ * server's plain sentences; nothing is shown when the rules are off.
+ */
+export interface RuleCheck {
+  enabled: boolean;
+  allowed: boolean;
+  reasons: Array<{ code: string; text: string }>;
+  summary?: string;
+  rulesUpdatedAt?: string | null;
+}
+
 /** A request from the user's agent to sign a document someone else sent them. */
 export interface Approval {
   id: string;
@@ -160,6 +173,8 @@ export interface Approval {
   values: ApprovalValue[];
   review: ContractReview | null;
   nameCheck?: NameCheck | null;
+  /** Why the user's rules sent this to them. Missing on a request made before rules existed. */
+  ruleCheck?: RuleCheck | null;
   /** Signing saved the typed signature as the user's own (they had none). */
   signatureSaved?: boolean;
 }

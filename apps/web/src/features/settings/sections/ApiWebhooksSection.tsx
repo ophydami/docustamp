@@ -1,11 +1,13 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { Trans, useTranslation } from "react-i18next";
-import { Check, Copy, KeyRound, Plug, RefreshCw, Trash2 } from "lucide-react";
+import { ArrowUpRight, Check, Copy, KeyRound, Plug, RefreshCw, ShieldCheck, Trash2 } from "lucide-react";
 import { Button, Dialog, Pill, Toggle, toast, type PillTone } from "@/components/ui";
 import { customRouteBase } from "@/lib/parse";
 import { dateMedium, whenShort } from "@/lib/format";
 import { FormColumn, ReadOnlyRow, SectionCard, SectionError, SectionLoading } from "../parts";
 import {
+  useAgentRules,
   useApiToken,
   useEmailVerification,
   useGenerateApiToken,
@@ -61,6 +63,42 @@ function accessOf(grant: OAuthGrantInfo): { key: string; tone: PillTone } {
   if (canSign) return { key: "settings.apiWebhooks.apps.readSendSign", tone: "accent" };
   if (grant.scopes.includes("documents:write")) return { key: "settings.apiWebhooks.apps.readWrite", tone: "accent" };
   return { key: "settings.apiWebhooks.apps.readOnly", tone: "neutral" };
+}
+
+/**
+ * Points at Settings > Rules for your AI, which covers every app below and the
+ * API key: whether the AI may sign documents others send without asking, and
+ * who it may send to. Left out on a server without rules (the query fails).
+ */
+function RulesLinkCard() {
+  const { t } = useTranslation();
+  const rules = useAgentRules();
+  if (rules.isError) return null;
+  const on = rules.data?.autoSign.enabled === true;
+  const limited = (rules.data?.sendOnlyTo.length ?? 0) > 0;
+  return (
+    <SectionCard
+      title={t("settings.apiWebhooks.rules.title")}
+      note={t("settings.apiWebhooks.rules.note")}
+      aside={<ShieldCheck className="size-4 text-muted" strokeWidth={1.6} />}
+    >
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        {rules.data ? (
+          <div className="flex flex-wrap items-center gap-1.5">
+            <Pill tone={on ? "accent" : "neutral"}>{t(on ? "settings.apiWebhooks.rules.on" : "settings.apiWebhooks.rules.off")}</Pill>
+            {limited ? <Pill tone="neutral">{t("settings.apiWebhooks.rules.sendLimited")}</Pill> : null}
+          </div>
+        ) : (
+          <span />
+        )}
+        <Link to="/settings/rules">
+          <Button size="sm" iconRight={<ArrowUpRight className="size-3.5" strokeWidth={1.6} />}>
+            {t("settings.apiWebhooks.rules.open")}
+          </Button>
+        </Link>
+      </div>
+    </SectionCard>
+  );
 }
 
 /**
@@ -315,6 +353,7 @@ export default function ApiWebhooksSection() {
     <FormColumn className="max-w-[640px]">
       <VerifyEmailCard />
       <ConnectedAppsCard />
+      <RulesLinkCard />
 
       <SectionCard
         title={t("settings.apiWebhooks.token.title")}

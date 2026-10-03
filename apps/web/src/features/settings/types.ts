@@ -9,6 +9,7 @@ export type SectionId =
   | "signature"
   | "notifications"
   | "security"
+  | "rules"
   | "general"
   | "team"
   | "branding"
@@ -126,4 +127,41 @@ export interface DocumentExportRow {
   updatedAt?: string;
   ExtUserPtr?: { Name?: string; Email?: string };
   Signers?: Array<{ Name?: string; Email?: string }>;
+}
+
+/** Document types a rule can name (server: RULE_DOC_TYPES in cloud/lib/agentRules.js). */
+export type RuleDocType =
+  | "nda"
+  | "order_form"
+  | "msa"
+  | "sow"
+  | "offer_letter"
+  | "lease"
+  | "renewal"
+  | "consent_form"
+  | "purchase_order"
+  | "vendor_agreement";
+
+/** What the person can ask to always be asked about (server: ALWAYS_ASK_KEYS). */
+export type AlwaysAskKey = "autoRenewal" | "personalGuarantee" | "nonCompete" | "paymentTerms";
+
+/**
+ * The account's rules for its AI apps, as `getagentrules` answers them: one set
+ * for every connected app and the API key. Only the person changes them, here;
+ * an agent can read them and never write them.
+ */
+export interface AgentRules {
+  autoSign: {
+    enabled: boolean;
+    documentTypes: RuleDocType[];
+    /** Whole dollars. 0 means only documents with no money in them. */
+    maxValueUsd: number;
+    /** Empty means any sender. */
+    trustedSenderDomains: string[];
+  };
+  alwaysAsk: Record<AlwaysAskKey, boolean>;
+  /** Empty means the agent may send to anyone. */
+  sendOnlyTo: string[];
+  updatedAt: string | null;
+  updatedBy: { name: string; email: string } | null;
 }

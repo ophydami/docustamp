@@ -229,7 +229,8 @@ function sameFile(a, b) {
  * lib/agentSign.js). Rebuilt key by key so nothing but these lands on the trail.
  *
  * @param {Object} agent `{Method, Agent, OnBehalfOf, AllowedBy}`; `AllowedBy`
- *   may carry `nameMismatch {printed, expected, confirmed, via?}`.
+ *   may carry `nameMismatch {printed, expected, confirmed, via?}`, and
+ *   `rule {summary, documentType, valueUsd, limitUsd}` when `via` is 'rules'.
  * @returns {Object}
  */
 function agentAuditFields(agent) {
@@ -250,6 +251,19 @@ function agentAuditFields(agent) {
     signingEnabledAt: date(allowed.signingEnabledAt),
   };
   if (allowed.approvalId) allowedBy.approvalId = text(allowed.approvalId, 64);
+  // Signed without asking because the document fit the user's rules for their
+  // AI (lib/agentRules.js): which rule, and what it matched.
+  const rule = allowed.rule;
+  if (allowedBy.via === 'rules' && rule && typeof rule === 'object') {
+    const amount = value =>
+      value !== null && value !== undefined && Number.isFinite(Number(value)) ? Number(value) : null;
+    allowedBy.rule = {
+      summary: text(rule.summary, 300),
+      documentType: text(rule.documentType, 40),
+      valueUsd: amount(rule.valueUsd),
+      limitUsd: amount(rule.limitUsd),
+    };
+  }
   // The document printed another name for this party and the user confirmed
   // they sign for it anyway (lib/signerName.js).
   const mismatch = allowed.nameMismatch;

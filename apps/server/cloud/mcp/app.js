@@ -327,6 +327,7 @@ export function approvalResult(out) {
     `They approve or decline ${where}; they were also emailed a link.`,
     `Then call get_approval with approvalId "${approval.id}" to wait for the decision.`,
     nameWarning(approval.nameCheck),
+    ruleWarning(approval.ruleCheck),
     out.created
       ? ''
       : 'This request was already open, so it was shown again instead of a new one.',
@@ -348,6 +349,14 @@ export function approvalResult(out) {
     { view: 'approval', approval, chatApproval, appUrl },
     chatApproval && nonce ? { 'docustamp/approvalNonce': nonce } : undefined
   );
+}
+
+/** Why the user's rules did not let you sign this one without asking, for the model to pass on, or ''. */
+function ruleWarning(check) {
+  if (!check?.enabled || check.allowed || !check.reasons?.length) return '';
+  return `The user's rules for their AI did not cover this one, so it needs them. Tell them why: ${check.reasons
+    .map(r => r.text)
+    .join(' ')}`;
 }
 
 /** The name check's warning for the model to pass on, or ''. */

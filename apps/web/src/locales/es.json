@@ -202,6 +202,11 @@
     "row": {
       "from": "De {{sender}}"
     },
+    "rules": {
+      "edit": "Tus reglas",
+      "title": "Por qué esto te necesita",
+      "titleDecided": "Por qué tu IA te preguntó"
+    },
     "status": {
       "failed": "Falló"
     },
@@ -2207,6 +2212,14 @@
         "note": "Las mismas operaciones que las herramientas MCP, como JSON sobre HTTPS.",
         "title": "API REST"
       },
+      "rules": {
+        "note": "Un solo conjunto para todas las apps de arriba y tu clave de API: qué puede firmar tu IA sin preguntar y a quién puede enviar.",
+        "off": "Te pregunta por cada documento",
+        "on": "Firma sin preguntar, dentro de tus reglas",
+        "open": "Abrir reglas",
+        "sendLimited": "Solo envía a dominios aprobados",
+        "title": "Reglas para tu IA"
+      },
       "token": {
         "copy": "Copiar token",
         "created": "Creado",
@@ -2514,6 +2527,69 @@
         "uploadFailed": "La subida falló"
       }
     },
+    "rules": {
+      "alwaysAsk": {
+        "autoRenewal": "Renovaciones automáticas",
+        "autoRenewalHint": "El contrato se renueva solo salvo que alguien lo cancele.",
+        "nonCompete": "No competencia y exclusividad",
+        "nonCompeteHint": "Límites sobre con quién o para quién puedes trabajar.",
+        "note": "Aunque un documento encaje con las reglas de arriba, esto te llega primero a ti.",
+        "paymentTerms": "Condiciones de pago",
+        "paymentTermsHint": "Deberías dinero.",
+        "personalGuarantee": "Garantías personales",
+        "personalGuaranteeHint": "Responderías tú personalmente, no solo tu empresa.",
+        "title": "Pregúntame siempre por"
+      },
+      "autoSign": {
+        "limitHint": "0 $ significa solo documentos sin dinero de por medio.",
+        "limitInvalid": "Escribe una cantidad entera en dólares, 0 o más.",
+        "limitLabel": "Pregúntame por todo lo que supere",
+        "needType": "Elige al menos un tipo de documento o desactiva firmar sin preguntar.",
+        "note": "Para documentos que otras personas te envían. Los documentos que envías tú se firman en cuanto lo dices.",
+        "offNote": "Desactivado: nada se firma solo. Tu IA te pregunta por cada documento que te envían.",
+        "sendersHint": "Solo los documentos de estos dominios se pueden firmar sin preguntar. Déjalo vacío para permitir cualquier remitente.",
+        "sendersLabel": "Remitentes de confianza (opcional)",
+        "title": "Firmar sin preguntar",
+        "toggle": "Dejar que mi IA firme sin preguntar los documentos que otros me envían, cuando encajen con estas reglas",
+        "toggleHint": "La app sigue necesitando \"Puede firmar por mí\" activado, y solo firma tu parte. Todo lo que quede fuera de estas reglas te llega primero a ti.",
+        "toggleLabel": "Firmar sin preguntar",
+        "typesHint": "Cualquier otro tipo de documento te llega primero a ti.",
+        "typesLabel": "Tipos de documento que puede firmar"
+      },
+      "domains": {
+        "add": "Añadir",
+        "duplicate": "{{domain}} ya está en la lista.",
+        "invalid": "Escribe un dominio como vendor.com.",
+        "none": "Aún no hay dominios.",
+        "placeholder": "vendor.com",
+        "remove": "Quitar {{domain}}"
+      },
+      "readOnlyNote": "Estas reglas se aplican a todas las apps que conectes y a tu clave de API. Tu IA puede leerlas, pero nunca cambiarlas.",
+      "sending": {
+        "hint": "Déjalo vacío para que tu IA pueda enviar a cualquiera. Tu propia dirección siempre está permitida. Un envío a cualquier otro dominio se rechaza y no sale nada.",
+        "label": "Enviar solo a estos dominios (opcional)",
+        "note": "Se comprueba cada vez que tu IA envía, reenvía, sustituye a un firmante o programa un envío de seguimiento.",
+        "title": "A quién puede enviar tu IA"
+      },
+      "toast": {
+        "saveFailed": "No se pudieron guardar tus reglas",
+        "saved": "Reglas guardadas"
+      },
+      "types": {
+        "consent_form": "Formulario de consentimiento",
+        "lease": "Contrato de alquiler",
+        "msa": "Contrato marco (MSA)",
+        "nda": "NDA",
+        "offer_letter": "Carta de oferta",
+        "order_form": "Formulario de pedido",
+        "purchase_order": "Orden de compra",
+        "renewal": "Renovación",
+        "sow": "Declaración de trabajo",
+        "vendor_agreement": "Contrato con proveedor"
+      },
+      "updated": "Último cambio el <0>{{date}}</0>",
+      "updatedBy": "Último cambio de {{name}} el <0>{{date}}</0>"
+    },
     "sections": {
       "api": {
         "description": "Token personal, endpoint MCP y API REST para scripts y agentes de IA.",
@@ -2559,6 +2635,11 @@
         "description": "Tu nombre, tus datos de contacto y cómo se te muestran las fechas.",
         "label": "Perfil",
         "title": "Perfil"
+      },
+      "rules": {
+        "description": "Qué puede firmar tu IA sin preguntar y a quién puede enviar.",
+        "label": "Reglas para tu IA",
+        "title": "Reglas para tu IA"
       },
       "security": {
         "description": "Cambia tu contraseña y revisa dónde tienes la sesión iniciada.",

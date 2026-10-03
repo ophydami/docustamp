@@ -202,6 +202,11 @@
     "row": {
       "from": "Von {{sender}}"
     },
+    "rules": {
+      "edit": "Ihre Regeln",
+      "title": "Warum das Sie braucht",
+      "titleDecided": "Warum Ihre KI Sie gefragt hat"
+    },
     "status": {
       "failed": "Fehlgeschlagen"
     },
@@ -2207,6 +2212,14 @@
         "note": "Dieselben Vorgänge wie die MCP-Werkzeuge, als JSON über HTTPS.",
         "title": "REST-API"
       },
+      "rules": {
+        "note": "Ein Regelwerk für jede App oben und Ihren API-Schlüssel: was Ihre KI ohne Nachfrage unterschreiben darf und an wen sie senden darf.",
+        "off": "Fragt Sie bei jedem Dokument",
+        "on": "Unterschreibt ohne Nachfrage, innerhalb Ihrer Regeln",
+        "open": "Regeln öffnen",
+        "sendLimited": "Sendet nur an freigegebene Domains",
+        "title": "Regeln für Ihre KI"
+      },
       "token": {
         "copy": "Token kopieren",
         "created": "Erstellt",
@@ -2514,6 +2527,69 @@
         "uploadFailed": "Hochladen fehlgeschlagen"
       }
     },
+    "rules": {
+      "alwaysAsk": {
+        "autoRenewal": "Automatischen Verlängerungen",
+        "autoRenewalHint": "Der Vertrag verlängert sich von selbst, wenn niemand kündigt.",
+        "nonCompete": "Wettbewerbsverboten und Exklusivität",
+        "nonCompeteHint": "Einschränkungen, mit wem oder für wen Sie arbeiten dürfen.",
+        "note": "Auch wenn ein Dokument zu den Regeln oben passt, kommen diese zuerst zu Ihnen.",
+        "paymentTerms": "Zahlungsbedingungen",
+        "paymentTermsHint": "Sie würden Geld schulden.",
+        "personalGuarantee": "Persönlichen Bürgschaften",
+        "personalGuaranteeHint": "Sie würden persönlich haften, nicht nur Ihr Unternehmen.",
+        "title": "Fragen Sie mich immer bei"
+      },
+      "autoSign": {
+        "limitHint": "0 $ bedeutet: nur Dokumente ohne Geldbeträge.",
+        "limitInvalid": "Geben Sie einen ganzen Dollarbetrag ein, 0 oder mehr.",
+        "limitLabel": "Fragen Sie mich bei allem über",
+        "needType": "Wählen Sie mindestens eine Dokumentart oder schalten Sie das Unterschreiben ohne Nachfrage aus.",
+        "note": "Für Dokumente, die andere Ihnen senden. Dokumente, die Sie selbst senden, werden unterschrieben, sobald Sie es sagen.",
+        "offNote": "Aus: Nichts wird von selbst unterschrieben. Ihre KI fragt Sie bei jedem Dokument, das andere senden.",
+        "sendersHint": "Nur Dokumente von diesen Domains können ohne Nachfrage unterschrieben werden. Leer lassen, um jeden Absender zu erlauben.",
+        "sendersLabel": "Vertrauenswürdige Absender (optional)",
+        "title": "Unterschreiben ohne Nachfrage",
+        "toggle": "Meine KI darf Dokumente, die andere mir senden, ohne Nachfrage unterschreiben, wenn sie zu diesen Regeln passen",
+        "toggleHint": "Für die App muss weiterhin \"Darf für mich unterschreiben\" eingeschaltet sein, und sie unterschreibt nur Ihren Teil. Alles außerhalb dieser Regeln kommt zuerst zu Ihnen.",
+        "toggleLabel": "Ohne Nachfrage unterschreiben",
+        "typesHint": "Jede andere Art von Dokument kommt zuerst zu Ihnen.",
+        "typesLabel": "Dokumentarten, die sie unterschreiben darf"
+      },
+      "domains": {
+        "add": "Hinzufügen",
+        "duplicate": "{{domain}} steht schon auf der Liste.",
+        "invalid": "Geben Sie eine Domain wie vendor.com ein.",
+        "none": "Noch keine Domains.",
+        "placeholder": "vendor.com",
+        "remove": "{{domain}} entfernen"
+      },
+      "readOnlyNote": "Diese Regeln gelten für jede App, die Sie verbinden, und für Ihren API-Schlüssel. Ihre KI kann sie lesen, aber nie ändern.",
+      "sending": {
+        "hint": "Leer lassen, damit Ihre KI an jeden senden darf. Ihre eigene Adresse ist immer erlaubt. Ein Versand an eine andere Domain wird abgelehnt, und nichts geht raus.",
+        "label": "Nur an diese Domains senden (optional)",
+        "note": "Wird immer geprüft, wenn Ihre KI sendet, erneut sendet, einen Unterzeichner ersetzt oder eine Folgesendung einrichtet.",
+        "title": "An wen Ihre KI senden darf"
+      },
+      "toast": {
+        "saveFailed": "Ihre Regeln konnten nicht gespeichert werden",
+        "saved": "Regeln gespeichert"
+      },
+      "types": {
+        "consent_form": "Einwilligungserklärung",
+        "lease": "Mietvertrag",
+        "msa": "Rahmenvertrag (MSA)",
+        "nda": "NDA",
+        "offer_letter": "Stellenangebot",
+        "order_form": "Bestellformular",
+        "purchase_order": "Bestellung",
+        "renewal": "Verlängerung",
+        "sow": "Leistungsbeschreibung",
+        "vendor_agreement": "Lieferantenvertrag"
+      },
+      "updated": "Zuletzt geändert am <0>{{date}}</0>",
+      "updatedBy": "Zuletzt geändert von {{name}} am <0>{{date}}</0>"
+    },
     "sections": {
       "api": {
         "description": "Persönliches Token, MCP-Endpunkt und REST-API für Skripte und KI-Agenten.",
@@ -2559,6 +2635,11 @@
         "description": "Ihr Name, Ihre Kontaktdaten und die Darstellung von Datumsangaben.",
         "label": "Profil",
         "title": "Profil"
+      },
+      "rules": {
+        "description": "Was Ihre KI ohne Nachfrage unterschreiben darf und an wen sie senden darf.",
+        "label": "Regeln für Ihre KI",
+        "title": "Regeln für Ihre KI"
       },
       "security": {
         "description": "Passwort ändern und prüfen, wo Sie angemeldet sind.",

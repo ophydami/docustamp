@@ -1,3 +1,4 @@
+import { assertRecipientsAllowed } from './agentRules.js';
 import { conditionalUpdate } from './atomic.js';
 import { loadCaller } from './context.js';
 import { createDocumentFromTemplate } from './documents.js';
@@ -17,6 +18,12 @@ import { emitInBackground } from './webhooks.js';
  * emitted as the `chained` webhook event; the follow-up itself points back with
  * `ChainedFrom` and goes out through the ordinary send path, so it mails,
  * reminds and webhooks like any other sent document.
+ *
+ * A chain an AI set up (`viaAgent`, see documents.normaliseChain) is checked
+ * against the account's "only send to" rule when it fires, with the rules of
+ * that moment, not the ones in force when it was set: a follow-up to an address
+ * the AI may no longer send to is recorded as `blocked`, with the reason, and
+ * nothing is created or sent. A chain a person set up is never limited.
  */
 
 /**
@@ -70,7 +77,8 @@ async function ownerCaller(docJson) {
  * @param {Object} docJson the completed document, plain JSON with Placeholders,
  *   Signers, CreatedBy and ExtUserPtr (the shape `signPdf` already holds).
  * @returns {Promise<Object|null>} the recorded ChainResult, or null when the
- *   document has no chain.
+ *   document has no chain. `status` is 'sent', 'failed', or 'blocked' (an AI's
+ *   chain to an address the account's rules do not let it send to).
  */
 export async function runChainOnComplete(docJson) {
   const chain = docJson?.Chain;
@@ -83,16 +91,21 @@ export async function runChainOnComplete(docJson) {
     if (!recipients.length) {
       throw new Error('the completed document has no signers to carry over to the follow-up');
     }
-    const created = await createDocumentFromTemplate(caller, chain.templateId, {
-      recipients,
-      name: chain.name,
-      note: chain.note,
-      message: chain.message,
-      send: true,
-      origin: 'chain',
-      chainedFrom: docJson.objectId,
-    });
-    result = { status: 'sent', documentId: created.objectId, at };
+    const blocked = chain.viaAgent === true ? await rulesBlock(caller, recipients) : '';
+    if (blocked) {
+      result = { status: 'blocked', error: blocked, at };
+    } else {
+      const created = await createDocumentFromTemplate(caller, chain.templateId, {
+        recipients,
+        name: chain.name,
+        note: chain.note,
+        message: chain.message,
+        send: true,
+        origin: 'chain',
+        chainedFrom: docJson.objectId,
+      });
+      result = { status: 'sent', documentId: created.objectId, at };
+    }
   } catch (err) {
     console.error(
       `chain: the follow-up for ${docJson?.objectId} could not be sent:`,
@@ -110,6 +123,24 @@ export async function runChainOnComplete(docJson) {
   }
   emitInBackground('chained', docJson, { chain: result });
   return result;
+}
+
+/**
+ * Why the account's rules stop an AI's chain from mailing these recipients, or
+ * '' when they do not. Checked as the AI that set the chain up would be (the
+ * owner, as a token caller), with the rules in force now.
+ */
+async function rulesBlock(caller, recipients) {
+  try {
+    await assertRecipientsAllowed(
+      { ...caller, viaToken: true },
+      recipients.map(r => r.email)
+    );
+    return '';
+  } catch (err) {
+    if (err?.code !== Parse.Error.OPERATION_FORBIDDEN) throw err;
+    return String(err.message || err).slice(0, 500);
+  }
 }
 
 /** Fire and forget: a chain failure never reaches the signer's response. */

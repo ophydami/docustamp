@@ -11,6 +11,7 @@ import {
 import { MAX_ATTEMPTS } from './deleteUtils.js';
 import { authoriseDeletionRequest, clearDeletionState } from '../../lib/deletionToken.js';
 import { revokeOAuthGrantsForUser } from '../../lib/oauth.js';
+import { deleteAgentRulesForUser } from '../../lib/agentRules.js';
 import { hashOtp } from '../../lib/otp.js';
 import { extUserForUser, resolveCaller } from '../../parsefunction/authGuard.js';
 
@@ -201,7 +202,11 @@ export async function deleteUser(userId, adminId, adminTenantId, isOrgAdmin, org
       if (!isMultiTenant) {
         const { revoked } = await revokeOAuthGrantsForUser(userId);
         const webhooks = await deleteScopedRows('contracts_Webhook', { createdBy: userPointer });
-        console.log(`Revoked ${revoked} connected apps and deleted ${webhooks} webhooks`);
+        // The rules for the account's AI apps belong to the `_User` too.
+        const rules = await deleteAgentRulesForUser(userId);
+        console.log(
+          `Revoked ${revoked} connected apps and deleted ${webhooks} webhooks and ${rules} rules`
+        );
       }
     } catch (err) {
       console.error('Failed during connected app and webhook cleanup:', err);

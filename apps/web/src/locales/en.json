@@ -201,6 +201,11 @@
     "row": {
       "from": "From {{sender}}"
     },
+    "rules": {
+      "edit": "Your rules",
+      "title": "Why this needs you",
+      "titleDecided": "Why your AI asked you"
+    },
     "status": {
       "failed": "Failed"
     },
@@ -2206,6 +2211,14 @@
         "note": "Same operations as the MCP tools, as JSON over HTTPS.",
         "title": "REST API"
       },
+      "rules": {
+        "note": "One set for every app above and your API key: what your AI may sign without asking, and who it may send to.",
+        "off": "Asks you about every document",
+        "on": "Signs without asking, within your rules",
+        "open": "Open rules",
+        "sendLimited": "Sends only to approved domains",
+        "title": "Rules for your AI"
+      },
       "token": {
         "copy": "Copy token",
         "created": "Created",
@@ -2513,6 +2526,69 @@
         "uploadFailed": "Upload failed"
       }
     },
+    "rules": {
+      "alwaysAsk": {
+        "autoRenewal": "Auto-renewals",
+        "autoRenewalHint": "The contract renews by itself unless someone cancels it.",
+        "nonCompete": "Non-competes and exclusivity",
+        "nonCompeteHint": "Limits on who you can work with or for.",
+        "note": "Even when a document fits the rules above, these come to you first.",
+        "paymentTerms": "Payment terms",
+        "paymentTermsHint": "You would owe money.",
+        "personalGuarantee": "Personal guarantees",
+        "personalGuaranteeHint": "You would be on the hook personally, not just your company.",
+        "title": "Always ask me about"
+      },
+      "autoSign": {
+        "limitHint": "$0 means only documents with no money in them.",
+        "limitInvalid": "Enter a whole dollar amount, 0 or more.",
+        "limitLabel": "Ask me about anything over",
+        "needType": "Pick at least one document type, or turn signing without asking off.",
+        "note": "For documents someone else sends you. Documents you send yourself are signed as soon as you say so.",
+        "offNote": "Off: nothing signs on its own. Your AI asks you about every document someone else sends.",
+        "sendersHint": "Only documents from these domains can be signed without asking. Leave it empty to allow any sender.",
+        "sendersLabel": "Trusted senders (optional)",
+        "title": "Signing without asking",
+        "toggle": "Let my AI sign documents others send me without asking, when they fit these rules",
+        "toggleHint": "The app still needs \"Can sign for me\" turned on, and it only ever signs your part. Anything outside these rules comes to you first.",
+        "toggleLabel": "Sign without asking",
+        "typesHint": "Any other kind of document comes to you first.",
+        "typesLabel": "Document types it may sign"
+      },
+      "domains": {
+        "add": "Add",
+        "duplicate": "{{domain}} is already on the list.",
+        "invalid": "Enter a domain like vendor.com.",
+        "none": "No domains yet.",
+        "placeholder": "vendor.com",
+        "remove": "Remove {{domain}}"
+      },
+      "readOnlyNote": "These rules apply to every app you connect and to your API key. Your AI can read them but never change them.",
+      "sending": {
+        "hint": "Leave it empty to let your AI send to anyone. Your own address is always allowed. A send to any other domain is refused, and nothing goes out.",
+        "label": "Only send to these domains (optional)",
+        "note": "Checked whenever your AI sends, resends, replaces a signer or sets up a follow-up.",
+        "title": "Who your AI may send to"
+      },
+      "toast": {
+        "saveFailed": "Couldn't save your rules",
+        "saved": "Rules saved"
+      },
+      "types": {
+        "consent_form": "Consent form",
+        "lease": "Lease",
+        "msa": "MSA",
+        "nda": "NDA",
+        "offer_letter": "Offer letter",
+        "order_form": "Order form",
+        "purchase_order": "Purchase order",
+        "renewal": "Renewal",
+        "sow": "Statement of work",
+        "vendor_agreement": "Vendor agreement"
+      },
+      "updated": "Last changed on <0>{{date}}</0>",
+      "updatedBy": "Last changed by {{name}} on <0>{{date}}</0>"
+    },
     "sections": {
       "api": {
         "description": "Personal token, MCP endpoint and REST API for scripts and AI agents.",
@@ -2558,6 +2634,11 @@
         "description": "Your name, contact details and how dates are shown to you.",
         "label": "Profile",
         "title": "Profile"
+      },
+      "rules": {
+        "description": "What your AI may sign without asking, and who it may send to.",
+        "label": "Rules for your AI",
+        "title": "Rules for your AI"
       },
       "security": {
         "description": "Change your password and review where you are signed in.",

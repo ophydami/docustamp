@@ -8,6 +8,7 @@ import {
 import { accessibleTemplateQuery } from '../parsefunction/GetTemplate.js';
 import { isDocumentOwner } from './acl.js';
 import { verifiedIdentityProblem } from './agentIdentity.js';
+import { assertRecipientsAllowed } from './agentRules.js';
 import { agentSignDocument, findAgentSeat, prepareAgentSignature } from './agentSign.js';
 import { emitInBackground } from './webhooks.js';
 import { conditionalUpdate } from './atomic.js';
@@ -21,6 +22,7 @@ import {
   customRequestBody,
   hasSigningLinkMarker,
   pendingRequestRecipients,
+  resolveRecipient,
   sendSignatureRequestMails,
   signingLinksFor,
 } from './requestMail.js';
@@ -397,11 +399,21 @@ function extUserShim(caller) {
  * carried over, in placeholder order, when the chain fires. With it, the list
  * must fill every signer role of the target template.
  *
+ * A chain an AI sets up (a token caller, or one carried over from a chain an AI
+ * set up) is stored with `viaAgent: true`: its named recipients are checked
+ * against the account's "only send to" rule now (lib/agentRules.js), and every
+ * recipient is checked again when the chain fires, against the rules of that
+ * moment (lib/chain.js). A chain a person set up in the web app is theirs to
+ * send and is never limited.
+ *
  * @param {import('./context.js').Caller} caller
  * @param {Object|null} input `{templateId, recipients?, name?, note?, message?}`; null clears.
+ * @param {{checkRecipients?: boolean}} [opts] false for a chain carried over
+ *   from a template, which must never block creating the document; it is still
+ *   checked when it fires.
  * @returns {Promise<Object|null>} the stored shape, or null.
  */
-export async function normaliseChain(caller, input) {
+export async function normaliseChain(caller, input, { checkRecipients = true } = {}) {
   if (input === null || input === undefined) return null;
   const templateId = String(input.templateId || '').trim();
   if (!templateId) {
@@ -441,7 +453,28 @@ export async function normaliseChain(caller, input) {
       ...(input.message.body ? { body: String(input.message.body).slice(0, 20000) } : {}),
     };
   }
+  if (caller?.viaToken === true || input.viaAgent === true) {
+    out.viaAgent = true;
+    if (checkRecipients && out.recipients?.length) {
+      await assertRecipientsAllowed(
+        caller,
+        out.recipients.map(r => r.email)
+      );
+    }
+  }
   return out;
+}
+
+/**
+ * Every address a document's signing requests go to (prefill groups and
+ * empty seats aside).
+ * @param {Object} d plain document JSON with Placeholders and Signers.
+ */
+function participantEmails(d) {
+  return (d?.Placeholders || [])
+    .filter(isParticipantBasic)
+    .map(p => resolveRecipient(p, d?.Signers).email)
+    .filter(Boolean);
 }
 
 /** The `chain` block of a document/template summary, or undefined. */
@@ -644,14 +677,21 @@ export async function createDocument(caller, input) {
   // is copied into our storage first (see assertStoredFileUrl).
   const url = await assertStoredFileUrl(input?.url, caller, { fileName: input?.fileName });
   const recipients = normaliseRecipients(input?.recipients, caller);
+  // An AI that may only send to some domains is refused before anything exists
+  // (quick_send, and REST creates with send: true). sendDocument checks again.
+  if (input?.send) await assertRecipientsAllowed(caller, recipients.map(r => r.email));
   assertSettingsInput(input?.settings);
   const settings = normaliseSettings(input?.settings);
   // Both pointers used to be written straight from the caller's input.
   const folder = input?.folderId ? await assertFolder(caller, input.folderId) : null;
   const template = input?.templateId ? await assertTemplate(caller, input.templateId) : null;
   // Validated up front: a chain naming a template the caller cannot use fails
-  // the create, not the completion months later.
-  const chain = input?.chain !== undefined ? await normaliseChain(caller, input.chain) : null;
+  // the create, not the completion months later. One carried over from the
+  // template is checked against the sending rules when it fires instead.
+  const chain =
+    input?.chain !== undefined
+      ? await normaliseChain(caller, input.chain, { checkRecipients: input.chainInherited !== true })
+      : null;
 
   // Contacts first: Placeholders and Signers must be index-parallel (§6.2).
   const contacts = [];
@@ -1161,6 +1201,12 @@ export async function sendDocument(
       'signForMe only works when a draft is first sent. To sign a document that is already out, call sign_document.'
     );
   }
+  // The account's "only send to" rule for its AI (lib/agentRules.js): checked
+  // before anything else happens, against the people this call would mail.
+  await assertRecipientsAllowed(
+    caller,
+    alreadySent ? pendingRequestRecipients(d).map(r => r.email) : participantEmails(d)
+  );
   let nameCheck = null;
   if (signForMe) {
     const seat = assertCanSignForMe(caller, d);
@@ -1422,11 +1468,13 @@ export async function createDocumentFromTemplate(caller, templateId, input = {})
   // inherited one is best-effort: a chain whose target template has since been
   // deleted or unshared must not block creating this document.
   let chain = input.chain;
+  let chainInherited = false;
   if (chain === undefined && t.Chain?.templateId) {
-    chain = await normaliseChain(caller, t.Chain).catch(err => {
+    chain = await normaliseChain(caller, t.Chain, { checkRecipients: false }).catch(err => {
       console.log(`documents: dropped the chain inherited from template ${t.objectId}:`, err?.message);
       return undefined;
     });
+    chainInherited = chain !== undefined;
   }
   return await createDocument(caller, {
     name: input.name || t.Name,
@@ -1458,6 +1506,7 @@ export async function createDocumentFromTemplate(caller, templateId, input = {})
     folderId: input.folderId,
     origin: input.origin,
     chain,
+    chainInherited,
     chainedFrom: input.chainedFrom,
   });
 }

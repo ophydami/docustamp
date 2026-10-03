@@ -11,7 +11,7 @@ import { VerifyEmailCard } from "@/features/settings/VerifyEmailCard";
 import { useApproval, useApprovalPage, useDecideApproval } from "./api";
 import { ReviewPanel } from "./ReviewPanel";
 import { agentLabel, approvalPill, fieldTypeLabel, formatValue, isNumericValue, mismatchedNames, senderLabel, stampOf } from "./parts";
-import type { Approval, ApprovalDecision, ApprovalValue, NameCheck } from "./types";
+import type { Approval, ApprovalDecision, ApprovalValue, NameCheck, RuleReason } from "./types";
 
 /**
  * One sign approval: the page as it stands, what the agent will fill in, the
@@ -55,6 +55,8 @@ export default function ApprovalDetailPage() {
   const unverified = verification.data?.verified === false;
   const pageCount = Math.max(1, approval.document.pageCount || 1);
   const nameCheck = approval.nameCheck?.status === "mismatch" ? approval.nameCheck : null;
+  // Only when the person's rules are on: with them off, everything comes here and there is no "why".
+  const ruleReasons = approval.ruleCheck?.enabled ? (approval.ruleCheck.reasons ?? []).filter((r) => r?.text) : [];
 
   async function onDecide(decision: ApprovalDecision) {
     if (!approval) return;
@@ -146,6 +148,8 @@ export default function ApprovalDetailPage() {
             </div>
 
             {nameCheck ? <NameMismatch check={nameCheck} pending={pending} onPage={setPage} /> : null}
+
+            {ruleReasons.length ? <RuleReasons reasons={ruleReasons} pending={pending} /> : null}
 
             {!pending ? <Outcome approval={approval} /> : null}
 
@@ -322,6 +326,35 @@ function NameMismatch({ check, pending, onPage }: { check: NameCheck; pending: b
         </button>
       ) : null}
     </div>
+  );
+}
+
+/**
+ * Why the person's rules sent this here instead of letting the agent sign it:
+ * "It's over your $25,000 limit", "It renews automatically". The sentences are
+ * the server's; the link goes to the rules.
+ */
+function RuleReasons({ reasons, pending }: { reasons: RuleReason[]; pending: boolean }) {
+  const { t } = useTranslation();
+  return (
+    <section className="flex flex-col gap-2" aria-labelledby="rule-reasons-title">
+      <div className="flex items-baseline justify-between gap-3">
+        <Cap id="rule-reasons-title">{t(pending ? "approvals.rules.title" : "approvals.rules.titleDecided")}</Cap>
+        <Link to="/settings/rules" className="text-[12px] font-medium text-accent hover:underline underline-offset-2">
+          {t("approvals.rules.edit")}
+        </Link>
+      </div>
+      <Card className="px-4 py-3">
+        <ul className="flex flex-col gap-1.5">
+          {reasons.map((r, i) => (
+            <li key={`${r.code}-${i}`} className="flex items-start gap-2 text-[13px] leading-relaxed text-ink-2">
+              <span className="mt-[8px] size-1 shrink-0 rounded-full bg-muted-2" aria-hidden />
+              <span className="min-w-0">{r.text}</span>
+            </li>
+          ))}
+        </ul>
+      </Card>
+    </section>
   );
 }
 

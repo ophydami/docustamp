@@ -124,13 +124,16 @@ function clip(value, max) {
  * @param {Object} entry an AuditTrail entry (or a certificate block)
  * `AllowedBy.nameMismatch` is there only when the document printed another
  * name for the signer's party and the user confirmed they sign for it
- * (lib/signerName.js).
+ * (lib/signerName.js). `AllowedBy.rule` is there only when the agent signed
+ * without asking because the document fit the user's rules (`via: 'rules'`,
+ * lib/agentRules.js).
  *
  * @returns {{Method: 'agent', Agent: {kind: string, name: string, host: string},
  *   OnBehalfOf: {name: string, email: string},
  *   AllowedBy: {via: string, name: string, email: string, at: string,
  *   signingEnabledAt: string|null, approvalId?: string,
- *   nameMismatch?: {printed: string, expected: string, confirmed: boolean, via?: string}}}|null}
+ *   nameMismatch?: {printed: string, expected: string, confirmed: boolean, via?: string},
+ *   rule?: {summary: string, documentType: string, valueUsd: number|null, limitUsd: number|null}}}|null}
  */
 export function agentRecord(entry) {
   if (entry?.Method !== 'agent') return null;
@@ -138,6 +141,9 @@ export function agentRecord(entry) {
   const behalf = entry.OnBehalfOf || {};
   const allowed = entry.AllowedBy || {};
   const mismatch = allowed.nameMismatch;
+  const rule = allowed.rule;
+  const amount = value =>
+    value !== null && value !== undefined && Number.isFinite(Number(value)) ? Number(value) : null;
   return {
     Method: 'agent',
     Agent: { kind: oneLine(agent.kind), name: oneLine(agent.name), host: oneLine(agent.host) },
@@ -159,6 +165,16 @@ export function agentRecord(entry) {
             },
           }
         : {}),
+      ...(allowed.via === 'rules' && rule && typeof rule === 'object'
+        ? {
+            rule: {
+              summary: oneLine(rule.summary),
+              documentType: oneLine(rule.documentType),
+              valueUsd: amount(rule.valueUsd),
+              limitUsd: amount(rule.limitUsd),
+            },
+          }
+        : {}),
     },
   };
 }
@@ -169,8 +185,10 @@ export function agentRecord(entry) {
  * "Signed by" says which app signed and for whom. The second row says who let
  * it: on the person's own document they did so by turning agent signing on for
  * that app ("Allowed by"); on a document someone else sent they approved this
- * signature, in the web app or in the chat ("Approved by"). Dates use the
- * document's format and zone, as every other date on the certificate does.
+ * signature, in the web app or in the chat ("Approved by"); or the document fit
+ * the rules they set for their AI, so it was signed without asking ("Rule
+ * used", with when those rules were set). Dates use the document's format and
+ * zone, as every other date on the certificate does.
  * When the document printed another name for the signer's party and the user
  * confirmed they sign for it, a third row says so ("Name on document").
  *
@@ -205,6 +223,13 @@ export function agentCertificateRows(block, { DateFormat, timezone = '', Is12Hr 
       allowed.via === 'web' ? appName : (agent.kind !== 'api_token' && name) || 'the AI app';
     const at = formatDateStr(allowed.at, DateFormat, timezone, Is12Hr);
     rows.push({ label: 'Approved by', value: `${who} in ${where}${at ? `, ${at}` : ''}` });
+  } else if (allowed.via === 'rules') {
+    const summary = clip(allowed.rule?.summary || 'a document their rules cover', 160);
+    const set = formatDateOnlyStr(allowed.at, DateFormat, timezone);
+    rows.push({
+      label: 'Rule used',
+      value: `${summary} (rules set by ${who}${set ? ` on ${set}` : ''})`,
+    });
   }
   const mismatch = allowed.nameMismatch;
   if (mismatch?.confirmed && mismatch.printed) {

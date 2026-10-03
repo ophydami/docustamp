@@ -80,6 +80,9 @@ function methodJson(source) {
       // The document named someone else for this party and the user confirmed
       // they sign for it (lib/signerName.js): {printed, expected, confirmed, via?}.
       ...(allowed.nameMismatch ? { nameMismatch: allowed.nameMismatch } : {}),
+      // Signed without asking because the document fit the user's rules for
+      // their AI (lib/agentRules.js): {summary, documentType, valueUsd, limitUsd}.
+      ...(allowed.rule ? { rule: allowed.rule } : {}),
     },
   };
 }

@@ -57,7 +57,10 @@ import {
  * A document the user created is signed straight away and the user is mailed a
  * "signed for you" notice with a way to void it, so a misled model cannot sign
  * quietly. A document someone else sent needs the user's approval first
- * (`allowedBy.via` 'web' or 'chat', recorded with the approval).
+ * (`allowedBy.via` 'web' or 'chat', recorded with the approval), unless it fits
+ * the rules the user set for their AI (`allowedBy.via` 'rules', lib/agentRules.js):
+ * then it is signed straight away too, the rule is recorded with the signature,
+ * and the user is mailed a notice saying which rule allowed it.
  *
  * Before it signs, the name the PDF prints for the seat's party is checked
  * against the account (lib/signerName.js): an agent always signs as the
@@ -67,7 +70,7 @@ import {
  */
 
 /** How the signature was allowed, as recorded in `AuditTrail[].AllowedBy.via`. */
-const ALLOWED_VIA = new Set(['own_document', 'web', 'chat']);
+const ALLOWED_VIA = new Set(['own_document', 'web', 'chat', 'rules']);
 
 /** Base PDF moved under us (a co-signer landed): re-stamp from the new one. */
 const MAX_STAMP_ATTEMPTS = 3;
@@ -588,6 +591,12 @@ function allowedByRecord(caller, allowedBy, own) {
       Parse.Error.OPERATION_FORBIDDEN
     );
   }
+  if (via === 'rules' && own) {
+    throw fail(
+      'Rules only cover documents someone else sent you; your own documents are signed as they are.',
+      Parse.Error.VALIDATION_ERROR
+    );
+  }
   const record = {
     via,
     name: String(allowedBy?.name || caller?.name || ''),
@@ -596,7 +605,24 @@ function allowedByRecord(caller, allowedBy, own) {
     signingEnabledAt: toDate(allowedBy?.signingEnabledAt ?? caller?.oauth?.signingEnabledAt),
   };
   if (allowedBy?.approvalId) record.approvalId = String(allowedBy.approvalId);
+  if (via === 'rules') record.rule = ruleRecord(allowedBy?.rule);
   return record;
+}
+
+/**
+ * Which of the user's rules let an agent sign without asking, as the audit
+ * trail keeps it: a one-line summary plus what was matched.
+ *
+ * @param {Object} [rule] `{summary, documentType, valueUsd, limitUsd}`
+ */
+function ruleRecord(rule) {
+  const number = value => (Number.isFinite(Number(value)) && value !== null ? Number(value) : null);
+  return {
+    summary: String(rule?.summary || '').slice(0, 300),
+    documentType: String(rule?.documentType || '').slice(0, 40),
+    valueUsd: number(rule?.valueUsd),
+    limitUsd: number(rule?.limitUsd),
+  };
 }
 
 /**
@@ -715,6 +741,68 @@ async function mailOwner(caller, doc, agent, pending, { signatureSaved = false }
   }
 }
 
+/** The sender of a document someone else sent the user, as one line for the notice. */
+function senderOf(doc) {
+  const ext = doc?.ExtUserPtr || {};
+  const name = String(ext.Name || doc?.SenderName || '').trim();
+  const email = normaliseEmail(ext.Email || doc?.SenderMail);
+  const company = String(ext.Company || '').trim();
+  const who = name || email || 'Someone';
+  return company && company !== who ? `${who} (${company})` : who;
+}
+
+function signedByRulesHtml({ doc, agent, name, rule, url, signatureSaved }) {
+  return renderMail({
+    title: `${agent.name} signed for you under your rules`,
+    preheader: `${agent.name} signed ${doc.Name} for you, because it fits the rules you set.`,
+    greeting: name ? `Hi ${name},` : '',
+    paragraphs: [
+      `${strong(agentLabel(agent))} signed ${strong(doc.Name)} for you, as ${strong(name)}, without asking first, because it fits the rules you set for your AI.`,
+      rule?.summary ? `Rule used: ${strong(rule.summary)}.` : '',
+      `${strong(senderOf(doc))} sent it to you. If this was not right, contact them, and change your rules in ${appName} so it asks you next time.`,
+      signatureSaved ? escapeHtml(SIGNATURE_SAVED_LINE) : '',
+    ].filter(Boolean),
+    details: [
+      { label: 'Document', value: doc.Name },
+      { label: 'From', value: senderOf(doc) },
+      { label: 'Signed via', value: agentLabel(agent) },
+      ...(rule?.summary ? [{ label: 'Rule used', value: rule.summary }] : []),
+    ],
+    cta: { url, label: 'See your inbox' },
+  });
+}
+
+/**
+ * Tell the user their agent signed a document someone else sent them under
+ * their rules: nothing an agent signs for them happens quietly.
+ */
+async function mailRulesNotice(caller, doc, agent, rule, { signatureSaved = false } = {}) {
+  const origin = resolveAppOrigin(caller?.publicUrl);
+  const recipient = normaliseEmail(caller?.email);
+  if (!recipient) return;
+  try {
+    const res = await ownerMailer({
+      extUserId: caller?.extUserId,
+      from: appName,
+      recipient,
+      subject: `${agent.name} signed "${doc.Name}" for you under your rules`,
+      html: signedByRulesHtml({
+        doc,
+        agent,
+        name: caller?.name || '',
+        rule,
+        url: `${origin}/inbox`,
+        signatureSaved,
+      }),
+    });
+    if (res?.status !== 'success') {
+      console.log('agentSign: rules notice not sent', res?.reason || res?.message || res?.status);
+    }
+  } catch (err) {
+    console.log('agentSign: rules notice not sent', err?.message || err);
+  }
+}
+
 async function mailNextSigner(caller, doc, next) {
   try {
     const res = await sendSignatureRequestMails({
@@ -739,9 +827,12 @@ async function mailNextSigner(caller, doc, next) {
  * @param {Object} [opts]
  * @param {Object} [opts.fields] the agent's answers, keyed by field key (see get_draft).
  * @param {Object} [opts.allowedBy] how the signature was allowed: `{via:
- *   'own_document'|'web'|'chat', name?, email?, at?, signingEnabledAt?, approvalId?}`.
- *   Defaults to `own_document` on the caller's own document.
- * @param {boolean} [opts.notifyOwner] mail the "signed for you" notice (own documents).
+ *   'own_document'|'web'|'chat'|'rules', name?, email?, at?, signingEnabledAt?,
+ *   approvalId?, rule?}`. Defaults to `own_document` on the caller's own
+ *   document. `rules` (a document someone else sent that fits the user's rules)
+ *   carries `rule {summary, documentType, valueUsd, limitUsd}`.
+ * @param {boolean} [opts.notifyOwner] mail the user the "signed for you" notice
+ *   (own documents) or the "signed under your rules" notice (rules).
  * @param {Object} [opts.agent] the agent to record, `{kind, clientId, name, host}`:
  *   an approved request signs as the agent that asked, even when the user
  *   approved in a DocuStamp session. Defaults to `agentIdentity(caller)`.
@@ -802,6 +893,13 @@ export async function agentSignDocument(caller, docId, opts = {}) {
     if (check.status !== 'mismatch') return;
     if (allowed.via === 'own_document' && confirmNameMismatch !== true) {
       throw fail(nameMismatchMessage(check), Parse.Error.VALIDATION_ERROR);
+    }
+    // Rules never stand in for the user's own word on whose name it is.
+    if (allowed.via === 'rules') {
+      throw fail(
+        `This document prints another name than ${check.expected || "the user's"} for the user's party. Rules never sign over that, so the user has to approve it.`,
+        Parse.Error.VALIDATION_ERROR
+      );
     }
     record.AllowedBy = { ...allowed, nameMismatch: mismatchFor(check, allowed) };
   };
@@ -865,6 +963,9 @@ export async function agentSignDocument(caller, docId, opts = {}) {
   if (after.SendinOrder === true && next?.email) await mailNextSigner(caller, after, next);
   if (allowed.via === 'own_document' && notifyOwner !== false) {
     await mailOwner(caller, after, agent, pending, { signatureSaved });
+  }
+  if (allowed.via === 'rules' && notifyOwner !== false) {
+    await mailRulesNotice(caller, after, agent, allowed.rule, { signatureSaved });
   }
 
   return {

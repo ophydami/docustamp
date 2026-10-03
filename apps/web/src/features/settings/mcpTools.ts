@@ -23,6 +23,7 @@ export const MCP_TOOL_NAMES: readonly string[] = [
   "quick_send",
   "send_document",
   "sign_document",
+  "get_rules",
   "get_approval",
   "list_inbox",
   "decline_document",

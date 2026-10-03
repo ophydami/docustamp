@@ -165,6 +165,7 @@ async function ensureApprovalSchema() {
     schema.addObject('DocumentInfo');
     schema.addObject('Review');
     schema.addObject('NameCheck');
+    schema.addObject('RuleCheck');
     schema.addString('Fingerprint');
     schema.addString('Status');
     schema.addString('NonceHash');
@@ -299,6 +300,34 @@ function nameCheckJson(check) {
 }
 
 /**
+ * The stored rules check as the contract shows it, or null for a request made
+ * before rules existed: whether the user's rules were on, and why they did not
+ * let the agent sign this one without asking (lib/agentRules.js).
+ */
+export function ruleCheckJson(check) {
+  if (!check || typeof check !== 'object' || typeof check.enabled !== 'boolean') return null;
+  const matched = check.matched && typeof check.matched === 'object' ? check.matched : null;
+  return {
+    enabled: check.enabled,
+    allowed: check.allowed === true,
+    reasons: (Array.isArray(check.reasons) ? check.reasons : [])
+      .filter(r => r && typeof r === 'object')
+      .slice(0, 20)
+      .map(r => ({ code: String(r.code || '').slice(0, 40), text: String(r.text || '').slice(0, 300) })),
+    summary: String(check.summary || '').slice(0, 300),
+    matched: matched
+      ? {
+          documentType: String(matched.documentType || ''),
+          valueUsd: Number.isFinite(Number(matched.valueUsd)) && matched.valueUsd !== null ? Number(matched.valueUsd) : null,
+          limitUsd: Number.isFinite(Number(matched.limitUsd)) && matched.limitUsd !== null ? Number(matched.limitUsd) : null,
+          senderDomain: String(matched.senderDomain || ''),
+        }
+      : null,
+    rulesUpdatedAt: isoOf(check.rulesUpdatedAt),
+  };
+}
+
+/**
  * The approval as the web app, the chat card and the model see it. Never the
  * approval code or its hash.
  *
@@ -359,6 +388,9 @@ export function approvalJson(row, imageUrls = {}) {
     // Whether the document prints the user's own name for their party:
     // {status: match|mismatch|unknown, expected, role, printed[]}.
     nameCheck: nameCheckJson(row.get('NameCheck')),
+    // The user's rules for their AI and why they did not cover this one:
+    // {enabled, allowed, reasons[{code, text}], summary, matched, rulesUpdatedAt}.
+    ruleCheck: ruleCheckJson(row.get('RuleCheck')),
     // Signing saved the typed signature as the user's own: say so, once.
     signatureSaved: row.get('SignatureSaved') === true,
   };
@@ -631,7 +663,15 @@ function nameWarning(check) {
   return `Check the name first: this document names ${names} ${where}, but your agent signs as ${strong(check.expected)}. Approve only if you really sign for that party.`;
 }
 
-function approvalMailHtml({ caller, agent, info, url, nameCheck }) {
+/** "Your rules did not cover this: ...", for the email, or ''. */
+function ruleReasons(check) {
+  const json = ruleCheckJson(check);
+  if (!json?.enabled || json.allowed || !json.reasons.length) return '';
+  const list = json.reasons.map(r => escapeHtml(r.text)).join(' ');
+  return `Your rules for your AI did not cover this one, so it needs you: ${list}`;
+}
+
+function approvalMailHtml({ caller, agent, info, url, nameCheck, ruleCheck }) {
   const title = info.title || 'a document';
   return renderMail({
     title: `${agent.name} wants to sign for you`,
@@ -641,6 +681,7 @@ function approvalMailHtml({ caller, agent, info, url, nameCheck }) {
       `${strong(agentLabel(agent))} asked to sign ${strong(title)} for you. ${strong(senderLine(info))} sent it to you.`,
       'Nothing is signed until you approve. Check the document and what will be filled in, then approve or decline.',
       nameWarning(nameCheck),
+      ruleReasons(ruleCheck),
     ].filter(Boolean),
     details: [
       { label: 'Document', value: title },
@@ -668,6 +709,7 @@ async function mailUser(caller, row) {
         info,
         url: approvalUrl(caller, row.id),
         nameCheck: row.get('NameCheck'),
+        ruleCheck: row.get('RuleCheck'),
       }),
     });
     if (res?.status !== 'success') {
@@ -695,25 +737,19 @@ async function rotateNonce(row, caller) {
 }
 
 /**
- * Ask the user to approve a signature on a document someone else sent them.
- *
- * Refuses, with the reason, everything that would make the signature fail
- * later (the app may not sign, the email is not verified, it is not the user's
- * turn, a required value is missing), so the user is never asked to approve
- * something that cannot be signed. A document that prints another name for the
- * user's party is not refused: the request carries the name check, and the
- * user decides. An open request for the same seat is returned again (with a
- * new approval code) when the agent asks with the same values, and replaced
- * when the values differ.
+ * Everything that would make an agent's signature on a document someone else
+ * sent fail later, checked before anything is asked or run: the app may not
+ * sign, the email is not verified, it is the user's own document, it is not
+ * their turn, a required value is missing. Shared by the approval below and
+ * by sign_document's rules check (cloud/mcp/server.js), so neither runs an AI
+ * review for a signature that could not happen.
  *
  * @param {import('./context.js').Caller} caller the agent's connection.
  * @param {string} docId
  * @param {{fields?: Object}} [opts] the agent's answers, as for sign_document.
- * @returns {Promise<{approval: Object, chatApproval: boolean, nonce: string|null,
- *   appUrl: string, created: boolean}>} `nonce` only when `chatApproval`; it goes
- *   to the chat card in the tool result's `_meta`, nowhere else.
+ * @returns {Promise<Object>} what `prepareAgentSignature` returns ({doc, seat, values, ...}).
  */
-export async function createSignApproval(caller, docId, { fields = {} } = {}) {
+export async function prepareSignRequest(caller, docId, { fields = {} } = {}) {
   const scopeProblem = signingScopeProblem(caller);
   if (scopeProblem) throw fail(scopeProblem, Parse.Error.OPERATION_FORBIDDEN);
   const identityProblem = verifiedIdentityProblem(caller);
@@ -729,11 +765,46 @@ export async function createSignApproval(caller, docId, { fields = {} } = {}) {
   if (prepared.missing.length) {
     throw fail(missingMessage(prepared.missing), Parse.Error.VALIDATION_ERROR);
   }
+  return prepared;
+}
+
+/**
+ * Ask the user to approve a signature on a document someone else sent them.
+ *
+ * Refuses, with the reason, everything that would make the signature fail
+ * later (`prepareSignRequest`), so the user is never asked to approve
+ * something that cannot be signed. A document that prints another name for the
+ * user's party is not refused: the request carries the name check, and the
+ * user decides. An open request for the same seat is returned again (with a
+ * new approval code) when the agent asks with the same values, and replaced
+ * when the values differ.
+ *
+ * When sign_document checked the user's rules first, the request carries that
+ * check (`ruleCheck`: why the rules did not cover this one) and reuses the
+ * review and name check it already made.
+ *
+ * @param {import('./context.js').Caller} caller the agent's connection.
+ * @param {string} docId
+ * @param {{fields?: Object, prepared?: Object, review?: Object|null,
+ *   nameCheck?: Object|null, ruleCheck?: Object|null}} [opts] the agent's
+ *   answers, as for sign_document, plus what the caller already has in hand.
+ * @returns {Promise<{approval: Object, chatApproval: boolean, nonce: string|null,
+ *   appUrl: string, created: boolean}>} `nonce` only when `chatApproval`; it goes
+ *   to the chat card in the tool result's `_meta`, nowhere else.
+ */
+export async function createSignApproval(
+  caller,
+  docId,
+  { fields = {}, prepared: given, review: givenReview, nameCheck: givenNameCheck, ruleCheck } = {}
+) {
+  const prepared = given || (await prepareSignRequest(caller, docId, { fields }));
+  const { doc, seat } = prepared;
 
   const chatApproval = canApproveInChat(caller);
   const agent = agentIdentity(caller);
   const input = canonicalFields(fields);
 
+  const storedRuleCheck = ruleCheck ? ruleCheckJson(ruleCheck) : null;
   const open = await pendingForSeat(doc.objectId, seat.contactId);
   for (const row of open) {
     const theirs = row.get('Agent') || {};
@@ -745,6 +816,11 @@ export async function createSignApproval(caller, docId, { fields = {} } = {}) {
       // eslint-disable-next-line no-await-in-loop -- at most one open request per seat
       await expireAsReplaced(row);
       continue;
+    }
+    if (storedRuleCheck) {
+      // The rules may have changed since the request was made: show today's reasons.
+      // eslint-disable-next-line no-await-in-loop -- at most one open request per seat
+      await conditionalUpdate(APPROVAL_CLASS, row.id, { Status: 'pending' }, { RuleCheck: storedRuleCheck });
     }
     // eslint-disable-next-line no-await-in-loop
     const nonce = chatApproval ? await rotateNonce(row, caller) : null;
@@ -761,7 +837,8 @@ export async function createSignApproval(caller, docId, { fields = {} } = {}) {
     };
   }
 
-  const reviewing = reviewOrNull(caller, doc.objectId);
+  // A review the rules check already ran is reused, not paid for twice.
+  const reviewing = givenReview ? Promise.resolve(givenReview) : reviewOrNull(caller, doc.objectId);
   const [raw, participant, review, nameCheck] = await Promise.all([
     readFresh('contracts_Document', doc.objectId, DOC_KEYS),
     getParticipantDocument(caller, doc.objectId),
@@ -769,7 +846,9 @@ export async function createSignApproval(caller, docId, { fields = {} } = {}) {
       reviewing.then(value => ({ value })),
       new Promise(resolve => setTimeout(() => resolve(null), REVIEW_WAIT_MS).unref?.()),
     ]),
-    checkSeatName(doc, findAgentSeat(doc, caller), accountOf(caller)),
+    givenNameCheck?.status
+      ? Promise.resolve(givenNameCheck)
+      : checkSeatName(doc, findAgentSeat(doc, caller), accountOf(caller)),
   ]);
 
   await ensureApprovalSchema();
@@ -802,6 +881,7 @@ export async function createSignApproval(caller, docId, { fields = {} } = {}) {
   });
   row.set('Review', review?.value || null);
   row.set('NameCheck', nameCheck);
+  if (storedRuleCheck) row.set('RuleCheck', storedRuleCheck);
   row.set('Fingerprint', approvalFingerprint(raw));
   row.set('Status', 'pending');
   if (minted) {

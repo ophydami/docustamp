@@ -20,6 +20,7 @@ import ProfileSection from "./sections/ProfileSection";
 import SignatureSection from "./sections/SignatureSection";
 import NotificationsSection from "./sections/NotificationsSection";
 import SecuritySection from "./sections/SecuritySection";
+import RulesSection from "./sections/RulesSection";
 import GeneralSection from "./sections/GeneralSection";
 import TeamSection from "./sections/TeamSection";
 import BrandingSection from "./sections/BrandingSection";
@@ -35,6 +36,7 @@ const bodies: Record<string, () => ReactElement> = {
   signature: SignatureSection,
   notifications: NotificationsSection,
   security: SecuritySection,
+  rules: RulesSection,
   general: GeneralSection,
   team: TeamSection,
   branding: BrandingSection,

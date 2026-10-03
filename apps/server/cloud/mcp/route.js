@@ -81,6 +81,9 @@ export async function authenticateApiRequest(req, { allowOAuth = false } = {}) {
     // agent makes (lib/agentSign.js passes it on as x-real-ip).
     const ip = clientIp(req);
     caller.ip = ip === 'unknown' ? '' : ip;
+    // A token (an app the user connected, or their API key), not a person in
+    // the web app: the account's rules for its AI apply (lib/agentRules.js).
+    caller.viaToken = true;
     // Undefined for an API token, which carries everything the account can do.
     if (resolved.scopes) {
       caller.scopes = resolved.scopes;

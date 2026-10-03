@@ -1,9 +1,12 @@
 import crypto from 'node:crypto';
 import { isAiEnabled } from '../ai/client.js';
+import { assertRecipientsAllowed } from '../lib/agentRules.js';
 import { conditionalUpdate } from '../lib/atomic.js';
 import { userPointer } from '../lib/context.js';
 import { assertOwner, findByIdempotencyKey, getDocument } from '../lib/documents.js';
 import { pageSizes } from '../lib/drafts.js';
+import { normaliseEmail } from '../lib/email.js';
+import { pendingRequestRecipients } from '../lib/requestMail.js';
 import { fetchReminderDoc, sendReminderForDoc } from '../parsefunction/sendReminder.js';
 import { analyzeDocumentFlow, prepareDocumentFlow } from '../parsefunction/aiFunctions.js';
 
@@ -231,6 +234,10 @@ export async function quickSendFlow(caller, input = {}, origin = 'api') {
   if (replayed) return { document: { ...replayed, mail: null }, idempotentReplay: true };
 
   const sending = input.dryRun !== true;
+  // Recipients the caller named are checked against the "only send to" rule
+  // before the AI reads anything; the ones read out of the PDF are checked by
+  // createDocument, still before the document exists.
+  if (sending) await assertRecipientsAllowed(caller, namedRecipientEmails(input.recipients, caller));
   const fingerprint = sending ? sendFingerprint(input) : '';
   const guarded = fingerprint && input.allowDuplicate !== true;
   const flightKey = `${caller?.userId || 'anon'}:${fingerprint}`;
@@ -381,6 +388,23 @@ export function assertRemindable(doc, caller) {
 /** `POST /v1/documents/:id/remind` and the `send_reminder` tool. */
 export async function remindDocument(caller, docId) {
   const doc = await fetchReminderDoc(docId);
-  assertRemindable(doc, caller);
+  const d = assertRemindable(doc, caller);
+  // A reminder is mail too: an AI limited to some domains nudges only those.
+  await assertRecipientsAllowed(
+    caller,
+    pendingRequestRecipients(d).map(r => r.email)
+  );
   return await sendReminderForDoc({ doc, by: caller.userId, publicUrl: caller.publicUrl });
+}
+
+/**
+ * The addresses in a recipients input, "me" resolved to the account's own.
+ * Malformed entries are left to the full validation later.
+ */
+function namedRecipientEmails(recipients, caller) {
+  if (!Array.isArray(recipients)) return [];
+  return recipients
+    .map(r => (r && typeof r === 'object' && r.me === true ? caller?.email : typeof r === 'string' ? r : r?.email))
+    .map(normaliseEmail)
+    .filter(Boolean);
 }

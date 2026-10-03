@@ -397,6 +397,122 @@ indexes in `migrationdb/createSignApprovalIndexes.js`).
   roles and contacts, and `Signers`; not the signed copy, so a co-signer signing does not expire it).
 - **`get_approval { approvalId, waitSec? }`** long-polls (up to 55 s) until the user decides.
 
+### Rules for your AI
+
+`cloud/lib/agentRules.js`, class `contracts_AgentRules` (master-key only, one row per `_User`,
+`databases/migrations/20261003150000-create_contracts_agentrules.cjs`). One set of rules per
+account, for every app the user connected and their API key. They answer three questions: may the
+agent sign a document **someone else** sent without asking, what must it always ask about, and who
+may it send to.
+
+```
+{
+  autoSign:  { enabled: false, documentTypes: ["nda"], maxValueUsd: 0, trustedSenderDomains: [] },
+  alwaysAsk: { autoRenewal: true, personalGuarantee: true, nonCompete: true, paymentTerms: true },
+  sendOnlyTo: [],
+  updatedAt, updatedBy: { name, email }
+}
+```
+
+- **Defaults change nothing.** `autoSign.enabled` starts false and `sendOnlyTo` empty, so an account
+  that never opens the page behaves exactly as before: every document someone else sends needs the
+  user's approval, and the agent may send to anyone.
+- **Who can change them: only the person, in the web app.** `setagentrules { rules }` and
+  `getagentrules` (`cloud/parsefunction/agentRulesFunctions.js`) need a web session;
+  `setAgentRules` also refuses any token caller. Sections left out keep their values; anything that
+  is not a valid rule is refused with the reason. The page is Settings > Rules for your AI
+  (`/settings/rules`). An agent can read the rules and has no way to change them, so it cannot
+  raise its own limits.
+- **Who they apply to: tokens, never people.** `cloud/mcp/route.js authenticateApiRequest` marks
+  every caller it resolves (an OAuth app or the API key, on MCP and on REST) with
+  `caller.viaToken = true`; the rules only ever look at callers with that mark. A person in the web
+  app is never limited.
+- **`get_rules`** (read): `{ rules, summary, editUrl, canChange: false, note }`. `summary` is the
+  rules as short sentences (`describeRules`), the same ones the settings page shows, so the agent can
+  tell the user what it may do on its own.
+
+**Signing by rules.** Own documents are unchanged (signed as soon as the user asks). On a document
+someone else sent, `sign_document` asks `checkSignRules` first. With the rules off it costs nothing
+and the request goes to an approval, as before. With them on, it runs the AI review (one call,
+shared with any `review_document` of the same file in the last 15 minutes) and the name check, and
+`evaluateSignRules`, plain code with no model in it, decides. The agent signs without asking only
+when **every** check passes; otherwise the request becomes an approval whose `ruleCheck` lists the
+reasons, and the card, the `/approvals/:id` page and the email show them under "Why this needs you".
+Everything an agent signature always needs still applies: "Can sign for me" on the app
+(`documents:sign`), a verified email, the user's own seat, their turn, every value filled.
+
+The reasons, each with the sentence the user sees:
+
+| Code | When |
+|---|---|
+| `review_unavailable` | The AI review could not run (AI off, budget, an error): "The AI review could not run, so this needs you." |
+| `doc_type` | The review's `facts.documentType` is not one of `autoSign.documentTypes`; `other` never matches. |
+| `over_limit` | The money involved is over `maxValueUsd` (0 means only documents with no money): "It's over your $25,000 limit ($48,000 on page 3)." |
+| `value_unknown` | The review says money is involved but no total can be stated, and the scan found no dollar amount. |
+| `other_currency` | An amount in another currency was found, or the review's currency is not USD. The limit is in US dollars only. |
+| `not_standard` | The review's overall rating is `review` or `concerning`, not `standard`. |
+| `warning_flag` | The review raised a `warning` flag (one reason per flag). |
+| `ai_text` | The document contains text aimed at an AI. |
+| `partial_review` | The document was too long to read in full. |
+| `auto_renewal`, `personal_guarantee`, `non_compete`, `payment_terms` | That topic is on the always-ask list and either the review or the scan found it. `payment_terms` means the user would owe money. |
+| `name_mismatch` | The name check did not come back `match` (a different name, or none found). |
+| `sender_domain` | `trustedSenderDomains` is set and the sender's address is not in it. |
+
+**The money figure** is the larger of the review's `facts.totalValueUsd` (when it says it knows it)
+and the scan's `maxUsd`: a document cannot talk the amount down.
+
+**The review's new fields** (`cloud/ai/review.js`, also in every `review_document` answer):
+- `facts`: the model's reading of the terms, `{ documentType, moneyInvolved, valueKnown,
+  totalValueUsd, currency, paymentObligation, autoRenewal, personalGuarantee, nonCompete }`. The
+  prompt tells the model what the document says about itself is a claim to check, not an answer,
+  and to give the cautious answer whenever a fact is unclear (type `other`, money involved, value
+  unknown, the always-ask flags true).
+- `scan`: plain pattern matching over the extracted text (`scanTerms`), with no model involved:
+  every amount found (`$25k`, `USD 1,200`, `$1.2 million`, other currencies), the largest US-dollar
+  figure and its page, and short verbatim snippets for renewal, guarantee, non-compete and payment
+  wording. It also tempers `facts`: "no money" next to a printed amount is not believed.
+- `partial`: only part of the document was read.
+
+**The record.** A signature the rules allowed is stored with `AllowedBy.via: "rules"`: who set the
+rules and when (`name`, `email`, `at`), and `rule { summary, documentType, valueUsd, limitUsd }`.
+The certificate adds a "Rule used" row with the summary, the audit trail and `get_audit_trail` carry
+the same `allowedBy`, and the user is emailed a notice with the rule that allowed it.
+`sign_document` answers `status: "signed"`, `signedBy: "rules"`, `rule` (the summary) and
+`ruleCheck`. Approvals store the check in the `RuleCheck` column
+(`databases/migrations/20261003170000-add_signapproval_rulecheck.cjs`).
+
+**Sending only to some domains.** With `sendOnlyTo` set, a token caller that would mail an address
+outside the list is refused before anything is created or mailed (`assertRecipientsAllowed`, error
+code 119, HTTP 403):
+
+> Your DocuStamp rules only let your AI send to: acme.com. pat@other.com is not on that list, so
+> nothing was sent. Ask the user to add the domain in DocuStamp (Settings > Rules for your AI), or
+> to send it themselves.
+
+A domain also covers its subdomains (`acme.com` allows `legal.acme.com`), and the account holder's
+own address always passes. Checked in every path that mails a signer:
+- `quick_send` (and REST quick-send): the recipients the caller named, before the AI reads
+  anything, and the addresses read out of the PDF, before the document is created. `dryRun` is
+  never limited: a draft mails nobody.
+- `create_document` and REST `POST /documents` with `send: true`: before the row exists.
+- `send_document` (REST send too): every signer on a first send; on `resend: true`, the people
+  still owed a request.
+- `resend_to`, `send_reminder` (a reminder is mail too) and `replace_signer`. The new signer is
+  checked even with `notify: false`, because they are mailed when their turn comes.
+- Chains (`chain` on the create tools, `quick_send`, `update_draft`, `create_template`, and
+  `set_chain`): named `recipients` are checked when the chain is set. A chain a token caller sets
+  is stored with `viaAgent: true` and is checked again **when it fires**, against the rules of that
+  moment, including the signers it carries over. If the rules no longer allow it, nothing is created
+  or sent, `chainResult` is `{status: "blocked", error: <the refusal>, at}`, and the `chained`
+  webhook carries that outcome. A chain the person set up in the web app is never checked. A chain
+  carried over from a template is not checked when the document is created (that must never fail),
+  only when it fires.
+
+Drafts are never limited: `create_document` without `send`, `update_draft` recipients and
+`create_document_from_template` only make drafts, and a draft mails nobody.
+
+Account deletion removes the user's rules row (`deleteAgentRulesForUser`).
+
 ### The DocuStamp app inside ChatGPT and Claude (MCP Apps)
 
 Hosts that render MCP Apps get screens, not just tools (`cloud/mcp/app.js`). One page, built from
@@ -571,8 +687,10 @@ signers are carried over in order; with them, the list must fill every role of t
 template. A template's own `chain` is inherited by documents created from it (an explicit
 `chain`, including `null`, wins). The follow-up goes out through the normal send path (mails,
 reminders, `sent` webhook) and reports `chainedFrom`; the completed document reports `chain`
-(the config) and, once fired, `chainResult` (`{status: sent|failed, documentId?, error?, at}`)
-in `get_document`, and the `chained` webhook event carries the same outcome as `chain`.
+(the config) and, once fired, `chainResult` (`{status: sent|failed|blocked, documentId?, error?, at}`)
+in `get_document`, and the `chained` webhook event carries the same outcome as `chain`. `blocked`
+is a chain an AI set up whose recipients the account's "only send to" rule no longer allows when
+it fires (see "Rules for your AI"); nothing is created or sent.
 Chains can be linked (B chains to C) for multi-step flows. `set_chain` (`cloud/lib/lifecycle.js
 setDocumentChain`) sets, changes or removes the chain on an existing document: drafts go through
 the versioned draft edit, sent-but-unfinished documents are stamped directly, and completed /
@@ -773,6 +891,7 @@ signedAt, signingUrl }], hasCertificate }`.
 cd apps/server && npx mongodb-runner start --port 27017
 SERVER_URL=http://localhost:30001/test APP_ID=test MASTER_KEY=test TESTING=true npx jasmine --filter="API tokens"
 TESTING=true npx jasmine spec/OAuth.spec.js
+TESTING=true npx jasmine spec/AgentRules.spec.js spec/AgentRulesSign.spec.js spec/AgentRulesSend.spec.js
 npm run mcp:docs:check   # docs/MCP_TOOLS.md matches the registered tools (no database needed)
 ```
 
@@ -782,16 +901,28 @@ npm run mcp:docs:check   # docs/MCP_TOOLS.md matches the registered tools (no da
   scopes (`documents:read`, `documents:write`, `documents:sign`); there is no finer split yet.
 - The name check reads printed text only: a scanned page, a name drawn as an image, or wording it
   does not know ("The party of the first part, J. Ellis") comes out `unknown` and does not block.
-- On documents other people send, the agent signs only after the user approves. Approving inside
-  the chat works only for hosts on `CHAT_APPROVAL_HOSTS`; everywhere else the user approves in
-  DocuStamp (the `/approvals` page or the emailed link).
+- On documents other people send, the agent signs only after the user approves, unless the
+  document fits the rules the user set for their AI. Approving inside the chat works only for hosts
+  on `CHAT_APPROVAL_HOSTS`; everywhere else the user approves in DocuStamp (the `/approvals` page or
+  the emailed link).
+- Rules for your AI:
+  - One set per account, shared by every connected app and the API key; there are no per-app rules.
+  - Signing by rules leans on the AI review's `facts`, and a model can misread a document. The
+    deterministic `scan` backs up the money figure and the always-ask topics, so a printed amount or
+    phrase cannot be talked away, but the scan only sees text the PDF actually contains: a scanned
+    page or an amount drawn as an image is invisible to it. Anything unclear (no review, a partial
+    review, an unknown value, a name the check cannot confirm) goes to the user.
+  - The money limit is in US dollars only; any other currency needs the user.
+  - "Only send to" covers email to signers. Webhook URLs are not limited by it.
+  - A blocked chain is not retried; the user sends the follow-up themselves or loosens the rule
+    and sets the chain again.
 - OAuth: dynamic client registration only, every client public (PKCE, no client secret). There are
   no pre-registered confidential clients, Client ID Metadata Documents (CIMD) are not supported
   yet, and MCP Events (automations that start from a document event) are not implemented.
 - A read-only connection cannot be upgraded in place: the user disconnects the app and connects
   it again with write access.
-- Creating an account, verifying the email address and turning on "Can sign for me" happen in
-  DocuStamp, not through a tool.
+- Creating an account, verifying the email address, turning on "Can sign for me" and setting the
+  rules for the AI happen in DocuStamp, not through a tool.
 - Every rate limit and the idempotency store are in-memory per Node process; scale out and they
   multiply. There is no per-account cost ceiling on AI usage beyond the 10 calls/minute.
 - The AI transcript stops at 60 pages and ~320k characters; fields the model puts on a page past

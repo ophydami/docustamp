@@ -12,8 +12,8 @@ The reference for every tool the MCP server offers: what it does, its safety
 class, the OAuth scope it needs and its inputs. The narrative guide (flows,
 signing, approvals, the REST API) is [AI_AND_MCP.md](AI_AND_MCP.md).
 
-Server `docustamp` version 1.6.0: 66 tools
-(27 read, 23 write, 16 sensitive),
+Server `docustamp` version 1.7.0: 67 tools
+(28 read, 23 write, 16 sensitive),
 plus 6 that only the DocuStamp app screens call.
 
 ## Connecting
@@ -117,6 +117,7 @@ POST), 413 (body over the limit, 72 MB by default) and 429 (rate limit).
 | [`quick_send`](#quick_send) | sensitive | documents:write | read and write |
 | [`send_document`](#send_document) | sensitive | documents:write | read and write |
 | [`sign_document`](#sign_document) | sensitive | documents:write | read and write |
+| [`get_rules`](#get_rules) | read | documents:read | all |
 | [`get_approval`](#get_approval) | read | documents:read | all |
 | [`list_inbox`](#list_inbox) | read | documents:read | all |
 | [`decline_document`](#decline_document) | sensitive | documents:write | read and write |
@@ -487,13 +488,22 @@ Mark a draft as sent and email every signer their signing link. Pass the `revisi
 **Sign for me.** Class: **sensitive**. Scope: `documents:write`. Connections: read and write.
 Labels: readOnlyHint false, destructiveHint true, openWorldHint false.
 
-Sign the user's own part of a sent document as their agent: a real DocuStamp signature, recorded in the audit trail and on the certificate as signed by you for the user. Only the user's own part (the recipient that is the user) is ever signed, nobody else's. On a document the user sent, it is signed right away, the user is emailed a notice with a Void button, and the next signer is mailed; returns status "signed", whether the document is now completed, who signs next, and the document summary. On a document someone else sent the user (list_inbox), nothing is signed yet: it returns status "awaiting_approval" with an approvalId, the user approves or declines on the card shown in the chat or in DocuStamp (they are emailed too), and get_approval waits for the decision. Name, email, company, job title and dates are filled from the account; give the user's other values in `fields` (the keys get_document or get_draft list). It always signs as the account holder: when the document prints another name for the user's party, it refuses on the user's own document (fix the name, or confirmNameMismatch after the user confirms), and on someone else's the approval carries nameCheck {status: "mismatch", expected, printed} to show the user. Needs 'Can sign for me' turned on for this app and a verified email.
+Sign the user's own part of a sent document as their agent: a real DocuStamp signature, recorded in the audit trail and on the certificate as signed by you for the user. Only the user's own part (the recipient that is the user) is ever signed, nobody else's. On a document the user sent, it is signed right away, the user is emailed a notice with a Void button, and the next signer is mailed; returns status "signed", whether the document is now completed, who signs next, and the document summary. On a document someone else sent the user (list_inbox), it is signed right away only when it fits the rules the user set for their AI (get_rules): then it returns status "signed" with signedBy "rules" and the rule used, and the user is emailed a notice. Otherwise nothing is signed yet: it returns status "awaiting_approval" with an approvalId and ruleCheck.reasons (why the rules did not cover it, when they are on), the user approves or declines on the card shown in the chat or in DocuStamp (they are emailed too), and get_approval waits for the decision. Name, email, company, job title and dates are filled from the account; give the user's other values in `fields` (the keys get_document or get_draft list). It always signs as the account holder: when the document prints another name for the user's party, it refuses on the user's own document (fix the name, or confirmNameMismatch after the user confirms), and on someone else's the approval carries nameCheck {status: "mismatch", expected, printed} to show the user. Needs 'Can sign for me' turned on for this app and a verified email.
 
 | Input | Type | Required | Description |
 | --- | --- | --- | --- |
 | `documentId` | string | yes |  |
 | `fields` | map of string or boolean or array of string | no | Values for the user's fields that the account cannot fill, keyed by the field key (get_draft, or get_document's myFields on a document sent to the user): a string for text, number, dropdown, radio and cells (or to override a date), true/false or the option labels to tick for a checkbox. |
 | `confirmNameMismatch` | boolean | no | Sign even though the document prints another name for the user's party than the name on their account (the refusal names both). Only after the user confirms they really sign for that party; never on your own. Recorded on the audit trail and the certificate. |
+
+### get_rules
+
+**Your rules for AI.** Class: **read**. Scope: `documents:read`. Connections: all.
+Labels: readOnlyHint true, destructiveHint false, openWorldHint false.
+
+The rules the user set in DocuStamp for their AI apps: whether documents someone else sends them may be signed without asking (which document types, the money limit, trusted senders), what always needs the user (auto-renewals, personal guarantees, non-competes, payment terms, anything unusual), and which email domains you may send to. Returns the rules, the same rules as short sentences (summary) and where the user changes them (editUrl). Read only: you cannot change them, and only the user can, in DocuStamp. Use it to tell the user what you may do on your own.
+
+No inputs.
 
 ### get_approval
 

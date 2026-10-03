@@ -1,5 +1,5 @@
 import type { TFunction } from "i18next";
-import type { SectionId } from "./types";
+import type { AlwaysAskKey, RuleDocType, SectionId } from "./types";
 
 /**
  * Date format values accepted by the server's `selectFormat`
@@ -120,8 +120,25 @@ export const YOU_SECTIONS: SectionMeta[] = [
   { id: "profile" },
   { id: "signature" },
   { id: "notifications" },
-  { id: "security" }
+  { id: "security" },
+  { id: "rules" }
 ];
+
+/** In the order the rules page offers them (server: RULE_DOC_TYPES). */
+export const RULE_DOC_TYPES: RuleDocType[] = [
+  "nda",
+  "order_form",
+  "msa",
+  "sow",
+  "offer_letter",
+  "lease",
+  "renewal",
+  "consent_form",
+  "purchase_order",
+  "vendor_agreement"
+];
+
+export const ALWAYS_ASK_KEYS: AlwaysAskKey[] = ["autoRenewal", "personalGuarantee", "nonCompete", "paymentTerms"];
 
 export const WORKSPACE_SECTIONS: SectionMeta[] = [
   { id: "general" },

@@ -202,6 +202,11 @@
     "row": {
       "from": "보낸 사람: {{sender}}"
     },
+    "rules": {
+      "edit": "내 규칙",
+      "title": "확인이 필요한 이유",
+      "titleDecided": "AI가 물어본 이유"
+    },
     "status": {
       "failed": "실패"
     },
@@ -2207,6 +2212,14 @@
         "note": "MCP 도구와 같은 작업을 HTTPS 위의 JSON으로 제공합니다.",
         "title": "REST API"
       },
+      "rules": {
+        "note": "위의 모든 앱과 API 키에 하나의 규칙이 적용됩니다: AI가 묻지 않고 서명할 수 있는 문서와 보낼 수 있는 상대.",
+        "off": "모든 문서를 먼저 물어봄",
+        "on": "규칙 안에서 묻지 않고 서명",
+        "open": "규칙 열기",
+        "sendLimited": "승인된 도메인으로만 발송",
+        "title": "AI 규칙"
+      },
       "token": {
         "copy": "토큰 복사",
         "created": "생성일",
@@ -2514,6 +2527,69 @@
         "uploadFailed": "업로드 실패"
       }
     },
+    "rules": {
+      "alwaysAsk": {
+        "autoRenewal": "자동 갱신",
+        "autoRenewalHint": "누군가 해지하지 않으면 계약이 저절로 갱신됩니다.",
+        "nonCompete": "경업 금지 및 독점",
+        "nonCompeteHint": "함께 일하거나 일해 줄 수 있는 상대에 대한 제한입니다.",
+        "note": "문서가 위 규칙에 맞더라도 아래 항목이 있으면 먼저 본인에게 옵니다.",
+        "paymentTerms": "지급 조건",
+        "paymentTermsHint": "본인이 돈을 내야 합니다.",
+        "personalGuarantee": "개인 보증",
+        "personalGuaranteeHint": "회사뿐 아니라 본인이 개인적으로 책임지게 됩니다.",
+        "title": "항상 물어볼 항목"
+      },
+      "autoSign": {
+        "limitHint": "$0은 금액이 없는 문서만 뜻합니다.",
+        "limitInvalid": "0 이상의 달러 정수 금액을 입력하세요.",
+        "limitLabel": "이 금액을 넘으면 항상 묻기",
+        "needType": "문서 종류를 하나 이상 고르거나, 묻지 않고 서명을 끄세요.",
+        "note": "다른 사람이 보낸 문서에 적용됩니다. 직접 보낸 문서는 말씀하시는 즉시 서명됩니다.",
+        "offNote": "꺼짐: 저절로 서명되는 문서는 없습니다. 다른 사람이 보낸 모든 문서를 AI가 먼저 묻습니다.",
+        "sendersHint": "이 도메인에서 온 문서만 묻지 않고 서명할 수 있습니다. 비워 두면 모든 발신자를 허용합니다.",
+        "sendersLabel": "신뢰하는 발신자 (선택)",
+        "title": "묻지 않고 서명",
+        "toggle": "다른 사람이 보낸 문서가 이 규칙에 맞으면 AI가 묻지 않고 서명하도록 허용",
+        "toggleHint": "앱에서 \"대신 서명 가능\"이 여전히 켜져 있어야 하며, AI는 본인 부분에만 서명합니다. 규칙에 맞지 않는 문서는 먼저 본인에게 옵니다.",
+        "toggleLabel": "묻지 않고 서명",
+        "typesHint": "그 밖의 문서는 먼저 본인에게 옵니다.",
+        "typesLabel": "서명할 수 있는 문서 종류"
+      },
+      "domains": {
+        "add": "추가",
+        "duplicate": "{{domain}}은(는) 이미 목록에 있습니다.",
+        "invalid": "vendor.com 같은 도메인을 입력하세요.",
+        "none": "아직 도메인이 없습니다.",
+        "placeholder": "vendor.com",
+        "remove": "{{domain}} 삭제"
+      },
+      "readOnlyNote": "이 규칙은 연결한 모든 앱과 API 키에 적용됩니다. AI는 규칙을 읽을 수는 있지만 절대 바꿀 수 없습니다.",
+      "sending": {
+        "hint": "비워 두면 AI가 누구에게나 보낼 수 있습니다. 본인 주소는 항상 허용됩니다. 그 밖의 도메인으로 보내려 하면 거부되며 아무것도 발송되지 않습니다.",
+        "label": "이 도메인으로만 보내기 (선택)",
+        "note": "AI가 문서를 보내거나, 다시 보내거나, 서명자를 바꾸거나, 후속 발송을 설정할 때마다 확인합니다.",
+        "title": "AI가 보낼 수 있는 상대"
+      },
+      "toast": {
+        "saveFailed": "규칙을 저장하지 못했습니다",
+        "saved": "규칙을 저장했습니다"
+      },
+      "types": {
+        "consent_form": "동의서",
+        "lease": "임대차 계약",
+        "msa": "기본 계약 (MSA)",
+        "nda": "NDA",
+        "offer_letter": "채용 제안서",
+        "order_form": "주문서",
+        "purchase_order": "구매 주문서",
+        "renewal": "갱신",
+        "sow": "작업 기술서",
+        "vendor_agreement": "공급업체 계약"
+      },
+      "updated": "마지막 변경: <0>{{date}}</0>",
+      "updatedBy": "마지막 변경: {{name}}, <0>{{date}}</0>"
+    },
     "sections": {
       "api": {
         "description": "스크립트와 AI 에이전트를 위한 개인 토큰, MCP 엔드포인트, REST API.",
@@ -2559,6 +2635,11 @@
         "description": "이름, 연락처, 날짜 표시 방식입니다.",
         "label": "프로필",
         "title": "프로필"
+      },
+      "rules": {
+        "description": "AI가 묻지 않고 서명할 수 있는 문서와 보낼 수 있는 상대를 정합니다.",
+        "label": "AI 규칙",
+        "title": "AI 규칙"
       },
       "security": {
         "description": "비밀번호를 변경하고 로그인된 기기를 확인합니다.",

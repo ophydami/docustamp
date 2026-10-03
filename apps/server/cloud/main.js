@@ -66,6 +66,7 @@ import {
   revokeOAuthGrantFn,
   setOAuthGrantSigningFn,
 } from './parsefunction/oauthFunctions.js';
+import { getAgentRulesFn, setAgentRulesFn } from './parsefunction/agentRulesFunctions.js';
 import getSigningLinks from './parsefunction/getSigningLinks.js';
 import savePlaceholders from './parsefunction/savePlaceholders.js';
 import updateProfile from './parsefunction/updateProfile.js';
@@ -160,6 +161,9 @@ Parse.Cloud.define('oauthdecide', oauthDecide);
 Parse.Cloud.define('listoauthgrants', listOAuthGrantsFn);
 Parse.Cloud.define('revokeoauthgrant', revokeOAuthGrantFn);
 Parse.Cloud.define('setoauthgrantsigning', setOAuthGrantSigningFn);
+// "Rules for your AI": what the user's agents may sign and send without asking.
+Parse.Cloud.define('getagentrules', getAgentRulesFn);
+Parse.Cloud.define('setagentrules', setAgentRulesFn);
 // Access hardening: tokenised signing links, signer-side placeholder save,
 // and the contracts_Users writes the web app used to do over the open REST class.
 Parse.Cloud.define('getsigninglinks', getSigningLinks);

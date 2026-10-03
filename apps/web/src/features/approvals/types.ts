@@ -62,6 +62,26 @@ export interface NameCheck {
   printed: PrintedName[];
 }
 
+/** One reason the account's rules did not let the agent sign on its own. The text is the server's, a plain sentence. */
+export interface RuleReason {
+  code: string;
+  text: string;
+}
+
+/**
+ * Whether the account's rules for its AI let the agent sign this document
+ * without asking (server: checkSignRules in cloud/lib/agentRules.js). When the
+ * rules are off (`enabled: false`) every document someone else sends comes to
+ * the person, and nothing is shown.
+ */
+export interface RuleCheck {
+  enabled: boolean;
+  allowed: boolean;
+  reasons: RuleReason[];
+  summary?: string;
+  rulesUpdatedAt?: string | null;
+}
+
 export interface Approval {
   id: string;
   status: ApprovalStatus;
@@ -82,6 +102,8 @@ export interface Approval {
   review: Review | null;
   /** Null on a request made before the check existed. */
   nameCheck?: NameCheck | null;
+  /** Why the rules sent this to the person. Missing or null on a request made before rules existed. */
+  ruleCheck?: RuleCheck | null;
   /** Signing saved the typed signature as the person's own (they had none). */
   signatureSaved?: boolean;
 }

@@ -6,6 +6,7 @@ import { extUserKey } from "@/lib/extUser";
 import { brandKey } from "@/lib/brand";
 import { recordFileUsage } from "@/lib/fileUsage";
 import type {
+  AgentRules,
   DocumentExportRow,
   MailTemplates,
   SignatureRecord,
@@ -575,4 +576,77 @@ export function useVerifyEmail() {
       await qc.invalidateQueries({ queryKey: oauthGrantsKey });
     }
   });
+}
+
+/* ------------------------------------------------------- rules for your AI */
+
+export const agentRulesKey = ["settings", "agentRules"] as const;
+
+/** What an account has before anyone sets its rules (server: defaultRules). */
+export function defaultAgentRules(): AgentRules {
+  return {
+    autoSign: { enabled: false, documentTypes: ["nda"], maxValueUsd: 0, trustedSenderDomains: [] },
+    alwaysAsk: { autoRenewal: true, personalGuarantee: true, nonCompete: true, paymentTerms: true },
+    sendOnlyTo: [],
+    updatedAt: null,
+    updatedBy: null
+  };
+}
+
+const strings = (v: unknown): string[] => (Array.isArray(v) ? v.filter((x): x is string => typeof x === "string") : []);
+
+/**
+ * The rules in one shape, whether the function answers `{ rules }` or the
+ * rules themselves, with defaults for anything an older server leaves out.
+ */
+function toAgentRules(raw: unknown): AgentRules {
+  const base = defaultAgentRules();
+  const outer = (raw && typeof raw === "object" ? raw : {}) as Record<string, unknown>;
+  const src = (outer.rules && typeof outer.rules === "object" ? outer.rules : outer) as Partial<AgentRules>;
+  const auto = (src.autoSign ?? {}) as Partial<AgentRules["autoSign"]>;
+  const ask = (src.alwaysAsk ?? {}) as Partial<AgentRules["alwaysAsk"]>;
+  const max = Number(auto.maxValueUsd);
+  return {
+    autoSign: {
+      enabled: auto.enabled === true,
+      documentTypes: Array.isArray(auto.documentTypes)
+        ? (strings(auto.documentTypes) as AgentRules["autoSign"]["documentTypes"])
+        : base.autoSign.documentTypes,
+      maxValueUsd: Number.isFinite(max) && max >= 0 ? Math.floor(max) : 0,
+      trustedSenderDomains: strings(auto.trustedSenderDomains)
+    },
+    alwaysAsk: {
+      autoRenewal: ask.autoRenewal !== false,
+      personalGuarantee: ask.personalGuarantee !== false,
+      nonCompete: ask.nonCompete !== false,
+      paymentTerms: ask.paymentTerms !== false
+    },
+    sendOnlyTo: strings(src.sendOnlyTo),
+    updatedAt: typeof src.updatedAt === "string" ? src.updatedAt : null,
+    updatedBy:
+      src.updatedBy && typeof src.updatedBy === "object"
+        ? { name: String(src.updatedBy.name ?? ""), email: String(src.updatedBy.email ?? "") }
+        : null
+  };
+}
+
+/**
+ * `getagentrules` -> the account's rules. `retry: false` so a server without
+ * rules answers quickly with an error, which the API page reads as "leave the
+ * rules card out".
+ */
+export function useAgentRules() {
+  const { user } = useAuth();
+  return useQuery({
+    queryKey: agentRulesKey,
+    enabled: !!user,
+    queryFn: async () => toAgentRules(await cloud<unknown>("getagentrules")),
+    retry: false,
+    staleTime: 30_000
+  });
+}
+
+/** `setagentrules { rules }`: the editable part. The server stamps who changed them and when. */
+export async function saveAgentRules(rules: Pick<AgentRules, "autoSign" | "alwaysAsk" | "sendOnlyTo">): Promise<AgentRules> {
+  return toAgentRules(await cloud<unknown>("setagentrules", { rules }));
 }

@@ -1,3 +1,4 @@
+import createAgentRulesIndexes from './createAgentRulesIndexes.js';
 import createAutoReminderIndex from './createAutoReminderIndex.js';
 import createContactIndex from './createContactIndex.js';
 import createDocumentIndex from './createDocumentIndex.js';
@@ -34,6 +35,7 @@ export default async function runDbMigrations() {
     ['identityIndexes', createIdentityIndexes],
     ['oauthIndexes', createOAuthIndexes],
     ['signApprovalIndexes', createSignApprovalIndexes],
+    ['agentRulesIndexes', createAgentRulesIndexes],
   ];
   // Bcrypt-heavy one-off pass over `_User`; specs drive it directly instead.
   if (!process.env.TESTING) migrations.push(['shadowPasswordRotation', rotateShadowPasswords]);

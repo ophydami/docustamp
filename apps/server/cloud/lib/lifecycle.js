@@ -3,6 +3,7 @@ import { renderMail, strong } from './mailShell.js';
 import { isParticipantBasic } from '../../utils/workflowUtils.js';
 import { conditionalUpdate, readFresh, tryMarkDeclined, updateWithVersion, MAX_WRITE_ATTEMPTS } from './atomic.js';
 import { upsertAuditEntry } from './auditTrail.js';
+import { assertRecipientsAllowed } from './agentRules.js';
 import { ensureContact } from './contacts.js';
 import { userPointer } from './context.js';
 import {
@@ -185,6 +186,9 @@ export async function replaceSigner(caller, docId, { signer, email, name, phone,
   if (participants(d).some(p => p.email === newEmail && p.signerObjId !== target.signerObjId)) {
     throw fail(`${newEmail} is already a signer on this document.`, Parse.Error.VALIDATION_ERROR);
   }
+  // Checked even with notify: false: the new signer is mailed when their turn
+  // comes, so an address the AI may not send to never gets onto the document.
+  await assertRecipientsAllowed(caller, [newEmail]);
   const contact = await ensureContact(caller, { email: newEmail, name, phone });
 
   const placeholders = (d.Placeholders || []).map((g, i) =>
@@ -239,6 +243,7 @@ export async function resendTo(caller, docId, { signer } = {}) {
   if (!turn) {
     throw fail('Signing is in order and it is not this signer\'s turn yet; mail the current signer instead.');
   }
+  await assertRecipientsAllowed(caller, [target.email]);
   const mail = await sendSignatureRequestMails({ doc: d, publicUrl: caller.publicUrl, only: [target.email] });
   delete mail.signingLinks;
   const summary = await getDocument(caller, d.objectId);

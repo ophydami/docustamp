@@ -314,6 +314,36 @@ function NameWarning({ approval }: { approval: Approval }) {
   );
 }
 
+/** How many rule reasons the small card shows before "and N more". */
+const REASONS_SHOWN = 3;
+
+/**
+ * Why the user's rules sent this to them instead of letting the agent sign on
+ * its own: "It's over your $25,000 limit." Nothing when the rules are off,
+ * since then every document someone else sends comes to the user.
+ */
+function RuleReasons({ approval, compact = false }: { approval: Approval; compact?: boolean }) {
+  const check = approval.ruleCheck;
+  const reasons = check?.enabled ? (check.reasons || []).filter((r) => r?.text) : [];
+  if (!reasons.length) return null;
+  const shown = compact ? reasons.slice(0, REASONS_SHOWN) : reasons;
+  const more = reasons.length - shown.length;
+  return (
+    <Banner tone="neutral">
+      <span className="block font-semibold">{approval.status === "pending" ? "Why this needs you" : "Why your AI asked you"}</span>
+      <ul className="m-0 mt-1 flex list-none flex-col gap-0.5 p-0">
+        {shown.map((r, i) => (
+          <li key={`${r.code}-${i}`} className="flex items-start gap-1.5">
+            <span className="mt-[7px] size-1 shrink-0 rounded-full bg-current opacity-60" aria-hidden />
+            <span className="min-w-0">{r.text}</span>
+          </li>
+        ))}
+      </ul>
+      {more > 0 ? <span className="mt-0.5 block text-[12px] text-muted">and {more} more</span> : null}
+    </Banner>
+  );
+}
+
 /** The AI's read of the terms: one overall pill, a summary, the first few flags with their quotes. */
 function ReviewBlock({ review, compact = false }: { review: ContractReview | null; compact?: boolean }) {
   if (!review)
@@ -598,6 +628,11 @@ export function ApprovalCard({
           <NameWarning approval={approval} />
         </div>
       ) : null}
+      {approval.ruleCheck?.enabled && approval.ruleCheck.reasons?.length ? (
+        <div className="px-3 pb-3">
+          <RuleReasons approval={approval} compact />
+        </div>
+      ) : null}
       <div className="border-t border-line-soft px-3 py-2.5">
         <ValuesList approval={approval} images={images} />
       </div>
@@ -695,6 +730,7 @@ export function ApprovalView({
 
         <div className="flex flex-col gap-4">
           <NameWarning approval={approval} />
+          <RuleReasons approval={approval} />
           <Card className="p-4">
             <ValuesList approval={approval} images={images} />
           </Card>

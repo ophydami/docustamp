@@ -202,6 +202,11 @@
     "row": {
       "from": "De {{sender}}"
     },
+    "rules": {
+      "edit": "Vos règles",
+      "title": "Pourquoi on a besoin de vous",
+      "titleDecided": "Pourquoi votre IA vous a demandé"
+    },
     "status": {
       "failed": "Échec"
     },
@@ -2207,6 +2212,14 @@
         "note": "Les mêmes opérations que les outils MCP, en JSON sur HTTPS.",
         "title": "API REST"
       },
+      "rules": {
+        "note": "Un seul ensemble pour chaque app ci-dessus et votre clé API : ce que votre IA peut signer sans demander, et à qui elle peut envoyer.",
+        "off": "Vous demande pour chaque document",
+        "on": "Signe sans demander, dans le cadre de vos règles",
+        "open": "Ouvrir les règles",
+        "sendLimited": "N'envoie qu'aux domaines approuvés",
+        "title": "Règles pour votre IA"
+      },
       "token": {
         "copy": "Copier le jeton",
         "created": "Créé",
@@ -2514,6 +2527,69 @@
         "uploadFailed": "Échec de l'envoi"
       }
     },
+    "rules": {
+      "alwaysAsk": {
+        "autoRenewal": "Renouvellements automatiques",
+        "autoRenewalHint": "Le contrat se renouvelle tout seul sauf si quelqu'un le résilie.",
+        "nonCompete": "Non-concurrence et exclusivité",
+        "nonCompeteHint": "Des limites sur les personnes avec ou pour qui vous pouvez travailler.",
+        "note": "Même quand un document respecte les règles ci-dessus, ces points vous sont d'abord soumis.",
+        "paymentTerms": "Conditions de paiement",
+        "paymentTermsHint": "Vous devriez de l'argent.",
+        "personalGuarantee": "Garanties personnelles",
+        "personalGuaranteeHint": "Vous seriez engagé personnellement, pas seulement votre entreprise.",
+        "title": "Toujours me demander pour"
+      },
+      "autoSign": {
+        "limitHint": "0 $ signifie : seulement les documents sans argent en jeu.",
+        "limitInvalid": "Saisissez un montant entier en dollars, 0 ou plus.",
+        "limitLabel": "Me demander pour tout ce qui dépasse",
+        "needType": "Choisissez au moins un type de document, ou désactivez la signature sans demander.",
+        "note": "Pour les documents que d'autres vous envoient. Les documents que vous envoyez vous-même sont signés dès que vous le dites.",
+        "offNote": "Désactivé : rien ne se signe tout seul. Votre IA vous demande pour chaque document que d'autres envoient.",
+        "sendersHint": "Seuls les documents venant de ces domaines peuvent être signés sans demander. Laissez vide pour accepter tout expéditeur.",
+        "sendersLabel": "Expéditeurs de confiance (facultatif)",
+        "title": "Signer sans demander",
+        "toggle": "Laisser mon IA signer sans demander les documents que d'autres m'envoient, s'ils respectent ces règles",
+        "toggleHint": "L'app doit toujours avoir \"Peut signer pour moi\" activé, et elle ne signe que votre partie. Tout ce qui sort de ces règles vous est d'abord soumis.",
+        "toggleLabel": "Signer sans demander",
+        "typesHint": "Tout autre type de document vous est d'abord soumis.",
+        "typesLabel": "Types de documents qu'elle peut signer"
+      },
+      "domains": {
+        "add": "Ajouter",
+        "duplicate": "{{domain}} est déjà dans la liste.",
+        "invalid": "Saisissez un domaine comme vendor.com.",
+        "none": "Aucun domaine pour l'instant.",
+        "placeholder": "vendor.com",
+        "remove": "Retirer {{domain}}"
+      },
+      "readOnlyNote": "Ces règles s'appliquent à chaque app que vous connectez et à votre clé API. Votre IA peut les lire, mais jamais les modifier.",
+      "sending": {
+        "hint": "Laissez vide pour que votre IA puisse envoyer à n'importe qui. Votre propre adresse est toujours autorisée. Un envoi vers tout autre domaine est refusé, et rien ne part.",
+        "label": "Envoyer uniquement à ces domaines (facultatif)",
+        "note": "Vérifié chaque fois que votre IA envoie, renvoie, remplace un signataire ou prépare un envoi de suivi.",
+        "title": "À qui votre IA peut envoyer"
+      },
+      "toast": {
+        "saveFailed": "Impossible d'enregistrer vos règles",
+        "saved": "Règles enregistrées"
+      },
+      "types": {
+        "consent_form": "Formulaire de consentement",
+        "lease": "Bail",
+        "msa": "Contrat-cadre (MSA)",
+        "nda": "NDA",
+        "offer_letter": "Lettre d'offre",
+        "order_form": "Bon de commande",
+        "purchase_order": "Ordre d'achat",
+        "renewal": "Renouvellement",
+        "sow": "Énoncé des travaux",
+        "vendor_agreement": "Contrat fournisseur"
+      },
+      "updated": "Dernière modification le <0>{{date}}</0>",
+      "updatedBy": "Dernière modification par {{name}} le <0>{{date}}</0>"
+    },
     "sections": {
       "api": {
         "description": "Jeton personnel, point de terminaison MCP et API REST pour scripts et agents IA.",
@@ -2559,6 +2635,11 @@
         "description": "Votre nom, vos coordonnées et la façon dont les dates vous sont affichées.",
         "label": "Profil",
         "title": "Profil"
+      },
+      "rules": {
+        "description": "Ce que votre IA peut signer sans demander, et à qui elle peut envoyer.",
+        "label": "Règles pour votre IA",
+        "title": "Règles pour votre IA"
       },
       "security": {
         "description": "Changez votre mot de passe et vérifiez où vous êtes connecté.",
