@@ -1,6 +1,6 @@
 {
   "name": "docustamp",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "description": "Open source, self-hostable e-signature app",
   "main": "index.js",
   "scripts": {

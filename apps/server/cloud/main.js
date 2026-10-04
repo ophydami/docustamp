@@ -77,6 +77,7 @@ import {
   userBeforeSave,
   verifyEmail,
 } from './parsefunction/emailVerification.js';
+import { sendPasswordCode, setPasswordWithCode } from './parsefunction/setPasswordWithCode.js';
 import {
   decideSignApproval,
   getSignApproval,
@@ -174,6 +175,9 @@ Parse.Cloud.define('updateteammember', updateTeamMember);
 Parse.Cloud.define('getemailverification', getEmailVerification);
 Parse.Cloud.define('sendemailverification', sendEmailVerification);
 Parse.Cloud.define('verifyemail', verifyEmail);
+// Setting a password with an emailed code, for accounts that never had one.
+Parse.Cloud.define('sendpasswordcode', sendPasswordCode);
+Parse.Cloud.define('setpasswordwithcode', setPasswordWithCode);
 // Approving a signature an AI agent asked to make on a document sent to the user.
 Parse.Cloud.define('listsignapprovals', listSignApprovals);
 Parse.Cloud.define('getsignapproval', getSignApproval);

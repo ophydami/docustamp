@@ -2680,8 +2680,23 @@
           "cannotChangeBody": "Your account has no email address.",
           "failed": "Could not change your password",
           "updated": "Password updated",
-          "updatedBody": "Other devices may need to sign in again."
-        }
+          "updatedBody": "Other devices may need to sign in again.",
+          "set": "Password set",
+          "setBody": "You can now sign in with your email and this password. Email codes still work too."
+        },
+        "titleSet": "Set a password",
+        "noteCode": "No password yet, or forgot it? Prove it is you with a code we email you. Other sessions are ended by the server.",
+        "useCode": "No password yet, or forgot it? Use an email code instead",
+        "useCurrent": "I know my current password",
+        "willSend": "We'll send a 6-digit code to <0>{{email}}</0>.",
+        "sendCode": "Email me a code",
+        "sent": "We sent a 6-digit code to <0>{{email}}</0>. It expires in 10 minutes.",
+        "codeLabel": "Code from the email",
+        "resend": "Send a new code",
+        "resendIn": "Send a new code in <0>{{seconds}}s</0>",
+        "submitSet": "Set password",
+        "sendFailed": "Could not send the code.",
+        "setFailed": "Could not set your password."
       },
       "sessions": {
         "end": "End",

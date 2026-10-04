@@ -149,7 +149,7 @@ export async function userBeforeSave(request) {
  * ------------------------------------------------------------------------- */
 
 /** The caller's `_User`, read fresh with the master key, or throws. */
-async function signedInUser(request) {
+export async function signedInUser(request) {
   const caller = await resolveCaller(request);
   if (!caller) {
     throw new Parse.Error(Parse.Error.INVALID_SESSION_TOKEN, 'User is not authenticated.');
@@ -162,7 +162,7 @@ async function signedInUser(request) {
 }
 
 /** The address a code is sent to and checked against. */
-function accountEmail(user) {
+export function accountEmail(user) {
   return normaliseEmail(user.get('email') || '');
 }
 
@@ -231,7 +231,7 @@ export async function sendEmailVerification(request) {
 }
 
 /** What each `consumeOtp` failure tells the person. */
-const OTP_FAILURES = {
+export const OTP_FAILURES = {
   missing: 'That code has expired. Ask for a new one.',
   expired: 'That code has expired. Ask for a new one.',
   locked: 'Too many wrong codes. Ask for a new one.',

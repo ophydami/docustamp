@@ -2681,8 +2681,23 @@
           "cannotChangeBody": "Tu cuenta no tiene dirección de correo.",
           "failed": "No se pudo cambiar tu contraseña",
           "updated": "Contraseña actualizada",
-          "updatedBody": "Puede que otros dispositivos tengan que iniciar sesión de nuevo."
-        }
+          "updatedBody": "Puede que otros dispositivos tengan que iniciar sesión de nuevo.",
+          "set": "Contraseña creada",
+          "setBody": "Ya puedes iniciar sesión con tu correo y esta contraseña. Los códigos por correo siguen funcionando."
+        },
+        "titleSet": "Crear una contraseña",
+        "noteCode": "¿Aún no tienes contraseña o la olvidaste? Demuestra que eres tú con un código que te enviamos por correo. El servidor cierra las demás sesiones.",
+        "useCode": "¿Aún no tienes contraseña o la olvidaste? Usa un código por correo",
+        "useCurrent": "Conozco mi contraseña actual",
+        "willSend": "Enviaremos un código de 6 dígitos a <0>{{email}}</0>.",
+        "sendCode": "Enviarme un código",
+        "sent": "Enviamos un código de 6 dígitos a <0>{{email}}</0>. Caduca en 10 minutos.",
+        "codeLabel": "Código del correo",
+        "resend": "Enviar un código nuevo",
+        "resendIn": "Enviar un código nuevo en <0>{{seconds}} s</0>",
+        "submitSet": "Guardar contraseña",
+        "sendFailed": "No se pudo enviar el código.",
+        "setFailed": "No se pudo guardar tu contraseña."
       },
       "sessions": {
         "end": "Cerrar",

@@ -1,10 +1,12 @@
 import { useState } from "react";
-import { useTranslation } from "react-i18next";
-import { Check, LogOut, Monitor, X } from "lucide-react";
+import { Trans, useTranslation } from "react-i18next";
+import { Check, LogOut, Monitor, Send, X } from "lucide-react";
 import { Button, Field, Input, Pill, toast } from "@/components/ui";
 import { useAuth } from "@/app/auth";
+import { CodeInput } from "@/features/auth/CodeInput";
+import { useCooldown } from "@/features/auth/useCooldown";
 import { ago, whenShort } from "@/lib/format";
-import { changePassword, revokeSession, useSessions } from "../api";
+import { changePassword, revokeSession, sendPasswordCode, setPasswordWithCode, useSessions } from "../api";
 import { FormColumn, SectionCard } from "../parts";
 
 const RULES = [
@@ -15,13 +17,25 @@ const RULES = [
 
 export default function SecuritySection() {
   const { t } = useTranslation();
-  const { user, logout } = useAuth();
+  const { user, logout, loginWithSessionToken } = useAuth();
   const sessions = useSessions();
   const [current, setCurrent] = useState("");
   const [next, setNext] = useState("");
   const [confirm, setConfirm] = useState("");
   const [busy, setBusy] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
+
+  // Someone who signed in with an emailed code, a signing link or Google has
+  // no password they know, so the card opens on the emailed-code route for
+  // them. Either route stays one click away.
+  const signedInWith = sessions.data?.find((s) => s.current)?.signedInWith;
+  const [chosenMode, setChosenMode] = useState<"current" | "code" | null>(null);
+  const mode = chosenMode ?? (signedInWith && signedInWith !== "password" ? "code" : "current");
+  const [sentTo, setSentTo] = useState<string | null>(null);
+  const [code, setCode] = useState("");
+  const [codeError, setCodeError] = useState("");
+  const [sending, setSending] = useState(false);
+  const cooldown = useCooldown(45);
 
   const rules = RULES.map((r) => ({
     key: r.key,
@@ -31,6 +45,48 @@ export default function SecuritySection() {
   const strong = rules.every((r) => r.ok);
   const matches = next.length > 0 && next === confirm;
   const canSubmit = current.length > 0 && strong && matches && !busy;
+  const canSubmitWithCode = code.length === 6 && strong && matches && !busy;
+
+  const switchMode = (to: "current" | "code") => {
+    setChosenMode(to);
+    setCodeError("");
+  };
+
+  const sendCode = async () => {
+    setSending(true);
+    setCodeError("");
+    try {
+      const res = await sendPasswordCode();
+      setSentTo(res.email || user?.email || "");
+      setCode("");
+      cooldown.start();
+    } catch (err) {
+      setCodeError((err as Error).message || t("settings.security.password.sendFailed"));
+    } finally {
+      setSending(false);
+    }
+  };
+
+  const submitWithCode = async () => {
+    setBusy(true);
+    setCodeError("");
+    try {
+      const { sessionToken } = await setPasswordWithCode(code, next);
+      // The server ended every session, this one included; adopt the new one.
+      await loginWithSessionToken(sessionToken);
+      setCode("");
+      setNext("");
+      setConfirm("");
+      setSentTo(null);
+      setChosenMode(null);
+      toast.success(t("settings.security.password.toast.set"), t("settings.security.password.toast.setBody"));
+      await sessions.refetch();
+    } catch (err) {
+      setCodeError((err as Error).message || t("settings.security.password.setFailed"));
+    } finally {
+      setBusy(false);
+    }
+  };
 
   const submit = async () => {
     if (!user?.email && !user?.username) {
@@ -76,43 +132,131 @@ export default function SecuritySection() {
     }
   };
 
+  const newPasswordFields = (
+    <>
+      <Field label={t("settings.security.password.new")}>
+        <Input type="password" value={next} autoComplete="new-password" onChange={(e) => setNext(e.target.value)} />
+      </Field>
+      <Field
+        label={t("settings.security.password.confirm")}
+        error={confirm.length > 0 && !matches ? t("settings.security.password.mismatch") : undefined}
+      >
+        <Input type="password" value={confirm} autoComplete="new-password" onChange={(e) => setConfirm(e.target.value)} />
+      </Field>
+
+      {next.length > 0 ? (
+        <ul className="flex flex-col gap-1">
+          {rules.map((r) => (
+            <li key={r.key} className="flex items-center gap-1.5 text-[12px]">
+              {r.ok ? (
+                <Check className="size-3.5 text-accent" strokeWidth={2} />
+              ) : (
+                <X className="size-3.5 text-muted-2" strokeWidth={2} />
+              )}
+              <span className={r.ok ? "text-ink-2" : "text-muted-2"}>{r.label}</span>
+            </li>
+          ))}
+        </ul>
+      ) : null}
+    </>
+  );
+
   return (
     <FormColumn>
-      <SectionCard title={t("settings.security.password.title")} note={t("settings.security.password.note")}>
-        <Field label={t("settings.security.password.current")}>
-          <Input type="password" value={current} autoComplete="current-password" onChange={(e) => setCurrent(e.target.value)} />
-        </Field>
-        <Field label={t("settings.security.password.new")}>
-          <Input type="password" value={next} autoComplete="new-password" onChange={(e) => setNext(e.target.value)} />
-        </Field>
-        <Field
-          label={t("settings.security.password.confirm")}
-          error={confirm.length > 0 && !matches ? t("settings.security.password.mismatch") : undefined}
-        >
-          <Input type="password" value={confirm} autoComplete="new-password" onChange={(e) => setConfirm(e.target.value)} />
-        </Field>
+      {mode === "current" ? (
+        <SectionCard title={t("settings.security.password.title")} note={t("settings.security.password.note")}>
+          <Field label={t("settings.security.password.current")}>
+            <Input type="password" value={current} autoComplete="current-password" onChange={(e) => setCurrent(e.target.value)} />
+          </Field>
+          {newPasswordFields}
 
-        {next.length > 0 ? (
-          <ul className="flex flex-col gap-1">
-            {rules.map((r) => (
-              <li key={r.key} className="flex items-center gap-1.5 text-[12px]">
-                {r.ok ? (
-                  <Check className="size-3.5 text-accent" strokeWidth={2} />
-                ) : (
-                  <X className="size-3.5 text-muted-2" strokeWidth={2} />
-                )}
-                <span className={r.ok ? "text-ink-2" : "text-muted-2"}>{r.label}</span>
-              </li>
-            ))}
-          </ul>
-        ) : null}
-
-        <div>
-          <Button variant="primary" size="sm" loading={busy} disabled={!canSubmit} onClick={() => void submit()}>
-            {t("settings.security.password.submit")}
-          </Button>
-        </div>
-      </SectionCard>
+          <div className="flex flex-col items-start gap-3">
+            <Button variant="primary" size="sm" loading={busy} disabled={!canSubmit} onClick={() => void submit()}>
+              {t("settings.security.password.submit")}
+            </Button>
+            <button type="button" className="text-[12px] text-accent hover:underline" onClick={() => switchMode("code")}>
+              {t("settings.security.password.useCode")}
+            </button>
+          </div>
+        </SectionCard>
+      ) : (
+        <SectionCard title={t("settings.security.password.titleSet")} note={t("settings.security.password.noteCode")}>
+          {sentTo === null ? (
+            <div className="flex flex-col items-start gap-3">
+              <p className="text-[12px] leading-relaxed text-muted">
+                <Trans
+                  i18nKey="settings.security.password.willSend"
+                  values={{ email: user?.email || user?.username || "" }}
+                  components={[<span key="email" className="font-medium text-ink-2" />]}
+                />
+              </p>
+              <Button
+                size="sm"
+                variant="primary"
+                loading={sending}
+                icon={<Send className="size-3.5" strokeWidth={1.6} />}
+                onClick={() => void sendCode()}
+              >
+                {t("settings.security.password.sendCode")}
+              </Button>
+            </div>
+          ) : (
+            <>
+              <p className="text-[12px] leading-relaxed text-muted">
+                <Trans
+                  i18nKey="settings.security.password.sent"
+                  values={{ email: sentTo }}
+                  components={[<span key="email" className="font-medium text-ink-2" />]}
+                />
+              </p>
+              <CodeInput
+                value={code}
+                onChange={(value) => {
+                  setCode(value);
+                  setCodeError("");
+                }}
+                disabled={busy}
+                invalid={Boolean(codeError)}
+                autoFocus
+                label={t("settings.security.password.codeLabel")}
+              />
+              {newPasswordFields}
+              <div className="flex flex-wrap items-center gap-2">
+                <Button
+                  variant="primary"
+                  size="sm"
+                  loading={busy}
+                  disabled={!canSubmitWithCode}
+                  onClick={() => void submitWithCode()}
+                >
+                  {t("settings.security.password.submitSet")}
+                </Button>
+                <Button size="sm" variant="ghost" disabled={cooldown.active || sending} onClick={() => void sendCode()}>
+                  {cooldown.active ? (
+                    <Trans
+                      i18nKey="settings.security.password.resendIn"
+                      values={{ seconds: cooldown.left }}
+                      components={[<span key="n" className="num" />]}
+                    />
+                  ) : (
+                    t("settings.security.password.resend")
+                  )}
+                </Button>
+              </div>
+            </>
+          )}
+          {codeError ? (
+            <p role="alert" className="text-[12px] text-danger">
+              {codeError}
+            </p>
+          ) : null}
+          <div>
+            <button type="button" className="text-[12px] text-accent hover:underline" onClick={() => switchMode("current")}>
+              {t("settings.security.password.useCurrent")}
+            </button>
+          </div>
+        </SectionCard>
+      )}
 
       {sessions.isSuccess && sessions.data.length > 0 ? (
         <SectionCard

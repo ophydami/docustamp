@@ -322,11 +322,27 @@ export async function changePassword(email: string, currentPassword: string, new
   if (token) await Parse.User.become(token);
 }
 
+/**
+ * Setting a password without knowing the current one: an account that signed
+ * in with an emailed code or Google has none it knows. The server mails a
+ * 6-digit code to the account's own address, then stores the password, ends
+ * every session and hands a new session token back.
+ */
+export async function sendPasswordCode() {
+  return cloud<{ sent: boolean; email: string }>("sendpasswordcode");
+}
+
+export async function setPasswordWithCode(otp: string, password: string) {
+  return cloud<{ sessionToken: string }>("setpasswordwithcode", { otp, password });
+}
+
 export interface SessionRow {
   objectId: string;
   createdAt?: string;
   expiresAt?: string;
   installationId?: string;
+  /** How the session was started: "password", "masterkey" (an emailed code or a signing link), "google". */
+  signedInWith?: string;
   current: boolean;
 }
 
@@ -347,11 +363,13 @@ export function useSessions() {
       return rows.map((s) => {
         const expires = s.get("expiresAt") as Date | undefined;
         const installationId = s.get("installationId") as string | undefined;
+        const createdWith = s.get("createdWith") as { authProvider?: string } | undefined;
         return {
           objectId: s.id ?? "",
           createdAt: s.createdAt?.toISOString(),
           expiresAt: expires instanceof Date ? expires.toISOString() : undefined,
           installationId,
+          signedInWith: createdWith?.authProvider,
           current: (s.get("sessionToken") as string | undefined) === currentToken
         };
       });

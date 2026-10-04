@@ -2681,8 +2681,23 @@
           "cannotChangeBody": "Votre compte n'a pas d'adresse e-mail.",
           "failed": "Impossible de changer votre mot de passe",
           "updated": "Mot de passe mis à jour",
-          "updatedBody": "Les autres appareils devront peut-être se reconnecter."
-        }
+          "updatedBody": "Les autres appareils devront peut-être se reconnecter.",
+          "set": "Mot de passe défini",
+          "setBody": "Vous pouvez maintenant vous connecter avec votre e-mail et ce mot de passe. Les codes par e-mail fonctionnent toujours."
+        },
+        "titleSet": "Définir un mot de passe",
+        "noteCode": "Pas encore de mot de passe, ou oublié ? Prouvez que c'est vous avec un code envoyé par e-mail. Les autres sessions sont terminées par le serveur.",
+        "useCode": "Pas encore de mot de passe, ou oublié ? Utiliser plutôt un code par e-mail",
+        "useCurrent": "Je connais mon mot de passe actuel",
+        "willSend": "Nous enverrons un code à 6 chiffres à <0>{{email}}</0>.",
+        "sendCode": "M'envoyer un code",
+        "sent": "Nous avons envoyé un code à 6 chiffres à <0>{{email}}</0>. Il expire dans 10 minutes.",
+        "codeLabel": "Code reçu par e-mail",
+        "resend": "Envoyer un nouveau code",
+        "resendIn": "Envoyer un nouveau code dans <0>{{seconds}} s</0>",
+        "submitSet": "Définir le mot de passe",
+        "sendFailed": "Impossible d'envoyer le code.",
+        "setFailed": "Impossible de définir votre mot de passe."
       },
       "sessions": {
         "end": "Terminer",

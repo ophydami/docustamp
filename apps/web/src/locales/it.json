@@ -2681,8 +2681,23 @@
           "cannotChangeBody": "Il tuo account non ha nessun indirizzo email.",
           "failed": "Impossibile cambiare la tua password",
           "updated": "Password aggiornata",
-          "updatedBody": "Gli altri dispositivi potrebbero dover accedere di nuovo."
-        }
+          "updatedBody": "Gli altri dispositivi potrebbero dover accedere di nuovo.",
+          "set": "Password impostata",
+          "setBody": "Ora puoi accedere con la tua email e questa password. I codici via email funzionano ancora."
+        },
+        "titleSet": "Imposta una password",
+        "noteCode": "Non hai ancora una password o l'hai dimenticata? Dimostra che sei tu con un codice che ti inviamo via email. Le altre sessioni vengono chiuse dal server.",
+        "useCode": "Non hai ancora una password o l'hai dimenticata? Usa un codice via email",
+        "useCurrent": "Conosco la mia password attuale",
+        "willSend": "Invieremo un codice di 6 cifre a <0>{{email}}</0>.",
+        "sendCode": "Inviami un codice",
+        "sent": "Abbiamo inviato un codice di 6 cifre a <0>{{email}}</0>. Scade tra 10 minuti.",
+        "codeLabel": "Codice dall'email",
+        "resend": "Invia un nuovo codice",
+        "resendIn": "Invia un nuovo codice tra <0>{{seconds}} s</0>",
+        "submitSet": "Imposta password",
+        "sendFailed": "Impossibile inviare il codice.",
+        "setFailed": "Impossibile impostare la tua password."
       },
       "sessions": {
         "end": "Chiudi",

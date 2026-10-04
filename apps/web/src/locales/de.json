@@ -2681,8 +2681,23 @@
           "cannotChangeBody": "Ihr Konto hat keine E-Mail-Adresse.",
           "failed": "Ihr Passwort konnte nicht geändert werden",
           "updated": "Passwort aktualisiert",
-          "updatedBody": "Andere Geräte müssen sich möglicherweise erneut anmelden."
-        }
+          "updatedBody": "Andere Geräte müssen sich möglicherweise erneut anmelden.",
+          "set": "Passwort festgelegt",
+          "setBody": "Sie können sich jetzt mit Ihrer E-Mail-Adresse und diesem Passwort anmelden. E-Mail-Codes funktionieren weiterhin."
+        },
+        "titleSet": "Passwort festlegen",
+        "noteCode": "Noch kein Passwort oder vergessen? Bestätigen Sie mit einem Code, den wir Ihnen per E-Mail senden. Andere Sitzungen werden vom Server beendet.",
+        "useCode": "Noch kein Passwort oder vergessen? Stattdessen einen E-Mail-Code verwenden",
+        "useCurrent": "Ich kenne mein aktuelles Passwort",
+        "willSend": "Wir senden einen 6-stelligen Code an <0>{{email}}</0>.",
+        "sendCode": "Code per E-Mail senden",
+        "sent": "Wir haben einen 6-stelligen Code an <0>{{email}}</0> gesendet. Er ist 10 Minuten gültig.",
+        "codeLabel": "Code aus der E-Mail",
+        "resend": "Neuen Code senden",
+        "resendIn": "Neuen Code senden in <0>{{seconds}} s</0>",
+        "submitSet": "Passwort festlegen",
+        "sendFailed": "Der Code konnte nicht gesendet werden.",
+        "setFailed": "Ihr Passwort konnte nicht festgelegt werden."
       },
       "sessions": {
         "end": "Beenden",
