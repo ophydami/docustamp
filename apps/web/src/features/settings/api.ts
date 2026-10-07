@@ -263,8 +263,14 @@ export interface AddUserInput {
   timezone?: string;
 }
 
+/**
+ * `passwordIgnored` is true when the address already had a sign-in with no
+ * profile (someone who was only ever a signer): the server links that account
+ * into the workspace and leaves its credentials alone, so the password typed
+ * here was not set.
+ */
 export async function addUser(input: AddUserInput) {
-  return cloud<TeamMember>("adduser", {
+  return cloud<TeamMember & { passwordIgnored?: boolean }>("adduser", {
     name: input.name,
     email: input.email,
     phone: input.phone ?? "",

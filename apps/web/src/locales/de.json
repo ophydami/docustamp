@@ -382,6 +382,8 @@
       "phone": "+1 (555) 010-0123"
     },
     "profile": {
+      "joinTeamBody": "Wenn Ihr Unternehmen DocuStamp bereits nutzt, brauchen Sie keinen neuen Arbeitsbereich. Bitten Sie Ihren Admin, {{email}} unter Einstellungen > Team hinzuzufügen, und laden Sie diese Seite dann neu.",
+      "joinTeamTitle": "Treten Sie Ihrem Team bei?",
       "subtitle": "Noch ein paar Angaben und {{email}} kann Dokumente senden.",
       "title": "Arbeitsbereich fertigstellen"
     },
@@ -2860,6 +2862,7 @@
         "created": "Das Konto ist bereit. Senden Sie dieses Passwort über einen Kanal, dem Sie vertrauen, es wird nicht erneut angezeigt.",
         "description": "Dieser Server legt das Konto sofort an. Geben Sie das Passwort selbst weiter.",
         "email": "E-Mail",
+        "existingAccount": "{{email}} hatte durch das Unterschreiben eines Dokuments bereits eine DocuStamp-Anmeldung. Das Passwort wurde daher nicht geändert, und Sie müssen nichts weitergeben. Die Person kann sich auf der Anmeldeseite mit „Anmeldecode per E-Mail senden“ anmelden und danach unter Einstellungen > Sicherheit und Sitzungen ein Passwort festlegen.",
         "fullName": "Vollständiger Name",
         "newPassword": "Neu",
         "password": "Temporäres Passwort",

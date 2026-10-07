@@ -382,6 +382,8 @@
       "phone": "+1 (555) 010-0123"
     },
     "profile": {
+      "joinTeamBody": "Si tu empresa ya usa DocuStamp, no necesitas un espacio de trabajo nuevo. Pide al administrador de tu espacio de trabajo que añada {{email}} en Ajustes > Equipo y luego recarga esta página.",
+      "joinTeamTitle": "¿Te unes a tu equipo?",
       "subtitle": "Un par de datos y {{email}} estará listo para enviar documentos.",
       "title": "Termina tu espacio de trabajo"
     },
@@ -2860,6 +2862,7 @@
         "created": "La cuenta está lista. Envíale esta contraseña por un canal de confianza; no se vuelve a mostrar.",
         "description": "Este servidor crea la cuenta de inmediato. Comparte tu mismo la contraseña con esa persona.",
         "email": "Correo",
+        "existingAccount": "{{email}} ya tenía un acceso a DocuStamp por haber firmado un documento, así que su contraseña no se cambió y no hay nada que enviar. Puede entrar con «Envíame un código de acceso» en la página de inicio de sesión y luego crear una contraseña en Ajustes > Seguridad y sesiones.",
         "fullName": "Nombre completo",
         "newPassword": "Nueva",
         "password": "Contraseña temporal",

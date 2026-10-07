@@ -344,7 +344,9 @@ function InviteDialog({
   const [team, setTeam] = useState("");
   const [password, setPassword] = useState(() => generatePassword());
   const [busy, setBusy] = useState(false);
-  const [created, setCreated] = useState<string | null>(null);
+  // The password to hand over, or `existing` when the address already had a
+  // sign-in and the server kept it (see `addUser`).
+  const [created, setCreated] = useState<{ password: string } | { existing: string } | null>(null);
 
   const teamId =
     team || teams.data?.find((row) => row.Name === "All Users")?.objectId || teams.data?.[0]?.objectId || "";
@@ -360,9 +362,10 @@ function InviteDialog({
     if (!tenantId) return;
     setBusy(true);
     try {
-      await addUser({
+      const address = email.trim().toLowerCase().replace(/\s/g, "");
+      const res = await addUser({
         name: name.trim(),
-        email: email.trim().toLowerCase().replace(/\s/g, ""),
+        email: address,
         phone: phone.trim(),
         password,
         role,
@@ -372,7 +375,7 @@ function InviteDialog({
         company,
         timezone: browserTimezone()
       });
-      setCreated(password);
+      setCreated(res?.passwordIgnored ? { existing: address } : { password });
       onDone();
       toast.success(t("settings.team.invite.toast.added"), email);
       setName("");
@@ -408,10 +411,14 @@ function InviteDialog({
         )
       }
     >
-      {created ? (
+      {created && "existing" in created ? (
+        <p className="text-[13px] text-ink-2">
+          {t("settings.team.invite.existingAccount", { email: created.existing })}
+        </p>
+      ) : created ? (
         <div className="flex flex-col gap-3">
           <p className="text-[13px] text-ink-2">{t("settings.team.invite.created")}</p>
-          <CopyableSecret value={created} />
+          <CopyableSecret value={created.password} />
         </div>
       ) : (
         <div className="flex flex-col gap-3.5">

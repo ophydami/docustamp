@@ -2,6 +2,7 @@ import { lazy, Suspense, type ReactNode } from "react";
 import { createBrowserRouter, Navigate, Outlet } from "react-router-dom";
 import { AppShell, BareShell } from "./AppShell";
 import { RequireAuth } from "./auth";
+import { RequireProfile } from "./RequireProfile";
 import { Loader2 } from "lucide-react";
 
 // Feature pages are lazy so each feature folder is its own chunk.
@@ -57,7 +58,9 @@ export const router = createBrowserRouter([
     path: "/connect",
     element: (
       <RequireAuth>
-        <S><ConnectPage /></S>
+        <RequireProfile>
+          <S><ConnectPage /></S>
+        </RequireProfile>
       </RequireAuth>
     )
   },
@@ -78,11 +81,14 @@ export const router = createBrowserRouter([
     ]
   },
 
-  // Signed-in, full-bleed (no sidebar)
+  // Signed-in, full-bleed (no sidebar). RequireProfile: a session without a
+  // workspace profile gets the setup step instead of pages that cannot load.
   {
     element: (
       <RequireAuth>
-        <BareShell />
+        <RequireProfile>
+          <BareShell />
+        </RequireProfile>
       </RequireAuth>
     ),
     children: [
@@ -99,7 +105,9 @@ export const router = createBrowserRouter([
   {
     element: (
       <RequireAuth>
-        <AppShell />
+        <RequireProfile>
+          <AppShell />
+        </RequireProfile>
       </RequireAuth>
     ),
     children: [

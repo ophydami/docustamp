@@ -381,6 +381,8 @@
       "phone": "+1 (555) 010-0123"
     },
     "profile": {
+      "joinTeamBody": "If your company already uses DocuStamp, you don't need a new workspace. Ask your workspace admin to add {{email}} in Settings > Team, then refresh this page.",
+      "joinTeamTitle": "Joining your team?",
       "subtitle": "A couple of details and {{email}} is ready to send documents.",
       "title": "Finish your workspace"
     },
@@ -2859,6 +2861,7 @@
         "created": "The account is ready. Send them this password over a channel you trust; it is not shown again.",
         "description": "This server creates the account straight away. Share the password with them yourself.",
         "email": "Email",
+        "existingAccount": "{{email}} already had a DocuStamp sign-in from signing a document, so its password was left as it was and there is nothing to send. They can sign in with \"Email me a sign-in code\" on the sign-in page, then set a password in Settings > Security and sessions.",
         "fullName": "Full name",
         "newPassword": "New",
         "password": "Temporary password",

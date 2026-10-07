@@ -382,6 +382,8 @@
       "phone": "+1 (555) 010-0123"
     },
     "profile": {
+      "joinTeamBody": "Si votre entreprise utilise déjà DocuStamp, vous n'avez pas besoin d'un nouvel espace de travail. Demandez à l'administrateur de votre espace d'ajouter {{email}} dans Paramètres > Équipe, puis actualisez cette page.",
+      "joinTeamTitle": "Vous rejoignez votre équipe ?",
       "subtitle": "Encore quelques détails et {{email}} pourra envoyer des documents.",
       "title": "Finalisez votre espace de travail"
     },
@@ -2860,6 +2862,7 @@
         "created": "Le compte est prêt. Transmettez-lui ce mot de passe par un canal de confiance ; il ne sera plus affiché.",
         "description": "Ce serveur crée le compte immédiatement. Transmettez-lui le mot de passe vous-même.",
         "email": "E-mail",
+        "existingAccount": "{{email}} avait déjà un accès DocuStamp après avoir signé un document : son mot de passe n'a donc pas été modifié et il n'y a rien à transmettre. La personne peut se connecter avec « Recevoir un code de connexion par e-mail » sur la page de connexion, puis définir un mot de passe dans Paramètres > Sécurité et sessions.",
         "fullName": "Nom complet",
         "newPassword": "Nouveau",
         "password": "Mot de passe temporaire",

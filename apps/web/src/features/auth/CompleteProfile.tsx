@@ -2,6 +2,8 @@ import { useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { Button, Field, Input, toast } from "@/components/ui";
 import { useAuth } from "@/app/auth";
+import { extUserKey } from "@/lib/extUser";
+import { queryClient } from "@/lib/queryClient";
 import { AuthHeading, FormError } from "./AuthLayout";
 import { ensureExtUser, errorMessage } from "./api";
 
@@ -16,7 +18,9 @@ export interface CompleteProfileProps {
  * Shown when a signed-in account has no `contracts_Users` row yet, which is the
  * case for a first Google sign-in and for accounts the server created as a side
  * effect of being a signing contact. Creating the row also creates the tenant,
- * so the workspace name comes from the company field.
+ * so the workspace name comes from the company field. That is the wrong move
+ * for someone whose company already has a workspace, so the form says up front
+ * that joining one is the admin's job (Settings > Team).
  */
 export function CompleteProfile({ name, email, phone, onDone }: CompleteProfileProps) {
   const { t } = useTranslation();
@@ -41,6 +45,8 @@ export function CompleteProfile({ name, email, phone, onDone }: CompleteProfileP
       const res = await ensureExtUser({ name, email, phone, company, jobTitle });
       // `/loginAs` mints a brand new session, so adopt it before continuing.
       if (res.sessionToken) await loginWithSessionToken(res.sessionToken);
+      // A cached "no profile" answer would keep RequireProfile showing this form.
+      await queryClient.invalidateQueries({ queryKey: extUserKey });
       await onDone();
     } catch (err) {
       const message = errorMessage(err, t("auth.errors.setupFailed"));
@@ -56,6 +62,11 @@ export function CompleteProfile({ name, email, phone, onDone }: CompleteProfileP
       <AuthHeading title={t("auth.profile.title")}>
         {t("auth.profile.subtitle", { email })}
       </AuthHeading>
+
+      <div className="mb-5 rounded-md border border-accent-line bg-accent-tint px-3 py-2 text-[12px] text-ink-2">
+        <p className="font-medium text-ink">{t("auth.profile.joinTeamTitle")}</p>
+        <p className="mt-0.5">{t("auth.profile.joinTeamBody", { email })}</p>
+      </div>
 
       <div className="flex flex-col gap-4">
         <FormError>{error}</FormError>
