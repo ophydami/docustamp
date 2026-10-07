@@ -29,7 +29,7 @@ You need a Linux server (Ubuntu or Debian, amd64 or ARM, 2 GB of memory or more)
 curl -fsSL https://raw.githubusercontent.com/ophydami/docustamp/main/install.sh | sudo bash
 ```
 
-The installer sets up Docker if it is missing, asks for your domain and email settings, creates the secrets and starts three containers in `/opt/docustamp`: DocuStamp (the web app and the server in one image), MongoDB, and Caddy, which gets HTTPS certificates for your domain automatically (ports 80 and 443 must be reachable). Open your domain and create the first account: it becomes the workspace admin.
+The installer sets up Docker if it is missing, asks for your domain and email settings, creates the secrets and starts three containers in `/opt/docustamp`: DocuStamp (the web app and the server in one image), MongoDB, and Caddy, which gets HTTPS certificates for your domain automatically (ports 80 and 443 must be reachable). Open your domain and create the first account: it becomes the workspace admin. Add your colleagues from Settings > Team; anyone who signs up on their own gets a separate workspace, which they run as its admin.
 
 It also adds a `docustamp` command:
 

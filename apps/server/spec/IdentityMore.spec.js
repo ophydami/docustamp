@@ -192,7 +192,8 @@ describe('identity and tenant fixes, second round', () => {
         .equalTo('UserId', pointer('_User', user.id))
         .first({ useMasterKey: true });
       expect(ext.get('Email')).toBe(folded);
-      expect(ext.get('UserRole')).toBe('contracts_User');
+      // The owner of the new tenant is its admin (ensureWorkspaceAdmin).
+      expect(ext.get('UserRole')).toBe('contracts_Admin');
       expect(ext.get('TenantId')).toBeDefined();
       // Owner-only ACL: the class used to be writable by anyone, which is how an
       // objectId was enough to grant yourself contracts_Admin.

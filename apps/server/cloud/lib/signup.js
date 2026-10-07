@@ -203,8 +203,9 @@ async function provisionProfile(userId, userDetails, email, { role, tenantId }) 
  * @param {{role: string}} opts the role to store; each cloud function validates
  *   its own allow-list before calling.
  * @returns {Promise<{userId: string, sessionToken?: string, alreadyProvisioned: boolean,
- *   email: string, extUser?: Object}>} `extUser` is the plain profile JSON of a
- *   freshly created row, which `addadmin` needs for its organisation and team.
+ *   email: string, extUserId: string, extUser?: Object}>} `extUserId` is the
+ *   profile row, new or existing, for `ensureWorkspaceAdmin`; `extUser` is the
+ *   plain profile JSON of a freshly created row.
  */
 export async function createAccountAndTenant(userDetails, request, { role }) {
   const email = signupEmail(userDetails);
@@ -220,6 +221,7 @@ export async function createAccountAndTenant(userDetails, request, { role }) {
       sessionToken: account.sessionToken,
       alreadyProvisioned: true,
       email,
+      extUserId: existingProfile.id,
     };
   }
 
@@ -234,6 +236,7 @@ export async function createAccountAndTenant(userDetails, request, { role }) {
     sessionToken: account.sessionToken,
     alreadyProvisioned: false,
     email,
+    extUserId: profile.id,
     extUser: {
       objectId: profile.id,
       Name: userDetails.name,
@@ -246,4 +249,81 @@ export async function createAccountAndTenant(userDetails, request, { role }) {
       JobTitle: userDetails.jobTitle,
     },
   };
+}
+
+const pointer = (className, objectId) => ({ __type: 'Pointer', className, objectId });
+
+/**
+ * Make the owner of a workspace its admin: an organisation, its "All Users"
+ * team and the `contracts_Admin` role.
+ *
+ * Self-service signup used to stop at `contracts_User` with no organisation, so
+ * everyone who signed up after the installation's first admin owned a
+ * workspace they could not add anyone to: Team needs an organisation, and
+ * `adduser`, branding and `updatetenant` need an admin role. Every admin power
+ * in the server is confined to the caller's own tenant (`adduser`,
+ * `updatetenant`, `updateteammember`, `resetpassword`, `getuserlist`,
+ * reminders, branding, account deletion), so the owner of a fresh tenant gains
+ * nothing outside it.
+ *
+ * Only the tenant's owner (`partners_Tenant.UserId`) qualifies: a teammate added
+ * through `adduser` lives in somebody else's tenant and is never promoted here.
+ * A row that already has an organisation is left alone, so the call is
+ * idempotent and a role an admin set on purpose stays as it is. An organisation
+ * or team a half-finished earlier attempt left behind is reused rather than
+ * duplicated.
+ *
+ * The same steps run once over existing accounts in
+ * databases/migrations/20261007120000-promote_workspace_owners.cjs.
+ *
+ * @param {string} extUserId the `contracts_Users` objectId.
+ * @returns {Promise<boolean>} true when the row was promoted.
+ */
+export async function ensureWorkspaceAdmin(extUserId) {
+  const profile = await new Parse.Query('contracts_Users')
+    .include('TenantId')
+    .get(extUserId, { useMasterKey: true });
+  if (profile.get('OrganizationId')) return false;
+  const tenant = profile.get('TenantId');
+  const userId = profile.get('UserId')?.id;
+  if (!tenant?.id || !userId || tenant.get('UserId')?.id !== userId) return false;
+
+  const profilePtr = pointer('contracts_Users', profile.id);
+  const org =
+    (await new Parse.Query('contracts_Organizations')
+      .equalTo('ExtUserId', profilePtr)
+      .equalTo('TenantId', pointer('partners_Tenant', tenant.id))
+      .ascending('createdAt')
+      .first({ useMasterKey: true })) || new Parse.Object('contracts_Organizations');
+  if (!org.id) {
+    org.set(
+      'Name',
+      profile.get('Company') || tenant.get('TenantName') || profile.get('Name') || ''
+    );
+    org.set('IsActive', true);
+    org.set('ExtUserId', profilePtr);
+    org.set('CreatedBy', pointer('_User', userId));
+    org.set('TenantId', pointer('partners_Tenant', tenant.id));
+    await org.save(null, { useMasterKey: true });
+  }
+  const orgPtr = pointer('contracts_Organizations', org.id);
+
+  const team =
+    (await new Parse.Query('contracts_Teams')
+      .equalTo('OrganizationId', orgPtr)
+      .equalTo('Name', 'All Users')
+      .ascending('createdAt')
+      .first({ useMasterKey: true })) || new Parse.Object('contracts_Teams');
+  if (!team.id) {
+    team.set('Name', 'All Users');
+    team.set('OrganizationId', orgPtr);
+    team.set('IsActive', true);
+    await team.save(null, { useMasterKey: true });
+  }
+
+  profile.set('UserRole', 'contracts_Admin');
+  profile.set('OrganizationId', orgPtr);
+  profile.set('TeamIds', [pointer('contracts_Teams', team.id)]);
+  await profile.save(null, { useMasterKey: true });
+  return true;
 }

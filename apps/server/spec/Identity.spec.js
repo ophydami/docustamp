@@ -394,7 +394,7 @@ describe('identity and tenant hardening', () => {
       expect(user).toBeUndefined();
     });
 
-    it('still signs a new account up as contracts_User', async () => {
+    it('signs a new account up as the admin of its own new workspace', async () => {
       const res = await callFn(
         'usersignup',
         {
@@ -414,7 +414,10 @@ describe('identity and tenant hardening', () => {
       const row = await new Parse.Query('contracts_Users')
         .equalTo('Email', 'good.signup.identity@example.com')
         .first({ useMasterKey: true });
-      expect(row.get('UserRole')).toBe('contracts_User');
+      // The client may only ask for contracts_User; the owner of the new tenant
+      // is then made its admin, with an organisation, so they can add teammates.
+      expect(row.get('UserRole')).toBe('contracts_Admin');
+      expect(row.get('OrganizationId')).toBeDefined();
     }, 30000);
 
     it('stores the typed password when a shadow user signs up holding its own session', async () => {

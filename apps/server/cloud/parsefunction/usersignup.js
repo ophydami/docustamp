@@ -1,12 +1,15 @@
-import { createAccountAndTenant } from '../lib/signup.js';
+import { createAccountAndTenant, ensureWorkspaceAdmin } from '../lib/signup.js';
 import { checkRateLimit, clientIp } from './authGuard.js';
 
 /**
  * Self-service signup. The account it creates owns a brand new tenant and is
- * the only member of it, so it never needs a privileged role: both frontends
- * send `contracts_User` here (apps/web/src/features/auth/api.ts and
- * apps/web/src/features/auth/api.ts), and the first-admin bootstrap has its own
- * function, `addadmin`.
+ * the only member of it. Both frontends send `contracts_User` here
+ * (apps/web/src/features/auth/api.ts), which is still the only role a client
+ * may name, but the owner of a tenant is made its admin afterwards
+ * (`ensureWorkspaceAdmin`): it used to stay a plain user with no organisation,
+ * so nobody who signed up after the installation's first admin could add a
+ * teammate. Every admin power is confined to the caller's own tenant, and the
+ * first-admin bootstrap keeps its own function, `addadmin`.
  *
  * `role` used to be written to the row verbatim AND split on `_` to build the
  * class name to write it to (`userDetails.role.split('_')[0] + '_Users'`), so a
@@ -60,8 +63,15 @@ export default async function usersignup(request) {
       throw err;
     }
     if (result.alreadyProvisioned) {
+      // Finishes a signup that failed half way; a no-op for an account that does
+      // not own its tenant (a teammate signing up again). Never worth refusing
+      // the sign-in over.
+      await ensureWorkspaceAdmin(result.extUserId).catch(err =>
+        console.log('usersignup: could not finish the workspace admin', err?.message || err)
+      );
       return { message: 'User already exist', sessionToken: result.sessionToken };
     }
+    await ensureWorkspaceAdmin(result.extUserId);
     return { message: 'User sign up', sessionToken: result.sessionToken };
   } catch (err) {
     // This used to log and fall off the end, so the function resolved

@@ -1,4 +1,4 @@
-import { createAccountAndTenant } from '../lib/signup.js';
+import { createAccountAndTenant, ensureWorkspaceAdmin } from '../lib/signup.js';
 import {
   anyAdminExists,
   checkRateLimit,
@@ -64,66 +64,6 @@ function adminRole(role) {
   }
   return role;
 }
-/**
- * Give the freshly created admin row its organisation and "All Users" team.
- *
- * Failures used to be logged and swallowed here, yet the function still
- * answered `'User sign up'` with a session token. This is the only place
- * `UserRole` becomes `contracts_Admin` and `OrganizationId` is set, so a failure
- * left the installation permanently in the "no admin yet" state that
- * `checkadminexist` reports. It throws now; the caller reports which step
- * failed and the work is idempotent, so a retry finishes it.
- */
-async function addTeamAndOrg(extUser) {
-  const extUserCls = new Parse.Query('contracts_Users');
-  const updateUser = await extUserCls.get(extUser.objectId, { useMasterKey: true });
-  if (updateUser && !updateUser?.get('OrganizationId')) {
-    const orgCls = new Parse.Object('contracts_Organizations');
-    orgCls.set('Name', extUser.Company);
-    orgCls.set('IsActive', true);
-    orgCls.set('ExtUserId', {
-      __type: 'Pointer',
-      className: 'contracts_Users',
-      objectId: extUser?.objectId,
-    });
-    orgCls.set('CreatedBy', {
-      __type: 'Pointer',
-      className: '_User',
-      objectId: extUser?.UserId?.objectId,
-    });
-    orgCls.set('TenantId', {
-      __type: 'Pointer',
-      className: 'partners_Tenant',
-      objectId: extUser?.TenantId?.objectId,
-    });
-
-    const orgRes = await orgCls.save(null, { useMasterKey: true });
-    const teamCls = new Parse.Object('contracts_Teams');
-    teamCls.set('Name', 'All Users');
-    teamCls.set('OrganizationId', {
-      __type: 'Pointer',
-      className: 'contracts_Organizations',
-      objectId: orgRes.id,
-    });
-    teamCls.set('IsActive', true);
-    const teamRes = await teamCls.save(null, { useMasterKey: true });
-    updateUser.set('UserRole', 'contracts_Admin');
-    updateUser.set('OrganizationId', {
-      __type: 'Pointer',
-      className: 'contracts_Organizations',
-      objectId: orgRes.id,
-    });
-    updateUser.set('TeamIds', [
-      {
-        __type: 'Pointer',
-        className: 'contracts_Teams',
-        objectId: teamRes.id,
-      },
-    ]);
-    await updateUser.save(null, { useMasterKey: true });
-  }
-}
-
 export default async function AddAdmin(request) {
   const userDetails = request.params.userDetails;
   if (!userDetails || typeof userDetails !== 'object' || !userDetails.email) {
@@ -160,14 +100,21 @@ export default async function AddAdmin(request) {
 
   try {
     if (result.alreadyProvisioned) {
+      // This step used to run only for a fresh row, so a retry after it failed
+      // answered "already exists" and the admin never got an organisation. It
+      // is idempotent and does nothing for an account that does not own its
+      // tenant, and it is not worth refusing the sign-in over.
+      await ensureWorkspaceAdmin(result.extUserId).catch(err =>
+        console.log('addadmin: could not finish the workspace admin', err?.message || err)
+      );
       // Hand back the session that was just minted for this account rather than
       // orphaning it and sending the caller to the login screen to type the
       // same password again.
       return { message: 'User already exist', sessionToken: result.sessionToken };
     }
-    // The one step that is this function's own: the organisation, the "All
-    // Users" team and the `contracts_Admin` role.
-    await addTeamAndOrg(result.extUser);
+    // The organisation, the "All Users" team and the `contracts_Admin` role
+    // (cloud/lib/signup.js, shared with `usersignup`).
+    await ensureWorkspaceAdmin(result.extUserId);
     return { message: 'User sign up', sessionToken: result.sessionToken };
   } catch (err) {
     // Swallowing this used to answer `undefined` for a failed tenant or profile
