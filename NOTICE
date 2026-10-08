@@ -49,3 +49,11 @@ Third-party components
 
 Dependencies listed in apps/server/package.json and apps/web/package.json are
 distributed under their own licenses.
+
+Fonts
+-----
+
+apps/server/font/IBMPlexSans-*.woff are IBM Plex Sans, copyright 2017 IBM Corp.
+with Reserved Font Name "Plex", licensed under the SIL Open Font License,
+version 1.1 (https://scripts.sil.org/OFL). They are embedded in the PDFs the
+server renders from written documents.

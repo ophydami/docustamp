@@ -1,6 +1,6 @@
 {
   "name": "docustamp-server",
-  "version": "0.7.3",
+  "version": "0.8.0",
   "description": "DocuStamp server (Parse Server + Express)",
   "homepage": "https://docustamp.dev",
   "repository": {

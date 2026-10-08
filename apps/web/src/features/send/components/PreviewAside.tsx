@@ -18,6 +18,8 @@ export interface PreviewAsideProps {
   pageCount?: number;
   decrypted?: boolean;
   converted?: boolean;
+  /** The PDF is rendered from text written in the app; it re-renders as the text changes. */
+  written?: boolean;
   suggestion?: HistorySuggestion | null;
   onPages?: (count: number) => void;
   onAddSuggested?: (r: { name: string; email: string }) => void;
@@ -36,6 +38,7 @@ export function PreviewAside({
   pageCount,
   decrypted,
   converted,
+  written,
   suggestion,
   onPages,
   onAddSuggested,
@@ -56,7 +59,8 @@ export function PreviewAside({
     count ? t("common.count.page", { count }) : null,
     bytes ? formatBytes(bytes) : null,
     decrypted ? t("send.preview.passwordRemoved") : null,
-    converted ? t("send.preview.convertedFromWord") : null
+    converted ? t("send.preview.convertedFromWord") : null,
+    written ? t("send.preview.writtenHere") : null
   ].filter(Boolean) as string[];
 
   return (
@@ -96,6 +100,7 @@ export function PreviewAside({
                 <PdfViewer
                   src={src}
                   pageWidth={PREVIEW_WIDTH}
+                  keepPrevious={written}
                   onLoad={(loaded) => {
                     setPages(loaded);
                     onPages?.(loaded.length);

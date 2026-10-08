@@ -1,0 +1,123 @@
+/*
+  The writing sheet. It sits on `paper-white`, which stays white in both
+  themes, so the colours here are fixed rather than tokens: they are the
+  PDF's own (near-black text, 75% grey rule). Sizes are the PDF typography
+  from docs/TEXT_DOCUMENTS.md at 4/3 px per pt, so what is typed wraps about
+  the way it prints. Tailwind's preflight zeroes heading sizes, margins and
+  list markers, which is why every one of them is set again here.
+*/
+.composer-sheet {
+  position: relative;
+  font-family: var(--font-sans);
+  font-size: 14.667px;
+  line-height: 1.5;
+  color: #1a1a1a;
+  caret-color: #1a1a1a;
+  /* Every typed space is real, like it is in the PDF. */
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  outline: none;
+  min-height: 22rem;
+}
+
+.composer-sheet ::selection {
+  background: #dbe4fd;
+  color: #09090b;
+}
+
+.composer-sheet[data-empty="true"]::before {
+  content: attr(data-placeholder);
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  color: #a1a1aa;
+  pointer-events: none;
+}
+
+.composer-sheet p {
+  margin: 0 0 9.333px;
+}
+
+.composer-sheet h1,
+.composer-sheet h2,
+.composer-sheet h3 {
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.composer-sheet h1 {
+  font-size: 24px;
+  margin: 18.667px 0 8px;
+}
+
+.composer-sheet h2 {
+  font-size: 18.667px;
+  margin: 16px 0 5.333px;
+}
+
+.composer-sheet h3 {
+  font-size: 15.333px;
+  margin: 13.333px 0 4px;
+}
+
+.composer-sheet > :first-child {
+  margin-top: 0;
+}
+
+.composer-sheet ul,
+.composer-sheet ol {
+  margin: 0 0 9.333px;
+  padding-left: 26.667px;
+}
+
+.composer-sheet ul {
+  list-style: disc;
+}
+
+.composer-sheet ol {
+  list-style: decimal;
+}
+
+.composer-sheet li {
+  margin: 0 0 4px;
+}
+
+.composer-sheet li::marker {
+  color: #1a1a1a;
+}
+
+/* Chrome leaves a new list inside the paragraph it was made from until the
+   editor unwraps it; until then the paragraph must not add its own gap. */
+.composer-sheet :is(p, h1, h2, h3):has(> ul, > ol) {
+  margin: 0;
+}
+
+.composer-sheet hr {
+  border: 0;
+  border-top: 1px solid #bfbfbf;
+  margin: 13.333px 0;
+}
+
+.composer-sheet [data-block="pageBreak"] {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 20px 0;
+  color: #8b8b94;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.composer-sheet [data-block="pageBreak"]::before,
+.composer-sheet [data-block="pageBreak"]::after {
+  content: "";
+  flex: 1;
+  border-top: 1px dashed #c4c4c8;
+}

@@ -48,6 +48,11 @@ export interface PdfViewerProps {
   maxPages?: number;
   /** Render only these 1-based pages. Takes precedence over maxPages. */
   pages?: number[];
+  /**
+   * Keep the current pages on screen while a new `src` loads, instead of
+   * dropping to the spinner. For live previews that re-render on every edit.
+   */
+  keepPrevious?: boolean;
 }
 
 /**
@@ -66,7 +71,8 @@ export function PdfViewer({
   pageClassName,
   gap = 16,
   maxPages,
-  pages: onlyPages
+  pages: onlyPages,
+  keepPrevious = false
 }: PdfViewerProps) {
   const [doc, setDoc] = useState<PDFDocumentProxy | null>(null);
   const [pages, setPages] = useState<PdfPageInfo[]>([]);
@@ -74,8 +80,10 @@ export function PdfViewer({
 
   useEffect(() => {
     let cancelled = false;
-    setDoc(null);
-    setPages([]);
+    if (!keepPrevious) {
+      setDoc(null);
+      setPages([]);
+    }
     setError(null);
     const task = pdfjs.getDocument(
       typeof src === "string" ? { url: src, withCredentials: false } : { data: src instanceof Uint8Array ? src : new Uint8Array(src) }

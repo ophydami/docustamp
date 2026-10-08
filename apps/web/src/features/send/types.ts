@@ -4,6 +4,7 @@
  * Naming follows the Parse classes in docs/BACKEND_API.md §3.5 / §3.7 at the wire
  * boundary (PascalCase, pointers) and camelCase for the plain records the UI uses.
  */
+import type { Content } from "@/features/compose/model";
 
 export interface ParsePointer<C extends string = string> {
   __type: "Pointer";
@@ -142,6 +143,8 @@ export interface TemplateSummary {
 /** The draft document as the send flow needs it. */
 export interface DraftDocument {
   objectId: string;
+  /** Set when the document was written in the app: the text its PDF is rendered from. */
+  content?: Content;
   name: string;
   note: string;
   description: string;

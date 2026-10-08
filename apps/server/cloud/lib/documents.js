@@ -616,6 +616,9 @@ export function documentFields(caller, input = {}) {
     // and the back-pointer a chained follow-up carries to the document that
     // triggered it.
     Chain: input.chain || undefined,
+    // The typed document a written draft's PDF was rendered from
+    // (docs/TEXT_DOCUMENTS.md); already normalised by the caller.
+    Content: input.content || undefined,
     ChainedFrom: input.chainedFrom
       ? { __type: 'Pointer', className: 'contracts_Document', objectId: String(input.chainedFrom) }
       : undefined,

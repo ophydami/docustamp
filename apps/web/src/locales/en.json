@@ -79,7 +79,8 @@
       "new": "New",
       "newRequest": "New request",
       "signYourself": "Sign yourself",
-      "useTemplate": "Use template"
+      "useTemplate": "Use template",
+      "writeDocument": "Write a document"
     },
     "nav": {
       "ai": "Ask AI",
@@ -541,6 +542,39 @@
       "toLight": "Switch to light mode"
     }
   },
+  "compose": {
+    "bodyLabel": "Document text",
+    "bodyPlaceholder": "Start writing. Headings, lists and a signing block are in the toolbar.",
+    "pageBreak": "Page break",
+    "pageSize": {
+      "a4": "A4",
+      "label": "Page size",
+      "letter": "Letter"
+    },
+    "style": {
+      "heading1": "Heading 1",
+      "heading2": "Heading 2",
+      "heading3": "Heading 3",
+      "label": "Text style",
+      "paragraph": "Paragraph"
+    },
+    "titleLabel": "Title",
+    "titlePlaceholder": "Untitled document",
+    "toolbar": {
+      "alignCenter": "Align center",
+      "alignLeft": "Align left",
+      "alignRight": "Align right",
+      "bold": "Bold",
+      "bulletList": "Bulleted list",
+      "divider": "Divider",
+      "italic": "Italic",
+      "label": "Formatting",
+      "numberedList": "Numbered list",
+      "pageBreak": "Page break",
+      "signingBlock": "Signing block",
+      "underline": "Underline"
+    }
+  },
   "contacts": {
     "a11y": {
       "closePanel": "Close panel",
@@ -751,6 +785,7 @@
       "downloadOriginal": "Download original",
       "downloadSigned": "Download signed PDF",
       "editRecipients": "Edit recipients",
+      "editText": "Edit text",
       "exportCsv": "Export CSV",
       "exportCsvShort": "CSV",
       "exportPdf": "Export PDF",
@@ -1952,7 +1987,18 @@
         "noRoles": "No roles yet"
       },
       "title": "What needs signing?",
-      "titleSelf": "What are you signing?"
+      "titleSelf": "What are you signing?",
+      "write": {
+        "backToUpload": "Upload a file instead",
+        "body": "Type the document in the app and it becomes the PDF people sign.",
+        "cta": "Start writing",
+        "fieldsKept": "Fields you placed stay where they are. Check them after bigger edits.",
+        "heading": "Write your document",
+        "renderFailed": "The PDF could not be updated",
+        "rendering": "Updating the PDF",
+        "subtitle": "Type it, format it, and the PDF on the right keeps up. You can still edit the text until it is sent.",
+        "title": "Write it here"
+      }
     },
     "errors": {
       "aRecipient": "A recipient",
@@ -2044,7 +2090,8 @@
       "reading": "Reading document",
       "suggestedHeading": "Suggested from your history",
       "usualExpiry_one": "You usually allow {{count}} day.",
-      "usualExpiry_other": "You usually allow {{count}} days."
+      "usualExpiry_other": "You usually allow {{count}} days.",
+      "writtenHere": "written here"
     },
     "progress": {
       "preparing": "Preparing {{index}} of {{total}}",

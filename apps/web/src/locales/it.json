@@ -80,7 +80,8 @@
       "new": "Nuovo",
       "newRequest": "Nuova richiesta",
       "signYourself": "Firma tu stesso",
-      "useTemplate": "Usa modello"
+      "useTemplate": "Usa modello",
+      "writeDocument": "Scrivi un documento"
     },
     "nav": {
       "ai": "Chiedi all'IA",
@@ -542,6 +543,39 @@
       "toLight": "Passa alla modalità chiara"
     }
   },
+  "compose": {
+    "bodyLabel": "Testo del documento",
+    "bodyPlaceholder": "Inizia a scrivere. Titoli, elenchi e il blocco firma sono nella barra.",
+    "pageBreak": "Interruzione di pagina",
+    "pageSize": {
+      "a4": "A4",
+      "label": "Formato pagina",
+      "letter": "Letter"
+    },
+    "style": {
+      "heading1": "Titolo 1",
+      "heading2": "Titolo 2",
+      "heading3": "Titolo 3",
+      "label": "Stile del testo",
+      "paragraph": "Paragrafo"
+    },
+    "titleLabel": "Titolo",
+    "titlePlaceholder": "Documento senza titolo",
+    "toolbar": {
+      "alignCenter": "Centra",
+      "alignLeft": "Allinea a sinistra",
+      "alignRight": "Allinea a destra",
+      "bold": "Grassetto",
+      "bulletList": "Elenco puntato",
+      "divider": "Separatore",
+      "italic": "Corsivo",
+      "label": "Formattazione",
+      "numberedList": "Elenco numerato",
+      "pageBreak": "Interruzione di pagina",
+      "signingBlock": "Blocco firma",
+      "underline": "Sottolineato"
+    }
+  },
   "contacts": {
     "a11y": {
       "closePanel": "Chiudi il pannello",
@@ -752,6 +786,7 @@
       "downloadOriginal": "Scarica l'originale",
       "downloadSigned": "Scarica il PDF firmato",
       "editRecipients": "Modifica destinatari",
+      "editText": "Modifica testo",
       "exportCsv": "Esporta CSV",
       "exportCsvShort": "CSV",
       "exportPdf": "Esporta PDF",
@@ -1953,7 +1988,18 @@
         "noRoles": "Ancora nessun ruolo"
       },
       "title": "Che cosa va firmato?",
-      "titleSelf": "Che cosa stai firmando?"
+      "titleSelf": "Che cosa stai firmando?",
+      "write": {
+        "backToUpload": "Carica invece un file",
+        "body": "Scrivi il documento nell'app e diventa il PDF da firmare.",
+        "cta": "Inizia a scrivere",
+        "fieldsKept": "I campi che hai posizionato restano dove sono. Controllali dopo modifiche importanti.",
+        "heading": "Scrivi il tuo documento",
+        "renderFailed": "Impossibile aggiornare il PDF",
+        "rendering": "Aggiornamento del PDF",
+        "subtitle": "Scrivilo, formattalo e il PDF a destra si aggiorna. Il testo resta modificabile fino all'invio.",
+        "title": "Scrivilo qui"
+      }
     },
     "errors": {
       "aRecipient": "Un destinatario",
@@ -2045,7 +2091,8 @@
       "reading": "Lettura del documento",
       "suggestedHeading": "Suggerito dalla tua cronologia",
       "usualExpiry_one": "Di solito concedi {{count}} giorno.",
-      "usualExpiry_other": "Di solito concedi {{count}} giorni."
+      "usualExpiry_other": "Di solito concedi {{count}} giorni.",
+      "writtenHere": "scritto qui"
     },
     "progress": {
       "preparing": "Preparazione di {{index}} di {{total}}",

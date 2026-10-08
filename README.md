@@ -11,7 +11,7 @@ Send PDFs for signature, collect signatures from one or many people, and get bac
 
 ## Features
 
-- **Send for signature:** upload a PDF or Word file, place fields (signature, initials, date, text, checkbox, stamp and more), and send it to one or many signers, in order or all at once.
+- **Send for signature:** upload a PDF or Word file, or write the document in the app and edit it until it is sent. Place fields (signature, initials, date, text, checkbox, stamp and more), and send it to one or many signers, in order or all at once.
 - **Sign without an account:** signers use the link in their email, optionally confirmed with a one-time code sent to them.
 - **Templates and bulk send:** save a document as a template and send it to many people in one go.
 - **Reminders, expiry and follow-ups:** automatic reminders, expiry dates, voiding, replacing a signer, and chaining a follow-up document once one completes.

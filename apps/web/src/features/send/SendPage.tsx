@@ -35,7 +35,9 @@ import {
 import { loadSigningLinks, signingLinkFor } from "@/lib/signingLinks";
 import { computeSuggestion } from "./suggest";
 import { recordFileUsage } from "@/lib/fileUsage";
-import { prepareFile, toPdfBlob, type UploadStage } from "./upload";
+import { prepareFile, toPdfBlob, uploadPdf, type UploadStage } from "./upload";
+import { renderTextPdf, useRenderedPdf } from "@/features/compose/api";
+import { contentHasText, emptyContent, normaliseContent, type Content } from "@/features/compose/model";
 import {
   DEFAULT_SETTINGS,
   isEmail,
@@ -61,6 +63,7 @@ import { PreviewAside } from "./components/PreviewAside";
 import { StepBulk } from "./components/StepBulk";
 import { emptyBulkRow } from "./bulk";
 import { StepDocuments } from "./components/StepDocuments";
+import { StepWrite } from "./components/StepWrite";
 import { StepRecipients } from "./components/StepRecipients";
 import { StepReview, type Problem } from "./components/StepReview";
 
@@ -175,6 +178,20 @@ export default function SendPage() {
   const [docId, setDocId] = useState<string | undefined>(params.docId);
   const [step, setStep] = useState<Step>(stepParam === 4 ? 4 : 1);
   const [file, setFile] = useState<UploadedFile | null>(null);
+  // "Write it here": the document is typed in the app and its PDF is rendered
+  // from the text (docs/TEXT_DOCUMENTS.md). `writing` is step 1's mode; a draft
+  // that carries Content always opens in it. Bulk send starts from a template.
+  const [writing, setWriting] = useState(search.get("compose") === "1" && mode !== "bulk");
+  const [content, setContent] = useState<Content>(() => emptyContent());
+  // JSON of { content, name } as last written to the draft; null until hydrated.
+  const [savedContent, setSavedContentState] = useState<string | null>(null);
+  // Mirrors `savedContent` for the save chain, which runs outside the render.
+  const savedContentRef = useRef<string | null>(null);
+  const setSavedContent = useCallback((value: string | null) => {
+    savedContentRef.current = value;
+    setSavedContentState(value);
+  }, []);
+  const [savingContent, setSavingContent] = useState(false);
   const [name, setName] = useState("");
   const [note, setNote] = useState("");
   const [recipients, setRecipients] = useState<Recipient[]>([]);
@@ -216,6 +233,13 @@ export default function SendPage() {
     hydrated.current = true;
     setName(draft.name);
     setNote(draft.note);
+    if (draft.content) {
+      setContent(draft.content);
+      setSavedContent(JSON.stringify({ content: draft.content, name: draft.name }));
+      setWriting(true);
+    } else {
+      setWriting(false);
+    }
     setPlaceholders(draft.placeholders);
     setRecipients(recipientsFromDraft(draft));
     setSettings(draft.settings);
@@ -226,7 +250,7 @@ export default function SendPage() {
     if (draft.sent) {
       toast.show(t("send.toast.alreadySentTitle"), t("send.toast.alreadySentBody"));
     }
-  }, [draft, draftQuery.isFetching, extUser?.Name, t, user?.name]);
+  }, [draft, draftQuery.isFetching, extUser?.Name, setSavedContent, t, user?.name]);
 
   /* ------------------------------------------------ start from a template link */
   const applyTemplate = useCallback(
@@ -303,6 +327,82 @@ export default function SendPage() {
     void applyTemplate(templateParam);
   }, [applyTemplate, docId, extUser?.objectId, templateParam, user?.id]);
 
+  /* ------------------------------------------------------- written document */
+  const untitled = t("send.upload.untitledDocument");
+  const writtenTitle = name.trim() || untitled;
+  const writtenSnapshot = useMemo(() => JSON.stringify({ content, name }), [content, name]);
+  const writtenDirty = writing && !!docId && savedContent !== null && savedContent !== writtenSnapshot;
+
+  // The preview on the right follows the text as it is typed.
+  const rendered = useRenderedPdf(writtenTitle, writing ? content : null, { enabled: writing && !draft?.sent });
+  useEffect(() => {
+    if (!writing || !rendered.bytes) return;
+    const bytes = rendered.bytes;
+    setFile((prev) => ({
+      url: prev?.url ?? "",
+      fileName: `${writtenTitle}.pdf`,
+      title: writtenTitle,
+      bytes: bytes.byteLength,
+      pageCount: rendered.pageCount,
+      data: bytes,
+      decrypted: false,
+      converted: false
+    }));
+    // Only a finished render should replace the preview, never a title keystroke.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rendered.bytes]);
+
+  // Saves run one after another: two overlapping uploads could land their PUTs
+  // in the wrong order and leave the draft on older text than the last keystroke.
+  const saveChain = useRef<Promise<void>>(Promise.resolve());
+  const saveWritten = useCallback(() => {
+    const run = async () => {
+      if (!docId || !writing) return;
+      const snapshot = JSON.stringify({ content, name });
+      if (savedContentRef.current === snapshot) return;
+      setSavingContent(true);
+      try {
+        const title = name.trim() || untitled;
+        // The editor never truncates; the limits are applied here, as the server does.
+        const body = normaliseContent(content);
+        const { bytes, pageCount } = await renderTextPdf(title, body);
+        const url = await uploadPdf(bytes);
+        await updateDocument(docId, { URL: url, Content: body, Name: title.slice(0, 250) });
+        void recordFileUsage(url, bytes.byteLength);
+        setFile({
+          url,
+          fileName: `${title}.pdf`,
+          title,
+          bytes: bytes.byteLength,
+          pageCount,
+          data: bytes,
+          decrypted: false,
+          converted: false
+        });
+        setSavedContent(snapshot);
+        setSavedAt(new Date());
+      } finally {
+        setSavingContent(false);
+      }
+    };
+    const next = saveChain.current.then(run, run);
+    saveChain.current = next.catch(() => undefined);
+    return next;
+  }, [content, docId, name, setSavedContent, untitled, writing]);
+
+  useEffect(() => {
+    if (!writing || !docId || !hydrated.current || draft?.sent) return;
+    if (savedContent === null) {
+      setSavedContent(writtenSnapshot);
+      return;
+    }
+    if (savedContent === writtenSnapshot || savingContent) return;
+    const timer = window.setTimeout(() => {
+      saveWritten().catch((err: Error) => toast.error(t("send.toast.draftNotSaved"), err.message));
+    }, 2500);
+    return () => window.clearTimeout(timer);
+  }, [docId, draft?.sent, saveWritten, savedContent, savingContent, setSavedContent, t, writing, writtenSnapshot]);
+
   /* --------------------------------------------------------------- autosave */
   // The name the default body is written for; `messageToPersist` compares
   // against the same default to tell an untouched body from an edited one.
@@ -324,6 +424,8 @@ export default function SendPage() {
       if (!docId) return;
       setSaving(true);
       try {
+        // The PDF has to match the text before the fields step or a send reads it.
+        if (writtenDirty) await saveWritten();
         let list = recipients;
         if (opts.withContacts) list = await ensureContacts(recipients, extUser?.TenantId?.objectId);
         const next = buildPlaceholders(list, placeholders);
@@ -358,7 +460,9 @@ export default function SendPage() {
       recipients,
       senderName,
       settings,
-      snapshot
+      snapshot,
+      saveWritten,
+      writtenDirty
     ]
   );
 
@@ -384,7 +488,7 @@ export default function SendPage() {
     return () => window.clearInterval(id);
   }, [savedAt]);
 
-  const unsaved = !!docId && savedSnapshot !== null && savedSnapshot !== snapshot;
+  const unsaved = (!!docId && savedSnapshot !== null && savedSnapshot !== snapshot) || writtenDirty;
 
   /* ------------------------------------------------------------ file upload */
   const askPassword = useCallback(
@@ -466,6 +570,80 @@ export default function SendPage() {
       user?.name
     ]
   );
+
+  /* ---------------------------------------------- create a written document */
+  const createWritten = useCallback(async () => {
+    if (!extUser?.objectId || !user?.id) {
+      toast.error(t("send.toast.profileLoadingTitle"), t("send.toast.profileLoadingBody"));
+      return;
+    }
+    setBusy(true);
+    setSaving(true);
+    try {
+      const title = name.trim() || untitled;
+      const body = normaliseContent(content);
+      const { bytes, pageCount } = await renderTextPdf(title, body);
+      const url = await uploadPdf(bytes);
+      const id = await createDraft({
+        name: title,
+        url,
+        extUserId: extUser.objectId,
+        userId: user.id,
+        settings,
+        folderId: folderParam,
+        content: body
+      });
+      void recordFileUsage(url, bytes.byteLength);
+      hydrated.current = true;
+      setFile({
+        url,
+        fileName: `${title}.pdf`,
+        title,
+        bytes: bytes.byteLength,
+        pageCount,
+        data: bytes,
+        decrypted: false,
+        converted: false
+      });
+      setName(title);
+      setSavedSnapshot(null);
+      setSavedContent(JSON.stringify({ content, name: title }));
+      setDocId(id);
+      setSavedAt(new Date());
+      setMessage({
+        subject: defaultSubject(title),
+        body: defaultBody(extUser.Name ?? user.name ?? "")
+      });
+      if (prefillEmail) setRecipients([newRecipient("signer", 0, { email: prefillEmail })]);
+      if (mode === "self") {
+        await updateDocument(id, { IsSignyourself: true });
+        navigate(`/sign-yourself/${id}`);
+        return;
+      }
+      navigate(`/send/${id}${window.location.search}`, { replace: true });
+      setStep(2);
+    } catch (err) {
+      toast.error(t("send.toast.uploadFailed"), (err as Error).message);
+    } finally {
+      setSaving(false);
+      setBusy(false);
+    }
+  }, [
+    content,
+    extUser?.Name,
+    extUser?.objectId,
+    folderParam,
+    mode,
+    name,
+    navigate,
+    prefillEmail,
+    setSavedContent,
+    settings,
+    t,
+    untitled,
+    user?.id,
+    user?.name
+  ]);
 
   /* ------------------------------------------------------------- recipients */
   const signers = recipients.filter((r) => r.role === "signer");
@@ -589,7 +767,7 @@ export default function SendPage() {
         ? !!docId
         : bulkValid
       : step === 1
-        ? !!docId
+        ? !!docId || (writing && contentHasText(content))
         : step === 2
           ? step2Valid
           : problems.length === 0;
@@ -809,8 +987,24 @@ export default function SendPage() {
       else await handleBulkSend();
       return;
     }
-    if (step === 1) setStep(2);
-    else if (step === 2) await goToFields();
+    if (step === 1) {
+      if (writing && !docId) {
+        await createWritten();
+        return;
+      }
+      if (writtenDirty) {
+        setBusy(true);
+        try {
+          await saveWritten();
+        } catch (err) {
+          toast.error(t("send.toast.couldNotSaveDraft"), (err as Error).message);
+          return;
+        } finally {
+          setBusy(false);
+        }
+      }
+      setStep(2);
+    } else if (step === 2) await goToFields();
     else if (step === 4) await handleSend();
   }
 
@@ -849,7 +1043,7 @@ export default function SendPage() {
         close();
       }
     },
-    [canContinue, busy, step, mode, unsaved, passwordRequest, contactsOpen, confirmClose, recipients, message, settings]
+    [canContinue, busy, step, mode, unsaved, passwordRequest, contactsOpen, confirmClose, recipients, message, settings, writing, content, writtenDirty]
   );
 
   /* ------------------------------------------------------------------ render */
@@ -888,7 +1082,7 @@ export default function SendPage() {
           {mode === "self" ? t("send.title.self") : mode === "bulk" ? t("send.title.bulk") : t("send.title.request")}
         </span>
         <span className="hidden sm:flex text-[12px] text-muted-2 items-center gap-1.5">
-          {saving ? (
+          {saving || savingContent ? (
             <>
               <Loader2 className="size-3 animate-spin" strokeWidth={1.6} /> {t("common.state.saving")}
             </>
@@ -982,6 +1176,23 @@ export default function SendPage() {
                   <Button onClick={() => navigate("/documents")}>{t("send.actions.backToDocuments")}</Button>
                 </div>
               </div>
+            ) : step === 1 && writing ? (
+              <StepWrite
+                title={name}
+                onTitle={setName}
+                content={content}
+                onContent={setContent}
+                note={note}
+                onNote={setNote}
+                isNew={!docId}
+                onBackToUpload={() => setWriting(false)}
+                rendering={rendered.rendering || savingContent}
+                renderError={rendered.error}
+                hasFields={placeholders.some((p) => p.placeHolder.some((page) => (page.pos?.length ?? 0) > 0))}
+                selfSign={mode === "self"}
+                folderName={folderName}
+                disabled={busy || !!draft?.sent}
+              />
             ) : step === 1 ? (
               <StepDocuments
                 hasDocument={!!docId}
@@ -1005,6 +1216,7 @@ export default function SendPage() {
                 pendingTemplateId={pendingTemplateId}
                 selfSign={mode === "self"}
                 folderName={folderName}
+                onWrite={() => setWriting(true)}
               />
             ) : step === 2 && mode === "bulk" ? (
               <StepBulk
@@ -1067,6 +1279,7 @@ export default function SendPage() {
           onPages={setLoadedPages}
           decrypted={file?.decrypted}
           converted={file?.converted}
+          written={writing}
           suggestion={step === 2 && mode === "request" ? suggestion : null}
           onAddSuggested={(r) =>
             setRecipients((prev) => [...prev, newRecipient("signer", prev.length, { name: r.name, email: r.email })])

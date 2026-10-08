@@ -80,7 +80,8 @@
       "new": "새로 만들기",
       "newRequest": "새 요청",
       "signYourself": "직접 서명",
-      "useTemplate": "템플릿 사용"
+      "useTemplate": "템플릿 사용",
+      "writeDocument": "문서 작성"
     },
     "nav": {
       "ai": "AI에게 묻기",
@@ -542,6 +543,39 @@
       "toLight": "라이트 모드로 전환"
     }
   },
+  "compose": {
+    "bodyLabel": "문서 본문",
+    "bodyPlaceholder": "작성을 시작하세요. 제목, 목록, 서명 블록은 도구 모음에 있습니다.",
+    "pageBreak": "페이지 나누기",
+    "pageSize": {
+      "a4": "A4",
+      "label": "용지 크기",
+      "letter": "Letter"
+    },
+    "style": {
+      "heading1": "제목 1",
+      "heading2": "제목 2",
+      "heading3": "제목 3",
+      "label": "텍스트 스타일",
+      "paragraph": "본문"
+    },
+    "titleLabel": "제목",
+    "titlePlaceholder": "제목 없는 문서",
+    "toolbar": {
+      "alignCenter": "가운데 정렬",
+      "alignLeft": "왼쪽 정렬",
+      "alignRight": "오른쪽 정렬",
+      "bold": "굵게",
+      "bulletList": "글머리 기호 목록",
+      "divider": "구분선",
+      "italic": "기울임",
+      "label": "서식",
+      "numberedList": "번호 매기기 목록",
+      "pageBreak": "페이지 나누기",
+      "signingBlock": "서명 블록",
+      "underline": "밑줄"
+    }
+  },
   "contacts": {
     "a11y": {
       "closePanel": "패널 닫기",
@@ -752,6 +786,7 @@
       "downloadOriginal": "원본 다운로드",
       "downloadSigned": "서명된 PDF 다운로드",
       "editRecipients": "수신자 편집",
+      "editText": "텍스트 편집",
       "exportCsv": "CSV 내보내기",
       "exportCsvShort": "CSV",
       "exportPdf": "PDF 내보내기",
@@ -1953,7 +1988,18 @@
         "noRoles": "아직 역할이 없습니다"
       },
       "title": "무엇에 서명받을까요?",
-      "titleSelf": "무엇에 서명하시나요?"
+      "titleSelf": "무엇에 서명하시나요?",
+      "write": {
+        "backToUpload": "대신 파일 업로드",
+        "body": "앱에서 문서를 입력하면 서명할 PDF가 됩니다.",
+        "cta": "작성 시작",
+        "fieldsKept": "배치한 필드는 그대로 유지됩니다. 큰 수정 후에는 확인하세요.",
+        "heading": "문서 작성",
+        "renderFailed": "PDF를 업데이트하지 못했습니다",
+        "rendering": "PDF 업데이트 중",
+        "subtitle": "입력하고 서식을 지정하면 오른쪽 PDF가 함께 바뀝니다. 보내기 전까지 텍스트를 수정할 수 있습니다.",
+        "title": "여기서 작성"
+      }
     },
     "errors": {
       "aRecipient": "수신인",
@@ -2045,7 +2091,8 @@
       "reading": "문서 읽는 중",
       "suggestedHeading": "기록 기반 추천",
       "usualExpiry_one": "보통 {{count}}일을 설정합니다.",
-      "usualExpiry_other": "보통 {{count}}일을 설정합니다."
+      "usualExpiry_other": "보통 {{count}}일을 설정합니다.",
+      "writtenHere": "앱에서 작성됨"
     },
     "progress": {
       "preparing": "{{total}}건 중 {{index}}건 준비 중",

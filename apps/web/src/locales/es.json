@@ -80,7 +80,8 @@
       "new": "Nuevo",
       "newRequest": "Nueva solicitud",
       "signYourself": "Firma tu mismo",
-      "useTemplate": "Usar plantilla"
+      "useTemplate": "Usar plantilla",
+      "writeDocument": "Escribir un documento"
     },
     "nav": {
       "ai": "Preguntar a la IA",
@@ -542,6 +543,39 @@
       "toLight": "Cambiar a modo claro"
     }
   },
+  "compose": {
+    "bodyLabel": "Texto del documento",
+    "bodyPlaceholder": "Empieza a escribir. Los títulos, las listas y el bloque de firma están en la barra.",
+    "pageBreak": "Salto de página",
+    "pageSize": {
+      "a4": "A4",
+      "label": "Tamaño de página",
+      "letter": "Carta"
+    },
+    "style": {
+      "heading1": "Título 1",
+      "heading2": "Título 2",
+      "heading3": "Título 3",
+      "label": "Estilo de texto",
+      "paragraph": "Párrafo"
+    },
+    "titleLabel": "Título",
+    "titlePlaceholder": "Documento sin título",
+    "toolbar": {
+      "alignCenter": "Centrar",
+      "alignLeft": "Alinear a la izquierda",
+      "alignRight": "Alinear a la derecha",
+      "bold": "Negrita",
+      "bulletList": "Lista con viñetas",
+      "divider": "Separador",
+      "italic": "Cursiva",
+      "label": "Formato",
+      "numberedList": "Lista numerada",
+      "pageBreak": "Salto de página",
+      "signingBlock": "Bloque de firma",
+      "underline": "Subrayado"
+    }
+  },
   "contacts": {
     "a11y": {
       "closePanel": "Cerrar panel",
@@ -752,6 +786,7 @@
       "downloadOriginal": "Descargar original",
       "downloadSigned": "Descargar PDF firmado",
       "editRecipients": "Editar destinatarios",
+      "editText": "Editar texto",
       "exportCsv": "Exportar CSV",
       "exportCsvShort": "CSV",
       "exportPdf": "Exportar PDF",
@@ -1953,7 +1988,18 @@
         "noRoles": "Aún sin roles"
       },
       "title": "¿Qué hay que firmar?",
-      "titleSelf": "¿Qué vas a firmar?"
+      "titleSelf": "¿Qué vas a firmar?",
+      "write": {
+        "backToUpload": "Subir un archivo en su lugar",
+        "body": "Escribe el documento en la app y se convierte en el PDF que se firma.",
+        "cta": "Empezar a escribir",
+        "fieldsKept": "Los campos que colocaste se quedan donde están. Revísalos tras cambios grandes.",
+        "heading": "Escribe tu documento",
+        "renderFailed": "No se pudo actualizar el PDF",
+        "rendering": "Actualizando el PDF",
+        "subtitle": "Escríbelo, dale formato y el PDF de la derecha se actualiza. Puedes editar el texto hasta que se envíe.",
+        "title": "Escribirlo aquí"
+      }
     },
     "errors": {
       "aRecipient": "Un destinatario",
@@ -2045,7 +2091,8 @@
       "reading": "Leyendo el documento",
       "suggestedHeading": "Sugerido a partir de tu historial",
       "usualExpiry_one": "Sueles dar {{count}} día.",
-      "usualExpiry_other": "Sueles dar {{count}} días."
+      "usualExpiry_other": "Sueles dar {{count}} días.",
+      "writtenHere": "escrito aquí"
     },
     "progress": {
       "preparing": "Preparando {{index}} de {{total}}",

@@ -80,7 +80,8 @@
       "new": "नया",
       "newRequest": "नया अनुरोध",
       "signYourself": "स्वयं हस्ताक्षर करें",
-      "useTemplate": "टेम्पलेट उपयोग करें"
+      "useTemplate": "टेम्पलेट उपयोग करें",
+      "writeDocument": "दस्तावेज़ लिखें"
     },
     "nav": {
       "ai": "AI से पूछें",
@@ -542,6 +543,39 @@
       "toLight": "लाइट मोड पर जाएँ"
     }
   },
+  "compose": {
+    "bodyLabel": "दस्तावेज़ का टेक्स्ट",
+    "bodyPlaceholder": "लिखना शुरू करें। शीर्षक, सूचियाँ और हस्ताक्षर ब्लॉक टूलबार में हैं।",
+    "pageBreak": "पेज ब्रेक",
+    "pageSize": {
+      "a4": "A4",
+      "label": "पेज का आकार",
+      "letter": "Letter"
+    },
+    "style": {
+      "heading1": "शीर्षक 1",
+      "heading2": "शीर्षक 2",
+      "heading3": "शीर्षक 3",
+      "label": "टेक्स्ट शैली",
+      "paragraph": "पैराग्राफ़"
+    },
+    "titleLabel": "शीर्षक",
+    "titlePlaceholder": "बिना शीर्षक का दस्तावेज़",
+    "toolbar": {
+      "alignCenter": "बीच में संरेखित करें",
+      "alignLeft": "बाएँ संरेखित करें",
+      "alignRight": "दाएँ संरेखित करें",
+      "bold": "बोल्ड",
+      "bulletList": "बुलेट सूची",
+      "divider": "विभाजक",
+      "italic": "इटैलिक",
+      "label": "फ़ॉर्मेटिंग",
+      "numberedList": "क्रमांकित सूची",
+      "pageBreak": "पेज ब्रेक",
+      "signingBlock": "हस्ताक्षर ब्लॉक",
+      "underline": "रेखांकित"
+    }
+  },
   "contacts": {
     "a11y": {
       "closePanel": "पैनल बंद करें",
@@ -752,6 +786,7 @@
       "downloadOriginal": "मूल डाउनलोड करें",
       "downloadSigned": "हस्ताक्षरित PDF डाउनलोड करें",
       "editRecipients": "प्राप्तकर्ता संपादित करें",
+      "editText": "टेक्स्ट संपादित करें",
       "exportCsv": "CSV निर्यात करें",
       "exportCsvShort": "CSV",
       "exportPdf": "PDF निर्यात करें",
@@ -1953,7 +1988,18 @@
         "noRoles": "अभी कोई भूमिका नहीं"
       },
       "title": "किस पर हस्ताक्षर चाहिए?",
-      "titleSelf": "आप किस पर हस्ताक्षर कर रहे हैं?"
+      "titleSelf": "आप किस पर हस्ताक्षर कर रहे हैं?",
+      "write": {
+        "backToUpload": "इसके बजाय फ़ाइल अपलोड करें",
+        "body": "ऐप में दस्तावेज़ टाइप करें और वह हस्ताक्षर के लिए PDF बन जाता है।",
+        "cta": "लिखना शुरू करें",
+        "fieldsKept": "आपके रखे गए फ़ील्ड वहीं रहते हैं। बड़े बदलावों के बाद उन्हें जाँच लें।",
+        "heading": "अपना दस्तावेज़ लिखें",
+        "renderFailed": "PDF अपडेट नहीं हो सकी",
+        "rendering": "PDF अपडेट हो रही है",
+        "subtitle": "टाइप करें, फ़ॉर्मेट करें, और दाईं ओर की PDF साथ-साथ बदलती रहेगी। भेजने तक टेक्स्ट संपादित किया जा सकता है।",
+        "title": "यहीं लिखें"
+      }
     },
     "errors": {
       "aRecipient": "एक प्राप्तकर्ता",
@@ -2045,7 +2091,8 @@
       "reading": "दस्तावेज़ पढ़ा जा रहा है",
       "suggestedHeading": "आपके इतिहास से सुझाए गए",
       "usualExpiry_one": "आप आमतौर पर {{count}} दिन देते हैं।",
-      "usualExpiry_other": "आप आमतौर पर {{count}} दिन देते हैं।"
+      "usualExpiry_other": "आप आमतौर पर {{count}} दिन देते हैं।",
+      "writtenHere": "यहीं लिखा गया"
     },
     "progress": {
       "preparing": "{{total}} में से {{index}} तैयार हो रहा है",

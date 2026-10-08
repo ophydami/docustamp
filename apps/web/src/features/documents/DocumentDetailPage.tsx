@@ -520,6 +520,11 @@ function OverviewTab({
             )}
           </div>
           <div className="mt-4 flex flex-wrap gap-2">
+            {doc.written && editable ? (
+              <Button size="sm" onClick={() => navigate(`/send/${doc.objectId}?compose=1`)}>
+                {t("documents.actions.editText")}
+              </Button>
+            ) : null}
             <Button
               size="sm"
               disabled={!editable}

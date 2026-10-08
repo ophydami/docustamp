@@ -9,6 +9,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import i18next from "i18next";
 import { CloudError, cloud, rest } from "@/lib/parse";
+import { isContent, normaliseContent, type Content } from "@/features/compose/model";
 import {
   DEFAULT_SETTINGS,
   type BccEntry,
@@ -96,6 +97,9 @@ export function toDraft(raw: Raw): DraftDocument {
   const remind = num(raw.RemindOnceInEvery, 0);
   return {
     objectId: str(raw.objectId),
+    // Normalised on the way in: the editor emits exactly this shape, so the
+    // first value it receives is the one it would emit and the caret stays put.
+    content: isContent(raw.Content) ? normaliseContent(raw.Content) : undefined,
     name: str(raw.Name),
     note: str(raw.Note),
     description: str(raw.Description),
@@ -166,6 +170,8 @@ export interface CreateDraftInput {
   folderId?: string;
   /** Set to create the document already sent (bulk send). Otherwise it is a draft. */
   signedUrl?: string;
+  /** The text a written document's PDF was rendered from (docs/TEXT_DOCUMENTS.md). */
+  content?: Content;
 }
 
 /**
@@ -200,6 +206,7 @@ export async function createDraft(input: CreateDraftInput): Promise<string> {
     ...(input.description ? { Description: input.description.slice(0, 500) } : {}),
     ...(input.templateId ? { TemplateId: pointer("contracts_Template", input.templateId) } : {}),
     ...(input.placeholders?.length ? { Placeholders: input.placeholders } : {}),
+    ...(input.content ? { Content: input.content } : {}),
     ...(input.signerIds?.length
       ? { Signers: input.signerIds.map((id) => pointer("contracts_Contactbook", id)) }
       : {}),

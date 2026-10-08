@@ -2,7 +2,7 @@ import { useRef, useState, type DragEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import type { TFunction } from "i18next";
-import { FileText, FolderClosed, Loader2, Lock, Sparkles, UploadCloud } from "lucide-react";
+import { FilePen, FileText, FolderClosed, Loader2, Lock, Sparkles, UploadCloud } from "lucide-react";
 import { Button, Cap, Field, Input, Textarea } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import { num } from "@/lib/format";
@@ -33,6 +33,8 @@ export interface StepDocumentsProps {
   selfSign: boolean;
   /** Set when the flow was opened from inside a Drive folder (`?folder=<id>`). */
   folderName?: string;
+  /** Switch step 1 to the in-app editor ("Write it here"). */
+  onWrite: () => void;
 }
 
 function stageLabel(stage: UploadStage, t: TFunction): string | null {
@@ -185,6 +187,27 @@ export function StepDocuments(props: StepDocumentsProps) {
               {props.error}
             </p>
           ) : null}
+
+          <button
+            type="button"
+            disabled={busy}
+            onClick={props.onWrite}
+            className={cn(
+              "flex items-start gap-3 rounded-lg border border-line bg-surface px-4 py-3 text-left transition-colors",
+              "hover:border-line-strong hover:bg-surface-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            )}
+          >
+            <span className="mt-0.5 flex size-8 items-center justify-center rounded-md bg-accent-soft text-accent shrink-0">
+              <FilePen className="size-4" strokeWidth={1.6} />
+            </span>
+            <span className="flex flex-col gap-0.5 min-w-0 flex-1">
+              <span className="text-[13px] font-semibold">{t("send.documents.write.title")}</span>
+              <span className="text-[12px] text-muted">{t("send.documents.write.body")}</span>
+            </span>
+            <span className="self-center text-[12px] font-medium text-ink-2 whitespace-nowrap">
+              {t("send.documents.write.cta")}
+            </span>
+          </button>
 
           {!props.hasDocument && !props.selfSign ? (
             <div className="flex items-start gap-3 rounded-lg border border-accent-line bg-accent-tint px-4 py-3">

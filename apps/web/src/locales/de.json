@@ -80,7 +80,8 @@
       "new": "Neu",
       "newRequest": "Neue Anfrage",
       "signYourself": "Selbst unterschreiben",
-      "useTemplate": "Vorlage verwenden"
+      "useTemplate": "Vorlage verwenden",
+      "writeDocument": "Dokument schreiben"
     },
     "nav": {
       "ai": "KI fragen",
@@ -542,6 +543,39 @@
       "toLight": "Zum hellen Modus wechseln"
     }
   },
+  "compose": {
+    "bodyLabel": "Dokumenttext",
+    "bodyPlaceholder": "Fangen Sie an zu schreiben. Überschriften, Listen und ein Unterschriftenblock sind in der Leiste.",
+    "pageBreak": "Seitenumbruch",
+    "pageSize": {
+      "a4": "A4",
+      "label": "Seitenformat",
+      "letter": "Letter"
+    },
+    "style": {
+      "heading1": "Überschrift 1",
+      "heading2": "Überschrift 2",
+      "heading3": "Überschrift 3",
+      "label": "Textstil",
+      "paragraph": "Absatz"
+    },
+    "titleLabel": "Titel",
+    "titlePlaceholder": "Unbenanntes Dokument",
+    "toolbar": {
+      "alignCenter": "Zentriert",
+      "alignLeft": "Linksbündig",
+      "alignRight": "Rechtsbündig",
+      "bold": "Fett",
+      "bulletList": "Aufzählung",
+      "divider": "Trennlinie",
+      "italic": "Kursiv",
+      "label": "Formatierung",
+      "numberedList": "Nummerierte Liste",
+      "pageBreak": "Seitenumbruch",
+      "signingBlock": "Unterschriftenblock",
+      "underline": "Unterstrichen"
+    }
+  },
   "contacts": {
     "a11y": {
       "closePanel": "Bereich schließen",
@@ -752,6 +786,7 @@
       "downloadOriginal": "Original herunterladen",
       "downloadSigned": "Unterzeichnetes PDF herunterladen",
       "editRecipients": "Empfänger bearbeiten",
+      "editText": "Text bearbeiten",
       "exportCsv": "CSV exportieren",
       "exportCsvShort": "CSV",
       "exportPdf": "PDF exportieren",
@@ -1953,7 +1988,18 @@
         "noRoles": "Noch keine Rollen"
       },
       "title": "Was muss unterschrieben werden?",
-      "titleSelf": "Was unterschreiben Sie?"
+      "titleSelf": "Was unterschreiben Sie?",
+      "write": {
+        "backToUpload": "Stattdessen eine Datei hochladen",
+        "body": "Tippen Sie das Dokument in der App, und es wird zur PDF, die unterschrieben wird.",
+        "cta": "Schreiben starten",
+        "fieldsKept": "Platzierte Felder bleiben, wo sie sind. Prüfen Sie sie nach größeren Änderungen.",
+        "heading": "Dokument schreiben",
+        "renderFailed": "Die PDF konnte nicht aktualisiert werden",
+        "rendering": "PDF wird aktualisiert",
+        "subtitle": "Tippen, formatieren, und die PDF rechts zieht mit. Der Text bleibt bis zum Versand bearbeitbar.",
+        "title": "Hier schreiben"
+      }
     },
     "errors": {
       "aRecipient": "Ein Empfänger",
@@ -2045,7 +2091,8 @@
       "reading": "Dokument wird gelesen",
       "suggestedHeading": "Vorschlag aus Ihrem Verlauf",
       "usualExpiry_one": "Üblicherweise geben Sie {{count}} Tag Zeit.",
-      "usualExpiry_other": "Üblicherweise geben Sie {{count}} Tage Zeit."
+      "usualExpiry_other": "Üblicherweise geben Sie {{count}} Tage Zeit.",
+      "writtenHere": "hier geschrieben"
     },
     "progress": {
       "preparing": "{{index}} von {{total}} wird vorbereitet",

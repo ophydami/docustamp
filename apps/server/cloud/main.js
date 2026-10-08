@@ -51,6 +51,7 @@ import getSignature from './parsefunction/getSignature.js';
 import triggerEvent from './parsefunction/triggerEvent.js';
 import setWidgetPreferences from './parsefunction/setWidgetPreferences.js';
 import createDocumentFromApp from './parsefunction/createDocumentFromApp.js';
+import renderTextPdf from './parsefunction/renderTextPdf.js';
 import sendreminder from './parsefunction/sendReminder.js';
 import autoRemindersJob from './jobs/autoReminders.js';
 import { aiAnalyzeDocument, aiPrepareDocument, aiStatus } from './parsefunction/aiFunctions.js';
@@ -146,6 +147,8 @@ Parse.Cloud.define('triggerevent', triggerEvent);
 Parse.Cloud.define('getdocumentopens', getDocumentOpens);
 Parse.Cloud.define('setwidgetpreferences', setWidgetPreferences);
 Parse.Cloud.define('createdocumentfromapp', createDocumentFromApp);
+// Written documents: the typed content rendered to the PDF that gets signed.
+Parse.Cloud.define('rendertextpdf', renderTextPdf);
 Parse.Cloud.define('sendreminder', sendreminder);
 // Storage accounting: the only writer of partners_DataFiles / partners_TenantCredits.
 Parse.Cloud.define('recordfileusage', recordFileUsage);

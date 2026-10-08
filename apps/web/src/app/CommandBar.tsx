@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Command } from "cmdk";
-import { Search, Plus, PenLine, LayoutTemplate, Inbox, FileText, Users, BarChart3, Settings, Menu as MenuIcon, Layers, Moon, Sun, BadgeCheck } from "lucide-react";
+import { Search, Plus, PenLine, LayoutTemplate, Inbox, FileText, FilePen, Users, BarChart3, Settings, Menu as MenuIcon, Layers, Moon, Sun, BadgeCheck } from "lucide-react";
 import { Button, Kbd, Menu } from "@/components/ui";
 import { useCommands, useNavDrawer, usePalette } from "@/lib/store";
 import { useTheme } from "@/lib/theme";
@@ -44,6 +44,7 @@ export function TopBar() {
       },
       n: () => navigate("/send"),
       s: () => navigate("/send?mode=self"),
+      w: () => navigate("/send?compose=1"),
       t: () => navigate("/templates"),
       ",": () => navigate("/settings")
     },
@@ -101,6 +102,7 @@ export function TopBar() {
         className="lg:hidden"
         items={[
           { label: t("app.actions.newRequest"), icon: <Plus className="size-4" strokeWidth={1.6} />, onSelect: () => navigate("/send") },
+          { label: t("app.actions.writeDocument"), icon: <FilePen className="size-4" strokeWidth={1.6} />, onSelect: () => navigate("/send?compose=1") },
           { label: t("app.actions.signYourself"), icon: <PenLine className="size-4" strokeWidth={1.6} />, onSelect: () => navigate("/send?mode=self") },
           { label: t("app.actions.useTemplate"), icon: <LayoutTemplate className="size-4" strokeWidth={1.6} />, onSelect: () => navigate("/templates") },
           { label: t("app.actions.bulkSend"), icon: <Layers className="size-4" strokeWidth={1.6} />, onSelect: () => navigate("/send?mode=bulk") }
@@ -168,6 +170,7 @@ export function CommandPalette() {
           <Command.Empty className="px-3 py-8 text-center text-muted text-[13px]">{t("app.palette.noResults")}</Command.Empty>
           <Command.Group heading={t("app.palette.groupActions")} className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:label-mono">
             <Item icon={<Plus className="size-4" />} kbd="N" onSelect={() => go("/send")}>{t("app.actions.newRequest")}</Item>
+            <Item icon={<FilePen className="size-4" />} kbd="W" onSelect={() => go("/send?compose=1")}>{t("app.actions.writeDocument")}</Item>
             <Item icon={<PenLine className="size-4" />} kbd="S" onSelect={() => go("/send?mode=self")}>{t("app.actions.signYourself")}</Item>
             <Item icon={<LayoutTemplate className="size-4" />} kbd="T" onSelect={() => go("/templates")}>{t("app.palette.useATemplate")}</Item>
             <Item icon={<Layers className="size-4" />} onSelect={() => go("/send?mode=bulk")}>{t("app.actions.bulkSend")}</Item>

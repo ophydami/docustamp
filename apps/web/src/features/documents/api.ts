@@ -107,6 +107,8 @@ interface RawAudit {
 interface RawDoc {
   objectId: string;
   Name?: string;
+  /** The written-document source (docs/TEXT_DOCUMENTS.md); only its presence matters here. */
+  Content?: unknown;
   Note?: string;
   Description?: string;
   URL?: string;
@@ -376,6 +378,7 @@ export function toDocument(raw: RawDoc, me: Viewer): Document {
           }
         : undefined,
     chainedFromId: raw.ChainedFrom?.objectId,
+    written: !!raw.Content && typeof raw.Content === "object",
     pageCount: maxPage || undefined,
     recipients,
     fields,

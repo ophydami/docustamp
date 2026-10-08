@@ -1,5 +1,6 @@
 import { buildDocumentObject, normaliseSettings, settingsFromDoc } from '../lib/documents.js';
 import { assertStoredFileUrl } from '../lib/files.js';
+import { normaliseContent } from '../lib/textDocument.js';
 import { assertNotDisabled, extUserForUser } from './authGuard.js';
 
 /**
@@ -78,6 +79,9 @@ export default async function createDocumentFromApp(request) {
       placeholders: doc.Placeholders?.length ? doc.Placeholders : undefined,
       signatureType: doc.SignatureType,
       penColors: doc.PenColors,
+      // A written document: the typed content its PDF was rendered from, held
+      // to the same shape and limits the renderer applies.
+      content: doc.Content ? normaliseContent(doc.Content) : undefined,
       // ExpiryDate / NextReminderDate are deliberately not set here: this row is
       // still being assembled by the wizard (recipients and fields arrive in
       // later PUTs), and `DocumentAftersave` derives both from the stored

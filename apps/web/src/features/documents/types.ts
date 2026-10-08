@@ -181,6 +181,8 @@ export interface Document {
   myContactId?: string;
   /** Blocked behind an earlier signer under strict order. */
   blockedByOrder: boolean;
+  /** The text was written in the app (`Content` column), so a draft's words can still be edited. */
+  written: boolean;
 }
 
 export interface DocumentPage {

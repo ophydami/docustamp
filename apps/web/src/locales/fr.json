@@ -80,7 +80,8 @@
       "new": "Nouveau",
       "newRequest": "Nouvelle demande",
       "signYourself": "Signez vous-même",
-      "useTemplate": "Utiliser un modèle"
+      "useTemplate": "Utiliser un modèle",
+      "writeDocument": "Rédiger un document"
     },
     "nav": {
       "ai": "Demander à l'IA",
@@ -542,6 +543,39 @@
       "toLight": "Passer en mode clair"
     }
   },
+  "compose": {
+    "bodyLabel": "Texte du document",
+    "bodyPlaceholder": "Commencez à écrire. Les titres, les listes et le bloc de signature sont dans la barre.",
+    "pageBreak": "Saut de page",
+    "pageSize": {
+      "a4": "A4",
+      "label": "Format de page",
+      "letter": "Lettre"
+    },
+    "style": {
+      "heading1": "Titre 1",
+      "heading2": "Titre 2",
+      "heading3": "Titre 3",
+      "label": "Style de texte",
+      "paragraph": "Paragraphe"
+    },
+    "titleLabel": "Titre",
+    "titlePlaceholder": "Document sans titre",
+    "toolbar": {
+      "alignCenter": "Centrer",
+      "alignLeft": "Aligner à gauche",
+      "alignRight": "Aligner à droite",
+      "bold": "Gras",
+      "bulletList": "Liste à puces",
+      "divider": "Séparateur",
+      "italic": "Italique",
+      "label": "Mise en forme",
+      "numberedList": "Liste numérotée",
+      "pageBreak": "Saut de page",
+      "signingBlock": "Bloc de signature",
+      "underline": "Souligné"
+    }
+  },
   "contacts": {
     "a11y": {
       "closePanel": "Fermer le panneau",
@@ -752,6 +786,7 @@
       "downloadOriginal": "Télécharger l'original",
       "downloadSigned": "Télécharger le PDF signé",
       "editRecipients": "Modifier les destinataires",
+      "editText": "Modifier le texte",
       "exportCsv": "Exporter en CSV",
       "exportCsvShort": "CSV",
       "exportPdf": "Exporter en PDF",
@@ -1953,7 +1988,18 @@
         "noRoles": "Aucun rôle pour l'instant"
       },
       "title": "Que faut-il faire signer ?",
-      "titleSelf": "Que signez-vous ?"
+      "titleSelf": "Que signez-vous ?",
+      "write": {
+        "backToUpload": "Importer un fichier à la place",
+        "body": "Tapez le document dans l'application : il devient le PDF à signer.",
+        "cta": "Commencer à rédiger",
+        "fieldsKept": "Les champs placés restent à leur place. Vérifiez-les après de grosses modifications.",
+        "heading": "Rédigez votre document",
+        "renderFailed": "Le PDF n'a pas pu être mis à jour",
+        "rendering": "Mise à jour du PDF",
+        "subtitle": "Tapez, mettez en forme, et le PDF à droite suit. Le texte reste modifiable jusqu'à l'envoi.",
+        "title": "Le rédiger ici"
+      }
     },
     "errors": {
       "aRecipient": "Un destinataire",
@@ -2045,7 +2091,8 @@
       "reading": "Lecture du document",
       "suggestedHeading": "Suggéré d'après votre historique",
       "usualExpiry_one": "Vous accordez habituellement {{count}} jour.",
-      "usualExpiry_other": "Vous accordez habituellement {{count}} jours."
+      "usualExpiry_other": "Vous accordez habituellement {{count}} jours.",
+      "writtenHere": "rédigé ici"
     },
     "progress": {
       "preparing": "Préparation de {{index}} sur {{total}}",
