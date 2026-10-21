@@ -10,8 +10,12 @@ import { queryClient } from "@/lib/queryClient";
 import { useThemeSync } from "@/lib/theme";
 import { AuthProvider } from "@/app/auth";
 import { router } from "@/app/router";
+import { installChunkRecovery } from "@/lib/chunkRecovery";
 import { Toaster } from "@/components/ui";
 
+// First, before any lazy download can fail: a page that does not download
+// reloads once instead of showing the router's developer error page.
+installChunkRecovery();
 initParse();
 
 /** Shown while a newly picked language downloads its bundle. */

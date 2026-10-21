@@ -1616,6 +1616,13 @@
       "body": "Cet écran arrive bientôt.",
       "title": "Bientôt disponible"
     },
+    "errorPage": {
+      "crashBody": "Réessayez. Si le problème persiste, revenez dans quelques minutes.",
+      "crashTitle": "Un problème est survenu",
+      "loadBody": "Une partie de la page n'a pas été téléchargée. Vérifiez votre connexion et réessayez. Si le problème persiste, ouvrez le lien dans un autre navigateur ou depuis un autre réseau.",
+      "loadTitle": "La page n'a pas pu finir de se charger",
+      "retry": "Réessayer"
+    },
     "legal": {
       "privacy": {
         "body": "[Votre politique de confidentialité va ici. Remplacez ce texte dans src/features/misc/LegalPage.tsx ou faites pointer la route /privacy vers votre document hébergé.]",

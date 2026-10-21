@@ -1616,6 +1616,13 @@
       "body": "Questa schermata sta arrivando.",
       "title": "Prossimamente"
     },
+    "errorPage": {
+      "crashBody": "Riprova. Se continua a succedere, torna tra qualche minuto.",
+      "crashTitle": "Qualcosa è andato storto",
+      "loadBody": "Una parte della pagina non è stata scaricata. Controlla la connessione e riprova. Se continua a succedere, apri il link in un altro browser o da un'altra rete.",
+      "loadTitle": "La pagina non ha finito di caricarsi",
+      "retry": "Riprova"
+    },
     "legal": {
       "privacy": {
         "body": "[Qui va la tua informativa sulla privacy. Sostituisci questo testo in src/features/misc/LegalPage.tsx oppure fai puntare la rotta /privacy al tuo documento online.]",

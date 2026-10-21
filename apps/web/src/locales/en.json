@@ -1615,6 +1615,13 @@
       "body": "This screen is on the way.",
       "title": "Coming soon"
     },
+    "errorPage": {
+      "crashBody": "Try again. If it keeps happening, come back in a few minutes.",
+      "crashTitle": "Something went wrong",
+      "loadBody": "Part of the page did not download. Check your connection and try again. If it keeps happening, open the link in another browser or on another network.",
+      "loadTitle": "The page could not finish loading",
+      "retry": "Try again"
+    },
     "legal": {
       "privacy": {
         "body": "[Your privacy policy goes here. Replace this text in src/features/misc/LegalPage.tsx or point the /privacy route at your hosted document.]",

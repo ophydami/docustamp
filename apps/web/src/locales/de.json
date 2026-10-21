@@ -1616,6 +1616,13 @@
       "body": "Dieser Bereich ist in Arbeit.",
       "title": "Demnächst verfügbar"
     },
+    "errorPage": {
+      "crashBody": "Versuchen Sie es erneut. Wenn es weiterhin passiert, kommen Sie in ein paar Minuten zurück.",
+      "crashTitle": "Etwas ist schiefgelaufen",
+      "loadBody": "Ein Teil der Seite wurde nicht heruntergeladen. Prüfen Sie Ihre Verbindung und versuchen Sie es erneut. Wenn es weiterhin passiert, öffnen Sie den Link in einem anderen Browser oder über ein anderes Netzwerk.",
+      "loadTitle": "Die Seite konnte nicht vollständig geladen werden",
+      "retry": "Erneut versuchen"
+    },
     "legal": {
       "privacy": {
         "body": "[Hier steht Ihre Datenschutzerklärung. Ersetzen Sie diesen Text in src/features/misc/LegalPage.tsx oder verweisen Sie die Route /privacy auf Ihr gehostetes Dokument.]",

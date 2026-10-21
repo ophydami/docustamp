@@ -1616,6 +1616,13 @@
       "body": "Esta pantalla está en camino.",
       "title": "Próximamente"
     },
+    "errorPage": {
+      "crashBody": "Inténtalo de nuevo. Si sigue ocurriendo, vuelve en unos minutos.",
+      "crashTitle": "Algo salió mal",
+      "loadBody": "Una parte de la página no se descargó. Comprueba tu conexión e inténtalo de nuevo. Si sigue ocurriendo, abre el enlace en otro navegador o desde otra red.",
+      "loadTitle": "La página no terminó de cargarse",
+      "retry": "Intentar de nuevo"
+    },
     "legal": {
       "privacy": {
         "body": "[Tu política de privacidad va aquí. Reemplaza este texto en src/features/misc/LegalPage.tsx o apunta la ruta /privacy a tu documento publicado.]",

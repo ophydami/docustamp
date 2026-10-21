@@ -4,6 +4,8 @@ import { AppShell, BareShell } from "./AppShell";
 import { RequireAuth } from "./auth";
 import { RequireProfile } from "./RequireProfile";
 import { Loader2 } from "lucide-react";
+// Not lazy: it is what renders when a lazy page cannot be downloaded.
+import RouteErrorPage from "@/features/misc/RouteErrorPage";
 
 // Feature pages are lazy so each feature folder is its own chunk.
 // Each feature owns src/features/<name>/ and exports pages from index.tsx.
@@ -44,102 +46,111 @@ function S({ children }: { children: ReactNode }) {
   return <Suspense fallback={<Fallback />}>{children}</Suspense>;
 }
 
+// Every route sits under one pathless parent whose errorElement catches a page
+// that failed to download or crashed while rendering (features/misc/RouteErrorPage).
+// Without it the router shows its own developer error page.
 export const router = createBrowserRouter([
-  // Public
-  { path: "/login", element: <S><LoginPage /></S> },
-  { path: "/login/:base64url", element: <S><GuestLoginPage /></S> },
-  { path: "/signup", element: <S><SignupPage /></S> },
-  { path: "/forgot-password", element: <S><ForgotPasswordPage /></S> },
-  { path: "/terms", element: <S><LegalPage kind="terms" /></S> },
-  { path: "/privacy", element: <S><LegalPage kind="privacy" /></S> },
-  { path: "/status", element: <S><LegalPage kind="status" /></S> },
-  // OAuth consent for MCP apps such as ChatGPT: signed in, but in the auth frame, not the app shell.
   {
-    path: "/connect",
-    element: (
-      <RequireAuth>
-        <RequireProfile>
-          <S><ConnectPage /></S>
-        </RequireProfile>
-      </RequireAuth>
-    )
-  },
-
-  // Signer (public, token in URL; no account needed)
-  {
-    element: <BareShell />,
+    element: <RootOutlet />,
+    errorElement: <RouteErrorPage />,
     children: [
-      { path: "/sign/:docId", element: <S><SignerPage /></S> },
-      { path: "/sign/:docId/:contactId", element: <S><SignerPage /></S> },
-      { path: "/sign/:docId/done", element: <S><SignerDonePage /></S> },
-      { path: "/verify", element: <S><VerifyPage /></S> },
-      // Links from earlier builds keep working
-      { path: "/recipientSignPdf/:docId", element: <S><SignerPage /></S> },
-      { path: "/recipientSignPdf/:docId/:contactId", element: <S><SignerPage /></S> },
-      { path: "/load/recipientSignPdf/:docId/:contactId", element: <S><SignerPage /></S> },
-      { path: "/verify-document", element: <S><VerifyPage /></S> }
-    ]
-  },
+      // Public
+      { path: "/login", element: <S><LoginPage /></S> },
+      { path: "/login/:base64url", element: <S><GuestLoginPage /></S> },
+      { path: "/signup", element: <S><SignupPage /></S> },
+      { path: "/forgot-password", element: <S><ForgotPasswordPage /></S> },
+      { path: "/terms", element: <S><LegalPage kind="terms" /></S> },
+      { path: "/privacy", element: <S><LegalPage kind="privacy" /></S> },
+      { path: "/status", element: <S><LegalPage kind="status" /></S> },
+      // OAuth consent for MCP apps such as ChatGPT: signed in, but in the auth frame, not the app shell.
+      {
+        path: "/connect",
+        element: (
+          <RequireAuth>
+            <RequireProfile>
+              <S><ConnectPage /></S>
+            </RequireProfile>
+          </RequireAuth>
+        )
+      },
 
-  // Signed-in, full-bleed (no sidebar). RequireProfile: a session without a
-  // workspace profile gets the setup step instead of pages that cannot load.
-  {
-    element: (
-      <RequireAuth>
-        <RequireProfile>
-          <BareShell />
-        </RequireProfile>
-      </RequireAuth>
-    ),
-    children: [
-      { path: "/send", element: <S><SendPage /></S> },
-      { path: "/send/:docId", element: <S><SendPage /></S> },
-      { path: "/editor/:docId", element: <S><EditorPage /></S> },
-      { path: "/templates/:templateId/edit", element: <S><EditorPage mode="template" /></S> },
-      // Self-sign uses the same signer UI in "self" mode
-      { path: "/sign-yourself/:docId", element: <S><SignerPage mode="self" /></S> }
-    ]
-  },
+      // Signer (public, token in URL; no account needed)
+      {
+        element: <BareShell />,
+        children: [
+          { path: "/sign/:docId", element: <S><SignerPage /></S> },
+          { path: "/sign/:docId/:contactId", element: <S><SignerPage /></S> },
+          { path: "/sign/:docId/done", element: <S><SignerDonePage /></S> },
+          { path: "/verify", element: <S><VerifyPage /></S> },
+          // Links from earlier builds keep working
+          { path: "/recipientSignPdf/:docId", element: <S><SignerPage /></S> },
+          { path: "/recipientSignPdf/:docId/:contactId", element: <S><SignerPage /></S> },
+          { path: "/load/recipientSignPdf/:docId/:contactId", element: <S><SignerPage /></S> },
+          { path: "/verify-document", element: <S><VerifyPage /></S> }
+        ]
+      },
 
-  // Signed-in app shell
-  {
-    element: (
-      <RequireAuth>
-        <RequireProfile>
-          <AppShell />
-        </RequireProfile>
-      </RequireAuth>
-    ),
-    children: [
-      { index: true, element: <Navigate to="/inbox" replace /> },
-      { path: "/inbox", element: <S><InboxPage /></S> },
-      // Sign approvals: the approval email links to /approvals/:id.
-      { path: "/approvals", element: <S><ApprovalsPage /></S> },
-      { path: "/approvals/:id", element: <S><ApprovalDetailPage /></S> },
-      { path: "/documents", element: <S><DocumentsPage /></S> },
-      { path: "/documents/:docId", element: <S><DocumentDetailPage /></S> },
-      { path: "/templates", element: <S><TemplatesPage /></S> },
-      { path: "/contacts", element: <S><ContactsPage /></S> },
-      { path: "/contacts/:contactId", element: <S><ContactsPage /></S> },
-      { path: "/reports", element: <S><ReportsPage /></S> },
-      { path: "/reports/:reportId", element: <S><ReportsPage /></S> },
-      { path: "/ai", element: <S><AiPage /></S> },
-      { path: "/automations", element: <S><ComingSoonPage titleKey="app.nav.automations" /></S> },
-      { path: "/settings", element: <S><SettingsPage /></S> },
-      { path: "/settings/:section", element: <S><SettingsPage /></S> },
-      // Routes from earlier builds
-      { path: "/dashboard/:id", element: <Navigate to="/inbox" replace /> },
-      { path: "/report/:id", element: <Navigate to="/documents" replace /> },
-      { path: "/managesign", element: <Navigate to="/settings/signature" replace /> },
-      { path: "/preferences", element: <Navigate to="/settings" replace /> },
-      { path: "/profile", element: <Navigate to="/settings/profile" replace /> },
-      { path: "/users", element: <Navigate to="/settings/team" replace /> },
-      { path: "/drive", element: <Navigate to="/documents" replace /> },
-      { path: "/placeHolderSign/:docId", element: <Navigate to="/send/:docId" replace /> }
-    ]
-  },
+      // Signed-in, full-bleed (no sidebar). RequireProfile: a session without a
+      // workspace profile gets the setup step instead of pages that cannot load.
+      {
+        element: (
+          <RequireAuth>
+            <RequireProfile>
+              <BareShell />
+            </RequireProfile>
+          </RequireAuth>
+        ),
+        children: [
+          { path: "/send", element: <S><SendPage /></S> },
+          { path: "/send/:docId", element: <S><SendPage /></S> },
+          { path: "/editor/:docId", element: <S><EditorPage /></S> },
+          { path: "/templates/:templateId/edit", element: <S><EditorPage mode="template" /></S> },
+          // Self-sign uses the same signer UI in "self" mode
+          { path: "/sign-yourself/:docId", element: <S><SignerPage mode="self" /></S> }
+        ]
+      },
 
-  { path: "*", element: <S><NotFoundPage /></S> }
+      // Signed-in app shell
+      {
+        element: (
+          <RequireAuth>
+            <RequireProfile>
+              <AppShell />
+            </RequireProfile>
+          </RequireAuth>
+        ),
+        children: [
+          { index: true, element: <Navigate to="/inbox" replace /> },
+          { path: "/inbox", element: <S><InboxPage /></S> },
+          // Sign approvals: the approval email links to /approvals/:id.
+          { path: "/approvals", element: <S><ApprovalsPage /></S> },
+          { path: "/approvals/:id", element: <S><ApprovalDetailPage /></S> },
+          { path: "/documents", element: <S><DocumentsPage /></S> },
+          { path: "/documents/:docId", element: <S><DocumentDetailPage /></S> },
+          { path: "/templates", element: <S><TemplatesPage /></S> },
+          { path: "/contacts", element: <S><ContactsPage /></S> },
+          { path: "/contacts/:contactId", element: <S><ContactsPage /></S> },
+          { path: "/reports", element: <S><ReportsPage /></S> },
+          { path: "/reports/:reportId", element: <S><ReportsPage /></S> },
+          { path: "/ai", element: <S><AiPage /></S> },
+          { path: "/automations", element: <S><ComingSoonPage titleKey="app.nav.automations" /></S> },
+          { path: "/settings", element: <S><SettingsPage /></S> },
+          { path: "/settings/:section", element: <S><SettingsPage /></S> },
+          // Routes from earlier builds
+          { path: "/dashboard/:id", element: <Navigate to="/inbox" replace /> },
+          { path: "/report/:id", element: <Navigate to="/documents" replace /> },
+          { path: "/managesign", element: <Navigate to="/settings/signature" replace /> },
+          { path: "/preferences", element: <Navigate to="/settings" replace /> },
+          { path: "/profile", element: <Navigate to="/settings/profile" replace /> },
+          { path: "/users", element: <Navigate to="/settings/team" replace /> },
+          { path: "/drive", element: <Navigate to="/documents" replace /> },
+          { path: "/placeHolderSign/:docId", element: <Navigate to="/send/:docId" replace /> }
+        ]
+      },
+
+      { path: "*", element: <S><NotFoundPage /></S> }
+    ]
+  }
 ]);
 
 export function RootOutlet() {
