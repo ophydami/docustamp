@@ -31,6 +31,7 @@ import {
 } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import { useAuth } from "@/app/auth";
+import { isAdminRole, useExtUser } from "@/lib/extUser";
 import { useHotkeys } from "@/lib/hotkeys";
 import { useCommands } from "@/lib/store";
 import { num, untilShort, whenShort } from "@/lib/format";
@@ -173,13 +174,25 @@ export default function DocumentsPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { data: extUser } = useExtUser();
+  const admin = isAdminRole(extUser?.UserRole);
   const [params, setParams] = useSearchParams();
   const me = useMemo(() => ({ userId: user?.id, email: user?.email }), [user?.id, user?.email]);
 
   const view = (params.get("view") as SavedView | null) ?? undefined;
   const statusParam = params.get("status") as DocFilter | null;
-  const folderId = params.get("folder") ?? undefined;
-  const owner = (params.get("owner") as OwnerFilter | null) ?? (view === "sent-by-me" ? "me" : "anyone");
+  const ownerParam = params.get("owner") as OwnerFilter | null;
+  // "workspace" is the admins' view of everyone's documents. Anyone else who
+  // lands on that link gets the normal list instead of a refusal.
+  const owner: OwnerFilter =
+    ownerParam === "workspace"
+      ? admin
+        ? "workspace"
+        : "anyone"
+      : ownerParam ?? (view === "sent-by-me" ? "me" : "anyone");
+  const workspace = owner === "workspace";
+  // Folders are personal, so they do not apply to the whole-workspace view.
+  const folderId = workspace ? undefined : params.get("folder") ?? undefined;
   const date = (params.get("date") as DateFilter | null) ?? "any";
   const templateId = params.get("template") ?? undefined;
   const search = params.get("q") ?? "";
@@ -260,9 +273,19 @@ export default function DocumentsPage() {
   });
 
   const selectedDocs = useMemo(() => documents.filter((d) => selected.has(d.objectId)), [documents, selected]);
+  // Remind, move, void and delete only work on the caller's own documents, so a
+  // selection that includes someone else's acts on the rest and never on those.
+  const notMine = actions.notMine;
+  const ownSelectedDocs = useMemo(() => selectedDocs.filter((d) => !notMine(d)), [selectedDocs, notMine]);
 
   const [tableRef, tableWidth] = useContentWidth<HTMLDivElement>();
-  const picked = COLUMNS.filter((c) => c.fixed || visibleColumns.includes(c.id));
+  // The whole-workspace view always shows whose document each row is, and has
+  // no use for the folder column: teammates' folders are theirs alone.
+  const picked = workspace
+    ? COLUMNS.filter((c) => c.id !== "folder" && (c.fixed || c.id === "owner" || visibleColumns.includes(c.id))).map(
+        (c) => (c.id === "owner" ? { ...c, fixed: true } : c)
+      )
+    : COLUMNS.filter((c) => c.fixed || visibleColumns.includes(c.id));
   // Narrow viewports drop the least important optional columns rather than crushing the name.
   const shown = fitColumns(picked, tableWidth);
   const gridTemplate = `24px minmax(${NAME_MIN}px,1fr) ${shown.map((c) => c.width).join(" ")} 28px`;
@@ -337,7 +360,7 @@ export default function DocumentsPage() {
       r: (e) => {
         e.preventDefault();
         const targets = selectedDocs.length ? selectedDocs : documents[cursor] ? [documents[cursor]] : [];
-        actionsRef.current.remind(targets);
+        actionsRef.current.remind(targets.filter((d) => !actionsRef.current.notMine(d)));
       },
       u: (e) => {
         e.preventDefault();
@@ -375,14 +398,21 @@ export default function DocumentsPage() {
     [register, navigate, t]
   );
 
-  const folderName = folderId
-    ? folders.find((f) => f.objectId === folderId)?.name ?? t("documents.list.thisFolder")
-    : t("documents.list.allDocuments");
+  const folderName = workspace
+    ? t("documents.list.wholeWorkspace")
+    : folderId
+      ? folders.find((f) => f.objectId === folderId)?.name ?? t("documents.list.thisFolder")
+      : t("documents.list.allDocuments");
 
   /** Drop selected rows on a folder in the rail. */
   const dropOnFolder = useCallback(
-    (target: string | null, ids: string[]) => {
+    (target: string | null, dragged: string[]) => {
       setDragIds([]);
+      // A dragged selection can include someone else's document, which cannot be moved.
+      const ids = dragged.filter((id) => {
+        const doc = documents.find((d) => d.objectId === id);
+        return !doc || !notMine(doc);
+      });
       if (!ids.length || target === (folderId ?? null)) return;
       moveDocs.mutate(
         { ids, folderId: target },
@@ -400,7 +430,7 @@ export default function DocumentsPage() {
         }
       );
     },
-    [folderId, folders, moveDocs, t]
+    [folderId, folders, moveDocs, t, documents, notMine]
   );
 
   const exportCsv = () => {
@@ -420,7 +450,7 @@ export default function DocumentsPage() {
   return (
     <div className="flex-1 min-h-0 flex">
       {/* Folder rail. Below lg it collapses into the "Folders" chip in the filter row. */}
-      {railOpen ? (
+      {railOpen && !workspace ? (
         <div className="hidden lg:flex w-[200px] shrink-0 bg-ground border-r border-line flex-col min-h-0">
           <FolderRail
             folderId={folderId}
@@ -524,10 +554,25 @@ export default function DocumentsPage() {
         <span className="w-px h-5 bg-line mx-1.5" />
 
         <FilterMenu
-          label={owner === "me" ? t("documents.filters.ownerMe") : t("documents.filters.ownerAnyone")}
+          label={
+            workspace
+              ? t("documents.filters.ownerWorkspace")
+              : owner === "me"
+                ? t("documents.filters.ownerMe")
+                : t("documents.filters.ownerAnyone")
+          }
           items={[
             { label: t("documents.filters.anyone"), onSelect: () => setParam({ owner: undefined }) },
-            { label: t("documents.filters.me"), onSelect: () => setParam({ owner: "me" }) }
+            { label: t("documents.filters.me"), onSelect: () => setParam({ owner: "me" }) },
+            // Admins only: every document created in the workspace, to look at and download.
+            ...(admin
+              ? [
+                  {
+                    label: t("documents.filters.workspace"),
+                    onSelect: () => setParam({ owner: "workspace", folder: undefined })
+                  }
+                ]
+              : [])
           ]}
         />
         <FilterMenu
@@ -554,16 +599,18 @@ export default function DocumentsPage() {
           />
         ) : null}
         {/* Below lg the rail is gone, so the tree moves into a sheet. */}
-        <button
-          type="button"
-          onClick={() => setFolderSheet(true)}
-          className="lg:hidden inline-flex items-center gap-1.5 h-7 px-2.5 rounded-md text-[12px] font-medium border border-line bg-surface text-ink-2 hover:border-line-strong max-w-48"
-        >
-          <FolderTree className="size-3.5 shrink-0" strokeWidth={1.6} />
-          <span className="truncate">{folderId ? folderName : t("documents.folders.title")}</span>
-          <ChevronDown className="size-3.5 shrink-0" strokeWidth={1.6} />
-        </button>
-        {!railOpen ? (
+        {!workspace ? (
+          <button
+            type="button"
+            onClick={() => setFolderSheet(true)}
+            className="lg:hidden inline-flex items-center gap-1.5 h-7 px-2.5 rounded-md text-[12px] font-medium border border-line bg-surface text-ink-2 hover:border-line-strong max-w-48"
+          >
+            <FolderTree className="size-3.5 shrink-0" strokeWidth={1.6} />
+            <span className="truncate">{folderId ? folderName : t("documents.folders.title")}</span>
+            <ChevronDown className="size-3.5 shrink-0" strokeWidth={1.6} />
+          </button>
+        ) : null}
+        {!railOpen && !workspace ? (
           <Button
             size="sm"
             className="max-lg:hidden"
@@ -587,9 +634,11 @@ export default function DocumentsPage() {
         <div className="mx-4 md:mx-6 mb-2 min-h-11 rounded-md bg-ink text-ground flex items-center gap-2 px-3 py-1 flex-wrap">
           <span className="text-[13px] font-semibold num">{t("common.hints.selected", { count: selected.size })}</span>
           <span className="w-px h-5 bg-ground/20 mx-1" />
-          <BulkButton kbd="R" onClick={() => actions.remind(selectedDocs)}>
-            {t("common.actions.remind")}
-          </BulkButton>
+          {ownSelectedDocs.length > 0 ? (
+            <BulkButton kbd="R" onClick={() => actions.remind(ownSelectedDocs)}>
+              {t("common.actions.remind")}
+            </BulkButton>
+          ) : null}
           <BulkButton
             onClick={() => {
               if (selectedDocs.length > 5) {
@@ -601,16 +650,22 @@ export default function DocumentsPage() {
           >
             {t("common.actions.download")}
           </BulkButton>
-          <BulkButton onClick={() => actions.askMove(selectedDocs)}>{t("documents.actions.moveToFolder")}</BulkButton>
-          <BulkButton
-            danger
-            onClick={() => actions.askVoid(selectedDocs.filter((d) => d.status === "in_progress" || d.status === "expired"))}
-          >
-            {t("documents.actions.void")}
-          </BulkButton>
-          <BulkButton danger onClick={() => actions.askDelete(selectedDocs)}>
-            {t("common.actions.delete")}
-          </BulkButton>
+          {ownSelectedDocs.length > 0 ? (
+            <>
+              <BulkButton onClick={() => actions.askMove(ownSelectedDocs)}>{t("documents.actions.moveToFolder")}</BulkButton>
+              <BulkButton
+                danger
+                onClick={() =>
+                  actions.askVoid(ownSelectedDocs.filter((d) => d.status === "in_progress" || d.status === "expired"))
+                }
+              >
+                {t("documents.actions.void")}
+              </BulkButton>
+              <BulkButton danger onClick={() => actions.askDelete(ownSelectedDocs)}>
+                {t("common.actions.delete")}
+              </BulkButton>
+            </>
+          ) : null}
           <button
             type="button"
             className="ml-auto text-[12px] text-ground/60 hover:text-ground flex items-center gap-1.5"
@@ -699,6 +754,7 @@ export default function DocumentsPage() {
                   }}
                   onOpen={() => openDoc(doc)}
                   onFocusRow={() => setCursor(i)}
+                  draggable={!workspace && !notMine(doc)}
                   onDragStart={() => setDragIds(selected.has(doc.objectId) ? [...selected] : [doc.objectId])}
                   onDragEnd={() => setDragIds([])}
                   templateName={doc.templateName ?? (doc.templateId ? templateNames.get(doc.templateId) : undefined)}
@@ -716,6 +772,7 @@ export default function DocumentsPage() {
                   selected={selected.has(doc.objectId)}
                   onToggle={() => toggleOne(doc.objectId)}
                   onOpen={() => openDoc(doc)}
+                  showOwner={workspace}
                   menuItems={actions.menuItems(doc)}
                 />
               ))}
@@ -751,7 +808,7 @@ export default function DocumentsPage() {
             <Kbd>⇧X</Kbd> {t("documents.hints.range")}
             <Kbd>↵</Kbd> {t("common.hints.open")}
             <Kbd>R</Kbd> {t("documents.hints.remind")}
-            <span className="text-faint">{t("documents.hints.drag")}</span>
+            {!workspace ? <span className="text-faint">{t("documents.hints.drag")}</span> : null}
           </span>
         </div>
       </div>
@@ -897,6 +954,8 @@ interface RowProps {
   onToggle: () => void;
   onOpen: () => void;
   onFocusRow: () => void;
+  /** Only the caller's own rows can be dragged onto a folder. */
+  draggable: boolean;
   onDragStart: () => void;
   onDragEnd: () => void;
   /** Resolved separately: list rows only carry the template pointer. */
@@ -913,6 +972,7 @@ function Row({
   onToggle,
   onOpen,
   onFocusRow,
+  draggable,
   onDragStart,
   onDragEnd,
   templateName,
@@ -972,7 +1032,7 @@ function Row({
     <div
       ref={ref}
       onMouseEnter={onFocusRow}
-      draggable
+      draggable={draggable}
       onDragStart={(e) => {
         e.dataTransfer.effectAllowed = "move";
         // Firefox will not start a drag without payload.
@@ -1028,12 +1088,15 @@ function DocumentCard({
   selected,
   onToggle,
   onOpen,
+  showOwner,
   menuItems
 }: {
   doc: Document;
   selected: boolean;
   onToggle: () => void;
   onOpen: () => void;
+  /** The whole-workspace view names the owner, since the rows are not all yours. */
+  showOwner?: boolean;
   menuItems: ReturnType<ReturnType<typeof useDocumentActions>["menuItems"]>;
 }) {
   const { t } = useTranslation();
@@ -1075,7 +1138,11 @@ function DocumentCard({
               · {t("documents.card.expires", { when: untilShort(doc.expiryDate) })}
             </span>
           ) : null}
-          {doc.folderName ? <span className="truncate">· {doc.folderName}</span> : null}
+          {showOwner && (doc.ownerName || doc.ownerEmail) ? (
+            <span className="truncate">· {t("documents.detail.by", { name: doc.ownerName || doc.ownerEmail })}</span>
+          ) : doc.folderName ? (
+            <span className="truncate">· {doc.folderName}</span>
+          ) : null}
         </div>
       </div>
       <Menu

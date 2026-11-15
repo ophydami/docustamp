@@ -23,7 +23,12 @@ export type DocStatus = "draft" | "in_progress" | "completed" | "declined" | "ex
 /** Filter chips on the documents list. "needs_you" is a cross-cut of in_progress. */
 export type DocFilter = "all" | "needs_you" | "in_progress" | "completed" | "declined" | "expired" | "draft";
 
-export type OwnerFilter = "anyone" | "me";
+/**
+ * Whose documents the list shows. "anyone" is everything the signed-in user can
+ * already open (their own, plus the ones they were asked to sign). "workspace" is
+ * admins only: every document created in their workspace, to look at and download.
+ */
+export type OwnerFilter = "anyone" | "me" | "workspace";
 
 /** Sidebar saved views, arriving as `?view=`. */
 export type SavedView = "waiting-on-me" | "expiring" | "sent-by-me";
@@ -183,6 +188,11 @@ export interface Document {
   blockedByOrder: boolean;
   /** The text was written in the app (`Content` column), so a draft's words can still be edited. */
   written: boolean;
+  /**
+   * Set by `getDocument` when a workspace admin opens a teammate's document:
+   * the whole row is there to read, and only its owner can change it.
+   */
+  viewAs?: "workspace_admin";
 }
 
 export interface DocumentPage {

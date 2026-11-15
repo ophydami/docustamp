@@ -9,6 +9,7 @@ import AuthLoginAsMail from './parsefunction/AuthLoginAsMail.js';
 import getUserDetails from './parsefunction/getUserDetails.js';
 import getDocument from './parsefunction/getDocument.js';
 import getDocumentOpens from './parsefunction/getDocumentOpens.js';
+import getWorkspaceDocuments from './parsefunction/getWorkspaceDocuments.js';
 import getReport from './parsefunction/getReport.js';
 import TemplateAfterSave from './parsefunction/TemplateAfterSave.js';
 import GetTemplate from './parsefunction/GetTemplate.js';
@@ -145,6 +146,8 @@ Parse.Cloud.define('savesignature', saveSignature);
 Parse.Cloud.define('getdefaultsignature', getSignature);
 Parse.Cloud.define('triggerevent', triggerEvent);
 Parse.Cloud.define('getdocumentopens', getDocumentOpens);
+// Workspace admins: every document in the workspace, to look at and download.
+Parse.Cloud.define('getworkspacedocuments', getWorkspaceDocuments);
 Parse.Cloud.define('setwidgetpreferences', setWidgetPreferences);
 Parse.Cloud.define('createdocumentfromapp', createDocumentFromApp);
 // Written documents: the typed content rendered to the PDF that gets signed.

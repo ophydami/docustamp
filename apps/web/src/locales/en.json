@@ -882,7 +882,9 @@
       "recipientsInOrder": "Recipients, in order",
       "signedAt": "signed {{when}}",
       "signingCertificate": "Signing certificate",
-      "statusLabel": "Status"
+      "statusLabel": "Status",
+      "viewingAsAdmin": "You are viewing this as a workspace admin. Only {{name}} can change it.",
+      "viewingAsAdminNoName": "You are viewing this as a workspace admin. Only the person who made it can change it."
     },
     "dialog": {
       "delete": {
@@ -1001,9 +1003,11 @@
       "needsYou": "Needs you",
       "ownerAnyone": "Owner: anyone",
       "ownerMe": "Owner: me",
+      "ownerWorkspace": "Owner: workspace",
       "sentByMe": "Sent by me",
       "template": "Template",
-      "waitingOnMe": "Waiting on me"
+      "waitingOnMe": "Waiting on me",
+      "workspace": "Everyone in workspace"
     },
     "folders": {
       "allDocuments": "All documents",
@@ -1044,7 +1048,8 @@
       "allDocuments": "all documents",
       "summary_one": "{{count}} in {{folder}}",
       "summary_other": "{{count}} in {{folder}}",
-      "thisFolder": "this folder"
+      "thisFolder": "this folder",
+      "wholeWorkspace": "the whole workspace"
     },
     "nav": {
       "inbox": "Inbox"
@@ -1084,6 +1089,7 @@
       "otpHint": "Recipients must verify a one-time code by email before they can open it.",
       "otpToggle": "Require sign-in",
       "readOnly": "This document is {{status}}, so its settings are read only.",
+      "readOnlyNotOwner": "Only the person who made this document can change its settings.",
       "remindEvery": "Remind once every",
       "remindEveryHint": "Days between reminders.",
       "signingOrder": "Signing order",
@@ -2910,6 +2916,7 @@
       },
       "countLine_one": "{{count}} person in this workspace.",
       "countLine_other": "{{count}} people in this workspace.",
+      "documentAccess": "Admins can see and download every document created in this workspace. Only the person who made a document can change it.",
       "invite": {
         "button": "Invite teammate",
         "created": "The account is ready. Send them this password over a channel you trust; it is not shown again.",

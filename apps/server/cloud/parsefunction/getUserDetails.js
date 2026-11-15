@@ -15,7 +15,7 @@ import {
  * though `apiTokens.describeToken` exists precisely so the hash never leaves the
  * server.
  */
-const SECRET_EXT_USER_FIELDS = [
+export const SECRET_EXT_USER_FIELDS = [
   'ApiTokenHash',
   'ApiTokenPrefix',
   'ApiTokenCreatedAt',

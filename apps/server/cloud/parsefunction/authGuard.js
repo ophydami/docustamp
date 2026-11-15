@@ -522,8 +522,12 @@ function hasVerifiedEmail(user) {
  *
  * @param {Parse.Cloud.FunctionRequest|{user?: any, master?: boolean, params?: any, headers?: any}} request
  * @param {Parse.Object|Object} docObject contracts_Document (object or JSON) with Signers/Placeholders loaded
- * @param {{contactId?: string, signingToken?: string, ownerMayActForContact?: boolean}} [opts]
- * @returns {Promise<{kind: 'master'|'owner'|'signer', user: Parse.User|null, contactId: string, legacy?: boolean}>}
+ * With `opts.allowWorkspaceViewer` (getDocument and getsignedurl only) an admin
+ * of the owner's workspace who is not signing gets `{ kind: 'viewer' }`: they
+ * may look at the document and download it, and nothing else.
+ *
+ * @param {{contactId?: string, signingToken?: string, ownerMayActForContact?: boolean, allowWorkspaceViewer?: boolean}} [opts]
+ * @returns {Promise<{kind: 'master'|'owner'|'viewer'|'signer', user: Parse.User|null, contactId: string, legacy?: boolean}>}
  */
 export async function resolveDocumentActor(request, docObject, opts = {}) {
   const docJson = docJsonOf(docObject);
@@ -566,6 +570,16 @@ export async function resolveDocumentActor(request, docObject, opts = {}) {
       }
     }
     return { kind: 'owner', user, contactId: claimed };
+  }
+
+  // A workspace admin looking at a teammate's document. Reads only: a caller
+  // has to ask for it, so signPdf, triggerevent, declinedoc and the rest never
+  // see this kind. A claimed seat or a signing link means the caller is here to
+  // sign, and that is decided below exactly as it is for everyone else.
+  if (opts.allowWorkspaceViewer && user && !claimed && !token) {
+    if (await isWorkspaceAdminOfDocument(user, docJson)) {
+      return { kind: 'viewer', user, contactId: '' };
+    }
   }
 
   // The seats this session would hold, if it is on the document at all.
@@ -628,6 +642,91 @@ export async function resolveDocumentActor(request, docObject, opts = {}) {
       ? 'You do not have access to this document.'
       : 'Please open this document from your signing link.'
   );
+}
+
+/* ------------------------------------------------------------------------- *
+ * Workspace admins: who may look at a teammate's documents
+ * ------------------------------------------------------------------------- */
+
+const WORKSPACE_ADMIN_ROLES = new Set(['contracts_Admin', 'contracts_OrgAdmin']);
+
+/**
+ * What a workspace admin may look at, or null for everybody else.
+ *
+ * A `contracts_Admin` covers the whole tenant. A `contracts_OrgAdmin` covers
+ * their own organisation, so in a tenant with more than one organisation they
+ * do not see the others. A suspended account, an account with no profile and a
+ * plain member all get null.
+ *
+ * @param {Parse.User|string|null} user the account, or its objectId.
+ * @returns {Promise<{userId: string, extUserId: string, role: string, tenantId: string, orgId: string}|null>}
+ *   `orgId` is set only when the scope is one organisation.
+ */
+export async function workspaceAdminScope(user) {
+  const userId = typeof user === 'string' ? user : user?.id;
+  if (!userId) return null;
+  const row = await extUserForUser(userId, { activeOnly: true });
+  const role = row?.get('UserRole');
+  if (!row || !WORKSPACE_ADMIN_ROLES.has(role)) return null;
+  const tenantId = row.get('TenantId')?.id || '';
+  if (!tenantId) return null;
+  const orgId = role === 'contracts_OrgAdmin' ? row.get('OrganizationId')?.id || '' : '';
+  if (role === 'contracts_OrgAdmin' && !orgId) return null;
+  return { userId, extUserId: row.id, role, tenantId, orgId };
+}
+
+/** True when a profile (tenant and organisation ids) sits inside an admin's scope. */
+export function isInWorkspaceScope(scope, tenantId, orgId) {
+  if (!scope?.tenantId || tenantId !== scope.tenantId) return false;
+  return !scope.orgId || orgId === scope.orgId;
+}
+
+/**
+ * The workspace the document's owner works in, or null when there is no single
+ * answer.
+ *
+ * `ExtUserPtr` names the profile the document was written under, so it decides.
+ * A row with only `CreatedBy` (an older entry point) falls back to the
+ * account's profiles, and only when they all agree: an account with profiles in
+ * two workspaces must not have its documents shown to the admin of the wrong one.
+ */
+async function documentOwnerWorkspace(docJson) {
+  const ext = docJson?.ExtUserPtr;
+  if (ext?.objectId) {
+    // Already loaded with its tenant when the caller included it.
+    if (ext.TenantId?.objectId) {
+      return { tenantId: ext.TenantId.objectId, orgId: ext.OrganizationId?.objectId || '' };
+    }
+    const row = await new Parse.Query('contracts_Users')
+      .select('TenantId', 'OrganizationId')
+      .get(ext.objectId, { useMasterKey: true })
+      .catch(() => null);
+    const tenantId = row?.get('TenantId')?.id || '';
+    return tenantId ? { tenantId, orgId: row.get('OrganizationId')?.id || '' } : null;
+  }
+  const ownerId = docJson?.CreatedBy?.objectId;
+  if (!ownerId) return null;
+  const rows = await extUserRowsForUser(ownerId);
+  const places = new Set(
+    rows.map(row => `${row.get('TenantId')?.id || ''}/${row.get('OrganizationId')?.id || ''}`)
+  );
+  if (places.size !== 1) return null;
+  const tenantId = rows[0].get('TenantId')?.id || '';
+  return tenantId ? { tenantId, orgId: rows[0].get('OrganizationId')?.id || '' } : null;
+}
+
+/**
+ * True when `user` is an admin of the workspace this document was created in.
+ *
+ * @param {Parse.User|string|null} user
+ * @param {Object} docJson plain JSON of a contracts_Document.
+ * @returns {Promise<boolean>}
+ */
+export async function isWorkspaceAdminOfDocument(user, docJson) {
+  const scope = await workspaceAdminScope(user);
+  if (!scope) return false;
+  const owner = await documentOwnerWorkspace(docJson);
+  return !!owner && isInWorkspaceScope(scope, owner.tenantId, owner.orgId);
 }
 
 /* ------------------------------------------------------------------------- *

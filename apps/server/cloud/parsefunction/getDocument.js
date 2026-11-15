@@ -1,5 +1,6 @@
 import { signingTokenFromRequest } from '../lib/signingToken.js';
 import { checkRateLimit, clientIp, resolveDocumentActor } from './authGuard.js';
+import { SECRET_EXT_USER_FIELDS } from './getUserDetails.js';
 
 /**
  * `getDocument` used to hand the whole master-key row to anyone who knew a
@@ -11,6 +12,11 @@ import { checkRateLimit, clientIp, resolveDocumentActor } from './authGuard.js';
  * Now: a fixed include list, `resolveDocumentActor` decides who is asking, and
  * a signer (guest link or otherwise) only ever gets the projection the signing
  * page reads. Owners and the master key keep the full row, minus credentials.
+ *
+ * An admin of the owner's workspace may look too. They get the owner's view of
+ * the document with the owner's profile cut down to what the page shows, and
+ * `ViewAs: 'workspace_admin'` so the page knows to offer nothing but reading
+ * and downloading.
  */
 
 /** The only includes that may run; a caller-supplied `include` is filtered to these. */
@@ -209,6 +215,45 @@ function ownerProjection(doc) {
   return scrubbed;
 }
 
+/** The owner's `contracts_Users` row, reduced to what a reader other than the owner may hold. */
+function publicExtUser(extUser) {
+  const projected = pick(extUser, SAFE_EXT_USER_FIELDS) || {};
+  if (extUser?.TenantId) projected.TenantId = pick(extUser.TenantId, SAFE_TENANT_FIELDS);
+  return projected;
+}
+
+/** Profile columns that belong to the account holder alone. */
+const PROFILE_SECRET_KEYS = new Set(SECRET_EXT_USER_FIELDS);
+
+/** Recursively drop the account-only profile columns, wherever a profile row is embedded. */
+function scrubProfileSecrets(value) {
+  if (Array.isArray(value)) return value.map(scrubProfileSecrets);
+  if (!value || typeof value !== 'object') return value;
+  const out = {};
+  for (const [key, inner] of Object.entries(value)) {
+    if (PROFILE_SECRET_KEYS.has(key)) continue;
+    out[key] = scrubProfileSecrets(inner);
+  }
+  return out;
+}
+
+/**
+ * What a workspace admin sees of a teammate's document: everything about the
+ * document, nothing about the teammate's account.
+ *
+ * The owner's profile row carries their API token hash, webhook url and
+ * account-deletion code columns. To the owner those are their own, so
+ * `scrubSecrets` leaves them in. Here the profile on the document is projected
+ * down to what the page shows, and the same columns are dropped anywhere else
+ * the row is embedded (the audit trail points at it when the owner signed).
+ */
+function viewerProjection(doc) {
+  const projected = scrubProfileSecrets(ownerProjection(doc));
+  if (projected.ExtUserPtr) projected.ExtUserPtr = publicExtUser(doc.ExtUserPtr);
+  projected.ViewAs = 'workspace_admin';
+  return projected;
+}
+
 /** Cheap "is this call carrying a session at all" test, for rate limiting only. */
 function hasSession(request) {
   const h = request?.headers || {};
@@ -260,11 +305,13 @@ export default async function getDocument(request) {
     contactId: request?.params?.contactId,
     signingToken,
     ownerMayActForContact: true,
+    allowWorkspaceViewer: true,
   });
 
   const document = JSON.parse(JSON.stringify(res));
   if (actor.kind === 'master' || actor.kind === 'owner') {
     return ownerProjection(document);
   }
+  if (actor.kind === 'viewer') return viewerProjection(document);
   return signerProjection(document);
 }

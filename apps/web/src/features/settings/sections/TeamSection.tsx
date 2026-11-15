@@ -87,6 +87,8 @@ export default function TeamSection() {
             disabled={extUser?.IsDisabled === true}
           />
           <p className="text-[12px] text-muted leading-relaxed">{t("settings.team.self.body")}</p>
+          {/* Everyone in the workspace is told that admins can read what they create here. */}
+          <p className="text-[12px] text-muted leading-relaxed">{t("settings.team.documentAccess")}</p>
         </SectionCard>
       </FormColumn>
     );
@@ -256,6 +258,7 @@ export default function TeamSection() {
         </div>
       </div>
 
+      <p className="text-[12px] text-muted leading-relaxed max-w-[560px]">{t("settings.team.documentAccess")}</p>
       <p className="text-[11px] text-muted-2 leading-relaxed max-w-[560px]">{t("settings.team.note")}</p>
 
       <InviteDialog

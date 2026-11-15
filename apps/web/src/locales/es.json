@@ -883,7 +883,9 @@
       "recipientsInOrder": "Destinatarios, en orden",
       "signedAt": "firmado {{when}}",
       "signingCertificate": "Certificado de firma",
-      "statusLabel": "Estado"
+      "statusLabel": "Estado",
+      "viewingAsAdmin": "Estás viendo este documento como administrador del espacio de trabajo. Solo {{name}} puede cambiarlo.",
+      "viewingAsAdminNoName": "Estás viendo este documento como administrador del espacio de trabajo. Solo quien lo creó puede cambiarlo."
     },
     "dialog": {
       "delete": {
@@ -1002,9 +1004,11 @@
       "needsYou": "Pendientes de ti",
       "ownerAnyone": "Propietario: cualquiera",
       "ownerMe": "Propietario: yo",
+      "ownerWorkspace": "Propietario: equipo",
       "sentByMe": "Enviados por mí",
       "template": "Plantilla",
-      "waitingOnMe": "Pendientes de mí"
+      "waitingOnMe": "Pendientes de mí",
+      "workspace": "Todos en el espacio de trabajo"
     },
     "folders": {
       "allDocuments": "Todos los documentos",
@@ -1045,7 +1049,8 @@
       "allDocuments": "todos los documentos",
       "summary_one": "{{count}} en {{folder}}",
       "summary_other": "{{count}} en {{folder}}",
-      "thisFolder": "esta carpeta"
+      "thisFolder": "esta carpeta",
+      "wholeWorkspace": "todo el espacio de trabajo"
     },
     "nav": {
       "inbox": "Bandeja de entrada"
@@ -1085,6 +1090,7 @@
       "otpHint": "Los destinatarios deben verificar un código de un solo uso por correo antes de poder abrirlo.",
       "otpToggle": "Exigir inicio de sesión",
       "readOnly": "Este documento está {{status}}, así que sus ajustes son de solo lectura.",
+      "readOnlyNotOwner": "Solo quien creó este documento puede cambiar sus ajustes.",
       "remindEvery": "Recordar cada",
       "remindEveryHint": "Días entre recordatorios.",
       "signingOrder": "Orden de firma",
@@ -2911,6 +2917,7 @@
       },
       "countLine_one": "{{count}} persona en este espacio de trabajo.",
       "countLine_other": "{{count}} personas en este espacio de trabajo.",
+      "documentAccess": "Los administradores pueden ver y descargar todos los documentos creados en este espacio de trabajo. Solo quien creó un documento puede cambiarlo.",
       "invite": {
         "button": "Invitar a un compañero",
         "created": "La cuenta está lista. Envíale esta contraseña por un canal de confianza; no se vuelve a mostrar.",

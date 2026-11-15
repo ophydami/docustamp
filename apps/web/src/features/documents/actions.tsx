@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Check, Copy, FileStack, Forward, FolderInput, Link2, Loader2 } from "lucide-react";
 import { Button, Dialog, Field, Input, Select, Textarea, toast, type MenuItem } from "@/components/ui";
 import { useAuth } from "@/app/auth";
+import { useExtUser } from "@/lib/extUser";
 import { remindError, remindErrorTitle, remindSummary } from "@/lib/reminder";
 import { loadSigningLinks, signingLinkFor, type SigningLink } from "@/lib/signingLinks";
 import {
@@ -20,7 +21,28 @@ import { ForwardDialog } from "./ForwardDialog";
 import { SaveAsTemplateDialog } from "./SaveAsTemplateDialog";
 import type { Document } from "./types";
 
+/**
+ * True when the document belongs to someone else: a signer's copy, or a
+ * teammate's document seen by a workspace admin. Everything past opening and
+ * downloading is the owner's, and the server refuses it for anyone else
+ * (`CreatedBy == caller`, or the row's write ACL), so those controls are not
+ * offered at all.
+ *
+ * The server counts both `CreatedBy` and the profile row behind `ExtUserPtr` as
+ * the owner, so either match makes it mine. A row with no `CreatedBy` falls
+ * back to the profile pointer alone.
+ */
+export function isNotMine(doc: Document, me: { userId?: string; extUserId?: string }): boolean {
+  if (doc.viewAs === "workspace_admin") return true;
+  if (!me.userId) return false;
+  const sameProfile = !!doc.extUserId && doc.extUserId === me.extUserId;
+  if (doc.createdById) return doc.createdById !== me.userId && !sameProfile;
+  return !!doc.extUserId && !!me.extUserId && !sameProfile;
+}
+
 export interface DocumentActions {
+  /** Someone else's document: only opening and downloading work. See `isNotMine`. */
+  notMine: (doc: Document) => boolean;
   remind: (docs: Document[]) => void;
   download: (doc: Document, kind: DownloadKind) => void;
   duplicate: (doc: Document) => void;
@@ -46,8 +68,14 @@ export function useDocumentActions(opts: { onRemoved?: (ids: string[]) => void }
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { data: extUser } = useExtUser();
   const me = useMemo(() => ({ userId: user?.id, email: user?.email }), [user?.id, user?.email]);
   const drive = useDrive(me);
+  const extUserId = extUser?.objectId;
+  const notMine = useCallback(
+    (doc: Document) => isNotMine(doc, { userId: user?.id, extUserId }),
+    [user?.id, extUserId]
+  );
 
   const del = useDeleteDocuments();
   const move = useMoveDocuments();
@@ -190,9 +218,25 @@ export function useDocumentActions(opts: { onRemoved?: (ids: string[]) => void }
   const menuItems = useCallback(
     (doc: Document, opts?: { omitOpen?: boolean }): (MenuItem | "separator")[] => {
       const sent = doc.status !== "draft";
-      // `forwarddoc` and `saveastemplate` both match on `CreatedBy == caller`.
-      const notMine = !!doc.createdById && !!user?.id && doc.createdById !== user.id;
       const items: (MenuItem | "separator")[] = [];
+      const downloads: MenuItem[] = [
+        {
+          label: doc.isCompleted ? t("documents.actions.downloadSigned") : t("documents.actions.downloadCurrent"),
+          disabled: !doc.signedUrl && !doc.url,
+          onSelect: () => download(doc, "signed")
+        },
+        {
+          label: t("documents.actions.downloadOriginal"),
+          disabled: !doc.url,
+          onSelect: () => download(doc, "original")
+        }
+      ];
+      if (doc.isCompleted) {
+        downloads.push({
+          label: t("documents.actions.downloadCompletionCertificate"),
+          onSelect: () => download(doc, "certificate")
+        });
+      }
       if (!opts?.omitOpen) {
         items.push({ label: t("common.actions.open"), onSelect: () => navigate(`/documents/${doc.objectId}`), kbd: "↵" });
       }
@@ -207,6 +251,13 @@ export function useDocumentActions(opts: { onRemoved?: (ids: string[]) => void }
             )
         });
       }
+      // Someone else's document: opening, signing your own part and the
+      // downloads are all that work, so the menu stops there.
+      if (notMine(doc)) {
+        if (items.length) items.push("separator");
+        items.push(...downloads);
+        return items;
+      }
       if (doc.status === "draft") {
         items.push({ label: t("documents.actions.continueInEditor"), onSelect: () => navigate(`/send/${doc.objectId}`) });
       }
@@ -217,22 +268,7 @@ export function useDocumentActions(opts: { onRemoved?: (ids: string[]) => void }
         disabled: doc.status !== "in_progress",
         onSelect: () => remind([doc])
       });
-      items.push({
-        label: doc.isCompleted ? t("documents.actions.downloadSigned") : t("documents.actions.downloadCurrent"),
-        disabled: !doc.signedUrl && !doc.url,
-        onSelect: () => download(doc, "signed")
-      });
-      items.push({
-        label: t("documents.actions.downloadOriginal"),
-        disabled: !doc.url,
-        onSelect: () => download(doc, "original")
-      });
-      if (doc.isCompleted) {
-        items.push({
-          label: t("documents.actions.downloadCompletionCertificate"),
-          onSelect: () => download(doc, "certificate")
-        });
-      }
+      items.push(...downloads);
       if (sent && doc.recipients.length > 0) {
         items.push({
           label: t("documents.actions.copyShareLink"),
@@ -240,12 +276,10 @@ export function useDocumentActions(opts: { onRemoved?: (ids: string[]) => void }
           onSelect: () => shareLinks(doc)
         });
       }
-      // `forwarddoc` mails the signed PDF and only the owner may call it (§4.3).
       if (doc.isCompleted) {
         items.push({
           label: t("documents.actions.forwardCopy"),
           icon: <Forward className="size-3.5" strokeWidth={1.6} />,
-          disabled: notMine,
           onSelect: () => askForward(doc)
         });
       }
@@ -255,7 +289,6 @@ export function useDocumentActions(opts: { onRemoved?: (ids: string[]) => void }
         items.push({
           label: t("documents.actions.saveAsTemplate"),
           icon: <FileStack className="size-3.5" strokeWidth={1.6} />,
-          disabled: notMine,
           onSelect: () => askSaveAsTemplate(doc)
         });
       }
@@ -271,7 +304,7 @@ export function useDocumentActions(opts: { onRemoved?: (ids: string[]) => void }
       items.push({ label: t("common.actions.delete"), danger: true, onSelect: () => askDelete([doc]) });
       return items;
     },
-    [t, navigate, user?.id, remind, download, duplicate, askMove, askVoid, askDelete, askForward, askSaveAsTemplate, shareLinks]
+    [t, navigate, notMine, remind, download, duplicate, askMove, askVoid, askDelete, askForward, askSaveAsTemplate, shareLinks]
   );
 
   const folderList = drive.data?.folders ?? [];
@@ -472,6 +505,7 @@ export function useDocumentActions(opts: { onRemoved?: (ids: string[]) => void }
   );
 
   return {
+    notMine,
     remind,
     download,
     duplicate,

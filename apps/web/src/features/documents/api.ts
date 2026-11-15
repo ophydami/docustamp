@@ -8,6 +8,10 @@
  * detail page (it resolves signed file URLs, which list queries do not, see
  * docs/BACKEND_API.md §8.4 and §11.12).
  *
+ * One list does not go through ACLs: a workspace admin's "everyone in workspace"
+ * view. Teammates' documents are not readable by the admin's session, so that
+ * list and its counts come from the `getworkspacedocuments` cloud function.
+ *
  * All Parse JSON is mapped to the plain types in `./types` right here.
  */
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -26,6 +30,7 @@ import type {
   DocumentPage,
   DocumentQuery,
   Folder,
+  OwnerFilter,
   ParseDate,
   Recipient,
   Signer,
@@ -151,6 +156,8 @@ interface RawDoc {
   Chain?: { templateId?: string; templateName?: string; name?: string };
   ChainResult?: { status?: string; documentId?: string; error?: string; at?: string };
   ChainedFrom?: { objectId?: string };
+  /** Only on `getDocument`, and only for a workspace admin reading a teammate's document. */
+  ViewAs?: string;
 }
 
 interface RestList<T> {
@@ -379,6 +386,7 @@ export function toDocument(raw: RawDoc, me: Viewer): Document {
         : undefined,
     chainedFromId: raw.ChainedFrom?.objectId,
     written: !!raw.Content && typeof raw.Content === "object",
+    viewAs: raw.ViewAs === "workspace_admin" ? "workspace_admin" : undefined,
     pageCount: maxPage || undefined,
     recipients,
     fields,
@@ -418,8 +426,12 @@ function docPointer(objectId: string) {
   return { __type: "Pointer", className: CLASS, objectId };
 }
 
-/** The `where` clause for one filter chip, before folder/date/template narrowing. */
-export function bucketWhere(filter: DocFilter, me: Viewer, owner: "anyone" | "me"): Where {
+/**
+ * The `where` clause for one filter chip, before folder/date/template narrowing.
+ * "workspace" reads like "anyone" here: this query runs as the signed-in user,
+ * so ACLs already limit it to what they can open themselves.
+ */
+export function bucketWhere(filter: DocFilter, me: Viewer, owner: OwnerFilter): Where {
   const now = datePointer(new Date());
   const where: Where = { Type: { $ne: "Folder" }, IsArchive: { $ne: true } };
   const ownedByMe = owner === "me" && me.userId;
@@ -571,7 +583,43 @@ export const documentKeys = {
   templates: () => ["documents", "templateOptions"] as const
 };
 
-export async function fetchDocuments(q: DocumentQuery, me: Viewer): Promise<DocumentPage> {
+/** Folders are personal, so the whole-workspace view never narrows by one. */
+function withoutFolder(q: DocumentQuery): DocumentQuery {
+  return q.owner === "workspace" && q.folderId ? { ...q, folderId: undefined } : q;
+}
+
+/** What `getworkspacedocuments` narrows by: the same filters as the REST list, minus folders. */
+function workspaceNarrowing(q: DocumentQuery) {
+  return {
+    date: q.date,
+    templateId: q.templateId,
+    search: q.search?.trim() || undefined,
+    view: q.view === "expiring" ? "expiring" : undefined
+  };
+}
+
+/**
+ * True when this list has to come from the server function instead of REST.
+ * "Needs you" stays on REST even in the workspace view: it is about documents
+ * waiting on the signed-in user, which their own session can already read.
+ */
+function fromWorkspace(q: DocumentQuery) {
+  return q.owner === "workspace" && q.filter !== "needs_you";
+}
+
+export async function fetchDocuments(query: DocumentQuery, me: Viewer): Promise<DocumentPage> {
+  const q = withoutFolder(query);
+  if (fromWorkspace(q)) {
+    const res = await cloud<RestList<RawDoc>>("getworkspacedocuments", {
+      mode: "list",
+      filter: q.filter,
+      ...workspaceNarrowing(q),
+      page: q.page,
+      perPage: q.perPage
+    });
+    const rows = (res?.results ?? []).map((r) => toDocument(r, me));
+    return { documents: rows, total: res?.count ?? rows.length };
+  }
   const where = applyNarrowing(bucketWhere(q.filter, me, q.owner), q);
   const res = await rest<RestList<RawDoc>>(`classes/${CLASS}`, {
     query: {
@@ -619,6 +667,27 @@ export function useBucketCounts(me: Viewer, q: DocumentQuery) {
     queryKey: documentKeys.counts(me, q),
     enabled: !!me.userId,
     queryFn: async (): Promise<BucketCounts> => {
+      if (q.owner === "workspace") {
+        const scoped = withoutFolder(q);
+        // One call for the six workspace-wide chips; "needs you" is still mine alone.
+        const [res, needsYou] = await Promise.all([
+          cloud<{ counts?: Partial<BucketCounts> }>("getworkspacedocuments", {
+            mode: "counts",
+            ...workspaceNarrowing(scoped)
+          }),
+          countWhere(applyNarrowing(bucketWhere("needs_you", me, scoped.owner), { ...scoped, filter: "needs_you" }))
+        ]);
+        const c = res?.counts ?? {};
+        return {
+          all: c.all ?? 0,
+          needs_you: needsYou,
+          in_progress: c.in_progress ?? 0,
+          completed: c.completed ?? 0,
+          declined: c.declined ?? 0,
+          expired: c.expired ?? 0,
+          draft: c.draft ?? 0
+        };
+      }
       const entries = await Promise.all(
         BUCKETS.map(
           async (b) =>

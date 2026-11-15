@@ -114,20 +114,23 @@ export default function DocumentDetailPage() {
     if (doc?.needsYou) navigate(signHref);
   }, [doc?.needsYou, navigate, signHref]);
 
+  // A workspace admin got here from the whole-workspace list, so that is where "back" goes.
+  const backTo = doc?.viewAs === "workspace_admin" ? "/documents?owner=workspace" : "/documents";
+
   useHotkeys(
     {
       r: (e) => {
         e.preventDefault();
-        if (doc) actionsRef.current.remind([doc]);
+        if (doc && !actionsRef.current.notMine(doc)) actionsRef.current.remind([doc]);
       },
       enter: (e) => {
         if ((e.target as HTMLElement)?.tagName === "BUTTON") return;
         e.preventDefault();
         goSign();
       },
-      escape: () => navigate("/documents")
+      escape: () => navigate(backTo)
     },
-    [doc, goSign, navigate]
+    [doc, goSign, navigate, backTo]
   );
 
   if (q.isLoading) {
@@ -156,6 +159,10 @@ export default function DocumentDetailPage() {
   }
 
   const pill = statusPill(doc);
+  // Someone else's document (a signer's copy, or a teammate's seen by a
+  // workspace admin): it can be read and downloaded here, nothing more.
+  const notMine = actions.notMine(doc);
+  const adminView = doc.viewAs === "workspace_admin";
   const showFields = fieldsOverride ?? !doc.isCompleted;
   const pageCount = pages.length || doc.pageCount || 0;
   const visibleFields = doc.fields.filter((f) => f.page === currentPage);
@@ -172,14 +179,15 @@ export default function DocumentDetailPage() {
   }
   if (doc.templateName) meta.push(t("documents.detail.fromTemplate", { name: doc.templateName }));
   if (doc.expiryDate) meta.push(t("documents.detail.expires", { date: longDate(doc.expiryDate) }));
-  meta.push(doc.folderName ?? t("documents.folders.driveRoot"));
+  // The folder is the owner's own filing, so it means nothing to an admin looking in.
+  if (!adminView) meta.push(doc.folderName ?? t("documents.folders.driveRoot"));
 
   return (
     <div className="flex-1 min-h-0 flex flex-col">
       <div className="min-h-[52px] shrink-0 bg-surface border-b border-line flex items-center gap-3 px-4 py-1.5 flex-wrap">
         <button
           type="button"
-          onClick={() => navigate("/documents")}
+          onClick={() => navigate(backTo)}
           aria-label={t("documents.a11y.backToDocuments")}
           className="text-muted hover:text-ink p-1 -ml-1"
         >
@@ -190,31 +198,39 @@ export default function DocumentDetailPage() {
             {t("documents.nav.inbox")}
           </Link>
           <span className="hidden sm:inline">/</span>
-          <Link
-            to={doc.folderId ? `/documents?folder=${doc.folderId}` : "/documents"}
-            className="hover:text-ink text-muted-2"
-          >
-            {doc.folderName ?? t("documents.folders.driveRoot")}
-          </Link>
+          {adminView ? (
+            <Link to={backTo} className="hover:text-ink text-muted-2">
+              {t("documents.filters.workspace")}
+            </Link>
+          ) : (
+            <Link
+              to={doc.folderId ? `/documents?folder=${doc.folderId}` : "/documents"}
+              className="hover:text-ink text-muted-2"
+            >
+              {doc.folderName ?? t("documents.folders.driveRoot")}
+            </Link>
+          )}
           <span>/</span>
           <span className="text-ink truncate max-w-[12rem] xl:max-w-[26rem]">{doc.name}</span>
         </nav>
 
         <div className="ml-auto flex items-center gap-2 flex-wrap">
-          <Button
-            size="sm"
-            kbd="R"
-            disabled={doc.status !== "in_progress"}
-            onClick={() => actions.remind([doc])}
-          >
-            {t("documents.actions.remindOthers")}
-          </Button>
-          {doc.isCompleted ? (
+          {!notMine ? (
+            <Button
+              size="sm"
+              kbd="R"
+              disabled={doc.status !== "in_progress"}
+              onClick={() => actions.remind([doc])}
+            >
+              {t("documents.actions.remindOthers")}
+            </Button>
+          ) : null}
+          {doc.isCompleted && !notMine ? (
             <Button size="sm" icon={<Forward className="size-3.5" strokeWidth={1.6} />} onClick={() => actions.askForward(doc)}>
               {t("documents.actions.forward")}
             </Button>
           ) : null}
-          {doc.fields.length > 0 ? (
+          {doc.fields.length > 0 && !notMine ? (
             <Button
               size="sm"
               className="max-xl:hidden"
@@ -251,7 +267,7 @@ export default function DocumentDetailPage() {
               </Button>
             )}
           />
-          {doc.status !== "draft" && doc.recipients.length > 0 ? (
+          {doc.status !== "draft" && doc.recipients.length > 0 && !notMine ? (
             <Button
               size="sm"
               icon={<Link2 className="size-3.5" strokeWidth={1.6} />}
@@ -260,19 +276,22 @@ export default function DocumentDetailPage() {
               {t("documents.dialog.share.title")}
             </Button>
           ) : null}
-          <Menu
-            items={actions.menuItems(doc, { omitOpen: true })}
-            trigger={(p) => (
-              <button
-                type="button"
-                {...p}
-                aria-label={t("documents.a11y.moreActions")}
-                className="text-muted-2 hover:text-ink p-1.5"
-              >
-                <MoreHorizontal className="size-4" strokeWidth={1.6} />
-              </button>
-            )}
-          />
+          {/* On someone else's document the menu would only repeat the downloads next to it. */}
+          {!notMine ? (
+            <Menu
+              items={actions.menuItems(doc, { omitOpen: true })}
+              trigger={(p) => (
+                <button
+                  type="button"
+                  {...p}
+                  aria-label={t("documents.a11y.moreActions")}
+                  className="text-muted-2 hover:text-ink p-1.5"
+                >
+                  <MoreHorizontal className="size-4" strokeWidth={1.6} />
+                </button>
+              )}
+            />
+          ) : null}
           {doc.needsYou ? (
             <Button variant="primary" size="sm" kbd="↵" icon={<PenLine className="size-3.5" strokeWidth={1.6} />} onClick={goSign}>
               {t("documents.actions.reviewAndSign")}
@@ -310,15 +329,18 @@ export default function DocumentDetailPage() {
                 components={{ 1: <span className={showFields ? "text-accent" : "text-ink"} /> }}
               />
             </button>
-            <a
-              href={signHref || `/sign/${doc.objectId}`}
-              target="_blank"
-              rel="noreferrer"
-              className="ml-auto text-[12px] font-medium text-muted hover:text-ink flex items-center gap-1"
-            >
-              {t("documents.viewer.openInSignerView")}
-              <ArrowUpRight className="size-3.5" strokeWidth={1.6} />
-            </a>
+            {/* The signer view is the owner's preview, or your own seat when you are a signer. */}
+            {!notMine || doc.myContactId ? (
+              <a
+                href={signHref || `/sign/${doc.objectId}`}
+                target="_blank"
+                rel="noreferrer"
+                className="ml-auto text-[12px] font-medium text-muted hover:text-ink flex items-center gap-1"
+              >
+                {t("documents.viewer.openInSignerView")}
+                <ArrowUpRight className="size-3.5" strokeWidth={1.6} />
+              </a>
+            ) : null}
           </div>
 
           <div ref={scrollRef} className="flex-1 min-h-0 overflow-auto scroll-thin py-5">
@@ -357,6 +379,13 @@ export default function DocumentDetailPage() {
               <span className="font-mono text-[11px]">{doc.objectId}</span>
               {meta.map((piece) => ` · ${piece}`).join("")}
             </p>
+            {adminView ? (
+              <p className="mt-3 text-[12px] text-muted bg-sand rounded-md px-3 py-2">
+                {doc.ownerName
+                  ? t("documents.detail.viewingAsAdmin", { name: doc.ownerName })
+                  : t("documents.detail.viewingAsAdminNoName")}
+              </p>
+            ) : null}
             {doc.isDeclined && doc.declineReason ? (
               <p className="mt-3 text-[13px] bg-danger-soft text-danger rounded-md px-3 py-2">
                 {t("documents.detail.declined", { reason: doc.declineReason })}
@@ -379,16 +408,17 @@ export default function DocumentDetailPage() {
 
           <div className="p-4 md:p-6">
             {tab === "overview" ? (
-              <OverviewTab doc={doc} onShare={() => actions.shareLinks(doc)} onDownloadOriginal={() => actions.download(doc, "original")} onDownloadCertificate={() => actions.download(doc, "certificate")} />
+              <OverviewTab doc={doc} readOnly={notMine} onShare={() => actions.shareLinks(doc)} onDownloadOriginal={() => actions.download(doc, "original")} onDownloadCertificate={() => actions.download(doc, "certificate")} />
             ) : tab === "audit" ? (
               <div className="flex flex-col gap-6">
                 <AuditList events={doc.audit} full />
-                <OpensPanel doc={doc} />
+                {/* A signer's copy carries no open counts at all, so the panel is the owner's and the admin's. */}
+                {!notMine || adminView ? <OpensPanel doc={doc} ownerLog={!notMine} /> : null}
               </div>
             ) : tab === "fields" ? (
               <FieldsTab fields={doc.fields} currentPage={currentPage} highlighted={visibleFields.length} />
             ) : (
-              <SettingsTab doc={doc} />
+              <SettingsTab doc={doc} readOnly={notMine} />
             )}
           </div>
         </div>
@@ -490,11 +520,14 @@ function FieldOverlay({ fields, scale }: { fields: DocField[]; scale: number }) 
 
 function OverviewTab({
   doc,
+  readOnly,
   onShare,
   onDownloadOriginal,
   onDownloadCertificate
 }: {
   doc: Document;
+  /** Someone else's document: the recipient controls are the owner's, so they are left out. */
+  readOnly: boolean;
   onShare: () => void;
   onDownloadOriginal: () => void;
   onDownloadCertificate: () => void;
@@ -519,32 +552,34 @@ function OverviewTab({
               doc.recipients.map((r) => <RecipientRow key={r.objectId || r.email} recipient={r} ordered={doc.settings.sendInOrder} />)
             )}
           </div>
-          <div className="mt-4 flex flex-wrap gap-2">
-            {doc.written && editable ? (
-              <Button size="sm" onClick={() => navigate(`/send/${doc.objectId}?compose=1`)}>
-                {t("documents.actions.editText")}
+          {readOnly ? null : (
+            <div className="mt-4 flex flex-wrap gap-2">
+              {doc.written && editable ? (
+                <Button size="sm" onClick={() => navigate(`/send/${doc.objectId}?compose=1`)}>
+                  {t("documents.actions.editText")}
+                </Button>
+              ) : null}
+              <Button
+                size="sm"
+                disabled={!editable}
+                title={editable ? undefined : t("documents.detail.editRecipientsLocked")}
+                onClick={() => navigate(`/send/${doc.objectId}`)}
+              >
+                {t("documents.actions.editRecipients")}
               </Button>
-            ) : null}
-            <Button
-              size="sm"
-              disabled={!editable}
-              title={editable ? undefined : t("documents.detail.editRecipientsLocked")}
-              onClick={() => navigate(`/send/${doc.objectId}`)}
-            >
-              {t("documents.actions.editRecipients")}
-            </Button>
-            <Button
-              size="sm"
-              disabled={!editable || !noneSigned}
-              title={editable ? undefined : t("documents.detail.changeOrderLocked")}
-              onClick={() => navigate(`/send/${doc.objectId}`)}
-            >
-              {t("documents.actions.changeOrder")}
-            </Button>
-            <Button size="sm" disabled={doc.status === "draft" || doc.recipients.length === 0} onClick={onShare}>
-              {t("documents.actions.resendLink")}
-            </Button>
-          </div>
+              <Button
+                size="sm"
+                disabled={!editable || !noneSigned}
+                title={editable ? undefined : t("documents.detail.changeOrderLocked")}
+                onClick={() => navigate(`/send/${doc.objectId}`)}
+              >
+                {t("documents.actions.changeOrder")}
+              </Button>
+              <Button size="sm" disabled={doc.status === "draft" || doc.recipients.length === 0} onClick={onShare}>
+                {t("documents.actions.resendLink")}
+              </Button>
+            </div>
+          )}
         </Card>
 
         <Card className="p-4">
@@ -779,12 +814,16 @@ function AuditList({ events, full }: { events: AuditEvent[]; full?: boolean }) {
 
 /**
  * Who opened the signing link and how often. The counts ride on the document
- * row; the individual opens come from the owner-only log, so a non-owner
- * viewing the page sees nothing here rather than an error.
+ * row; the individual opens come from the owner-only log. A workspace admin
+ * looking at a teammate's document gets the counts without the log
+ * (`ownerLog` off), and if the log is refused anyway the panel shows nothing
+ * rather than an error.
  */
-function OpensPanel({ doc }: { doc: Document }) {
+function OpensPanel({ doc, ownerLog }: { doc: Document; ownerLog: boolean }) {
   const { t } = useTranslation();
-  const opens = useDocumentOpens(doc.objectId, doc.status !== "draft");
+  // The log is owner-only, so it is not asked for on someone else's document;
+  // the counts on the row are still shown.
+  const opens = useDocumentOpens(doc.objectId, ownerLog && doc.status !== "draft");
   const opened = doc.recipients.filter((r) => r.openCount > 0);
   const total = opened.reduce((n, r) => n + r.openCount, 0);
   if (opens.isError) return null;
@@ -886,12 +925,13 @@ function FieldsTab({ fields, currentPage, highlighted }: { fields: DocField[]; c
 
 /* ------------------------------------------------------------------ settings */
 
-function SettingsTab({ doc }: { doc: Document }) {
+function SettingsTab({ doc, readOnly }: { doc: Document; readOnly: boolean }) {
   const { t } = useTranslation();
   const update = useUpdateSettings();
   const setChainMut = useSetChain();
   const templates = useTemplates();
-  const editable = doc.status === "draft" || doc.status === "in_progress";
+  // Settings are the owner's to change; anyone else only reads them.
+  const editable = !readOnly && (doc.status === "draft" || doc.status === "in_progress");
   const [expiry, setExpiry] = useState(doc.expiryDate ? doc.expiryDate.slice(0, 10) : "");
   const [reminders, setReminders] = useState(doc.settings.automaticReminders);
   const [remindEvery, setRemindEvery] = useState(String(doc.settings.remindOnceInEvery ?? 5));
@@ -956,7 +996,9 @@ function SettingsTab({ doc }: { doc: Document }) {
     <Card className="p-5 max-w-2xl">
       {!editable ? (
         <p className="mb-4 text-[12px] text-muted bg-sand rounded-md px-3 py-2">
-          {t("documents.settings.readOnly", { status: t(`documents.statusLower.${doc.status}`) })}
+          {readOnly
+            ? t("documents.settings.readOnlyNotOwner")
+            : t("documents.settings.readOnly", { status: t(`documents.statusLower.${doc.status}`) })}
         </p>
       ) : null}
 

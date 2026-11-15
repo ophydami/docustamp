@@ -883,7 +883,9 @@
       "recipientsInOrder": "수신자, 순서대로",
       "signedAt": "{{when}} 서명",
       "signingCertificate": "서명 인증서",
-      "statusLabel": "상태"
+      "statusLabel": "상태",
+      "viewingAsAdmin": "워크스페이스 관리자로 이 문서를 보고 있습니다. {{name}} 님만 변경할 수 있습니다.",
+      "viewingAsAdminNoName": "워크스페이스 관리자로 이 문서를 보고 있습니다. 문서를 만든 사람만 변경할 수 있습니다."
     },
     "dialog": {
       "delete": {
@@ -1002,9 +1004,11 @@
       "needsYou": "서명 필요",
       "ownerAnyone": "소유자: 전체",
       "ownerMe": "소유자: 나",
+      "ownerWorkspace": "소유자: 워크스페이스",
       "sentByMe": "내가 보낸 문서",
       "template": "템플릿",
-      "waitingOnMe": "내 서명 대기"
+      "waitingOnMe": "내 서명 대기",
+      "workspace": "워크스페이스 전체"
     },
     "folders": {
       "allDocuments": "모든 문서",
@@ -1045,7 +1049,8 @@
       "allDocuments": "모든 문서",
       "summary_one": "{{folder}}에 {{count}}",
       "summary_other": "{{folder}}에 {{count}}",
-      "thisFolder": "이 폴더"
+      "thisFolder": "이 폴더",
+      "wholeWorkspace": "워크스페이스 전체"
     },
     "nav": {
       "inbox": "수신함"
@@ -1085,6 +1090,7 @@
       "otpHint": "수신자는 문서를 열기 전에 이메일로 받은 일회용 코드를 인증해야 합니다.",
       "otpToggle": "인증 요구",
       "readOnly": "이 문서는 {{status}} 상태이므로 설정이 읽기 전용입니다.",
+      "readOnlyNotOwner": "이 문서의 설정은 문서를 만든 사람만 변경할 수 있습니다.",
       "remindEvery": "알림 주기",
       "remindEveryHint": "알림 사이의 일수입니다.",
       "signingOrder": "서명 순서",
@@ -2911,6 +2917,7 @@
       },
       "countLine_one": "이 워크스페이스에 {{count}}명이 있습니다.",
       "countLine_other": "이 워크스페이스에 {{count}}명이 있습니다.",
+      "documentAccess": "관리자는 이 워크스페이스에서 만든 모든 문서를 보고 다운로드할 수 있습니다. 문서는 만든 사람만 변경할 수 있습니다.",
       "invite": {
         "button": "팀원 초대",
         "created": "계정이 준비되었습니다. 신뢰할 수 있는 방법으로 이 비밀번호를 전달하세요. 다시 표시되지 않습니다.",

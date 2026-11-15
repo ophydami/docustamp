@@ -158,11 +158,13 @@ export async function getSignedUrl(request) {
       if (!res) {
         throw new Parse.Error(Parse.Error.OBJECT_NOT_FOUND, 'Document not found.');
       }
-      // Throws for anyone who is not the owner or one of the signers.
+      // Throws for anyone who is not the owner, one of the signers, or an admin
+      // of the owner's workspace (who may look at and download the file).
       await resolveDocumentActor(request, res, {
         contactId: request.params?.contactId,
         signingToken: signingTokenFromRequest(request),
         ownerMayActForContact: true,
+        allowWorkspaceViewer: true,
       });
       assertUrlBelongsTo(url, res.toJSON());
       return await signUrl(url);
