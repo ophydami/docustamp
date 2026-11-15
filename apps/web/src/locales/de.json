@@ -884,8 +884,11 @@
       "signedAt": "unterzeichnet {{when}}",
       "signingCertificate": "Signaturzertifikat",
       "statusLabel": "Status",
-      "viewingAsAdmin": "Sie sehen dieses Dokument als Admin des Arbeitsbereichs. Nur {{name}} kann es ändern.",
-      "viewingAsAdminNoName": "Sie sehen dieses Dokument als Admin des Arbeitsbereichs. Nur die Person, die es erstellt hat, kann es ändern."
+      "viewingAsAdmin": "Sie sehen dieses Dokument als Admin des Arbeitsbereichs. Sie können Erinnerungen senden oder es annullieren. Alles andere kann nur {{name}} ändern.",
+      "viewingAsAdminNoName": "Sie sehen dieses Dokument als Admin des Arbeitsbereichs. Sie können Erinnerungen senden oder es annullieren. Alles andere kann nur die Person ändern, die es erstellt hat.",
+      "voidReason": "Grund: {{reason}}",
+      "voidedByAdmin": "Annulliert von {{name}}, Admin des Arbeitsbereichs.",
+      "voidedByAdminNoName": "Von einem Admin des Arbeitsbereichs annulliert."
     },
     "dialog": {
       "delete": {
@@ -927,9 +930,16 @@
         "confirm_one": "Dokument annullieren",
         "confirm_other": "{{count}} Dokumente annullieren",
         "defaultReason": "Vom Absender annulliert",
+        "defaultReasonAdmin": "Von einem Admin des Arbeitsbereichs annulliert",
         "description": "Empfänger können es nicht mehr unterschreiben. Das lässt sich nicht rückgängig machen, und alle Beteiligten werden per E-Mail informiert.",
+        "descriptionAdmin": "Empfänger können es nicht mehr unterschreiben. Das lässt sich nicht rückgängig machen, und alle Beteiligten werden per E-Mail informiert.",
         "reasonHint": "Wird den Empfängern in der Benachrichtigungs-E-Mail angezeigt.",
+        "reasonHintAdmin": "Wird dem Eigentümer und den Empfängern in ihren E-Mails angezeigt.",
         "reasonPlaceholder": "Bedingungen geändert, eine neue Version folgt.",
+        "teammate": "Dieses Dokument gehört {{name}}. Die Person erhält eine E-Mail, dass Sie es annulliert haben.",
+        "teammateNoName": "Dieses Dokument gehört einem Teammitglied. Die Person erhält eine E-Mail, dass Sie es annulliert haben.",
+        "teammates_one": "Eines dieser Dokumente gehört einem Teammitglied. Die Person erhält eine E-Mail, dass Sie es annulliert haben.",
+        "teammates_other": "{{count}} dieser Dokumente gehören Teammitgliedern. Jede dieser Personen erhält eine E-Mail, dass Sie ihr Dokument annulliert haben.",
         "title": "Dieses Dokument annullieren?"
       }
     },
@@ -1065,6 +1075,7 @@
     },
     "recipientState": {
       "declined": "abgelehnt",
+      "notSigned": "nicht unterschrieben",
       "signed": "unterzeichnet",
       "turn": "ist an der Reihe",
       "viewed": "angesehen",
@@ -2917,7 +2928,7 @@
       },
       "countLine_one": "{{count}} Person in diesem Arbeitsbereich.",
       "countLine_other": "{{count}} Personen in diesem Arbeitsbereich.",
-      "documentAccess": "Admins können jedes Dokument sehen und herunterladen, das in diesem Arbeitsbereich erstellt wurde. Ändern kann es nur die Person, die es erstellt hat.",
+      "documentAccess": "Admins können jedes Dokument sehen und herunterladen, das in diesem Arbeitsbereich erstellt wurde, dafür Erinnerungen senden und es annullieren. Bearbeiten oder löschen kann es nur die Person, die es erstellt hat.",
       "invite": {
         "button": "Teammitglied einladen",
         "created": "Das Konto ist bereit. Senden Sie dieses Passwort über einen Kanal, dem Sie vertrauen, es wird nicht erneut angezeigt.",

@@ -17,9 +17,10 @@ import {
  * its owner. This function is the one place an admin reads across the
  * workspace, with the master key and a where clause it builds itself.
  *
- * Reading only. Nothing here, and nothing the rows carry, lets the admin
- * remind, void, move, edit or delete a teammate's document: those paths all
- * check the owner (`lib/acl.isDocumentOwner`) or go through the ACL.
+ * Reading only. An admin may also remind and void a teammate's document, but
+ * through `sendreminder` and `declinedoc`, which make that check themselves.
+ * Moving, editing and deleting stay with the owner: those paths check the
+ * owner (`lib/acl.isDocumentOwner`) or go through the ACL.
  *
  * The caller never supplies a where clause. It names a bucket and a few
  * narrowing values, the same ones the documents page already has, and the
@@ -257,6 +258,9 @@ function projectRow(json, scope) {
   if (mine && json.Folder?.objectId) {
     row.Folder = projectFields(json.Folder, ['objectId', 'Name']);
   }
+  // The same mark `getDocument` puts on a teammate's document, so the list
+  // knows which rows the admin administers and which are simply their own.
+  if (!mine) row.ViewAs = 'workspace_admin';
   return row;
 }
 

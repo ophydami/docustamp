@@ -273,10 +273,16 @@ export default function DocumentsPage() {
   });
 
   const selectedDocs = useMemo(() => documents.filter((d) => selected.has(d.objectId)), [documents, selected]);
-  // Remind, move, void and delete only work on the caller's own documents, so a
-  // selection that includes someone else's acts on the rest and never on those.
+  // Move and delete only work on the caller's own documents, so a selection
+  // that includes someone else's acts on the rest and never on those. Remind
+  // and void also reach the teammates' documents a workspace admin looks after.
   const notMine = actions.notMine;
+  const canRemindOrVoid = actions.canRemindOrVoid;
   const ownSelectedDocs = useMemo(() => selectedDocs.filter((d) => !notMine(d)), [selectedDocs, notMine]);
+  const chaseSelectedDocs = useMemo(
+    () => selectedDocs.filter((d) => canRemindOrVoid(d)),
+    [selectedDocs, canRemindOrVoid]
+  );
 
   const [tableRef, tableWidth] = useContentWidth<HTMLDivElement>();
   // The whole-workspace view always shows whose document each row is, and has
@@ -360,7 +366,7 @@ export default function DocumentsPage() {
       r: (e) => {
         e.preventDefault();
         const targets = selectedDocs.length ? selectedDocs : documents[cursor] ? [documents[cursor]] : [];
-        actionsRef.current.remind(targets.filter((d) => !actionsRef.current.notMine(d)));
+        actionsRef.current.remind(targets.filter((d) => actionsRef.current.canRemindOrVoid(d)));
       },
       u: (e) => {
         e.preventDefault();
@@ -634,8 +640,8 @@ export default function DocumentsPage() {
         <div className="mx-4 md:mx-6 mb-2 min-h-11 rounded-md bg-ink text-ground flex items-center gap-2 px-3 py-1 flex-wrap">
           <span className="text-[13px] font-semibold num">{t("common.hints.selected", { count: selected.size })}</span>
           <span className="w-px h-5 bg-ground/20 mx-1" />
-          {ownSelectedDocs.length > 0 ? (
-            <BulkButton kbd="R" onClick={() => actions.remind(ownSelectedDocs)}>
+          {chaseSelectedDocs.length > 0 ? (
+            <BulkButton kbd="R" onClick={() => actions.remind(chaseSelectedDocs)}>
               {t("common.actions.remind")}
             </BulkButton>
           ) : null}
@@ -651,20 +657,22 @@ export default function DocumentsPage() {
             {t("common.actions.download")}
           </BulkButton>
           {ownSelectedDocs.length > 0 ? (
-            <>
-              <BulkButton onClick={() => actions.askMove(ownSelectedDocs)}>{t("documents.actions.moveToFolder")}</BulkButton>
-              <BulkButton
-                danger
-                onClick={() =>
-                  actions.askVoid(ownSelectedDocs.filter((d) => d.status === "in_progress" || d.status === "expired"))
-                }
-              >
-                {t("documents.actions.void")}
-              </BulkButton>
-              <BulkButton danger onClick={() => actions.askDelete(ownSelectedDocs)}>
-                {t("common.actions.delete")}
-              </BulkButton>
-            </>
+            <BulkButton onClick={() => actions.askMove(ownSelectedDocs)}>{t("documents.actions.moveToFolder")}</BulkButton>
+          ) : null}
+          {chaseSelectedDocs.length > 0 ? (
+            <BulkButton
+              danger
+              onClick={() =>
+                actions.askVoid(chaseSelectedDocs.filter((d) => d.status === "in_progress" || d.status === "expired"))
+              }
+            >
+              {t("documents.actions.void")}
+            </BulkButton>
+          ) : null}
+          {ownSelectedDocs.length > 0 ? (
+            <BulkButton danger onClick={() => actions.askDelete(ownSelectedDocs)}>
+              {t("common.actions.delete")}
+            </BulkButton>
           ) : null}
           <button
             type="button"

@@ -57,6 +57,27 @@ function statusPill(doc: Document): { tone: PillTone; labelKey: string } {
   return { tone: "warn", labelKey: "common.status.inProgress" };
 }
 
+/**
+ * The workspace admin who voided this document, or undefined when that is not
+ * what happened. A void by an admin leaves `DeclineBy` naming someone who is
+ * neither the owner nor one of the recipients, and no declining contact. A
+ * recipient's decline and the owner's own void are both left alone.
+ */
+function adminWhoVoided(doc: Document): { name?: string } | undefined {
+  const by = doc.declinedBy;
+  if (!doc.isDeclined || !by || by.bySigner) return undefined;
+  const email = by.email?.toLowerCase();
+  // An older row may name its owner only by profile, so the address counts too.
+  // With no owner account to compare against, nothing is claimed.
+  if (!doc.createdById || by.userId === doc.createdById) return undefined;
+  if (email && doc.ownerEmail?.toLowerCase() === email) return undefined;
+  const isRecipient = doc.recipients.some(
+    (r) => (!!r.userId && r.userId === by.userId) || (!!email && r.email.toLowerCase() === email)
+  );
+  if (isRecipient) return undefined;
+  return { name: by.name || by.email };
+}
+
 function longDate(v?: string) {
   if (!v) return "";
   const d = new Date(v);
@@ -83,7 +104,11 @@ export default function DocumentDetailPage() {
 
   const q = useDocument(docId, me);
   const doc = q.data;
-  const actions = useDocumentActions({ onRemoved: () => navigate("/documents") });
+  // After a void or a delete the page has nothing left to act on. An admin who
+  // voided a teammate's document goes back to the whole-workspace list.
+  const actions = useDocumentActions({
+    onRemoved: () => navigate(doc?.viewAs === "workspace_admin" ? "/documents?owner=workspace" : "/documents")
+  });
   // Latest actions, so the hotkey listener does not have to rebind every render.
   const actionsRef = useRef(actions);
   useEffect(() => {
@@ -121,7 +146,7 @@ export default function DocumentDetailPage() {
     {
       r: (e) => {
         e.preventDefault();
-        if (doc && !actionsRef.current.notMine(doc)) actionsRef.current.remind([doc]);
+        if (doc && actionsRef.current.canRemindOrVoid(doc)) actionsRef.current.remind([doc]);
       },
       enter: (e) => {
         if ((e.target as HTMLElement)?.tagName === "BUTTON") return;
@@ -160,9 +185,20 @@ export default function DocumentDetailPage() {
 
   const pill = statusPill(doc);
   // Someone else's document (a signer's copy, or a teammate's seen by a
-  // workspace admin): it can be read and downloaded here, nothing more.
+  // workspace admin): it can be read and downloaded here. An admin can also
+  // remind the signers of a teammate's document and void it, nothing more.
   const notMine = actions.notMine(doc);
   const adminView = doc.viewAs === "workspace_admin";
+  // The header already has the sign, download and remind buttons, so an
+  // admin's menu holds only what is left (void, while the document is open).
+  const moreItems = notMine
+    ? adminView
+      ? actions.menuItems(doc, { omitOpen: true, inHeader: true })
+      : []
+    : actions.menuItems(doc, { omitOpen: true });
+  // Only the owner and an admin get the row this is read from; a signer's copy
+  // does not say who declined, so nothing is claimed there.
+  const voidedBy = !notMine || adminView ? adminWhoVoided(doc) : undefined;
   const showFields = fieldsOverride ?? !doc.isCompleted;
   const pageCount = pages.length || doc.pageCount || 0;
   const visibleFields = doc.fields.filter((f) => f.page === currentPage);
@@ -215,7 +251,7 @@ export default function DocumentDetailPage() {
         </nav>
 
         <div className="ml-auto flex items-center gap-2 flex-wrap">
-          {!notMine ? (
+          {!notMine || adminView ? (
             <Button
               size="sm"
               kbd="R"
@@ -276,10 +312,10 @@ export default function DocumentDetailPage() {
               {t("documents.dialog.share.title")}
             </Button>
           ) : null}
-          {/* On someone else's document the menu would only repeat the downloads next to it. */}
-          {!notMine ? (
+          {/* On a signer's copy the menu would only repeat the downloads next to it. */}
+          {moreItems.length > 0 ? (
             <Menu
-              items={actions.menuItems(doc, { omitOpen: true })}
+              items={moreItems}
               trigger={(p) => (
                 <button
                   type="button"
@@ -386,10 +422,23 @@ export default function DocumentDetailPage() {
                   : t("documents.detail.viewingAsAdminNoName")}
               </p>
             ) : null}
-            {doc.isDeclined && doc.declineReason ? (
-              <p className="mt-3 text-[13px] bg-danger-soft text-danger rounded-md px-3 py-2">
-                {t("documents.detail.declined", { reason: doc.declineReason })}
-              </p>
+            {voidedBy || (doc.isDeclined && doc.declineReason) ? (
+              <div className="mt-3 text-[13px] bg-danger-soft text-danger rounded-md px-3 py-2">
+                {voidedBy ? (
+                  <p>
+                    {voidedBy.name
+                      ? t("documents.detail.voidedByAdmin", { name: voidedBy.name })
+                      : t("documents.detail.voidedByAdminNoName")}
+                  </p>
+                ) : null}
+                {doc.isDeclined && doc.declineReason ? (
+                  <p>
+                    {t(voidedBy ? "documents.detail.voidReason" : "documents.detail.declined", {
+                      reason: doc.declineReason
+                    })}
+                  </p>
+                ) : null}
+              </div>
             ) : null}
           </div>
 
@@ -408,7 +457,7 @@ export default function DocumentDetailPage() {
 
           <div className="p-4 md:p-6">
             {tab === "overview" ? (
-              <OverviewTab doc={doc} readOnly={notMine} onShare={() => actions.shareLinks(doc)} onDownloadOriginal={() => actions.download(doc, "original")} onDownloadCertificate={() => actions.download(doc, "certificate")} />
+              <OverviewTab doc={doc} readOnly={notMine} voidedByAdmin={!!voidedBy} onShare={() => actions.shareLinks(doc)} onDownloadOriginal={() => actions.download(doc, "original")} onDownloadCertificate={() => actions.download(doc, "certificate")} />
             ) : tab === "audit" ? (
               <div className="flex flex-col gap-6">
                 <AuditList events={doc.audit} full />
@@ -521,6 +570,7 @@ function FieldOverlay({ fields, scale }: { fields: DocField[]; scale: number }) 
 function OverviewTab({
   doc,
   readOnly,
+  voidedByAdmin,
   onShare,
   onDownloadOriginal,
   onDownloadCertificate
@@ -528,6 +578,8 @@ function OverviewTab({
   doc: Document;
   /** Someone else's document: the recipient controls are the owner's, so they are left out. */
   readOnly: boolean;
+  /** An admin voided it, so a recipient who had not signed did not decline anything. */
+  voidedByAdmin: boolean;
   onShare: () => void;
   onDownloadOriginal: () => void;
   onDownloadCertificate: () => void;
@@ -549,7 +601,14 @@ function OverviewTab({
             {doc.recipients.length === 0 ? (
               <p className="text-[13px] text-muted">{t("documents.detail.noRecipients")}</p>
             ) : (
-              doc.recipients.map((r) => <RecipientRow key={r.objectId || r.email} recipient={r} ordered={doc.settings.sendInOrder} />)
+              doc.recipients.map((r) => (
+                <RecipientRow
+                  key={r.objectId || r.email}
+                  recipient={r}
+                  ordered={doc.settings.sendInOrder}
+                  voidedByAdmin={voidedByAdmin}
+                />
+              ))
             )}
           </div>
           {readOnly ? null : (
@@ -730,7 +789,15 @@ const STATE_LABEL: Record<Recipient["state"], { tone: PillTone; key: string }> =
   declined: { tone: "danger", key: "documents.recipientState.declined" }
 };
 
-function RecipientRow({ recipient, ordered }: { recipient: Recipient; ordered: boolean }) {
+function RecipientRow({
+  recipient,
+  ordered,
+  voidedByAdmin = false
+}: {
+  recipient: Recipient;
+  ordered: boolean;
+  voidedByAdmin?: boolean;
+}) {
   const { t } = useTranslation();
   const s = STATE_LABEL[recipient.state];
   return (
@@ -757,6 +824,8 @@ function RecipientRow({ recipient, ordered }: { recipient: Recipient; ordered: b
           <span className="text-[12px] text-muted num">
             {t("documents.detail.signedAt", { when: stamp(recipient.signedAt) })}
           </span>
+        ) : recipient.state === "declined" && voidedByAdmin ? (
+          <Pill tone="neutral">{t("documents.recipientState.notSigned")}</Pill>
         ) : recipient.state === "declined" ? (
           <Pill tone="danger">
             {recipient.declineReason

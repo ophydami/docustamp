@@ -884,8 +884,11 @@
       "signedAt": "a signé {{when}}",
       "signingCertificate": "Certificat de signature",
       "statusLabel": "Statut",
-      "viewingAsAdmin": "Vous consultez ce document en tant qu'administrateur de l'espace de travail. Il ne peut être modifié que par {{name}}.",
-      "viewingAsAdminNoName": "Vous consultez ce document en tant qu'administrateur de l'espace de travail. Il ne peut être modifié que par la personne qui l'a créé."
+      "viewingAsAdmin": "Vous consultez ce document en tant qu'administrateur de l'espace de travail. Vous pouvez envoyer des rappels ou l'invalider. Le reste ne peut être modifié que par {{name}}.",
+      "viewingAsAdminNoName": "Vous consultez ce document en tant qu'administrateur de l'espace de travail. Vous pouvez envoyer des rappels ou l'invalider. Le reste ne peut être modifié que par la personne qui l'a créé.",
+      "voidReason": "Motif : {{reason}}",
+      "voidedByAdmin": "Invalidé par {{name}}, administrateur de l'espace de travail.",
+      "voidedByAdminNoName": "Invalidé par un administrateur de l'espace de travail."
     },
     "dialog": {
       "delete": {
@@ -927,9 +930,16 @@
         "confirm_one": "Invalider le document",
         "confirm_other": "Invalider {{count}} documents",
         "defaultReason": "Invalidé par l'expéditeur",
+        "defaultReasonAdmin": "Invalidé par un administrateur de l'espace de travail",
         "description": "Les destinataires ne peuvent plus le signer. Cette action est irréversible et tout le monde sur le document reçoit un e-mail.",
+        "descriptionAdmin": "Les destinataires ne peuvent plus le signer. Cette action est irréversible et tout le monde sur le document reçoit un e-mail.",
         "reasonHint": "Affiché aux destinataires dans l'e-mail de notification.",
+        "reasonHintAdmin": "Affiché au propriétaire et aux destinataires dans les e-mails qu'ils reçoivent.",
         "reasonPlaceholder": "Les conditions ont changé, une nouvelle version arrive.",
+        "teammate": "Ce document appartient à {{name}}. Cette personne recevra un e-mail indiquant que vous l'avez invalidé.",
+        "teammateNoName": "Ce document appartient à un collègue. Cette personne recevra un e-mail indiquant que vous l'avez invalidé.",
+        "teammates_one": "L'un de ces documents appartient à un collègue. Cette personne recevra un e-mail indiquant que vous l'avez invalidé.",
+        "teammates_other": "{{count}} de ces documents appartiennent à des collègues. Chacun recevra un e-mail indiquant que vous avez invalidé son document.",
         "title": "Invalider ce document ?"
       }
     },
@@ -1065,6 +1075,7 @@
     },
     "recipientState": {
       "declined": "refusé",
+      "notSigned": "n'a pas signé",
       "signed": "signé",
       "turn": "à son tour",
       "viewed": "consulté",
@@ -2917,7 +2928,7 @@
       },
       "countLine_one": "{{count}} personne dans cet espace de travail.",
       "countLine_other": "{{count}} personnes dans cet espace de travail.",
-      "documentAccess": "Les administrateurs peuvent voir et télécharger tous les documents créés dans cet espace de travail. Seule la personne qui a créé un document peut le modifier.",
+      "documentAccess": "Les administrateurs peuvent voir et télécharger tous les documents créés dans cet espace de travail, envoyer des rappels et les invalider. Seule la personne qui a créé un document peut le modifier ou le supprimer.",
       "invite": {
         "button": "Inviter un collègue",
         "created": "Le compte est prêt. Transmettez-lui ce mot de passe par un canal de confiance ; il ne sera plus affiché.",

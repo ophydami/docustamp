@@ -524,10 +524,11 @@ function hasVerifiedEmail(user) {
  * @param {Parse.Object|Object} docObject contracts_Document (object or JSON) with Signers/Placeholders loaded
  * With `opts.allowWorkspaceViewer` (getDocument and getsignedurl only) an admin
  * of the owner's workspace who is not signing gets `{ kind: 'viewer' }`: they
- * may look at the document and download it, and nothing else.
+ * may look at the document and download it. With `opts.allowWorkspaceAdmin`
+ * (declinedoc only) the same person gets `{ kind: 'admin' }` and may void it.
  *
- * @param {{contactId?: string, signingToken?: string, ownerMayActForContact?: boolean, allowWorkspaceViewer?: boolean}} [opts]
- * @returns {Promise<{kind: 'master'|'owner'|'viewer'|'signer', user: Parse.User|null, contactId: string, legacy?: boolean}>}
+ * @param {{contactId?: string, signingToken?: string, ownerMayActForContact?: boolean, allowWorkspaceViewer?: boolean, allowWorkspaceAdmin?: boolean}} [opts]
+ * @returns {Promise<{kind: 'master'|'owner'|'viewer'|'admin'|'signer', user: Parse.User|null, contactId: string, legacy?: boolean}>}
  */
 export async function resolveDocumentActor(request, docObject, opts = {}) {
   const docJson = docJsonOf(docObject);
@@ -572,13 +573,16 @@ export async function resolveDocumentActor(request, docObject, opts = {}) {
     return { kind: 'owner', user, contactId: claimed };
   }
 
-  // A workspace admin looking at a teammate's document. Reads only: a caller
-  // has to ask for it, so signPdf, triggerevent, declinedoc and the rest never
-  // see this kind. A claimed seat or a signing link means the caller is here to
-  // sign, and that is decided below exactly as it is for everyone else.
-  if (opts.allowWorkspaceViewer && user && !claimed && !token) {
+  // A workspace admin on a teammate's document: `viewer` to look at it
+  // (getDocument, getsignedurl), `admin` to void it (declinedoc, and only when
+  // the caller says they are acting as the admin). A function has to ask for
+  // either, so signPdf, triggerevent and the rest never see these kinds. A
+  // claimed seat or a signing link means the caller is here to sign, and that
+  // is decided below exactly as it is for everyone else.
+  const adminKind = opts.allowWorkspaceAdmin ? 'admin' : opts.allowWorkspaceViewer ? 'viewer' : '';
+  if (adminKind && user && !claimed && !token) {
     if (await isWorkspaceAdminOfDocument(user, docJson)) {
-      return { kind: 'viewer', user, contactId: '' };
+      return { kind: adminKind, user, contactId: '' };
     }
   }
 

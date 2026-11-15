@@ -26,7 +26,7 @@ import type { Document } from "./types";
  * teammate's document seen by a workspace admin. Everything past opening and
  * downloading is the owner's, and the server refuses it for anyone else
  * (`CreatedBy == caller`, or the row's write ACL), so those controls are not
- * offered at all.
+ * offered at all. The one exception is `isAdminManaged` below.
  *
  * The server counts both `CreatedBy` and the profile row behind `ExtUserPtr` as
  * the owner, so either match makes it mine. A row with no `CreatedBy` falls
@@ -40,9 +40,23 @@ export function isNotMine(doc: Document, me: { userId?: string; extUserId?: stri
   return !!doc.extUserId && !!me.extUserId && !sameProfile;
 }
 
+/**
+ * True for a teammate's document that the signed-in workspace admin looks
+ * after. On top of opening and downloading, an admin can remind its signers
+ * and void it: `sendreminder` accepts an admin of the document's workspace, and
+ * `declinedoc` does when told `asAdmin`. Nothing else opens up.
+ */
+export function isAdminManaged(doc: Document): boolean {
+  return doc.viewAs === "workspace_admin";
+}
+
 export interface DocumentActions {
   /** Someone else's document: only opening and downloading work. See `isNotMine`. */
   notMine: (doc: Document) => boolean;
+  /** A teammate's document the caller administers. See `isAdminManaged`. */
+  adminManaged: (doc: Document) => boolean;
+  /** Reminding and voiding work: the caller's own documents, plus the ones they administer. */
+  canRemindOrVoid: (doc: Document) => boolean;
   remind: (docs: Document[]) => void;
   download: (doc: Document, kind: DownloadKind) => void;
   duplicate: (doc: Document) => void;
@@ -52,8 +66,12 @@ export interface DocumentActions {
   askForward: (doc: Document) => void;
   askSaveAsTemplate: (doc: Document) => void;
   shareLinks: (doc: Document) => void;
-  /** Row / top-bar overflow menu for a single document. */
-  menuItems: (doc: Document, opts?: { omitOpen?: boolean }) => (MenuItem | "separator")[];
+  /**
+   * Row / top-bar overflow menu for a single document. `inHeader` is for the
+   * detail page of a document the caller administers: its header already has
+   * the sign, download and remind buttons, so the menu keeps only what is left.
+   */
+  menuItems: (doc: Document, opts?: { omitOpen?: boolean; inHeader?: boolean }) => (MenuItem | "separator")[];
   /** Render this once per page: all confirmation dialogs live here. */
   dialogs: ReactNode;
   busy: boolean;
@@ -76,6 +94,7 @@ export function useDocumentActions(opts: { onRemoved?: (ids: string[]) => void }
     (doc: Document) => isNotMine(doc, { userId: user?.id, extUserId }),
     [user?.id, extUserId]
   );
+  const canRemindOrVoid = useCallback((doc: Document) => !notMine(doc) || isAdminManaged(doc), [notMine]);
 
   const del = useDeleteDocuments();
   const move = useMoveDocuments();
@@ -216,8 +235,9 @@ export function useDocumentActions(opts: { onRemoved?: (ids: string[]) => void }
   }, [t]);
 
   const menuItems = useCallback(
-    (doc: Document, opts?: { omitOpen?: boolean }): (MenuItem | "separator")[] => {
+    (doc: Document, opts?: { omitOpen?: boolean; inHeader?: boolean }): (MenuItem | "separator")[] => {
       const sent = doc.status !== "draft";
+      const voidable = doc.status === "in_progress" || doc.status === "expired";
       const items: (MenuItem | "separator")[] = [];
       const downloads: MenuItem[] = [
         {
@@ -252,10 +272,29 @@ export function useDocumentActions(opts: { onRemoved?: (ids: string[]) => void }
         });
       }
       // Someone else's document: opening, signing your own part and the
-      // downloads are all that work, so the menu stops there.
+      // downloads are all that work, so the menu stops there. A workspace
+      // admin can also remind and void a teammate's document.
       if (notMine(doc)) {
+        const managed = isAdminManaged(doc);
+        if (managed && opts?.inHeader) {
+          return voidable
+            ? [{ label: t("documents.actions.void"), danger: true, onSelect: () => askVoid([doc]) }]
+            : [];
+        }
         if (items.length) items.push("separator");
         items.push(...downloads);
+        if (managed) {
+          items.push("separator");
+          items.push({
+            label: t("documents.actions.remindOthers"),
+            kbd: "R",
+            disabled: doc.status !== "in_progress",
+            onSelect: () => remind([doc])
+          });
+          if (voidable) {
+            items.push({ label: t("documents.actions.void"), danger: true, onSelect: () => askVoid([doc]) });
+          }
+        }
         return items;
       }
       if (doc.status === "draft") {
@@ -298,7 +337,7 @@ export function useDocumentActions(opts: { onRemoved?: (ids: string[]) => void }
         onSelect: () => askMove([doc])
       });
       items.push("separator");
-      if (doc.status === "in_progress" || doc.status === "expired") {
+      if (voidable) {
         items.push({ label: t("documents.actions.void"), danger: true, onSelect: () => askVoid([doc]) });
       }
       items.push({ label: t("common.actions.delete"), danger: true, onSelect: () => askDelete([doc]) });
@@ -308,6 +347,20 @@ export function useDocumentActions(opts: { onRemoved?: (ids: string[]) => void }
   );
 
   const folderList = drive.data?.folders ?? [];
+
+  // Voiding a teammate's document is an admin acting on someone else's work,
+  // so the dialog names whose it is and says the owner will be told.
+  const voidTeammates = (voidTargets ?? []).filter(isAdminManaged);
+  const voidAllTeammates = voidTeammates.length > 0 && voidTeammates.length === (voidTargets?.length ?? 0);
+  const voidTeammateName = voidTeammates[0]?.ownerName || voidTeammates[0]?.ownerEmail;
+  const voidTeammateNote =
+    voidTeammates.length === 0
+      ? ""
+      : (voidTargets?.length ?? 0) > 1
+        ? t("documents.dialog.void.teammates", { count: voidTeammates.length })
+        : voidTeammateName
+          ? t("documents.dialog.void.teammate", { name: voidTeammateName })
+          : t("documents.dialog.void.teammateNoName");
 
   const dialogs = (
     <>
@@ -372,7 +425,9 @@ export function useDocumentActions(opts: { onRemoved?: (ids: string[]) => void }
         open={!!voidTargets}
         onClose={() => setVoidTargets(null)}
         title={t("documents.dialog.void.title")}
-        description={t("documents.dialog.void.description")}
+        description={
+          voidAllTeammates ? t("documents.dialog.void.descriptionAdmin") : t("documents.dialog.void.description")
+        }
         width={480}
         footer={
           <>
@@ -384,8 +439,18 @@ export function useDocumentActions(opts: { onRemoved?: (ids: string[]) => void }
               onClick={() => {
                 const ids = (voidTargets ?? []).map((d) => d.objectId);
                 if (!user?.id) return;
+                const typed = voidReason.trim();
+                // The fallback reason says who did it: the sender for their own
+                // document, an admin for a teammate's.
+                const targets = (voidTargets ?? []).map((d) => {
+                  const asAdmin = isAdminManaged(d);
+                  const fallback = asAdmin
+                    ? t("documents.dialog.void.defaultReasonAdmin")
+                    : t("documents.dialog.void.defaultReason");
+                  return { id: d.objectId, reason: typed || fallback, asAdmin };
+                });
                 voidDocs.mutate(
-                  { ids, reason: voidReason.trim() || t("documents.dialog.void.defaultReason"), userId: user.id },
+                  { targets, userId: user.id },
                   {
                     onSuccess: () => {
                       toast.success(t("documents.toast.voided", { count: ids.length }));
@@ -402,7 +467,13 @@ export function useDocumentActions(opts: { onRemoved?: (ids: string[]) => void }
           </>
         }
       >
-        <Field label={t("documents.fields.reason")} hint={t("documents.dialog.void.reasonHint")}>
+        {voidTeammateNote ? (
+          <p className="mb-3 text-[12px] text-muted bg-sand rounded-md px-3 py-2">{voidTeammateNote}</p>
+        ) : null}
+        <Field
+          label={t("documents.fields.reason")}
+          hint={voidAllTeammates ? t("documents.dialog.void.reasonHintAdmin") : t("documents.dialog.void.reasonHint")}
+        >
           <Textarea
             value={voidReason}
             onChange={(e) => setVoidReason(e.target.value)}
@@ -506,6 +577,8 @@ export function useDocumentActions(opts: { onRemoved?: (ids: string[]) => void }
 
   return {
     notMine,
+    adminManaged: isAdminManaged,
+    canRemindOrVoid,
     remind,
     download,
     duplicate,

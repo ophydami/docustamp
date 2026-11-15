@@ -1,14 +1,16 @@
 /**
- * Workspace admins can look at every document in their workspace, and only
- * look: `getworkspacedocuments` lists them, `getDocument` and `getsignedurl`
- * open and download them, and every path that changes a document still answers
- * to its owner alone.
+ * Workspace admins can look at every document in their workspace:
+ * `getworkspacedocuments` lists them, `getDocument` and `getsignedurl` open and
+ * download them. They can also remind and void a teammate's document
+ * (`sendreminder`, `declinedoc` with `asAdmin`). Every other path that changes
+ * a document still answers to its owner alone.
  *
  * Everything goes over raw HTTP with a real session token, because the point
  * is what one signed-in person may do to another person's document.
  */
 import axios from 'axios';
 import { serverAppId } from '../Utils.js';
+import { setMailTransport } from '../cloud/lib/mailTransport.js';
 import { resetRateLimits } from '../cloud/parsefunction/authGuard.js';
 import { uniqueEmail } from './support/env.js';
 
@@ -151,6 +153,7 @@ describe('workspace admins and their teammates documents', () => {
   let former;
   let outsider;
   let docs;
+  let owners;
 
   beforeAll(async () => {
     const tenantA = await makeTenant('Workspace A');
@@ -220,6 +223,12 @@ describe('workspace admins and their teammates documents', () => {
     const clientContactId = (await clientContact.save(null, { useMasterKey: true })).id;
 
     const memberOwner = { userId: member.id, extId: memberExt };
+    owners = {
+      member: memberOwner,
+      admin: { userId: admin.id, extId: adminExt },
+      otherOrg: { userId: otherOrgMember.id, extId: otherOrgExt },
+      clientContactId,
+    };
     const memberFolder = await makeDoc('Member folder', memberOwner, { Type: 'Folder' });
     const adminFolder = await makeDoc(
       'Admin folder',
@@ -479,6 +488,14 @@ describe('workspace admins and their teammates documents', () => {
       expect(byId[docs.memberDraft].Folder).toBeUndefined();
       expect(byId[docs.adminOwn].Folder.Name).toBe('Admin folder');
     });
+
+    it('marks the rows that are a teammate document, and not the admin own', async () => {
+      const res = await callFn('getworkspacedocuments', { perPage: 100 }, session(admin.token));
+      const byId = Object.fromEntries(res.result.results.map(r => [r.objectId, r]));
+      expect(byId[docs.memberDraft].ViewAs).toBe('workspace_admin');
+      expect(byId[docs.former].ViewAs).toBe('workspace_admin');
+      expect(byId[docs.adminOwn].ViewAs).toBeUndefined();
+    });
   });
 
   describe('opening a teammate document', () => {
@@ -611,7 +628,7 @@ describe('workspace admins and their teammates documents', () => {
       expect(res.ok).toBe(false);
     });
 
-    it('cannot be voided by the admin', async () => {
+    it('is not voided by an admin who does not say they act as the admin', async () => {
       // A document the admin has no seat on. (Where the admin is one of the
       // signers they may decline their own part, like any signer.)
       const res = await callFn(
@@ -639,6 +656,305 @@ describe('workspace admins and their teammates documents', () => {
         session(admin.token)
       );
       expect(links.ok).toBe(false);
+    });
+  });
+  describe('reminding and voiding a teammate document', () => {
+    const mailbox = [];
+    let sent;
+
+    const fresh = async id =>
+      await new Parse.Query('contracts_Document').get(id, { useMasterKey: true });
+
+    const sentDoc = async (name, owner, signerContactId) =>
+      await makeDoc(name, owner, {
+        SignedUrl: localFileUrl(`${name.replace(/\W+/g, '-')}-signed.pdf`),
+        ExpiryDate: future,
+        Signers: [pointer('contracts_Contactbook', signerContactId)],
+        Placeholders: [],
+      });
+
+    beforeAll(async () => {
+      setMailTransport(async params => {
+        mailbox.push(params);
+        return { status: 'success' };
+      });
+      sent = {
+        toVoid: await sentDoc('Void me', owners.member, owners.clientContactId),
+        untouched: await sentDoc('Leave me', owners.member, owners.clientContactId),
+        adminSeatVoid: await sentDoc('Admin seat void', owners.member, docs.adminContactId),
+        adminSeatDecline: await sentDoc('Admin seat decline', owners.member, docs.adminContactId),
+        adminOwn: await sentDoc('Admin sent', owners.admin, owners.clientContactId),
+        otherOrg: await sentDoc('Other org sent', owners.otherOrg, owners.clientContactId),
+      };
+    });
+
+    afterAll(() => setMailTransport(null));
+
+    beforeEach(() => {
+      mailbox.length = 0;
+    });
+
+    /** A signer outside the workspace, with the placeholder group that seats them. */
+    const makeSigner = async name => {
+      const email = uniqueEmail(`ws.${name}`);
+      const contact = new Parse.Object('contracts_Contactbook');
+      contact.set('Name', name);
+      contact.set('Email', email);
+      contact.set('CreatedBy', pointer('_User', member.id));
+      const id = (await contact.save(null, { useMasterKey: true })).id;
+      return {
+        id,
+        email,
+        group: {
+          Id: id,
+          Role: name,
+          signerObjId: id,
+          signerPtr: pointer('contracts_Contactbook', id),
+          email,
+          placeHolder: [],
+        },
+        signed: {
+          UserPtr: pointer('contracts_Contactbook', id),
+          Activity: 'Signed',
+          SignedOn: new Date().toISOString(),
+        },
+      };
+    };
+
+    /** A sent document of the member's, with real seats on it. */
+    const seatedDoc = async (name, signers, fields = {}) =>
+      await makeDoc(name, owners.member, {
+        SignedUrl: localFileUrl(`${name.replace(/\W+/g, '-')}-signed.pdf`),
+        ExpiryDate: future,
+        Signers: signers.map(signer => pointer('contracts_Contactbook', signer.id)),
+        Placeholders: signers.map(signer => signer.group),
+        ...fields,
+      });
+
+    const sentTo = () => mailbox.map(mail => mail.recipient).sort();
+
+    it('lets the admin void it, puts the admin on the record and tells the owner', async () => {
+      const res = await callFn(
+        'declinedoc',
+        { docId: sent.toVoid, reason: 'Client pulled out', asAdmin: true },
+        session(admin.token)
+      );
+      expect(res.ok).toBe(true);
+      expect(res.result.declined).toBe(true);
+      expect(res.result.notified).toBe(true);
+
+      const row = await fresh(sent.toVoid);
+      expect(row.get('IsDeclined')).toBe(true);
+      expect(row.get('DeclineReason')).toBe('Client pulled out');
+      expect(row.get('DeclineBy').id).toBe(admin.id);
+      expect(row.get('DeclineByContact')).toBeUndefined();
+
+      expect(mailbox.length).toBe(1);
+      expect(mailbox[0].recipient).toBe(member.email);
+      expect(mailbox[0].subject).toBe('Document "Void me" was voided by ws.admin');
+      expect(mailbox[0].html).toContain('an admin of your workspace');
+      expect(mailbox[0].html).toContain('Client pulled out');
+      expect(mailbox[0].html).toContain(`/documents/${sent.toVoid}`);
+    });
+
+    it('shows the owner who voided it', async () => {
+      const res = await callFn('getDocument', { docId: sent.toVoid }, session(member.token));
+      expect(res.ok).toBe(true);
+      expect(res.result.IsDeclined).toBe(true);
+      expect(res.result.DeclineBy.objectId).toBe(admin.id);
+      expect(res.result.DeclineBy.name).toBe('ws.admin');
+      expect(res.result.DeclineByContact).toBeUndefined();
+    });
+
+    it('will not void it twice', async () => {
+      const res = await callFn(
+        'declinedoc',
+        { docId: sent.toVoid, reason: 'Again', asAdmin: true },
+        session(admin.token)
+      );
+      expect(res.ok).toBe(false);
+      expect(res.code).toBe(Parse.Error.SCRIPT_FAILED);
+      expect(mailbox.length).toBe(0);
+    });
+
+    it('refuses the admin of another workspace', async () => {
+      const res = await callFn(
+        'declinedoc',
+        { docId: sent.untouched, reason: 'Not mine', asAdmin: true },
+        session(outsider.token)
+      );
+      expect(res.ok).toBe(false);
+      expect(res.code).toBe(Parse.Error.OPERATION_FORBIDDEN);
+      expect((await fresh(sent.untouched)).get('IsDeclined')).not.toBe(true);
+      expect(mailbox.length).toBe(0);
+    });
+
+    it('refuses a member who claims to act as an admin', async () => {
+      const res = await callFn(
+        'declinedoc',
+        { docId: sent.adminOwn, reason: 'Nope', asAdmin: true },
+        session(member.token)
+      );
+      expect(res.ok).toBe(false);
+      expect(res.code).toBe(Parse.Error.OPERATION_FORBIDDEN);
+      expect((await fresh(sent.adminOwn)).get('IsDeclined')).not.toBe(true);
+    });
+
+    it('refuses an organisation admin outside their organisation', async () => {
+      const res = await callFn(
+        'declinedoc',
+        { docId: sent.otherOrg, reason: 'Nope', asAdmin: true },
+        session(orgAdmin.token)
+      );
+      expect(res.ok).toBe(false);
+      expect(res.code).toBe(Parse.Error.OPERATION_FORBIDDEN);
+      expect((await fresh(sent.otherOrg)).get('IsDeclined')).not.toBe(true);
+    });
+
+    it('lets an organisation admin void inside their organisation', async () => {
+      const res = await callFn(
+        'declinedoc',
+        { docId: sent.untouched, reason: 'Wrong client', asAdmin: true },
+        session(orgAdmin.token)
+      );
+      expect(res.ok).toBe(true);
+      expect((await fresh(sent.untouched)).get('DeclineBy').id).toBe(orgAdmin.id);
+    });
+
+    it('will not void a draft', async () => {
+      const res = await callFn(
+        'declinedoc',
+        { docId: docs.memberDraft, reason: 'Nope', asAdmin: true },
+        session(admin.token)
+      );
+      expect(res.ok).toBe(false);
+      expect(res.code).toBe(Parse.Error.SCRIPT_FAILED);
+      expect(res.error).toBe('Only a document that has been sent can be voided.');
+      expect((await fresh(docs.memberDraft)).get('IsDeclined')).not.toBe(true);
+    });
+
+    it('records a void, not a signer decline, when the admin also has a seat', async () => {
+      const res = await callFn(
+        'declinedoc',
+        { docId: sent.adminSeatVoid, reason: 'Voided as admin', asAdmin: true },
+        session(admin.token)
+      );
+      expect(res.ok).toBe(true);
+      const row = await fresh(sent.adminSeatVoid);
+      expect(row.get('DeclineBy').id).toBe(admin.id);
+      expect(row.get('DeclineByContact')).toBeUndefined();
+      expect(mailbox[0].subject).toContain('was voided by');
+    });
+
+    it('still lets the admin decline their own part as a signer', async () => {
+      const res = await callFn(
+        'declinedoc',
+        { docId: sent.adminSeatDecline, reason: 'Not signing this' },
+        session(admin.token)
+      );
+      expect(res.ok).toBe(true);
+      const row = await fresh(sent.adminSeatDecline);
+      expect(row.get('IsDeclined')).toBe(true);
+      expect(row.get('DeclineByContact').id).toBe(docs.adminContactId);
+      expect(mailbox[0].subject).toContain('has been declined by');
+    });
+
+    it('tells everyone who was asked to sign when the owner voids', async () => {
+      const first = await makeSigner('first');
+      const second = await makeSigner('second');
+      const docId = await seatedDoc('Owner void', [first, second], { AuditTrail: [first.signed] });
+
+      const res = await callFn(
+        'declinedoc',
+        { docId, reason: 'Deal is off', userId: member.id },
+        session(member.token)
+      );
+      expect(res.ok).toBe(true);
+      // The one who signed and the one still being waited on. Not the owner.
+      expect(sentTo()).toEqual([first.email, second.email].sort());
+      expect(res.result.signersNotified.sort()).toEqual([first.email, second.email].sort());
+      expect(res.result.signersFailed).toEqual([]);
+      expect(mailbox[0].subject).toBe('Signature request withdrawn: "Owner void"');
+      expect(mailbox[0].html).toContain('ws.member');
+      expect(mailbox[0].html).toContain('has withdrawn');
+      expect(mailbox[0].html).toContain('Deal is off');
+    });
+
+    it('tells the signers which admin withdrew it, and tells the owner', async () => {
+      const only = await makeSigner('only');
+      const docId = await seatedDoc('Admin void with signers', [only]);
+
+      const res = await callFn(
+        'declinedoc',
+        { docId, reason: 'Wrong price', asAdmin: true },
+        session(admin.token)
+      );
+      expect(res.ok).toBe(true);
+      expect(sentTo()).toEqual([member.email, only.email].sort());
+      const toSigner = mailbox.find(mail => mail.recipient === only.email);
+      expect(toSigner.subject).toBe('Signature request withdrawn: "Admin void with signers"');
+      expect(toSigner.html).toContain('ws.admin');
+      expect(toSigner.html).toContain('ws.member');
+      expect(toSigner.html).toContain('Wrong price');
+      const toOwner = mailbox.find(mail => mail.recipient === member.email);
+      expect(toOwner.subject).toContain('was voided by');
+    });
+
+    it('leaves out whoever was not asked yet on a document signed in order', async () => {
+      const first = await makeSigner('one');
+      const second = await makeSigner('two');
+      const third = await makeSigner('three');
+      const docId = await seatedDoc('Ordered void', [first, second, third], {
+        SendinOrder: true,
+        AuditTrail: [first.signed],
+      });
+
+      const res = await callFn(
+        'declinedoc',
+        { docId, reason: '', userId: member.id },
+        session(member.token)
+      );
+      expect(res.ok).toBe(true);
+      expect(sentTo()).toEqual([first.email, second.email].sort());
+    });
+
+    it('sends no withdrawal when a signer declines their own part', async () => {
+      const other = await makeSigner('other');
+      const adminSeat = {
+        id: docs.adminContactId,
+        group: {
+          Id: docs.adminContactId,
+          Role: 'Admin seat',
+          signerObjId: docs.adminContactId,
+          signerPtr: pointer('contracts_Contactbook', docs.adminContactId),
+          email: admin.email,
+          placeHolder: [],
+        },
+      };
+      const docId = await seatedDoc('Signer decline', [adminSeat, other]);
+
+      const res = await callFn('declinedoc', { docId, reason: 'Not for me' }, session(admin.token));
+      expect(res.ok).toBe(true);
+      // Only the owner hears about a decline, as before.
+      expect(sentTo()).toEqual([member.email]);
+      expect(mailbox[0].subject).toContain('has been declined by');
+      expect(res.result.signersNotified).toEqual([]);
+    });
+
+    it('lets the admin send a reminder, and nobody outside the workspace', async () => {
+      const mine = await callFn(
+        'sendreminder',
+        { docId: docs.memberWaiting },
+        session(admin.token)
+      );
+      expect(mine.code).not.toBe(Parse.Error.OPERATION_FORBIDDEN);
+      const theirs = await callFn(
+        'sendreminder',
+        { docId: docs.memberWaiting },
+        session(outsider.token)
+      );
+      expect(theirs.ok).toBe(false);
+      expect(theirs.code).toBe(Parse.Error.OPERATION_FORBIDDEN);
     });
   });
 });

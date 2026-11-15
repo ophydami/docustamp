@@ -8,8 +8,10 @@ import {
 } from '../lib/atomic.js';
 import { agentLabel } from '../lib/agentIdentity.js';
 import { upsertAuditEntry } from '../lib/auditTrail.js';
+import { pendingRequestRecipients, resolveRecipient } from '../lib/requestMail.js';
 import { signingTokenFromRequest } from '../lib/signingToken.js';
-import { resolveDocumentActor } from './authGuard.js';
+import { COMPLETION_ACTIVITIES, isParticipantBasic } from '../../utils/workflowUtils.js';
+import { extUserForUser, resolveDocumentActor } from './authGuard.js';
 import sendSystemMail from './sendSystemMail.js';
 import { emitInBackground } from '../lib/webhooks.js';
 
@@ -26,6 +28,17 @@ import { emitInBackground } from '../lib/webhooks.js';
  * The decline itself (`applyDecline`) is shared with lib/decline.js, where an AI
  * agent declines its own user's part: both go through the same conditional
  * write, audit entry, owner email and `declined` webhook.
+ *
+ * A void (the owner, or an admin of their workspace, withdrawing the document)
+ * also tells everyone who was asked to sign. It used to tell nobody, while the
+ * dialog in front of it promised that everyone on the document is emailed: a
+ * signer who had not opened their link yet simply found it dead.
+ *
+ * An admin of the owner's workspace may void a teammate's document, and only
+ * when the call says so (`asAdmin: true`). The flag is what tells that apart
+ * from the same person declining their own part as a signer, which the signing
+ * page does with the same function and no contact id. The admin goes on the
+ * record as `DeclineBy`, and the owner is emailed who voided it and why.
  */
 
 function findSigner(doc, { contactId, userId }) {
@@ -113,8 +126,32 @@ function agentLine(agent) {
   return `Declined on their behalf by their AI agent${label ? `, ${escapeHtml(label)}` : ''}.`;
 }
 
+/**
+ * What the owner is told when an admin of their workspace voided the document:
+ * who did it, and that it can no longer be signed.
+ */
+function adminVoidMail({ pdfName, creatorName, admin, reason, viewDocUrl }) {
+  const who = admin.name || admin.email || 'A workspace admin';
+  return {
+    subject: `Document "${pdfName}" was voided by ${who}`,
+    html: renderMail({
+      title: `Voided by ${who}`,
+      preheader: `${pdfName} was voided by ${who}`,
+      greeting: creatorName ? `Hi ${creatorName},` : '',
+      paragraphs: [
+        `${strong(pdfName)} was voided by ${strong(who)}` +
+          (admin.name && admin.email ? ` (${escapeHtml(admin.email)})` : '') +
+          `, an admin of your workspace, on ${escapeHtml(new Date().toLocaleDateString())}.`,
+        'It can no longer be signed.',
+        `${strong('Reason:')} ${escapeHtml(reason || 'Not specified')}`,
+      ],
+      cta: { url: viewDocUrl, label: 'View document' },
+    }),
+  };
+}
+
 /** @returns {Promise<boolean>} whether the owner was actually told. */
-async function sendDeclineMail(doc, publicUrl, actorIds, reason, agent) {
+async function sendDeclineMail(doc, publicUrl, actorIds, reason, agent, admin) {
   try {
     const TenantAppName = appName;
 
@@ -133,21 +170,32 @@ async function sendDeclineMail(doc, publicUrl, actorIds, reason, agent) {
     const signerName = signUser?.signerPtr?.Name || '';
     const signerEmail = signUser?.signerPtr?.Email || signUser?.email || '';
     const viewDocUrl = `${publicUrl}/recipientSignPdf/${doc.objectId}`;
-    const subject = `Document "${pdfName}" has been declined by ${signerName}`;
+    const voided = admin
+      ? adminVoidMail({
+          pdfName,
+          creatorName,
+          admin,
+          reason,
+          viewDocUrl: `${publicUrl}/documents/${doc.objectId}`,
+        })
+      : null;
+    const subject = voided?.subject || `Document "${pdfName}" has been declined by ${signerName}`;
     const byAgent = agentLine(agent);
-    const body = renderMail({
-      title: `Declined by ${signerName || signerEmail}`,
-      preheader: `${pdfName} was declined by ${signerName || signerEmail}`,
-      greeting: creatorName ? `Hi ${creatorName},` : '',
-      paragraphs: [
-        `${strong(pdfName)} was declined by ${strong(signerName || signerEmail)}` +
-          (signerName && signerEmail ? ` (${escapeHtml(signerEmail)})` : '') +
-          ` on ${escapeHtml(new Date().toLocaleDateString())}.`,
-        ...(byAgent ? [byAgent] : []),
-        `${strong('Reason:')} ${escapeHtml(reason || 'Not specified')}`,
-      ],
-      cta: { url: viewDocUrl, label: 'View document' },
-    });
+    const body =
+      voided?.html ||
+      renderMail({
+        title: `Declined by ${signerName || signerEmail}`,
+        preheader: `${pdfName} was declined by ${signerName || signerEmail}`,
+        greeting: creatorName ? `Hi ${creatorName},` : '',
+        paragraphs: [
+          `${strong(pdfName)} was declined by ${strong(signerName || signerEmail)}` +
+            (signerName && signerEmail ? ` (${escapeHtml(signerEmail)})` : '') +
+            ` on ${escapeHtml(new Date().toLocaleDateString())}.`,
+          ...(byAgent ? [byAgent] : []),
+          `${strong('Reason:')} ${escapeHtml(reason || 'Not specified')}`,
+        ],
+        cta: { url: viewDocUrl, label: 'View document' },
+      });
 
     const params = {
       extUserId: sender?.objectId,
@@ -221,6 +269,9 @@ export async function loadDeclineTarget(docId) {
  * @param {Object} [opts.agent] `{Method, Agent, OnBehalfOf, AllowedBy}` when an
  *   agent declines for its user: recorded on the audit entry and named in the
  *   owner email.
+ * @param {{name: string, email: string}} [opts.admin] set when an admin of the
+ *   owner's workspace voids the document: named in the owner email and in the
+ *   `declined` webhook. `declineByUserId` is then the admin's account.
  * @returns {Promise<{declined: true, notified: boolean, recorded: boolean}>}
  */
 export async function applyDecline({
@@ -232,6 +283,7 @@ export async function applyDecline({
   ipAddress = '',
   publicUrl = '',
   agent,
+  admin,
 }) {
   if (doc.IsDeclined === true) {
     throw new Parse.Error(Parse.Error.SCRIPT_FAILED, 'Document has already been declined.');
@@ -292,11 +344,13 @@ export async function applyDecline({
         reason,
         signer: isOwner
           ? { kind: 'sender' }
-          : {
-              name: who?.signerPtr?.Name || '',
-              email: (who?.signerPtr?.Email || who?.email || '').toLowerCase(),
-              contactId: contactId || undefined,
-            },
+          : admin
+            ? { kind: 'admin', name: admin.name, email: admin.email.toLowerCase() }
+            : {
+                name: who?.signerPtr?.Name || '',
+                email: (who?.signerPtr?.Email || who?.email || '').toLowerCase(),
+                contactId: contactId || undefined,
+              },
       }
     );
   }
@@ -307,15 +361,124 @@ export async function applyDecline({
       publicUrl,
       { contactId, userId: declineByUserId },
       reason,
-      agent
+      agent,
+      admin
     );
   }
   return { declined: true, notified, recorded };
 }
 
+/**
+ * Everyone a void has to tell: the people who have signed, and the people the
+ * document is waiting on now. On a document signed in order that leaves out
+ * whoever comes later, because they were never asked and have nothing to stop
+ * waiting for.
+ *
+ * @param {Object} doc document JSON as `loadDeclineTarget` reads it.
+ * @returns {Array<{email: string, name: string, signerObjId: string}>}
+ */
+export function voidNoticeRecipients(doc) {
+  const signedIds = new Set(
+    (doc?.AuditTrail || [])
+      .filter(entry => COMPLETION_ACTIVITIES.includes(entry?.Activity))
+      .map(entry => entry?.UserPtr?.objectId)
+      .filter(Boolean)
+  );
+  const signed = (doc?.Placeholders || [])
+    .filter(isParticipantBasic)
+    .map(group => resolveRecipient(group, doc?.Signers))
+    .filter(r => r.email && r.signerObjId && signedIds.has(r.signerObjId));
+  const seen = new Set();
+  return [...signed, ...pendingRequestRecipients(doc)].filter(r => {
+    if (seen.has(r.email)) return false;
+    seen.add(r.email);
+    return true;
+  });
+}
+
+/** The mail a signer gets when the document they were sent has been voided. */
+function withdrawnMailHtml({ docName, senderName, senderEmail, admin, reason }) {
+  const sender = senderName || senderEmail;
+  const who = admin ? admin.name || admin.email : '';
+  const lead = who
+    ? `${strong(who)} has withdrawn ${strong(docName)}, which ` +
+      (sender ? `${escapeHtml(sender)} sent` : 'was sent') +
+      ' to you for signature.'
+    : `${strong(sender || 'The sender')} has withdrawn ${strong(docName)}, which was sent to you for signature.`;
+  return renderMail({
+    title: 'Signature request withdrawn',
+    preheader: `${docName} has been withdrawn and can no longer be signed`,
+    paragraphs: [
+      lead,
+      'It will not be completed. No further action is needed, and the signing link no longer works.',
+      reason ? `${strong('Reason:')} ${escapeHtml(reason)}` : '',
+    ],
+    sender: { senderName, senderMail: senderEmail },
+  });
+}
+
+/**
+ * Tell the signers a document was voided. Never throws: the void has already
+ * committed, so a mail that fails is reported, not allowed to undo anything.
+ *
+ * @param {Object} doc document JSON as `loadDeclineTarget` reads it.
+ * @param {{reason?: string, admin?: {name: string, email: string}}} opts `admin`
+ *   when an admin of the owner's workspace voided it, so the mail says who.
+ * @returns {Promise<{notified: string[], failed: string[]}>} addresses.
+ */
+async function notifySignersOfVoid(doc, { reason = '', admin } = {}) {
+  const senderName = doc?.SenderName || doc?.ExtUserPtr?.Name || '';
+  const senderEmail = doc?.SenderMail || doc?.ExtUserPtr?.Email || '';
+  const html = withdrawnMailHtml({ docName: doc?.Name, senderName, senderEmail, admin, reason });
+  const notified = [];
+  const failed = [];
+  await Promise.all(
+    voidNoticeRecipients(doc).map(async recipient => {
+      try {
+        const res = await sendSystemMail({
+          params: {
+            extUserId: doc?.ExtUserPtr?.objectId,
+            recipient: recipient.email,
+            subject: `Signature request withdrawn: "${doc?.Name}"`,
+            html,
+            replyto: senderEmail,
+          },
+        });
+        if (res?.status === 'success') {
+          notified.push(recipient.email);
+          return;
+        }
+        console.error(
+          `declinedoc: ${recipient.email} was not told that ${doc?.objectId} was voided`,
+          res?.message || res?.status || 'no result'
+        );
+      } catch (err) {
+        console.error(
+          `declinedoc: could not tell ${recipient.email} that ${doc?.objectId} was voided`,
+          err?.message || err
+        );
+      }
+      failed.push(recipient.email);
+    })
+  );
+  return { notified, failed };
+}
+
+/** The name and address an admin goes by in their workspace, for the owner's email. */
+async function adminIdentity(user) {
+  const profile = await extUserForUser(user, { activeOnly: true });
+  return {
+    name: profile?.get('Name') || user?.get?.('name') || '',
+    email: profile?.get('Email') || user?.get?.('email') || user?.get?.('username') || '',
+  };
+}
+
 export default async function declinedocument(request) {
   const docId = request.params?.docId;
   const reason = request.params?.reason || '';
+  // Only the documents page sends this, for a teammate's document. Without it
+  // an admin who is also one of the signers declines their own part, as before.
+  const asAdmin = request.params?.asAdmin === true;
   const hintedUserId = request.params?.userId;
   const publicUrl = request.headers?.public_url;
   if (!docId) {
@@ -332,7 +495,17 @@ export default async function declinedocument(request) {
       contactId: request.params?.contactId,
       signingToken: signingTokenFromRequest(request),
       ownerMayActForContact: true,
+      allowWorkspaceAdmin: asAdmin,
     });
+
+    // An admin voids what a teammate has sent. A draft has nobody waiting on
+    // it, so there is nothing to void and it stays its owner's to finish.
+    if (actor.kind === 'admin' && !_doc.SignedUrl) {
+      throw new Parse.Error(
+        Parse.Error.SCRIPT_FAILED,
+        'Only a document that has been sent can be voided.'
+      );
+    }
 
     // Who is on the record: the resolved actor, never the `userId` parameter,
     // except for a master-key call, which is server-side by definition.
@@ -345,16 +518,32 @@ export default async function declinedocument(request) {
       declineByUserId = await userIdForContact(_doc, actor.contactId);
     }
 
+    const admin = actor.kind === 'admin' ? await adminIdentity(actor.user) : undefined;
     const { notified, recorded } = await applyDecline({
       doc: _doc,
       contactId: actor.contactId || '',
       declineByUserId,
       isOwner: actor.kind === 'owner',
+      admin,
       reason,
       ipAddress: request.headers?.['x-real-ip'] || '',
       publicUrl,
     });
-    return { declined: true, notified, recorded, message: 'document declined' };
+
+    // The owner or an admin withdrew it, as opposed to a signer declining their
+    // part: everyone who was asked to sign is told it is off.
+    const voided = (actor.kind === 'owner' || actor.kind === 'admin') && !actor.contactId;
+    const signers = voided
+      ? await notifySignersOfVoid(_doc, { reason, admin })
+      : { notified: [], failed: [] };
+    return {
+      declined: true,
+      notified,
+      recorded,
+      signersNotified: signers.notified,
+      signersFailed: signers.failed,
+      message: 'document declined',
+    };
   } catch (err) {
     console.log('err while decling doc', err);
     throw err;

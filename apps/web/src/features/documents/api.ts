@@ -156,8 +156,12 @@ interface RawDoc {
   Chain?: { templateId?: string; templateName?: string; name?: string };
   ChainResult?: { status?: string; documentId?: string; error?: string; at?: string };
   ChainedFrom?: { objectId?: string };
-  /** Only on `getDocument`, and only for a workspace admin reading a teammate's document. */
+  /** A teammate's document read by a workspace admin: `getDocument` and the whole-workspace list. */
   ViewAs?: string;
+  /** Who declined or voided it; `getDocument` resolves it to `{ objectId, name, email }`. */
+  DeclineBy?: RawPtr & { name?: string; email?: string };
+  /** Set when a recipient declined. A void (by the sender or an admin) leaves it out. */
+  DeclineByContact?: RawPtr;
 }
 
 interface RestList<T> {
@@ -387,6 +391,15 @@ export function toDocument(raw: RawDoc, me: Viewer): Document {
     chainedFromId: raw.ChainedFrom?.objectId,
     written: !!raw.Content && typeof raw.Content === "object",
     viewAs: raw.ViewAs === "workspace_admin" ? "workspace_admin" : undefined,
+    declinedBy:
+      raw.IsDeclined && raw.DeclineBy?.objectId
+        ? {
+            userId: raw.DeclineBy.objectId,
+            name: raw.DeclineBy.name,
+            email: raw.DeclineBy.email,
+            bySigner: !!raw.DeclineByContact?.objectId
+          }
+        : undefined,
     pageCount: maxPage || undefined,
     recipients,
     fields,
@@ -1113,19 +1126,37 @@ export function useDeleteDocuments() {
   });
 }
 
+/** One document to void, with the reason that goes on its record. */
+export interface VoidTarget {
+  id: string;
+  reason: string;
+  /** A teammate's document, voided by a workspace admin rather than by its owner. */
+  asAdmin?: boolean;
+}
+
 /**
  * Void ("revoke") a sent document. The backend has no dedicated void function:
  * the owner voids by calling `declinedoc` with their own `_User` id, which is
  * exactly what the legacy Revoke action did.
+ *
+ * A workspace admin voiding a teammate's document says so with `asAdmin`. The
+ * server then checks they administer that workspace, records them as the one
+ * who voided it and emails the owner. It is never sent for the caller's own
+ * documents, so a selection can mix both.
  */
 export function useVoidDocuments() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async ({ ids, reason, userId }: { ids: string[]; reason: string; userId: string }) => {
-      for (const docId of ids) {
-        await cloud("declinedoc", { docId, reason, userId });
+    mutationFn: async ({ targets, userId }: { targets: VoidTarget[]; userId: string }) => {
+      for (const target of targets) {
+        await cloud(
+          "declinedoc",
+          target.asAdmin
+            ? { docId: target.id, reason: target.reason, asAdmin: true }
+            : { docId: target.id, reason: target.reason, userId }
+        );
       }
-      return ids;
+      return targets.map((target) => target.id);
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: documentKeys.all })
   });

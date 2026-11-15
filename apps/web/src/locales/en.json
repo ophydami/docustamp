@@ -883,8 +883,11 @@
       "signedAt": "signed {{when}}",
       "signingCertificate": "Signing certificate",
       "statusLabel": "Status",
-      "viewingAsAdmin": "You are viewing this as a workspace admin. Only {{name}} can change it.",
-      "viewingAsAdminNoName": "You are viewing this as a workspace admin. Only the person who made it can change it."
+      "viewingAsAdmin": "You are viewing this as a workspace admin. You can send reminders or void it. Only {{name}} can change anything else.",
+      "viewingAsAdminNoName": "You are viewing this as a workspace admin. You can send reminders or void it. Only the person who made it can change anything else.",
+      "voidReason": "Reason: {{reason}}",
+      "voidedByAdmin": "Voided by {{name}}, a workspace admin.",
+      "voidedByAdminNoName": "Voided by a workspace admin."
     },
     "dialog": {
       "delete": {
@@ -926,9 +929,16 @@
         "confirm_one": "Void document",
         "confirm_other": "Void {{count}} documents",
         "defaultReason": "Voided by the sender",
+        "defaultReasonAdmin": "Voided by a workspace admin",
         "description": "Recipients can no longer sign it. This cannot be undone, and everyone on the document is emailed.",
+        "descriptionAdmin": "Recipients can no longer sign it. This cannot be undone, and everyone on the document is emailed.",
         "reasonHint": "Shown to the recipients in the notification email.",
+        "reasonHintAdmin": "Shown to the owner and the recipients in the emails they get.",
         "reasonPlaceholder": "Terms changed, a new version is on the way.",
+        "teammate": "This is {{name}}'s document. They will get an email saying you voided it.",
+        "teammateNoName": "This is a teammate's document. They will get an email saying you voided it.",
+        "teammates_one": "One of these is a teammate's document. Its owner will get an email saying you voided it.",
+        "teammates_other": "{{count}} of these are teammates' documents. Each owner will get an email saying you voided it.",
         "title": "Void this document?"
       }
     },
@@ -1064,6 +1074,7 @@
     },
     "recipientState": {
       "declined": "declined",
+      "notSigned": "did not sign",
       "signed": "signed",
       "turn": "their turn",
       "viewed": "viewed",
@@ -2916,7 +2927,7 @@
       },
       "countLine_one": "{{count}} person in this workspace.",
       "countLine_other": "{{count}} people in this workspace.",
-      "documentAccess": "Admins can see and download every document created in this workspace. Only the person who made a document can change it.",
+      "documentAccess": "Admins can see and download every document created in this workspace, send reminders for it and void it. Only the person who made a document can edit or delete it.",
       "invite": {
         "button": "Invite teammate",
         "created": "The account is ready. Send them this password over a channel you trust; it is not shown again.",

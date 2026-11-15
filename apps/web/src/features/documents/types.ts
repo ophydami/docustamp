@@ -189,10 +189,17 @@ export interface Document {
   /** The text was written in the app (`Content` column), so a draft's words can still be edited. */
   written: boolean;
   /**
-   * Set by `getDocument` when a workspace admin opens a teammate's document:
-   * the whole row is there to read, and only its owner can change it.
+   * A teammate's document seen by a workspace admin, on the whole-workspace
+   * list and on `getDocument`. The admin can read it, download it, remind its
+   * signers and void it. Everything else is the owner's.
    */
   viewAs?: "workspace_admin";
+  /**
+   * Who ended a declined document (`DeclineBy`), on `getDocument` only.
+   * `bySigner` means a recipient declined their part (`DeclineByContact`);
+   * without it the sender voided it, or a workspace admin did.
+   */
+  declinedBy?: { userId: string; name?: string; email?: string; bySigner: boolean };
 }
 
 export interface DocumentPage {

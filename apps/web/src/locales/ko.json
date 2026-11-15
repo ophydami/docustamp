@@ -884,8 +884,11 @@
       "signedAt": "{{when}} 서명",
       "signingCertificate": "서명 인증서",
       "statusLabel": "상태",
-      "viewingAsAdmin": "워크스페이스 관리자로 이 문서를 보고 있습니다. {{name}} 님만 변경할 수 있습니다.",
-      "viewingAsAdminNoName": "워크스페이스 관리자로 이 문서를 보고 있습니다. 문서를 만든 사람만 변경할 수 있습니다."
+      "viewingAsAdmin": "워크스페이스 관리자로 이 문서를 보고 있습니다. 알림을 보내거나 문서를 무효화할 수 있습니다. 그 밖의 변경은 {{name}} 님만 할 수 있습니다.",
+      "viewingAsAdminNoName": "워크스페이스 관리자로 이 문서를 보고 있습니다. 알림을 보내거나 문서를 무효화할 수 있습니다. 그 밖의 변경은 문서를 만든 사람만 할 수 있습니다.",
+      "voidReason": "사유: {{reason}}",
+      "voidedByAdmin": "워크스페이스 관리자 {{name}} 님이 무효화했습니다.",
+      "voidedByAdminNoName": "워크스페이스 관리자가 무효화했습니다."
     },
     "dialog": {
       "delete": {
@@ -927,9 +930,16 @@
         "confirm_one": "문서 무효화",
         "confirm_other": "문서 {{count}}건 무효화",
         "defaultReason": "보낸 사람이 무효화함",
+        "defaultReasonAdmin": "워크스페이스 관리자가 무효화함",
         "description": "수신자가 더 이상 서명할 수 없습니다. 되돌릴 수 없으며 문서의 모든 사람에게 메일이 발송됩니다.",
+        "descriptionAdmin": "수신자가 더 이상 서명할 수 없습니다. 되돌릴 수 없으며 문서의 모든 사람에게 메일이 발송됩니다.",
         "reasonHint": "알림 이메일에서 수신자에게 표시됩니다.",
+        "reasonHintAdmin": "소유자와 수신자가 받는 이메일에 표시됩니다.",
         "reasonPlaceholder": "조건이 변경되어 새 버전을 곧 보내드립니다.",
+        "teammate": "{{name}} 님의 문서입니다. 회원님이 무효화했다는 이메일이 해당 팀원에게 발송됩니다.",
+        "teammateNoName": "팀원의 문서입니다. 회원님이 무효화했다는 이메일이 해당 팀원에게 발송됩니다.",
+        "teammates_one": "이 중 1건은 팀원의 문서입니다. 회원님이 무효화했다는 이메일이 해당 팀원에게 발송됩니다.",
+        "teammates_other": "이 중 {{count}}건은 팀원의 문서입니다. 회원님이 무효화했다는 이메일이 각 팀원에게 발송됩니다.",
         "title": "이 문서를 무효화할까요?"
       }
     },
@@ -1065,6 +1075,7 @@
     },
     "recipientState": {
       "declined": "거부됨",
+      "notSigned": "서명하지 않음",
       "signed": "서명 완료",
       "turn": "차례",
       "viewed": "열람함",
@@ -2917,7 +2928,7 @@
       },
       "countLine_one": "이 워크스페이스에 {{count}}명이 있습니다.",
       "countLine_other": "이 워크스페이스에 {{count}}명이 있습니다.",
-      "documentAccess": "관리자는 이 워크스페이스에서 만든 모든 문서를 보고 다운로드할 수 있습니다. 문서는 만든 사람만 변경할 수 있습니다.",
+      "documentAccess": "관리자는 이 워크스페이스에서 만든 모든 문서를 보고 다운로드하고, 알림을 보내고, 무효화할 수 있습니다. 문서 편집과 삭제는 만든 사람만 할 수 있습니다.",
       "invite": {
         "button": "팀원 초대",
         "created": "계정이 준비되었습니다. 신뢰할 수 있는 방법으로 이 비밀번호를 전달하세요. 다시 표시되지 않습니다.",

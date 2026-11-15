@@ -884,8 +884,11 @@
       "signedAt": "ha firmato {{when}}",
       "signingCertificate": "Certificato di firma",
       "statusLabel": "Stato",
-      "viewingAsAdmin": "Stai guardando questo documento come amministratore dello spazio di lavoro. Solo {{name}} può modificarlo.",
-      "viewingAsAdminNoName": "Stai guardando questo documento come amministratore dello spazio di lavoro. Solo chi lo ha creato può modificarlo."
+      "viewingAsAdmin": "Stai guardando questo documento come amministratore dello spazio di lavoro. Puoi inviare promemoria o annullarlo. Solo {{name}} può modificare il resto.",
+      "viewingAsAdminNoName": "Stai guardando questo documento come amministratore dello spazio di lavoro. Puoi inviare promemoria o annullarlo. Solo chi lo ha creato può modificare il resto.",
+      "voidReason": "Motivo: {{reason}}",
+      "voidedByAdmin": "Annullato da {{name}}, amministratore dello spazio di lavoro.",
+      "voidedByAdminNoName": "Annullato da un amministratore dello spazio di lavoro."
     },
     "dialog": {
       "delete": {
@@ -927,9 +930,16 @@
         "confirm_one": "Annulla documento",
         "confirm_other": "Annulla {{count}} documenti",
         "defaultReason": "Annullato dal mittente",
+        "defaultReasonAdmin": "Annullato da un amministratore dello spazio di lavoro",
         "description": "I destinatari non possono più firmarlo. L'operazione non si può annullare e tutte le persone sul documento ricevono un'email.",
+        "descriptionAdmin": "I destinatari non possono più firmarlo. L'operazione non si può annullare e tutte le persone sul documento ricevono un'email.",
         "reasonHint": "Mostrato ai destinatari nell'email di notifica.",
+        "reasonHintAdmin": "Mostrato al proprietario e ai destinatari nelle email che ricevono.",
         "reasonPlaceholder": "I termini sono cambiati, sta arrivando una nuova versione.",
+        "teammate": "Questo documento è di {{name}}. Riceverà un'email che lo informa che lo hai annullato.",
+        "teammateNoName": "Questo documento è di un collega. Riceverà un'email che lo informa che lo hai annullato.",
+        "teammates_one": "Uno di questi documenti è di un collega. Riceverà un'email che lo informa che lo hai annullato.",
+        "teammates_other": "{{count}} di questi documenti sono di colleghi. Ognuno riceverà un'email che lo informa che hai annullato il suo documento.",
         "title": "Vuoi annullare questo documento?"
       }
     },
@@ -1065,6 +1075,7 @@
     },
     "recipientState": {
       "declined": "ha rifiutato",
+      "notSigned": "non ha firmato",
       "signed": "ha firmato",
       "turn": "tocca a lui",
       "viewed": "ha visualizzato",
@@ -2917,7 +2928,7 @@
       },
       "countLine_one": "{{count}} persona in questo spazio di lavoro.",
       "countLine_other": "{{count}} persone in questo spazio di lavoro.",
-      "documentAccess": "Gli amministratori possono vedere e scaricare tutti i documenti creati in questo spazio di lavoro. Solo chi ha creato un documento può modificarlo.",
+      "documentAccess": "Gli amministratori possono vedere e scaricare tutti i documenti creati in questo spazio di lavoro, inviare promemoria e annullarli. Solo chi ha creato un documento può modificarlo o eliminarlo.",
       "invite": {
         "button": "Invita un collega",
         "created": "L'account è pronto. Inviagli questa password tramite un canale di cui ti fidi; non viene più mostrata.",
